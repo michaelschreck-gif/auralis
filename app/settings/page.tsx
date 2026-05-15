@@ -4,10 +4,10 @@ import DashboardShell from "@/components/DashboardShell"
 import SettingsForm from "@/components/SettingsForm"
 
 const SECTIONS = [
-  { id: "profile",  label: "Profile" },
-  { id: "topics",   label: "Monitoring Topics" },
-  { id: "plan",     label: "Plan" },
-  { id: "danger",   label: "Danger Zone" },
+  { id: "profile", label: "Profile" },
+  { id: "topics",  label: "Monitoring Topics" },
+  { id: "plan",    label: "Plan" },
+  { id: "danger",  label: "Danger Zone" },
 ]
 
 export default async function SettingsPage() {
@@ -35,7 +35,7 @@ export default async function SettingsPage() {
         <a
           key={s.id}
           href={`#${s.id}`}
-          className="block px-4 py-3 text-sm text-neutral-500 hover:text-neutral-300 hover:bg-white/[0.02] transition-colors"
+          className="block px-4 py-3 text-sm text-[#64748b] hover:text-[#0f172a] hover:bg-gray-50 transition-colors font-medium border-b border-gray-100 last:border-0"
         >
           {s.label}
         </a>

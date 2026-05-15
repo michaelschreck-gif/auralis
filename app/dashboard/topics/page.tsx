@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 
 function hue(s: number) {
-  return s >= 70 ? "#3dcfb0" : s >= 45 ? "#d4a84b" : "#e05555"
+  return s >= 70 ? "#10b981" : s >= 45 ? "#4F6EF7" : "#ef4444"
 }
 
 function scoreLabel(s: number) {
@@ -12,7 +12,11 @@ function scoreLabel(s: number) {
 
 function Sparkline({ scores }: { scores: number[] }) {
   if (scores.length < 2) {
-    return <div className="h-8 flex items-center"><span className="text-xs text-neutral-700">No history</span></div>
+    return (
+      <div className="h-8 flex items-center">
+        <span className="text-xs text-[#94a3b8]">No history</span>
+      </div>
+    )
   }
   const max = Math.max(...scores, 1)
   const w = 80
@@ -25,20 +29,20 @@ function Sparkline({ scores }: { scores: number[] }) {
   const last = scores[scores.length - 1] ?? 0
   const prev = scores[scores.length - 2] ?? last
   const trend = last > prev ? "↑" : last < prev ? "↓" : "→"
-  const trendColor = last > prev ? "#3dcfb0" : last < prev ? "#e05555" : "#7a7e8e"
+  const trendColor = last > prev ? "#10b981" : last < prev ? "#ef4444" : "#94a3b8"
   return (
     <div className="flex items-center gap-2">
       <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
         <polyline
           points={pts.join(" ")}
           fill="none"
-          stroke="rgba(212,168,75,0.4)"
+          stroke="rgba(79,110,247,0.5)"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
         />
       </svg>
-      <span className="text-xs" style={{ color: trendColor }}>{trend}</span>
+      <span className="text-xs font-semibold" style={{ color: trendColor }}>{trend}</span>
     </div>
   )
 }
@@ -83,24 +87,29 @@ export default async function TopicsPage() {
   const panel = (
     <div className="py-2">
       {(schedules ?? []).length === 0 && (
-        <p className="text-xs text-neutral-600 text-center mt-8 px-4">No topics yet.</p>
+        <p className="text-xs text-[#94a3b8] text-center mt-8 px-4">No topics yet.</p>
       )}
       {(schedules ?? []).map(s => {
         const data = reportsBySchedule[s.id]
         const score = data?.score ?? null
         return (
-          <div key={s.id} className="px-4 py-3 border-b border-white/[0.04]">
+          <div key={s.id} className="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-neutral-400 truncate pr-2">{s.query}</span>
-              {score > 0 && (
-                <span className="text-xs font-light flex-shrink-0" style={{ color: hue(score) }}>
+              <span className="text-xs text-[#0f172a] truncate pr-2 font-medium">{s.query}</span>
+              {score != null && score > 0 && (
+                <span className="text-xs font-semibold flex-shrink-0" style={{ color: hue(score) }}>
                   {score}
                 </span>
               )}
             </div>
-            <div className="h-0.5 bg-white/[0.05] rounded-full overflow-hidden">
-              <div className="h-full rounded-full"
-                style={{ width: score > 0 ? `${score}%` : "0%", background: score > 0 ? hue(score) : "transparent" }}/>
+            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{
+                  width: score != null && score > 0 ? `${score}%` : "0%",
+                  background: score != null && score > 0 ? hue(score) : "transparent",
+                }}
+              />
             </div>
           </div>
         )
@@ -117,19 +126,19 @@ export default async function TopicsPage() {
     >
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-light text-white">Topic Ownership</h1>
-          <p className="text-neutral-500 text-sm mt-1">
+          <h1 className="text-xl font-semibold text-[#0f172a]">Topic Ownership</h1>
+          <p className="text-[#64748b] text-sm mt-1">
             How strongly AI associates you with each monitored topic.
           </p>
         </div>
 
         {(schedules ?? []).length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-neutral-600 text-sm max-w-xs leading-relaxed">
+            <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
               No topics tracked yet. Complete{" "}
-              <a href="/onboarding" className="text-amber-400 hover:underline">onboarding</a>{" "}
+              <a href="/onboarding" className="text-[#4F6EF7] hover:underline font-medium">onboarding</a>{" "}
               or run a custom check on the{" "}
-              <a href="/dashboard" className="text-amber-400 hover:underline">overview page</a>.
+              <a href="/dashboard" className="text-[#4F6EF7] hover:underline font-medium">overview page</a>.
             </p>
           </div>
         ) : (
@@ -141,39 +150,43 @@ export default async function TopicsPage() {
               const hasData = score > 0
 
               return (
-                <div key={s.id} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+                <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-base font-light text-white">{s.query}</h3>
-                      <p className="text-xs text-neutral-600 mt-0.5">
+                      <h3 className="text-base font-semibold text-[#0f172a]">{s.query}</h3>
+                      <p className="text-xs text-[#94a3b8] mt-0.5">
                         {s.language === "en" ? "🇬🇧" : "🇩🇪"} {s.name} · {s.frequency}
                       </p>
                     </div>
                     {hasData && (
                       <div className="text-right flex-shrink-0 ml-4">
-                        <p className="text-2xl font-light" style={{ color: hue(score) }}>{score}</p>
-                        <p className="text-xs mt-0.5" style={{ color: hue(score) }}>{scoreLabel(score)}</p>
+                        <p className="text-2xl font-semibold" style={{ color: hue(score) }}>{score}</p>
+                        <p className="text-xs mt-0.5 font-medium" style={{ color: hue(score) }}>
+                          {scoreLabel(score)}
+                        </p>
                       </div>
                     )}
                   </div>
 
                   {hasData ? (
                     <div className="space-y-3">
-                      <div className="h-1.5 bg-white/[0.05] rounded-full overflow-hidden">
-                        <div className="h-full rounded-full transition-all duration-700"
-                          style={{ width: `${score}%`, background: hue(score) }}/>
+                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-700"
+                          style={{ width: `${score}%`, background: hue(score) }}
+                        />
                       </div>
                       <div className="flex items-center justify-between">
                         <Sparkline scores={history}/>
-                        <span className="text-xs text-neutral-600">
+                        <span className="text-xs text-[#94a3b8]">
                           {history.length} {history.length === 1 ? "check" : "checks"}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xs text-neutral-700">
+                    <p className="text-xs text-[#94a3b8]">
                       No data yet.{" "}
-                      <a href="/dashboard" className="text-amber-400 hover:underline">
+                      <a href="/dashboard" className="text-[#4F6EF7] hover:underline font-medium">
                         Run a visibility check →
                       </a>
                     </p>

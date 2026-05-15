@@ -5,11 +5,11 @@ import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
 
 const NAV = [
-  { href: "/dashboard",                  label: "Overview",        icon: "overview" },
-  { href: "/dashboard/ai-visibility",    label: "AI Visibility",   icon: "visibility" },
-  { href: "/dashboard/topics",           label: "Topic Ownership", icon: "topics" },
-  { href: "/dashboard/recommendations",  label: "Recommendations", icon: "recommendations" },
-  { href: "/settings",                   label: "Settings",        icon: "settings" },
+  { href: "/dashboard",                 label: "Overview",        icon: "overview" },
+  { href: "/dashboard/ai-visibility",   label: "AI Visibility",   icon: "visibility" },
+  { href: "/dashboard/topics",          label: "Topic Ownership", icon: "topics" },
+  { href: "/dashboard/recommendations", label: "Recommendations", icon: "recommendations" },
+  { href: "/settings",                  label: "Settings",        icon: "settings" },
 ] as const
 
 type IconKey = typeof NAV[number]["icon"]
@@ -67,73 +67,101 @@ export default function DashboardShell({
   children,
 }: Props) {
   const pathname = usePathname()
+  const initials = userName
+    ? userName.split(" ").map(n => n[0] ?? "").join("").toUpperCase().slice(0, 2)
+    : "?"
+  const breadcrumb = NAV.find(n => n.href === pathname)?.label ?? "Dashboard"
 
   return (
-    <div className="flex h-screen bg-[#0a0c10] text-white overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#f8f9fb] overflow-hidden">
 
-      {/* ─── Sidebar ─── */}
-      <aside className="w-[220px] flex-shrink-0 bg-[#0f1117] border-r border-white/[0.06] flex flex-col">
-        <div className="px-5 py-5 border-b border-white/[0.04]">
-          <div className="flex items-center gap-2.5">
-            <div className="w-4 h-4 rounded-full bg-gradient-radial from-amber-400 to-amber-800 flex-shrink-0"/>
-            <span className="text-amber-400 font-light tracking-widest text-xs uppercase">Auralis</span>
+      {/* ─── Topbar ─── */}
+      <header className="h-[60px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-6 gap-6 z-10">
+        <div className="flex items-center gap-2.5 w-[240px] flex-shrink-0">
+          <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center flex-shrink-0">
+            <span className="text-white text-xs font-bold">A</span>
           </div>
+          <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
         </div>
-
-        <nav className="flex-1 px-3 py-4 space-y-0.5">
-          {NAV.map(item => {
-            const active = pathname === item.href
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  active
-                    ? "bg-amber-400/10 text-amber-400"
-                    : "text-neutral-500 hover:text-neutral-300 hover:bg-white/[0.03]"
-                }`}
-              >
-                <span className="w-4 flex-shrink-0 flex items-center justify-center">
-                  {Icons[item.icon]}
-                </span>
-                {item.label}
-              </Link>
-            )
-          })}
-        </nav>
-
-        <div className="px-5 py-4 border-t border-white/[0.04] space-y-2">
-          {userName && <p className="text-xs text-neutral-600 truncate">{userName}</p>}
-          <form action="/auth/signout" method="POST">
-            <button type="submit" className="text-xs text-neutral-700 hover:text-neutral-500 transition-colors">
-              Sign out →
-            </button>
-          </form>
+        <div className="flex-1">
+          <span className="text-sm text-[#64748b] font-medium">{breadcrumb}</span>
         </div>
-      </aside>
-
-      {/* ─── Panel column ─── */}
-      {panelContent !== undefined && (
-        <div className="w-[280px] flex-shrink-0 border-r border-white/[0.06] flex flex-col overflow-hidden">
-          <div className="px-4 py-4 border-b border-white/[0.04] flex items-center justify-between">
-            <span className="text-sm text-neutral-300 font-medium">{panelHeader}</span>
-            {panelCount && <span className="text-xs text-neutral-600">{panelCount}</span>}
-          </div>
-          <div className="flex-1 overflow-y-auto">
-            {panelContent}
-          </div>
-          {panelFooter && (
-            <div className="border-t border-white/[0.04]">
-              {panelFooter}
-            </div>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          {userName && (
+            <>
+              <span className="text-sm text-[#64748b] hidden md:block">{userName}</span>
+              <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-semibold text-[#4F6EF7]">{initials}</span>
+              </div>
+            </>
           )}
         </div>
-      )}
+      </header>
 
-      {/* ─── Main content ─── */}
-      <main className="flex-1 overflow-y-auto">
-        {children}
-      </main>
+      {/* ─── Body ─── */}
+      <div className="flex flex-1 overflow-hidden">
+
+        {/* ─── Sidebar ─── */}
+        <aside className="w-[240px] flex-shrink-0 bg-white border-r border-gray-100 flex flex-col">
+          <nav className="flex-1 px-3 py-4 space-y-0.5">
+            {NAV.map(item => {
+              const active = pathname === item.href
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                    active
+                      ? "bg-blue-50 text-[#4F6EF7] font-medium"
+                      : "text-[#64748b] hover:text-[#0f172a] hover:bg-gray-50"
+                  }`}
+                >
+                  <span className="w-4 flex-shrink-0 flex items-center justify-center">
+                    {Icons[item.icon]}
+                  </span>
+                  {item.label}
+                </Link>
+              )
+            })}
+          </nav>
+
+          <div className="px-5 py-4 border-t border-gray-100">
+            <form action="/auth/signout" method="POST">
+              <button
+                type="submit"
+                className="text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
+              >
+                Sign out →
+              </button>
+            </form>
+          </div>
+        </aside>
+
+        {/* ─── Panel column ─── */}
+        {panelContent !== undefined && (
+          <div className="w-[300px] flex-shrink-0 bg-[#f8f9fb] border-r border-gray-100 flex flex-col overflow-hidden">
+            <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between bg-white">
+              <span className="text-sm font-semibold text-[#0f172a]">{panelHeader}</span>
+              {panelCount && (
+                <span className="text-xs text-[#64748b] bg-gray-100 px-2 py-0.5 rounded-full">
+                  {panelCount}
+                </span>
+              )}
+            </div>
+            <div className="flex-1 overflow-y-auto">
+              {panelContent}
+            </div>
+            {panelFooter && (
+              <div className="border-t border-gray-100">{panelFooter}</div>
+            )}
+          </div>
+        )}
+
+        {/* ─── Main content ─── */}
+        <main className="flex-1 overflow-y-auto bg-white">
+          {children}
+        </main>
+      </div>
     </div>
   )
 }

@@ -19,9 +19,15 @@ const CATEGORY_ICONS: Record<string, string> = {
 }
 
 const IMPACT_COLORS: Record<string, string> = {
-  high:   "#3dcfb0",
-  medium: "#d4a84b",
-  low:    "#7a7e8e",
+  high:   "#10b981",
+  medium: "#f59e0b",
+  low:    "#94a3b8",
+}
+
+const IMPACT_BG: Record<string, string> = {
+  high:   "#d1fae5",
+  medium: "#fef3c7",
+  low:    "#f1f5f9",
 }
 
 async function generateRecommendations(
@@ -92,7 +98,7 @@ async function RecommendationsContent({
   if (topics.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-24 text-center">
-        <p className="text-neutral-600 text-sm max-w-xs leading-relaxed">
+        <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
           Complete onboarding and run at least one visibility check to get recommendations.
         </p>
       </div>
@@ -103,7 +109,7 @@ async function RecommendationsContent({
 
   if (recommendations.length === 0) {
     return (
-      <p className="text-sm text-neutral-600">
+      <p className="text-sm text-[#64748b]">
         Could not generate recommendations. Try again later.
       </p>
     )
@@ -112,29 +118,28 @@ async function RecommendationsContent({
   return (
     <div className="space-y-4">
       {recommendations.map((rec, i) => (
-        <div key={i} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6">
+        <div key={i} className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
           <div className="flex items-start gap-4">
-            <div className="w-9 h-9 rounded-xl bg-white/[0.03] border border-white/[0.06] flex items-center justify-center text-lg flex-shrink-0">
+            <div className="w-9 h-9 rounded-xl bg-[#f8f9fb] border border-gray-100 flex items-center justify-center text-lg flex-shrink-0">
               {CATEGORY_ICONS[rec.category] ?? "💡"}
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-2 flex-wrap">
-                <h3 className="text-sm font-medium text-white">{rec.title}</h3>
+                <h3 className="text-sm font-semibold text-[#0f172a]">{rec.title}</h3>
                 <span
-                  className="text-xs px-2 py-0.5 rounded-full border"
+                  className="text-xs px-2 py-0.5 rounded-full font-medium"
                   style={{
-                    borderColor: `${IMPACT_COLORS[rec.impact]}33`,
-                    background: `${IMPACT_COLORS[rec.impact]}10`,
+                    background: IMPACT_BG[rec.impact],
                     color: IMPACT_COLORS[rec.impact],
                   }}
                 >
                   {rec.impact} impact
                 </span>
-                <span className="text-xs px-2 py-0.5 rounded-full border border-white/[0.06] text-neutral-600 capitalize">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-[#64748b] capitalize">
                   {rec.category}
                 </span>
               </div>
-              <p className="text-sm text-neutral-400 leading-relaxed">{rec.description}</p>
+              <p className="text-sm text-[#64748b] leading-relaxed">{rec.description}</p>
             </div>
           </div>
         </div>
@@ -147,13 +152,13 @@ function LoadingSkeleton() {
   return (
     <div className="space-y-4">
       {[...Array(5)].map((_, i) => (
-        <div key={i} className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-6 animate-pulse">
+        <div key={i} className="rounded-xl border border-gray-100 bg-white shadow-sm p-6 animate-pulse">
           <div className="flex items-start gap-4">
-            <div className="w-9 h-9 rounded-xl bg-white/[0.05] flex-shrink-0"/>
+            <div className="w-9 h-9 rounded-xl bg-gray-100 flex-shrink-0"/>
             <div className="flex-1 space-y-2">
-              <div className="h-4 bg-white/[0.05] rounded w-48"/>
-              <div className="h-3 bg-white/[0.03] rounded w-full"/>
-              <div className="h-3 bg-white/[0.03] rounded w-3/4"/>
+              <div className="h-4 bg-gray-100 rounded w-48"/>
+              <div className="h-3 bg-gray-50 rounded w-full"/>
+              <div className="h-3 bg-gray-50 rounded w-3/4"/>
             </div>
           </div>
         </div>
@@ -187,13 +192,13 @@ export default async function RecommendationsPage() {
     <div className="py-2">
       {CATEGORIES.map(c => (
         <div key={c.id}
-          className="px-4 py-3 border-b border-white/[0.04] flex items-center gap-3">
+          className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 hover:bg-gray-50 transition-colors">
           <span className="text-sm">{CATEGORY_ICONS[c.id] ?? "✨"}</span>
-          <span className="text-xs text-neutral-500">{c.label}</span>
+          <span className="text-xs text-[#0f172a] font-medium">{c.label}</span>
         </div>
       ))}
       <div className="p-4 mt-2">
-        <p className="text-xs text-neutral-700 leading-relaxed">
+        <p className="text-xs text-[#94a3b8] leading-relaxed">
           Recommendations are generated by Claude based on your latest visibility data.
         </p>
       </div>
@@ -208,8 +213,8 @@ export default async function RecommendationsPage() {
     >
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-light text-white">AI Strategy Recommendations</h1>
-          <p className="text-neutral-500 text-sm mt-1">
+          <h1 className="text-xl font-semibold text-[#0f172a]">AI Strategy Recommendations</h1>
+          <p className="text-[#64748b] text-sm mt-1">
             Personalized actions to improve your AI visibility — generated by Claude.
           </p>
         </div>

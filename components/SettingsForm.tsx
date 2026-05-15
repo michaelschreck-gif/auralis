@@ -58,7 +58,10 @@ export default function SettingsForm({
 
   async function updateScheduleFrequency(id: string, frequency: string) {
     const supabase = createSupabaseBrowserClient()
-    await supabase.from("monitoring_schedules").update({ frequency: frequency as "daily" | "weekly" | "monthly" }).eq("id", id)
+    await supabase
+      .from("monitoring_schedules")
+      .update({ frequency: frequency as "daily" | "weekly" | "monthly" })
+      .eq("id", id)
     setSchedules(prev => prev.map(s => s.id === id ? { ...s, frequency } : s))
   }
 
@@ -77,17 +80,17 @@ export default function SettingsForm({
     router.push("/")
   }
 
-  const inputCls = "w-full bg-white/[0.04] border border-white/[0.08] rounded-xl px-4 py-3 text-sm text-white placeholder-neutral-600 focus:outline-none focus:border-white/20 transition-colors"
-  const labelCls = "text-xs text-neutral-500 uppercase tracking-wider"
+  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20 transition-colors"
+  const labelCls = "text-xs text-[#64748b] font-medium uppercase tracking-wider"
 
   return (
     <div className="p-8 max-w-2xl space-y-10">
 
       {/* Profile */}
-      <section className="space-y-5">
+      <section id="profile" className="space-y-5">
         <div>
-          <h2 className="text-base font-medium text-white">Profile</h2>
-          <p className="text-xs text-neutral-600 mt-0.5">How AI sees you in visibility checks.</p>
+          <h2 className="text-base font-semibold text-[#0f172a]">Profile</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">How AI sees you in visibility checks.</p>
         </div>
 
         <div className="space-y-4">
@@ -98,21 +101,28 @@ export default function SettingsForm({
 
           <div className="space-y-1.5">
             <label className={labelCls}>Email</label>
-            <input type="email" value={initialEmail} disabled
-              className="w-full bg-white/[0.02] border border-white/[0.05] rounded-xl px-4 py-3 text-sm text-neutral-600 cursor-not-allowed"/>
+            <input
+              type="email"
+              value={initialEmail}
+              disabled
+              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#94a3b8] cursor-not-allowed"
+            />
           </div>
 
           <div className="space-y-1.5">
             <label className={labelCls}>AI Query Language</label>
             <div className="flex gap-2">
               {(["de", "en"] as const).map(lang => (
-                <button key={lang} onClick={() => setLanguage(lang)}
-                  className="px-4 py-2.5 rounded-xl text-sm border transition-colors"
+                <button
+                  key={lang}
+                  onClick={() => setLanguage(lang)}
+                  className="px-4 py-2.5 rounded-lg text-sm border font-medium transition-colors"
                   style={{
-                    borderColor: language === lang ? "rgba(212,168,75,0.4)" : "rgba(255,255,255,0.08)",
-                    background: language === lang ? "rgba(212,168,75,0.08)" : "transparent",
-                    color: language === lang ? "#d4a84b" : "#7a7e8e",
-                  }}>
+                    borderColor: language === lang ? "#4F6EF7" : "#e2e8f0",
+                    background: language === lang ? "#eff2ff" : "white",
+                    color: language === lang ? "#4F6EF7" : "#64748b",
+                  }}
+                >
                   {lang === "de" ? "🇩🇪 Deutsch" : "🇬🇧 English"}
                 </button>
               ))}
@@ -120,39 +130,44 @@ export default function SettingsForm({
           </div>
         </div>
 
-        {error && <p className="text-xs text-red-400">{error}</p>}
+        {error && <p className="text-xs text-red-500">{error}</p>}
 
-        <button onClick={saveProfile} disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium transition-all disabled:opacity-40"
-          style={{ background: "rgba(212,168,75,0.12)", border: "1px solid rgba(212,168,75,0.25)", color: "#d4a84b" }}>
+        <button
+          onClick={saveProfile}
+          disabled={saving}
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+        >
           {saving ? (
-            <><span className="w-3.5 h-3.5 border border-amber-400/40 border-t-amber-400 rounded-full animate-spin"/> Saving…</>
+            <>
+              <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin"/>
+              Saving…
+            </>
           ) : saved ? "Saved ✓" : "Save Changes"}
         </button>
       </section>
 
       {/* Monitoring Topics */}
-      <section className="space-y-5">
+      <section id="topics" className="space-y-5">
         <div>
-          <h2 className="text-base font-medium text-white">Monitoring Topics</h2>
-          <p className="text-xs text-neutral-600 mt-0.5">Topics tracked by scheduled AI visibility checks.</p>
+          <h2 className="text-base font-semibold text-[#0f172a]">Monitoring Topics</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">Topics tracked by scheduled AI visibility checks.</p>
         </div>
 
         {schedules.length === 0 && (
-          <p className="text-sm text-neutral-600">No active topics. Go to the dashboard to add one.</p>
+          <p className="text-sm text-[#64748b]">No active topics. Go to the dashboard to add one.</p>
         )}
 
         <div className="space-y-3">
           {schedules.map(s => (
-            <div key={s.id} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center gap-4">
+            <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center gap-4">
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-white truncate">{s.query}</p>
-                <p className="text-xs text-neutral-600 mt-0.5">{s.name}</p>
+                <p className="text-sm text-[#0f172a] font-medium truncate">{s.query}</p>
+                <p className="text-xs text-[#94a3b8] mt-0.5">{s.name}</p>
               </div>
               <select
                 value={s.frequency}
                 onChange={e => updateScheduleFrequency(s.id, e.target.value)}
-                className="bg-white/[0.04] border border-white/[0.08] rounded-lg px-3 py-1.5 text-xs text-neutral-300 focus:outline-none"
+                className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-[#64748b] focus:outline-none focus:border-[#4F6EF7] transition-colors"
               >
                 <option value="daily">Daily</option>
                 <option value="weekly">Weekly</option>
@@ -161,7 +176,7 @@ export default function SettingsForm({
               <button
                 onClick={() => deleteSchedule(s.id)}
                 disabled={deletingId === s.id}
-                className="text-xs text-neutral-700 hover:text-red-400 transition-colors disabled:opacity-40"
+                className="text-xs text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-40"
               >
                 {deletingId === s.id ? "…" : "Remove"}
               </button>
@@ -171,20 +186,20 @@ export default function SettingsForm({
       </section>
 
       {/* Plan */}
-      <section className="space-y-4">
+      <section id="plan" className="space-y-4">
         <div>
-          <h2 className="text-base font-medium text-white">Plan</h2>
-          <p className="text-xs text-neutral-600 mt-0.5">Your current subscription.</p>
+          <h2 className="text-base font-semibold text-[#0f172a]">Plan</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">Your current subscription.</p>
         </div>
-        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 flex items-center justify-between">
+        <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center justify-between">
           <div>
-            <p className="text-sm text-white capitalize">{plan}</p>
-            <p className="text-xs text-neutral-600 mt-0.5">
+            <p className="text-sm text-[#0f172a] font-medium capitalize">{plan}</p>
+            <p className="text-xs text-[#64748b] mt-0.5">
               {plan === "free" ? "1 visibility check per month" : "Unlimited checks"}
             </p>
           </div>
           {plan === "free" && (
-            <span className="text-xs px-3 py-1.5 rounded-full border border-amber-500/20 bg-amber-500/5 text-amber-400">
+            <span className="text-xs px-3 py-1.5 rounded-full bg-blue-50 text-[#4F6EF7] border border-blue-100 font-medium cursor-pointer hover:bg-blue-100 transition-colors">
               Upgrade →
             </span>
           )}
@@ -192,29 +207,35 @@ export default function SettingsForm({
       </section>
 
       {/* Danger Zone */}
-      <section className="space-y-4">
+      <section id="danger" className="space-y-4">
         <div>
-          <h2 className="text-base font-medium text-red-400">Danger Zone</h2>
-          <p className="text-xs text-neutral-600 mt-0.5">Irreversible actions.</p>
+          <h2 className="text-base font-semibold text-red-500">Danger Zone</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">Irreversible actions.</p>
         </div>
 
         {!showDeleteConfirm ? (
-          <button onClick={() => setShowDeleteConfirm(true)}
-            className="px-5 py-2.5 rounded-xl text-sm border border-red-500/20 text-red-400 bg-red-500/5 hover:bg-red-500/10 transition-colors">
+          <button
+            onClick={() => setShowDeleteConfirm(true)}
+            className="px-5 py-2.5 rounded-lg text-sm border border-red-200 text-red-500 bg-red-50 hover:bg-red-100 transition-colors font-medium"
+          >
             Delete Account
           </button>
         ) : (
-          <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-4 space-y-3">
-            <p className="text-sm text-red-300">
+          <div className="rounded-xl border border-red-100 bg-red-50 p-4 space-y-3">
+            <p className="text-sm text-red-600">
               This will permanently delete your profile, all topics, and all visibility reports. Are you sure?
             </p>
             <div className="flex gap-3">
-              <button onClick={deleteAccount}
-                className="px-4 py-2 rounded-lg text-sm bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors">
+              <button
+                onClick={deleteAccount}
+                className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600 transition-colors font-medium"
+              >
                 Yes, delete everything
               </button>
-              <button onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 rounded-lg text-sm text-neutral-500 hover:text-neutral-300 transition-colors">
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="px-4 py-2 rounded-lg text-sm text-[#64748b] hover:text-[#0f172a] transition-colors"
+              >
                 Cancel
               </button>
             </div>
