@@ -1,6 +1,5 @@
 {
   "crons": [{"path": "/api/cron/run-scheduled-checks", "schedule": "0 6 * * *"}],
   "buildCommand": "npm run build",
-  "framework": "nextjs",
-  "nodeVersion": "20.x"
+  "framework": "nextjs"
 }
