@@ -10,24 +10,41 @@ const SECTIONS = [
   { id: "danger",  label: "Danger Zone" },
 ]
 
+export const dynamic = 'force-dynamic'
+
 export default async function SettingsPage() {
-  const supabase = await createSupabaseServerClient()
+  let supabase
+  try {
+    supabase = await createSupabaseServerClient()
+  } catch {
+    return redirect("/login")
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const [{ data: profile }, { data: schedules }] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("full_name, email, language, plan, timezone")
-      .eq("id", user.id)
-      .single(),
-    supabase
-      .from("monitoring_schedules")
-      .select("id, name, query, frequency, language")
-      .eq("profile_id", user.id)
-      .eq("is_active", true)
-      .order("created_at", { ascending: true }),
-  ])
+  let profile = null
+  let schedules: { id: string; name: string; query: string; frequency: string; language: string }[] = []
+
+  try {
+    const [profileResult, schedulesResult] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("full_name, email, language, plan, timezone")
+        .eq("id", user!.id)
+        .single(),
+      supabase
+        .from("monitoring_schedules")
+        .select("id, name, query, frequency, language")
+        .eq("profile_id", user!.id)
+        .eq("is_active", true)
+        .order("created_at", { ascending: true }),
+    ])
+    profile = profileResult.data
+    schedules = schedulesResult.data ?? []
+  } catch {
+    // continue with empty defaults
+  }
 
   const panel = (
     <div className="py-2">

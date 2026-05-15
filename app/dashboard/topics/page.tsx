@@ -47,41 +47,57 @@ function Sparkline({ scores }: { scores: number[] }) {
   )
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function TopicsPage() {
-  const supabase = await createSupabaseServerClient()
+  let supabase
+  try {
+    supabase = await createSupabaseServerClient()
+  } catch {
+    return redirect("/login")
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const [{ data: profile }, { data: schedules }] = await Promise.all([
-    supabase.from("profiles").select("full_name").eq("id", user.id).single(),
-    supabase
-      .from("monitoring_schedules")
-      .select("id, name, query, frequency, language")
-      .eq("profile_id", user.id)
-      .eq("is_active", true)
-      .order("created_at", { ascending: true }),
-  ])
-
-  const scheduleIds = (schedules ?? []).map(s => s.id)
-
+  let profile = null
+  let schedules: { id: string; name: string; query: string; frequency: string; language: string }[] = []
   let reportsBySchedule: Record<string, { score: number; history: number[] }> = {}
-  if (scheduleIds.length > 0) {
-    const { data: reports } = await supabase
-      .from("visibility_reports")
-      .select("schedule_id, visibility_score, created_at")
-      .in("schedule_id", scheduleIds)
-      .order("created_at", { ascending: true })
 
-    if (reports) {
-      for (const r of reports) {
-        if (!r.schedule_id) continue
-        const sid = r.schedule_id
-        if (!reportsBySchedule[sid]) reportsBySchedule[sid] = { score: 0, history: [] }
-        const s = typeof r.visibility_score === "number" ? Math.round(r.visibility_score) : 0
-        reportsBySchedule[sid].history.push(s)
-        reportsBySchedule[sid].score = s
+  try {
+    const [profileResult, schedulesResult] = await Promise.all([
+      supabase.from("profiles").select("full_name").eq("id", user!.id).single(),
+      supabase
+        .from("monitoring_schedules")
+        .select("id, name, query, frequency, language")
+        .eq("profile_id", user!.id)
+        .eq("is_active", true)
+        .order("created_at", { ascending: true }),
+    ])
+    profile = profileResult.data
+    schedules = schedulesResult.data ?? []
+
+    const scheduleIds = schedules.map(s => s.id)
+    if (scheduleIds.length > 0) {
+      const { data: reports } = await supabase
+        .from("visibility_reports")
+        .select("schedule_id, visibility_score, created_at")
+        .in("schedule_id", scheduleIds)
+        .order("created_at", { ascending: true })
+
+      if (reports) {
+        for (const r of reports) {
+          if (!r.schedule_id) continue
+          const sid = r.schedule_id
+          if (!reportsBySchedule[sid]) reportsBySchedule[sid] = { score: 0, history: [] }
+          const s = typeof r.visibility_score === "number" ? Math.round(r.visibility_score) : 0
+          reportsBySchedule[sid].history.push(s)
+          reportsBySchedule[sid].score = s
+        }
       }
     }
+  } catch {
+    // continue with empty defaults
   }
 
   const panel = (

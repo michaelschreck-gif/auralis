@@ -2,10 +2,18 @@ import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import Link from "next/link"
 
+export const dynamic = 'force-dynamic'
+
 export default async function Home() {
-  const supabase = await createSupabaseServerClient()
-  const { data: { user } } = await supabase.auth.getUser()
-  if (user) redirect("/dashboard")
+  let isLoggedIn = false
+  try {
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    isLoggedIn = !!user
+  } catch {
+    // supabase unavailable at build time — show landing page
+  }
+  if (isLoggedIn) redirect("/dashboard")
 
   return (
     <div className="min-h-screen bg-[#f8f9fb] text-[#0f172a]">

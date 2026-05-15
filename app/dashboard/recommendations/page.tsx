@@ -73,27 +73,32 @@ async function RecommendationsContent({
   userId: string
   userName: string
 }) {
-  const supabase = await createSupabaseServerClient()
+  let topics: string[] = []
+  let score: number | null = null
 
-  const [{ data: schedules }, { data: latestReport }] = await Promise.all([
-    supabase
-      .from("monitoring_schedules")
-      .select("query")
-      .eq("profile_id", userId)
-      .eq("is_active", true),
-    supabase
-      .from("visibility_reports")
-      .select("visibility_score")
-      .eq("profile_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single(),
-  ])
-
-  const topics = (schedules ?? []).map(s => s.query)
-  const score = typeof latestReport?.visibility_score === "number"
-    ? Math.round(latestReport.visibility_score)
-    : null
+  try {
+    const supabase = await createSupabaseServerClient()
+    const [schedulesResult, reportResult] = await Promise.all([
+      supabase
+        .from("monitoring_schedules")
+        .select("query")
+        .eq("profile_id", userId)
+        .eq("is_active", true),
+      supabase
+        .from("visibility_reports")
+        .select("visibility_score")
+        .eq("profile_id", userId)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single(),
+    ])
+    topics = (schedulesResult.data ?? []).map(s => s.query)
+    score = typeof reportResult.data?.visibility_score === "number"
+      ? Math.round(reportResult.data.visibility_score)
+      : null
+  } catch {
+    // continue with empty defaults
+  }
 
   if (topics.length === 0) {
     return (
@@ -175,18 +180,30 @@ const CATEGORIES = [
   { id: "narrative", label: "Narrative" },
 ]
 
+export const dynamic = 'force-dynamic'
+
 export default async function RecommendationsPage() {
-  const supabase = await createSupabaseServerClient()
+  let supabase
+  try {
+    supabase = await createSupabaseServerClient()
+  } catch {
+    return redirect("/login")
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("full_name")
-    .eq("id", user.id)
-    .single()
-
-  const userName = profile?.full_name ?? ""
+  let userName = ""
+  try {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("full_name")
+      .eq("id", user!.id)
+      .single()
+    userName = profile?.full_name ?? ""
+  } catch {
+    // continue with empty name
+  }
 
   const panel = (
     <div className="py-2">

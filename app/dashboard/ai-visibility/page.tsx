@@ -125,27 +125,42 @@ function ModelCard({
   )
 }
 
+export const dynamic = 'force-dynamic'
+
 export default async function AiVisibilityPage() {
-  const supabase = await createSupabaseServerClient()
+  let supabase
+  try {
+    supabase = await createSupabaseServerClient()
+  } catch {
+    return redirect("/login")
+  }
+
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect("/login")
 
-  const [{ data: profile }, { data: latestReport }] = await Promise.all([
-    supabase
-      .from("profiles")
-      .select("full_name")
-      .eq("id", user.id)
-      .single(),
-    supabase
-      .from("visibility_reports")
-      .select("visibility_score")
-      .eq("profile_id", user.id)
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .single(),
-  ])
+  let profile = null
+  let score: number | null = null
 
-  const score = latestReport?.visibility_score ?? null
+  try {
+    const [profileResult, reportResult] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("full_name")
+        .eq("id", user!.id)
+        .single(),
+      supabase
+        .from("visibility_reports")
+        .select("visibility_score")
+        .eq("profile_id", user!.id)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single(),
+    ])
+    profile = profileResult.data
+    score = reportResult.data?.visibility_score ?? null
+  } catch {
+    // continue with null defaults
+  }
 
   const panel = (
     <div className="py-2">
