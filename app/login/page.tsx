@@ -3,26 +3,75 @@
 import { useState } from "react"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 
+type Tab = "signin" | "signup"
+
 export default function LoginPage() {
+  const [tab, setTab] = useState<Tab>("signin")
   const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
   const supabase = createSupabaseBrowserClient()
 
-  async function handleMagicLink(e: React.FormEvent) {
+  function switchTab(t: Tab) {
+    setTab(t)
+    setError(null)
+    setSuccessMsg(null)
+  }
+
+  async function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
     setError(null)
 
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) {
+      setError(error.message === "Invalid login credentials"
+        ? "E-Mail oder Passwort falsch."
+        : error.message)
+      setLoading(false)
+      return
+    }
+
+    window.location.href = "/dashboard"
+  }
+
+  async function handleSignUp(e: React.FormEvent) {
+    e.preventDefault()
+    setLoading(true)
+    setError(null)
+
+    if (password !== confirmPassword) {
+      setError("Die Passwörter stimmen nicht überein.")
+      setLoading(false)
+      return
+    }
+    if (password.length < 8) {
+      setError("Das Passwort muss mindestens 8 Zeichen lang sein.")
+      setLoading(false)
+      return
+    }
+
+    const { error } = await supabase.auth.signUp({
       email,
+      password,
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     })
 
-    if (error) setError(error.message)
-    else setSent(true)
+    if (error) {
+      setError(error.message === "User already registered"
+        ? "Diese E-Mail ist bereits registriert. Bitte melde dich an."
+        : error.message)
+      setLoading(false)
+      return
+    }
+
+    setSuccessMsg("Konto erstellt! Bitte prüf deine E-Mails zur Bestätigung.")
     setLoading(false)
   }
 
@@ -66,25 +115,40 @@ export default function LoginPage() {
     )
   }
 
+  const inputCls =
+    "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20 transition-colors"
+
   return (
     <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-6">
       <div className="max-w-sm w-full">
-
-        {/* Card */}
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
 
           {/* Branding */}
-          <div className="text-center space-y-3">
-            <div className="flex items-center justify-center gap-2.5">
+          <div className="text-center space-y-1">
+            <div className="flex items-center justify-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
                 <span className="text-white text-sm font-bold">A</span>
               </div>
               <span className="text-[#0f172a] font-semibold text-lg tracking-tight">Auralis</span>
             </div>
-            <div>
-              <h1 className="text-xl font-semibold text-[#0f172a]">Sign in</h1>
-              <p className="text-[#64748b] text-sm mt-1">AI Visibility Monitoring for Personal Brands</p>
-            </div>
+            <p className="text-[#64748b] text-sm">AI Visibility Monitoring for Personal Brands</p>
+          </div>
+
+          {/* Tab Switch */}
+          <div className="flex bg-gray-100 p-1 rounded-lg">
+            {(["signin", "signup"] as const).map(t => (
+              <button
+                key={t}
+                onClick={() => switchTab(t)}
+                className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
+                  tab === t
+                    ? "bg-white text-[#0f172a] shadow-sm"
+                    : "text-[#64748b] hover:text-[#0f172a]"
+                }`}
+              >
+                {t === "signin" ? "Anmelden" : "Registrieren"}
+              </button>
+            ))}
           </div>
 
           {/* Google OAuth */}
@@ -94,49 +158,136 @@ export default function LoginPage() {
             className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-[#0f172a] font-medium hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
           >
             <GoogleIcon />
-            Continue with Google
+            Mit Google fortfahren
           </button>
 
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-[#94a3b8]">or</span>
+            <span className="text-xs text-[#94a3b8]">oder</span>
             <div className="flex-1 h-px bg-gray-100" />
           </div>
 
-          {/* Magic Link */}
-          <form onSubmit={handleMagicLink} className="space-y-3">
-            <input
-              type="email"
-              value={email}
-              onChange={e => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              required
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20 transition-colors"
-            />
-            <button
-              type="submit"
-              disabled={loading || !email.trim()}
-              className="w-full py-2.5 rounded-lg text-sm font-medium border border-gray-200 text-[#64748b] hover:bg-gray-50 hover:text-[#0f172a] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <span className="flex items-center justify-center gap-2">
-                  <span className="w-3.5 h-3.5 border border-gray-300 border-t-[#4F6EF7] rounded-full animate-spin" />
-                  Sending…
-                </span>
-              ) : (
-                "Send Magic Link →"
-              )}
-            </button>
-          </form>
+          {/* Sign In Form */}
+          {tab === "signin" && (
+            <form onSubmit={handleSignIn} className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-xs text-[#64748b] font-medium">E-Mail</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="deine@email.de"
+                  required
+                  autoFocus
+                  className={inputCls}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-[#64748b] font-medium">Passwort</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className={inputCls}
+                />
+              </div>
 
-          {error && (
-            <p className="text-xs text-red-500 text-center">{error}</p>
+              {error && (
+                <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3">
+                  <p className="text-xs text-red-600">{error}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading || !email.trim() || !password.trim()}
+                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin" />
+                    Anmelden…
+                  </span>
+                ) : (
+                  "Anmelden →"
+                )}
+              </button>
+            </form>
+          )}
+
+          {/* Sign Up Form */}
+          {tab === "signup" && (
+            <form onSubmit={handleSignUp} className="space-y-3">
+              <div className="space-y-1.5">
+                <label className="text-xs text-[#64748b] font-medium">E-Mail</label>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  placeholder="deine@email.de"
+                  required
+                  autoFocus
+                  className={inputCls}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-[#64748b] font-medium">Passwort</label>
+                <input
+                  type="password"
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Min. 8 Zeichen"
+                  required
+                  minLength={8}
+                  className={inputCls}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-[#64748b] font-medium">Passwort wiederholen</label>
+                <input
+                  type="password"
+                  value={confirmPassword}
+                  onChange={e => setConfirmPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  className={inputCls}
+                />
+              </div>
+
+              {error && (
+                <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3">
+                  <p className="text-xs text-red-600">{error}</p>
+                </div>
+              )}
+              {successMsg && (
+                <div className="rounded-lg bg-green-50 border border-green-100 px-4 py-3">
+                  <p className="text-xs text-green-600 font-medium">{successMsg}</p>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading || !email.trim() || !password.trim() || !confirmPassword.trim()}
+                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {loading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin" />
+                    Konto erstellen…
+                  </span>
+                ) : (
+                  "Konto erstellen →"
+                )}
+              </button>
+            </form>
           )}
         </div>
 
         <p className="text-center text-xs text-[#94a3b8] mt-6">
-          By continuing, you agree to our Terms of Service.
+          Mit der Anmeldung stimmst du unseren Nutzungsbedingungen zu.
         </p>
       </div>
     </div>
