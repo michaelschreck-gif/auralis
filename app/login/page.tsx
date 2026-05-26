@@ -19,7 +19,6 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
-sprint-6-cockpit-explainer
   // NOTE: client is constructed INSIDE each handler (lazy) instead of at the
   // top level. Otherwise Next.js prerender of this client component fails
   // with "@supabase/ssr: Your project's URL and API key are required" because
