@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
 import { addCompetitor, removeCompetitor } from "@/app/dashboard/competitors/actions"
 
 export type CompetitorRow = {
@@ -19,6 +20,9 @@ export type SelfRow = {
 type Props = {
   self: SelfRow
   competitors: CompetitorRow[]
+  /** From server: whether the user's plan permits competitor analyses. */
+  canAnalyze: boolean
+  plan: string
 }
 
 function scoreBand(s: number): { color: string; bg: string; label: string } {
@@ -28,10 +32,36 @@ function scoreBand(s: number): { color: string; bg: string; label: string } {
   return { color: "#791F1F", bg: "#FCEBEB", label: "Nicht sichtbar" }
 }
 
-export default function CompetitorsPanel({ self, competitors }: Props) {
+export default function CompetitorsPanel({ self, competitors, canAnalyze, plan }: Props) {
+  const router = useRouter()
   const [showAdd, setShowAdd] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [pending, startTransition] = useTransition()
+  const [analyzingId, setAnalyzingId] = useState<string | null>(null)
+  const [successId, setSuccessId] = useState<string | null>(null)
+
+  async function analyze(competitorId: string) {
+    setAnalyzingId(competitorId)
+    setError(null)
+    setSuccessId(null)
+    try {
+      const res = await fetch(`/api/competitors/${competitorId}/analyze`, {
+        method: "POST",
+      })
+      const body = await res.json()
+      if (!res.ok) {
+        setError(body?.error ?? "Analyse fehlgeschlagen.")
+        setAnalyzingId(null)
+        return
+      }
+      setSuccessId(competitorId)
+      setAnalyzingId(null)
+      router.refresh()
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Netzwerkfehler.")
+      setAnalyzingId(null)
+    }
+  }
 
   // Build ranking: self + competitors merged + sorted by score desc.
   // Competitors without a score sink to the bottom.
@@ -206,15 +236,47 @@ export default function CompetitorsPanel({ self, competitors }: Props) {
                   </span>
                 )}
                 {!r.isSelf && r.competitorId && (
-                  <button
-                    type="button"
-                    onClick={() => handleRemove(r.competitorId!)}
-                    disabled={pending}
-                    className="text-xs text-[#94a3b8] hover:text-red-600 transition-colors disabled:opacity-40"
-                    title="Entfernen"
-                  >
-                    ✕
-                  </button>
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => analyze(r.competitorId!)}
+                      disabled={!canAnalyze || analyzingId === r.competitorId}
+                      title={
+                        canAnalyze
+                          ? "Wettbewerber-Analyse starten"
+                          : "Ab Tarif Starter verfügbar"
+                      }
+                      className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${
+                        successId === r.competitorId
+                          ? "bg-green-100 text-green-700 border border-green-200"
+                          : canAnalyze
+                          ? "bg-[#4F6EF7] hover:bg-blue-700 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                          : "bg-gray-100 text-[#94a3b8] cursor-not-allowed border border-gray-200"
+                      }`}
+                    >
+                      {analyzingId === r.competitorId ? (
+                        <span className="flex items-center gap-1.5">
+                          <span className="w-2.5 h-2.5 border border-blue-200 border-t-white rounded-full animate-spin" />
+                          Läuft…
+                        </span>
+                      ) : successId === r.competitorId ? (
+                        "✓ Fertig"
+                      ) : canAnalyze ? (
+                        "Analysieren →"
+                      ) : (
+                        "🔒 Pro"
+                      )}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleRemove(r.competitorId!)}
+                      disabled={pending}
+                      className="text-xs text-[#94a3b8] hover:text-red-600 transition-colors disabled:opacity-40"
+                      title="Entfernen"
+                    >
+                      ✕
+                    </button>
+                  </>
                 )}
               </div>
             </div>
@@ -237,9 +299,15 @@ export default function CompetitorsPanel({ self, competitors }: Props) {
       </section>
 
       <p className="text-xs text-[#94a3b8]">
-        Hinweis: Wettbewerber-Scores werden separat von deinen Analysen berechnet.
-        Diese Funktion ist in der Beta-Phase und befüllt sich automatisch in
-        kommenden Releases.
+        {canAnalyze ? (
+          <>Hinweis: Wettbewerber-Scores werden separat von deinen Analysen berechnet.
+          Klicke „Analysieren" um eine neue Analyse für einen Wettbewerber zu starten.</>
+        ) : (
+          <>Hinweis: Wettbewerber kannst du auf jedem Tarif hinzufügen. Das Triggern einer
+          Wettbewerber-Analyse ist ab Tarif <span className="text-[#0f172a] font-medium">Starter</span> verfügbar.{" "}
+          <a href="/settings" className="text-[#4F6EF7] hover:underline font-medium">Upgrade →</a></>
+        )}{" "}
+        <span className="opacity-60">(Aktueller Tarif: {plan.charAt(0).toUpperCase() + plan.slice(1)})</span>
       </p>
     </div>
   )
