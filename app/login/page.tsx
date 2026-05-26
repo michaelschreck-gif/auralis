@@ -1,11 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
-
-// Opt out of static prerendering so the supabase client (which reads env vars
-// from process.env.NEXT_PUBLIC_*) isn't constructed at build time.
-export const dynamic = "force-dynamic"
 
 type Tab = "signin" | "signup"
 
@@ -19,9 +15,13 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
-  // Lazy init via useMemo so the client is only built once per mount AND not
-  // accessed at all during static prerender (which would crash without env vars).
-  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
+  // NOTE: client is constructed INSIDE each handler (lazy) instead of at the
+  // top level. Otherwise Next.js prerender of this client component fails
+  // with "@supabase/ssr: Your project's URL and API key are required" because
+  // process.env.NEXT_PUBLIC_* is not exposed during the build's static
+  // generation step (especially with Turbopack in Next 16). Constructing the
+  // client only when the user actually clicks a button guarantees we're in
+  // a real browser context where the inlined env vars are present.
 
   function switchTab(t: Tab) {
     setTab(t)
@@ -34,6 +34,7 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
+    const supabase = createSupabaseBrowserClient()
     const { error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) {
@@ -63,6 +64,7 @@ export default function LoginPage() {
       return
     }
 
+    const supabase = createSupabaseBrowserClient()
     const { error } = await supabase.auth.signUp({
       email,
       password,
@@ -85,6 +87,7 @@ export default function LoginPage() {
     setLoading(true)
     setError(null)
 
+    const supabase = createSupabaseBrowserClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
