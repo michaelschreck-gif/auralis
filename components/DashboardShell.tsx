@@ -6,10 +6,13 @@ import type { ReactNode } from "react"
 
 const NAV = [
   { href: "/dashboard",                    label: "Übersicht",          icon: "overview" },
+  { href: "/dashboard/analyze",            label: "Analyse",            icon: "analyze" },
   { href: "/dashboard/ai-visibility",      label: "KI-Sichtbarkeit",    icon: "visibility" },
   { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
   { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
   { href: "/dashboard/topics",             label: "Themen",             icon: "topics" },
+  { href: "/dashboard/sources",            label: "Quellen",            icon: "sources" },
+  { href: "/dashboard/competitors",        label: "Wettbewerber",       icon: "competitors" },
   { href: "/dashboard/recommendations",    label: "Empfehlungen",       icon: "recommendations" },
   { href: "/settings",                     label: "Einstellungen",      icon: "settings" },
 ] as const
@@ -30,6 +33,25 @@ const Icons: Record<IconKey, ReactNode> = {
       <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" strokeWidth="1.2"/>
       <circle cx="7.5" cy="7.5" r="3" stroke="currentColor" strokeWidth="1.2"/>
       <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor"/>
+    </svg>
+  ),
+  analyze: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M2 12V3M2 12h11M5 9.5l2.5-3 2 1.5 3-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  sources: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M2.5 2.5h6l4 4v6a1 1 0 01-1 1H2.5a1 1 0 01-1-1V3.5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M8.5 2.5v4h4" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M4 9h5M4 11h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  competitors: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <circle cx="5" cy="5" r="2" stroke="currentColor" strokeWidth="1.2"/>
+      <circle cx="11" cy="5" r="2" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M2 13c0-1.66 1.34-3 3-3s3 1.34 3 3M8 13c0-1.66 1.34-3 3-3s3 1.34 3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
   geo: (

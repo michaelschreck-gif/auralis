@@ -14,6 +14,44 @@ export type Database = {
   }
   public: {
     Tables: {
+      competitors: {
+        Row: {
+          created_at: string
+          id: string
+          last_analyzed_at: string | null
+          last_score: number | null
+          name: string
+          profile_id: string
+          topics: string[]
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_analyzed_at?: string | null
+          last_score?: number | null
+          name: string
+          profile_id: string
+          topics?: string[]
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_analyzed_at?: string | null
+          last_score?: number | null
+          name?: string
+          profile_id?: string
+          topics?: string[]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competitors_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       monitoring_schedules: {
         Row: {
           created_at: string
