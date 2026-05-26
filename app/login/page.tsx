@@ -1,11 +1,7 @@
 "use client"
 
-import { useMemo, useState } from "react"
+import { useState } from "react"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
-
-// Opt out of static prerendering so the supabase client (which reads env vars
-// from process.env.NEXT_PUBLIC_*) isn't constructed at build time.
-export const dynamic = "force-dynamic"
 
 type Tab = "signin" | "signup"
 
@@ -26,10 +22,6 @@ export default function LoginPage() {
   // generation step (especially with Turbopack in Next 16). Constructing the
   // client only when the user actually clicks a button guarantees we're in
   // a real browser context where the inlined env vars are present.
-  // Lazy init via useMemo so the client is only built once per mount AND not
-  // accessed at all during static prerender (which would crash without env vars).
-  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
-main
 
   function switchTab(t: Tab) {
     setTab(t)
