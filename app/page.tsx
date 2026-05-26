@@ -201,19 +201,19 @@ export default async function Home() {
               highlight: false,
             },
             {
-              plan: "Solo",
+              plan: "Starter",
               price: "79",
               period: "/Monat",
               features: ["Tägliche Checks", "Bis zu 5 Themen", "Claude + GPT-4o", "Trend-Analyse", "Strategie-Empfehlungen"],
-              cta: "Solo starten",
+              cta: "Starter buchen",
               highlight: true,
             },
             {
-              plan: "Executive",
+              plan: "Pro",
               price: "299",
               period: "/Monat",
               features: ["Unbegrenzte Checks", "Bis zu 20 Profile", "Alle KI-Modelle", "API-Zugang", "Dedicated Support"],
-              cta: "Executive starten",
+              cta: "Pro buchen",
               highlight: false,
             },
           ].map(p => (

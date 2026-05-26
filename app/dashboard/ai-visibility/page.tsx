@@ -117,7 +117,7 @@ function ModelCard({
       {!active && (
         <div className="mt-4 pt-4 border-t border-gray-100">
           <p className="text-xs text-[#94a3b8]">
-            Available on Solo & Executive plans.
+            Available on Starter, Pro & Enterprise plans.
           </p>
         </div>
       )}
