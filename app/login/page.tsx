@@ -1,7 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useMemo, useState } from "react"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
+
+// Opt out of static prerendering so the supabase client (which reads env vars
+// from process.env.NEXT_PUBLIC_*) isn't constructed at build time.
+export const dynamic = "force-dynamic"
 
 type Tab = "signin" | "signup"
 
@@ -15,7 +19,9 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null)
   const [successMsg, setSuccessMsg] = useState<string | null>(null)
 
-  const supabase = createSupabaseBrowserClient()
+  // Lazy init via useMemo so the client is only built once per mount AND not
+  // accessed at all during static prerender (which would crash without env vars).
+  const supabase = useMemo(() => createSupabaseBrowserClient(), [])
 
   function switchTab(t: Tab) {
     setTab(t)
