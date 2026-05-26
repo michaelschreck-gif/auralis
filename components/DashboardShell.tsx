@@ -5,11 +5,13 @@ import { usePathname } from "next/navigation"
 import type { ReactNode } from "react"
 
 const NAV = [
-  { href: "/dashboard",                 label: "Overview",        icon: "overview" },
-  { href: "/dashboard/ai-visibility",   label: "AI Visibility",   icon: "visibility" },
-  { href: "/dashboard/topics",          label: "Topic Ownership", icon: "topics" },
-  { href: "/dashboard/recommendations", label: "Recommendations", icon: "recommendations" },
-  { href: "/settings",                  label: "Settings",        icon: "settings" },
+  { href: "/dashboard",                    label: "Übersicht",          icon: "overview" },
+  { href: "/dashboard/ai-visibility",      label: "KI-Sichtbarkeit",    icon: "visibility" },
+  { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
+  { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
+  { href: "/dashboard/topics",             label: "Themen",             icon: "topics" },
+  { href: "/dashboard/recommendations",    label: "Empfehlungen",       icon: "recommendations" },
+  { href: "/settings",                     label: "Einstellungen",      icon: "settings" },
 ] as const
 
 type IconKey = typeof NAV[number]["icon"]
@@ -28,6 +30,19 @@ const Icons: Record<IconKey, ReactNode> = {
       <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" strokeWidth="1.2"/>
       <circle cx="7.5" cy="7.5" r="3" stroke="currentColor" strokeWidth="1.2"/>
       <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor"/>
+    </svg>
+  ),
+  geo: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M7.5 1C4.46 1 2 3.46 2 6.5c0 4 5.5 7.5 5.5 7.5S13 10.5 13 6.5C13 3.46 10.54 1 7.5 1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <circle cx="7.5" cy="6.5" r="1.8" stroke="currentColor" strokeWidth="1.2"/>
+    </svg>
+  ),
+  thought: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M4 2h7v3.5a3.5 3.5 0 01-7 0V2z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M4 4H2.5v1A1.5 1.5 0 004 6.5M11 4h1.5v1A1.5 1.5 0 0111 6.5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M7.5 9v2.5M5 13.5h5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
   topics: (
@@ -131,7 +146,7 @@ export default function DashboardShell({
                 type="submit"
                 className="text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
               >
-                Sign out →
+                Abmelden →
               </button>
             </form>
           </div>

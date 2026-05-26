@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import Cockpit from "@/components/Cockpit"
+import DashboardShell from "@/components/DashboardShell"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
 
 export const dynamic = "force-dynamic"
@@ -51,11 +52,13 @@ export default async function DashboardPage() {
   }
 
   return (
-    <Cockpit
-      userName={userName}
-      report={report}
-      schedules={schedules}
-      plan={plan}
-    />
+    <DashboardShell userName={userName}>
+      <Cockpit
+        userName={userName}
+        report={report}
+        schedules={schedules}
+        plan={plan}
+      />
+    </DashboardShell>
   )
 }
