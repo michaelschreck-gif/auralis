@@ -11,19 +11,13 @@ import {
 } from "@/lib/auralis/master-scores"
 import ScoreExplainer from "./ScoreExplainer"
 
-type ScheduleLite = { id: string; name: string; query: string; language: string }
-
 export default function Cockpit({
   userName,
   report,
-  schedules,
-  plan,
 }: {
   userName: string
   /** Latest visibility report from raw_data jsonb, or null if user has none yet. */
   report: VisibilityReport | null
-  schedules: ScheduleLite[]
-  plan: string
 }) {
   const [openKey, setOpenKey] = useState<ScoreKey | null>(null)
 
@@ -104,54 +98,24 @@ export default function Cockpit({
             />
           </div>
 
-          {/* ─── Letzte Analyse ─── */}
-          {lastAnalyzedAt && (
-            <p className="text-xs text-[#94a3b8] mb-6">
-              Letzte Analyse: {relativeTime(lastAnalyzedAt)}
-            </p>
-          )}
+          {/* ─── Letzte Analyse + CTA ─── */}
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            {lastAnalyzedAt ? (
+              <p className="text-xs text-[#94a3b8]">
+                Letzte Analyse: {relativeTime(lastAnalyzedAt)}
+              </p>
+            ) : (
+              <span />
+            )}
+            <Link
+              href="/dashboard/analyze"
+              className="text-sm text-[#4F6EF7] hover:underline font-medium"
+            >
+              Neue Analyse starten →
+            </Link>
+          </div>
         </>
       )}
-
-      {/* ─── Quick Actions ─── */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <QuickAction
-          href="/dashboard/analyze"
-          icon="🔍"
-          title="Neue Analyse"
-          subtitle="KI-Sichtbarkeit prüfen"
-          primary
-        />
-        <QuickAction
-          href="/dashboard/competitors"
-          icon="⚔️"
-          title="Wettbewerber"
-          subtitle="Sichtbarkeit vergleichen"
-        />
-        <QuickAction
-          href="/dashboard/geo"
-          icon="📡"
-          title="GEO Score"
-          subtitle="Generative Engine Opt."
-        />
-        <QuickAction
-          href="/dashboard/thought-leadership"
-          icon="🏆"
-          title="Thought Leadership"
-          subtitle="Expertenstatus analysieren"
-        />
-      </div>
-
-      {/* ─── Footer Strip ─── */}
-      <div className="mt-8 pt-6 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2 text-xs text-[#94a3b8]">
-        <div className="flex items-center gap-3">
-          <span>{schedules.length} aktive Themen</span>
-          <PlanBadge plan={plan} />
-        </div>
-        <Link href="/settings" className="text-[#4F6EF7] hover:underline">
-          Öffentliches Profil →
-        </Link>
-      </div>
 
       {/* ─── Score Explainer Modal ─── */}
       {openKey && masters && (
@@ -263,46 +227,6 @@ function HighlightCard({
       <p className="text-base font-semibold text-[#0f172a]">{title}</p>
       <p className="text-xs mt-1 opacity-90 text-[#64748b]">{detail}</p>
     </div>
-  )
-}
-
-function QuickAction({
-  href,
-  icon,
-  title,
-  subtitle,
-  primary = false,
-}: {
-  href: string
-  icon: string
-  title: string
-  subtitle: string
-  primary?: boolean
-}) {
-  return (
-    <Link
-      href={href}
-      className={`rounded-2xl border p-5 transition-all hover:shadow-sm hover:-translate-y-0.5 ${
-        primary
-          ? "border-[#4F6EF7]/30 bg-blue-50/40 ring-1 ring-[#4F6EF7]/5"
-          : "border-gray-100 bg-white"
-      }`}
-    >
-      <div className="text-xl mb-2" aria-hidden>{icon}</div>
-      <p className={`text-sm font-medium ${primary ? "text-[#4F6EF7]" : "text-[#0f172a]"}`}>
-        {title}
-      </p>
-      <p className="text-xs text-[#64748b] mt-0.5">{subtitle}</p>
-    </Link>
-  )
-}
-
-function PlanBadge({ plan }: { plan: string }) {
-  const label = plan.charAt(0).toUpperCase() + plan.slice(1)
-  return (
-    <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-[#64748b] font-medium">
-      {label}
-    </span>
   )
 }
 
