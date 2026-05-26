@@ -5,6 +5,7 @@ import CompetitorsPanel, {
   type CompetitorRow,
   type SelfRow,
 } from "@/components/CompetitorsPanel"
+import { canAnalyzeCompetitors, type PlanType } from "@/lib/auralis/runner"
 
 export const dynamic = "force-dynamic"
 
@@ -23,6 +24,7 @@ export default async function CompetitorsPage() {
 
   let userName = ""
   let selfScore: number | null = null
+  let plan: PlanType = "free"
   let competitors: CompetitorRow[] = []
 
   try {
@@ -30,7 +32,7 @@ export default async function CompetitorsPage() {
       await Promise.all([
         supabase
           .from("profiles")
-          .select("full_name")
+          .select("full_name, plan")
           .eq("id", user!.id)
           .single(),
         supabase
@@ -48,6 +50,7 @@ export default async function CompetitorsPage() {
       ])
 
     userName = profileResult.data?.full_name ?? ""
+    plan = (profileResult.data?.plan ?? "free") as PlanType
     competitors = (competitorsResult.data ?? []) as CompetitorRow[]
     const rawScore = latestReportResult.data?.visibility_score
     selfScore = rawScore !== null && rawScore !== undefined
@@ -58,10 +61,16 @@ export default async function CompetitorsPage() {
   }
 
   const self: SelfRow = { name: userName, score: selfScore }
+  const canAnalyze = canAnalyzeCompetitors(plan)
 
   return (
     <DashboardShell userName={userName}>
-      <CompetitorsPanel self={self} competitors={competitors} />
+      <CompetitorsPanel
+        self={self}
+        competitors={competitors}
+        canAnalyze={canAnalyze}
+        plan={plan}
+      />
     </DashboardShell>
   )
 }

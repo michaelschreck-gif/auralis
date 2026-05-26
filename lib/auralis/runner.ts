@@ -181,6 +181,121 @@ export async function runAnalysisForSchedule(
   }
 }
 
+// ─── Competitor Analysis ─────────────────────────────────────────────────────
+
+export type RunCompetitorAnalysisResult = {
+  reportId: string
+  score: number
+  sentiment: SentimentType | null
+  mentionRate: number
+  queryCount: number
+}
+
+/**
+ * Runs a visibility analysis for a competitor. Same prompt structure as the
+ * user's own analysis, but the "target person" is the competitor's name.
+ * Stores result in `competitor_reports` and updates the parent `competitors`
+ * row's `last_score` + `last_analyzed_at`.
+ *
+ * Caller must verify ownership + plan eligibility before invoking.
+ */
+export async function runCompetitorAnalysis(
+  competitorId: string,
+  supabase: SupabaseClient<Database>,
+  options: RunAnalysisOptions,
+): Promise<RunCompetitorAnalysisResult> {
+  const apiKey = options.anthropicApiKey ?? process.env.ANTHROPIC_API_KEY
+  if (!apiKey) {
+    throw new Error("ANTHROPIC_API_KEY is not configured.")
+  }
+  const anthropic = new Anthropic({ apiKey })
+
+  // 1. Load the competitor row
+  const { data: competitor, error: competitorError } = await supabase
+    .from("competitors")
+    .select("id, profile_id, name, topics")
+    .eq("id", competitorId)
+    .single()
+  if (competitorError || !competitor) {
+    throw new Error(`Competitor ${competitorId} not found: ${competitorError?.message ?? "unknown"}`)
+  }
+
+  // 2. Generate queries. If no topics, use a generic "expertise" topic.
+  const topics = (competitor.topics && competitor.topics.length > 0)
+    ? competitor.topics
+    : ["expertise"]
+  const config: QueryConfig = {
+    name: competitor.name,
+    topics,
+    // No language column on competitors yet — default to German.
+    language: "de",
+  }
+  const queries = generateVisibilityQueries(config)
+
+  // 3. Fan-out to Anthropic
+  const queryResults = await Promise.all(
+    queries.map(async (query) => {
+      const message = await anthropic.messages.create({
+        model: MODEL,
+        max_tokens: 600,
+        system: AI_SIMULATION_SYSTEM_PROMPT,
+        messages: [{ role: "user", content: query.prompt }],
+      })
+      const rawResponse = message.content
+        .filter(b => b.type === "text")
+        .map(b => (b as { type: "text"; text: string }).text)
+        .join("\n")
+      return extractMentionSignal(
+        rawResponse,
+        competitor.name,
+        query.id,
+        query.weight,
+        query.prompt,
+        query.type,
+      )
+    }),
+  )
+
+  // 4. Build report and persist
+  const report = buildVisibilityReport(competitor.name, topics, queryResults)
+  const sentiment = deriveSentiment(queryResults.map(r => r.signal.sentiment))
+
+  const { data: savedReport, error: reportError } = await supabase
+    .from("competitor_reports")
+    .insert({
+      competitor_id: competitor.id,
+      profile_id: competitor.profile_id,
+      trigger: options.trigger,
+      visibility_score: report.overallScore,
+      sentiment,
+      summary: `${competitor.name}: Score ${report.overallScore}/100, erwähnt in ${report.mentionRate}% der Abfragen.`,
+      raw_data: report as unknown as Json,
+    })
+    .select("id")
+    .single()
+
+  if (reportError || !savedReport) {
+    throw new Error(`Competitor report save failed: ${reportError?.message ?? "unknown"}`)
+  }
+
+  // 5. Update competitor's last_score + last_analyzed_at
+  await supabase
+    .from("competitors")
+    .update({
+      last_score: report.overallScore,
+      last_analyzed_at: new Date().toISOString(),
+    })
+    .eq("id", competitor.id)
+
+  return {
+    reportId: savedReport.id,
+    score: report.overallScore,
+    sentiment,
+    mentionRate: report.mentionRate,
+    queryCount: queryResults.length,
+  }
+}
+
 // ─── Plan-Limit ───────────────────────────────────────────────────────────────
 
 export type PlanType = Database["public"]["Enums"]["plan_type"]
@@ -245,4 +360,12 @@ export async function checkManualAnalysisLimit(
     reason: `Free-Tarif: ${limit} manuelle Analyse pro 30 Tage. Upgrade für unbegrenzt.`,
     resetAt,
   }
+}
+
+/**
+ * Competitor analyses are Pro-only (Starter+). Free users can add competitors
+ * but cannot trigger analyses on them.
+ */
+export function canAnalyzeCompetitors(plan: PlanType): boolean {
+  return plan !== "free"
 }
