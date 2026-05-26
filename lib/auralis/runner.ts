@@ -227,8 +227,12 @@ export async function runCompetitorAnalysis(
   const config: QueryConfig = {
     name: competitor.name,
     topics,
-    // No language column on competitors yet — default to German.
-    language: "de",
+    // Default to English for competitor analyses: the German query templates
+    // hardcode "deutschsprachigen Raum" which excludes global figures
+    // (e.g. asking for AI experts in Germany won't surface Mark Zuckerberg).
+    // English templates are region-neutral and capture global brands.
+    // (A per-competitor language column would be a future-sprint enhancement.)
+    language: "en",
   }
   const queries = generateVisibilityQueries(config)
 
