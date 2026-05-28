@@ -7,14 +7,14 @@ function hue(s: number) {
 }
 
 function scoreLabel(s: number) {
-  return s >= 70 ? "Strong" : s >= 45 ? "Moderate" : "Low"
+  return s >= 70 ? "Stark" : s >= 45 ? "Mittel" : "Niedrig"
 }
 
 function Sparkline({ scores }: { scores: number[] }) {
   if (scores.length < 2) {
     return (
       <div className="h-8 flex items-center">
-        <span className="text-xs text-[#94a3b8]">No history</span>
+        <span className="text-xs text-[#94a3b8]">Kein Verlauf</span>
       </div>
     )
   }
@@ -103,7 +103,7 @@ export default async function TopicsPage() {
   const panel = (
     <div className="py-2">
       {(schedules ?? []).length === 0 && (
-        <p className="text-xs text-[#94a3b8] text-center mt-8 px-4">No topics yet.</p>
+        <p className="text-xs text-[#94a3b8] text-center mt-8 px-4">Noch keine Themen.</p>
       )}
       {(schedules ?? []).map(s => {
         const data = reportsBySchedule[s.id]
@@ -136,25 +136,25 @@ export default async function TopicsPage() {
   return (
     <DashboardShell
       userName={profile?.full_name ?? ""}
-      panelHeader="Topics"
+      panelHeader="Themen"
       panelCount={`${(schedules ?? []).length}`}
       panelContent={panel}
     >
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0f172a]">Topic Ownership</h1>
+          <h1 className="text-xl font-semibold text-[#0f172a]">Themenführerschaft</h1>
           <p className="text-[#64748b] text-sm mt-1">
-            How strongly AI associates you with each monitored topic.
+            Wie stark KI dich mit jedem überwachten Thema verbindet.
           </p>
         </div>
 
         {(schedules ?? []).length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
-              No topics tracked yet. Complete{" "}
-              <a href="/onboarding" className="text-[#4F6EF7] hover:underline font-medium">onboarding</a>{" "}
-              or run a custom check on the{" "}
-              <a href="/dashboard" className="text-[#4F6EF7] hover:underline font-medium">overview page</a>.
+              Noch keine Themen verfolgt. Schließe das{" "}
+              <a href="/onboarding" className="text-[#4F6EF7] hover:underline font-medium">Onboarding</a>{" "}
+              ab oder starte eine Analyse auf der{" "}
+              <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline font-medium">Analyse-Seite</a>.
             </p>
           </div>
         ) : (
@@ -195,15 +195,15 @@ export default async function TopicsPage() {
                       <div className="flex items-center justify-between">
                         <Sparkline scores={history}/>
                         <span className="text-xs text-[#94a3b8]">
-                          {history.length} {history.length === 1 ? "check" : "checks"}
+                          {history.length} {history.length === 1 ? "Analyse" : "Analysen"}
                         </span>
                       </div>
                     </div>
                   ) : (
                     <p className="text-xs text-[#94a3b8]">
-                      No data yet.{" "}
-                      <a href="/dashboard" className="text-[#4F6EF7] hover:underline font-medium">
-                        Run a visibility check →
+                      Noch keine Daten.{" "}
+                      <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline font-medium">
+                        Analyse starten →
                       </a>
                     </p>
                   )}
