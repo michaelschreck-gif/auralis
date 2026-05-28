@@ -162,7 +162,15 @@ export default function DashboardShell({
             })}
           </nav>
 
-          <div className="px-5 py-4 border-t border-gray-100">
+          <div className="px-5 py-4 border-t border-gray-100 space-y-2.5">
+            <a
+              href="/"
+              target="_blank"
+              rel="noopener"
+              className="block text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
+            >
+              Zur Auralis-Webseite ↗
+            </a>
             <form action="/auth/signout" method="POST">
               <button
                 type="submit"
