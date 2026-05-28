@@ -14,10 +14,13 @@ import ScoreExplainer from "./ScoreExplainer"
 export default function Cockpit({
   userName,
   report,
+  latestReportId,
 }: {
   userName: string
   /** Latest visibility report from raw_data jsonb, or null if user has none yet. */
   report: VisibilityReport | null
+  /** id der `visibility_reports`-Row, deren raw_data hier angezeigt wird. */
+  latestReportId?: string | null
 }) {
   const [openKey, setOpenKey] = useState<ScoreKey | null>(null)
 
@@ -107,12 +110,23 @@ export default function Cockpit({
             ) : (
               <span />
             )}
-            <Link
-              href="/dashboard/analyze"
-              className="text-sm text-[#4F6EF7] hover:underline font-medium"
-            >
-              Neue Analyse starten →
-            </Link>
+            <div className="flex items-center gap-4">
+              {latestReportId && (
+                <a
+                  href={`/api/reports/${latestReportId}/pdf`}
+                  className="text-sm text-[#64748b] hover:text-[#0f172a] hover:underline font-medium inline-flex items-center gap-1"
+                  download
+                >
+                  <span aria-hidden>↓</span> PDF-Report
+                </a>
+              )}
+              <Link
+                href="/dashboard/analyze"
+                className="text-sm text-[#4F6EF7] hover:underline font-medium"
+              >
+                Neue Analyse starten →
+              </Link>
+            </div>
           </div>
         </>
       )}

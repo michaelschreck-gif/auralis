@@ -206,6 +206,8 @@ export type Database = {
           id: string
           language: Database["public"]["Enums"]["language_type"]
           plan: Database["public"]["Enums"]["plan_type"]
+          public_profile_enabled: boolean
+          public_slug: string | null
           timezone: string
           updated_at: string
         }
@@ -217,6 +219,8 @@ export type Database = {
           id: string
           language?: Database["public"]["Enums"]["language_type"]
           plan?: Database["public"]["Enums"]["plan_type"]
+          public_profile_enabled?: boolean
+          public_slug?: string | null
           timezone?: string
           updated_at?: string
         }
@@ -228,6 +232,8 @@ export type Database = {
           id?: string
           language?: Database["public"]["Enums"]["language_type"]
           plan?: Database["public"]["Enums"]["plan_type"]
+          public_profile_enabled?: boolean
+          public_slug?: string | null
           timezone?: string
           updated_at?: string
         }
