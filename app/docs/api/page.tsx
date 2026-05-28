@@ -1,0 +1,459 @@
+/**
+ * Public API documentation page at /docs/api.
+ * No authentication required — shareable URL for external developers.
+ */
+
+import type { Metadata } from "next"
+
+export const metadata: Metadata = {
+  title: "Auralis API – Dokumentation",
+  description: "Public REST API für Auralis — KI-Sichtbarkeits-Scores per HTTP abfragen.",
+}
+
+const BASE_URL = "https://auralis-plum.vercel.app"
+const API_PREFIX = "/api/v1"
+
+const TOC = [
+  { id: "introduction",  label: "Einführung" },
+  { id: "authentication", label: "Authentifizierung" },
+  { id: "errors",        label: "Fehler-Codes" },
+  { id: "endpoints",     label: "Endpoints" },
+  { id: "ep-me",         label: "  GET /me", indent: true },
+  { id: "ep-latest",     label: "  GET /scores/latest", indent: true },
+  { id: "ep-history",    label: "  GET /scores/history", indent: true },
+  { id: "ep-competitors", label: "  GET /competitors", indent: true },
+  { id: "examples",      label: "Code-Beispiele" },
+  { id: "support",       label: "Support" },
+] as const
+
+export default function ApiDocsPage() {
+  return (
+    <div className="min-h-screen bg-[#f8f9fb]">
+      {/* Top bar */}
+      <header className="bg-white border-b border-gray-100">
+        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
+          <a href="/" className="flex items-center gap-2.5">
+            <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
+              <span className="text-white text-xs font-bold">A</span>
+            </div>
+            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+          </a>
+          <div className="flex items-center gap-4 text-sm">
+            <span className="text-[#94a3b8]">API v1</span>
+            <a
+              href="/settings"
+              className="text-[#4F6EF7] hover:underline font-medium"
+            >
+              Mein API-Key →
+            </a>
+          </div>
+        </div>
+      </header>
+
+      <div className="max-w-5xl mx-auto px-6 py-10 flex gap-10">
+        {/* Sidebar TOC */}
+        <aside className="w-56 flex-shrink-0 hidden lg:block">
+          <div className="sticky top-6">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-3">
+              Inhalt
+            </p>
+            <nav className="space-y-1">
+              {TOC.map(item => (
+                <a
+                  key={item.id}
+                  href={`#${item.id}`}
+                  className={`block text-sm hover:text-[#4F6EF7] transition-colors ${
+                    "indent" in item && item.indent
+                      ? "text-[#94a3b8] pl-3 py-1"
+                      : "text-[#64748b] py-1.5 font-medium"
+                  }`}
+                >
+                  {item.label}
+                </a>
+              ))}
+            </nav>
+          </div>
+        </aside>
+
+        {/* Content */}
+        <main className="flex-1 min-w-0 space-y-12">
+          {/* Headline */}
+          <section>
+            <p className="text-xs uppercase tracking-wider font-semibold text-[#4F6EF7] mb-2">
+              Auralis API · v1
+            </p>
+            <h1 className="text-3xl font-semibold text-[#0f172a]">
+              Public API Dokumentation
+            </h1>
+            <p className="text-base text-[#64748b] mt-3 leading-relaxed">
+              Über die Auralis Public-API kannst du die KI-Sichtbarkeits-Scores einer Person
+              programmatisch abfragen — z.B. um Aura-Score, GEO-Score, Thought Leadership
+              oder Wettbewerber-Vergleiche in eigene Dashboards, CRMs oder Reports
+              einzubinden.
+            </p>
+            <div className="mt-5 rounded-lg bg-white border border-gray-200 px-4 py-3 inline-block">
+              <p className="text-xs text-[#94a3b8] uppercase tracking-wider font-semibold mb-1">
+                Base URL
+              </p>
+              <code className="text-sm font-mono text-[#0f172a]">{BASE_URL + API_PREFIX}</code>
+            </div>
+          </section>
+
+          {/* Intro */}
+          <Section id="introduction" title="Einführung">
+            <p>
+              Die API liefert <strong>Read-only</strong> Zugriff auf die Sichtbarkeits-Daten
+              eines Auralis-Accounts. Sie ist als <strong>Pro-Feature</strong> Bestandteil der
+              Tarife Pro und Enterprise. Free- und Starter-Accounts können sich derzeit nicht
+              authentifizieren.
+            </p>
+            <ul className="list-disc pl-6 space-y-1.5 text-sm">
+              <li>4 GET-Endpoints (siehe unten)</li>
+              <li>JSON-Responses mit konsistenter Fehler-Struktur</li>
+              <li>Bearer-Token-Authentifizierung</li>
+              <li>HTTPS-Pflicht</li>
+            </ul>
+          </Section>
+
+          {/* Auth */}
+          <Section id="authentication" title="Authentifizierung">
+            <p>
+              Jede Anfrage benötigt einen API-Key im{" "}
+              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">Authorization</code>{" "}
+              Header:
+            </p>
+            <CodeBlock language="http">{`Authorization: Bearer aur_sk_<dein-key>`}</CodeBlock>
+
+            <h3 className="text-base font-semibold text-[#0f172a] mt-6">Key erstellen</h3>
+            <ol className="list-decimal pl-6 space-y-1.5 text-sm">
+              <li>Einloggen in <a href="/settings" className="text-[#4F6EF7] hover:underline">Auralis Einstellungen</a></li>
+              <li>Zum Block <em>„API-Keys"</em> scrollen</li>
+              <li><em>„+ Neuen API-Key generieren"</em> klicken</li>
+              <li>Name vergeben (z.B. „Production CRM") und Submit</li>
+              <li>Den angezeigten Key sofort sicher speichern — er wird nur einmal angezeigt</li>
+            </ol>
+
+            <div className="rounded-lg bg-amber-50 border border-amber-100 p-4 mt-5">
+              <p className="text-sm font-medium text-[#0f172a]">⚠ Schlüssel-Sicherheit</p>
+              <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed">
+                API-Keys gewähren <strong>vollen Lesezugriff</strong> auf alle deine
+                Sichtbarkeits-Daten. Behandle sie wie Passwörter: niemals in Frontend-Code
+                hardcoden, niemals in Git committen, niemals öffentlich teilen.
+                Bei Verdacht auf Kompromittierung den Key sofort in den Einstellungen
+                widerrufen.
+              </p>
+            </div>
+          </Section>
+
+          {/* Errors */}
+          <Section id="errors" title="Fehler-Codes">
+            <p>
+              Alle Fehlerantworten haben das gleiche JSON-Schema:
+            </p>
+            <CodeBlock language="json">{`{
+  "error": "Human-readable error message",
+  "code": "MACHINE_READABLE_CODE"
+}`}</CodeBlock>
+            <div className="overflow-x-auto mt-5">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">HTTP</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Code</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Bedeutung</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  <ErrorRow http="401" code="MISSING_TOKEN" meaning="Authorization-Header fehlt oder ist nicht Bearer." />
+                  <ErrorRow http="401" code="INVALID_TOKEN_FORMAT" meaning="Token beginnt nicht mit aur_sk_." />
+                  <ErrorRow http="401" code="INVALID_TOKEN" meaning="Token nicht gefunden — wurde er ggf. widerrufen oder falsch kopiert?" />
+                  <ErrorRow http="401" code="TOKEN_REVOKED" meaning="Der Key wurde in den Einstellungen widerrufen." />
+                  <ErrorRow http="403" code="PLAN_REQUIRED" meaning="Tarif unterstützt API nicht. Upgrade auf Pro/Enterprise nötig." />
+                  <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Sichtbarkeits-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
+                  <ErrorRow http="500" code="INTERNAL" meaning="Serverseitiger Fehler — Support kontaktieren falls anhaltend." />
+                </tbody>
+              </table>
+            </div>
+          </Section>
+
+          {/* Endpoints */}
+          <Section id="endpoints" title="Endpoints">
+            <p>
+              Alle Endpoints sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code> und liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
+            </p>
+          </Section>
+
+          <Endpoint
+            id="ep-me"
+            method="GET"
+            path="/me"
+            description="Gibt die Profil-Basics des authentifizierten Accounts zurück. Nützlich, um zu prüfen, ob ein Key gültig ist und zu welchem Account er gehört."
+            example={`curl ${BASE_URL}${API_PREFIX}/me \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "id": "e24182d8-446a-4bbf-8aba-3459ff31bd66",
+  "email": "user@example.com",
+  "full_name": "Elon Musk",
+  "plan": "pro",
+  "language": "de"
+}`}
+          />
+
+          <Endpoint
+            id="ep-latest"
+            method="GET"
+            path="/scores/latest"
+            description="Aktuelle Werte für die 4 Master-Scores (Aura, GEO, Thought Leadership, Digitale Autorität), abgeleitet aus dem zuletzt erstellten Sichtbarkeits-Report. Antwortet mit 404, wenn noch keine Analyse durchgeführt wurde."
+            example={`curl ${BASE_URL}${API_PREFIX}/scores/latest \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "aura":              { "value": 58, "band": "Starke Sichtbarkeit" },
+  "geo":               { "value": 56, "band": "Etabliert" },
+  "thought_leadership":{ "value": 52, "band": "Anerkannt" },
+  "digital_authority": { "value": 42, "band": "Etablierend" },
+  "strongest":         { "key": "geo", "value": 56 },
+  "biggest_opportunity": { "key": "digital-authority", "value": 42 },
+  "queried_at": "2026-05-26T10:20:43.249Z",
+  "summary": "Score: 58/100. Erwähnt in 40% der Abfragen."
+}`}
+          />
+
+          <Endpoint
+            id="ep-history"
+            method="GET"
+            path="/scores/history"
+            description="Score-Zeitreihe der letzten N Tage. Default = 30 Tage. Min = 1, Max = 365."
+            params={[
+              { name: "days", type: "integer", desc: "Anzahl Tage rückwirkend. Optional, default 30, clamp 1–365." },
+            ]}
+            example={`curl "${BASE_URL}${API_PREFIX}/scores/history?days=90" \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "days": 90,
+  "since": "2026-02-25T...",
+  "points": [
+    {
+      "date": "2026-03-01T06:00:00Z",
+      "score": 75,
+      "sentiment": "positive",
+      "trigger": "scheduled"
+    },
+    ...
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-competitors"
+            method="GET"
+            path="/competitors"
+            description="Liste aller verfolgten Wettbewerber mit zuletzt gemessenem Score (oder null falls noch nicht analysiert)."
+            example={`curl ${BASE_URL}${API_PREFIX}/competitors \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "competitors": [
+    {
+      "id": "f73395d1-7ce1-443f-b9e6-c0d594ca583c",
+      "name": "Mark Zuckerberg",
+      "topics": ["Social Media", "AI", "Metaverse"],
+      "language": "en",
+      "last_score": 48,
+      "last_analyzed_at": "2026-05-26T14:55:21Z"
+    },
+    {
+      "id": "8eb0e9ef-2894-4796-880a-cd6c2cd3a302",
+      "name": "Andrew Ng",
+      "topics": ["AI", "Machine Learning", "Education"],
+      "language": "en",
+      "last_score": 84,
+      "last_analyzed_at": "2026-05-26T14:42:39Z"
+    }
+  ]
+}`}
+          />
+
+          {/* Examples */}
+          <Section id="examples" title="Code-Beispiele">
+            <h3 className="text-base font-semibold text-[#0f172a]">cURL</h3>
+            <CodeBlock language="bash">{`# Profile abrufen
+curl ${BASE_URL}${API_PREFIX}/me \\
+  -H "Authorization: Bearer $AURALIS_API_KEY"
+
+# Aktuelle Scores
+curl ${BASE_URL}${API_PREFIX}/scores/latest \\
+  -H "Authorization: Bearer $AURALIS_API_KEY"`}</CodeBlock>
+
+            <h3 className="text-base font-semibold text-[#0f172a] mt-6">JavaScript (Node.js / Browser)</h3>
+            <CodeBlock language="javascript">{`const API_KEY = process.env.AURALIS_API_KEY
+const headers = { Authorization: \`Bearer \${API_KEY}\` }
+
+async function getLatestScores() {
+  const res = await fetch(
+    "${BASE_URL}${API_PREFIX}/scores/latest",
+    { headers }
+  )
+  if (!res.ok) {
+    const { error, code } = await res.json()
+    throw new Error(\`\${code}: \${error}\`)
+  }
+  return res.json()
+}
+
+getLatestScores().then(console.log)`}</CodeBlock>
+
+            <h3 className="text-base font-semibold text-[#0f172a] mt-6">Python (requests)</h3>
+            <CodeBlock language="python">{`import os
+import requests
+
+API_KEY = os.environ["AURALIS_API_KEY"]
+HEADERS = {"Authorization": f"Bearer {API_KEY}"}
+BASE   = "${BASE_URL}${API_PREFIX}"
+
+def get_latest_scores():
+    r = requests.get(f"{BASE}/scores/latest", headers=HEADERS, timeout=15)
+    r.raise_for_status()
+    return r.json()
+
+print(get_latest_scores())`}</CodeBlock>
+          </Section>
+
+          {/* Support */}
+          <Section id="support" title="Support">
+            <p>
+              Bei Fragen, Bug-Reports oder Feature-Requests zur API erreichst du das Auralis-Team unter{" "}
+              <a href="mailto:support@entrenous.de" className="text-[#4F6EF7] hover:underline font-medium">
+                support@entrenous.de
+              </a>.
+            </p>
+            <p className="text-xs text-[#94a3b8]">
+              Diese API ist als <strong>v1</strong> markiert. Breaking Changes werden in einer
+              neuen Version (<code className="bg-gray-100 px-1 rounded">/api/v2</code>) ausgeliefert;
+              v1 bleibt mindestens 12 Monate nach Release einer v2 verfügbar.
+            </p>
+          </Section>
+
+          {/* Footer */}
+          <footer className="pt-8 border-t border-gray-200 text-xs text-[#94a3b8]">
+            <p>
+              Auralis — AI Visibility Monitoring · Operated by Entrenous ·{" "}
+              <a href="/" className="hover:underline">Zurück zur Hauptseite</a>
+            </p>
+          </footer>
+        </main>
+      </div>
+    </div>
+  )
+}
+
+/* ─────────────────── Helper Components ─────────────────── */
+
+function Section({
+  id,
+  title,
+  children,
+}: {
+  id: string
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <section id={id} className="scroll-mt-6">
+      <h2 className="text-xl font-semibold text-[#0f172a] mb-3">{title}</h2>
+      <div className="space-y-3 text-sm text-[#475569] leading-relaxed">
+        {children}
+      </div>
+    </section>
+  )
+}
+
+function CodeBlock({ language, children }: { language?: string; children: string }) {
+  return (
+    <div className="relative rounded-lg bg-[#0f172a] overflow-hidden">
+      {language && (
+        <div className="absolute top-2 right-3 text-[10px] uppercase tracking-wider font-semibold text-[#64748b]">
+          {language}
+        </div>
+      )}
+      <pre className="text-[12.5px] text-gray-100 px-4 py-3.5 overflow-x-auto leading-relaxed font-mono">
+        {children}
+      </pre>
+    </div>
+  )
+}
+
+function ErrorRow({ http, code, meaning }: { http: string; code: string; meaning: string }) {
+  return (
+    <tr>
+      <td className="py-2.5 px-3 text-sm font-mono text-[#0f172a] tabular-nums">{http}</td>
+      <td className="py-2.5 px-3">
+        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">{code}</code>
+      </td>
+      <td className="py-2.5 px-3 text-sm text-[#64748b]">{meaning}</td>
+    </tr>
+  )
+}
+
+function Endpoint({
+  id,
+  method,
+  path,
+  description,
+  example,
+  response,
+  params,
+}: {
+  id: string
+  method: string
+  path: string
+  description: string
+  example: string
+  response: string
+  params?: { name: string; type: string; desc: string }[]
+}) {
+  return (
+    <section id={id} className="scroll-mt-6 rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
+      <div className="flex items-center gap-3 flex-wrap">
+        <span className="px-2 py-0.5 rounded-md bg-green-50 text-green-700 border border-green-100 text-xs font-semibold font-mono">
+          {method}
+        </span>
+        <code className="text-base font-mono font-semibold text-[#0f172a]">{API_PREFIX}{path}</code>
+      </div>
+      <p className="text-sm text-[#475569] leading-relaxed">{description}</p>
+
+      {params && params.length > 0 && (
+        <div>
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+            Query-Parameter
+          </p>
+          <table className="w-full text-xs border-collapse">
+            <tbody className="divide-y divide-gray-100">
+              {params.map(p => (
+                <tr key={p.name}>
+                  <td className="py-2 pr-3 align-top">
+                    <code className="font-mono font-semibold text-[#0f172a]">{p.name}</code>
+                    <span className="ml-2 text-[#94a3b8]">{p.type}</span>
+                  </td>
+                  <td className="py-2 text-[#64748b]">{p.desc}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      <div>
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+          Beispiel-Request
+        </p>
+        <CodeBlock language="bash">{example}</CodeBlock>
+      </div>
+
+      <div>
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+          Beispiel-Response (200 OK)
+        </p>
+        <CodeBlock language="json">{response}</CodeBlock>
+      </div>
+    </section>
+  )
+}
