@@ -30,38 +30,85 @@ const IMPACT_BG: Record<string, string> = {
   low:    "#f1f5f9",
 }
 
+/**
+ * Robust JSON-array extractor. Claude Sonnet sometimes wraps responses in
+ * markdown code fences (```json ... ```) even when told not to. This handles
+ * both cases plus the fallback of "first [ ... last ]" extraction.
+ */
+function parseRecommendationsJson(raw: string): Recommendation[] {
+  // Strip markdown code fences (```json or ```)
+  const cleaned = raw
+    .replace(/^```(?:json)?\s*/i, "")
+    .replace(/\s*```$/i, "")
+    .trim()
+
+  // Try direct parse first
+  try {
+    const parsed = JSON.parse(cleaned)
+    if (Array.isArray(parsed)) return parsed as Recommendation[]
+  } catch {
+    // fall through to extraction
+  }
+
+  // Fallback: find first '[' and matching last ']'
+  const start = cleaned.indexOf("[")
+  const end = cleaned.lastIndexOf("]")
+  if (start >= 0 && end > start) {
+    try {
+      const parsed = JSON.parse(cleaned.slice(start, end + 1))
+      if (Array.isArray(parsed)) return parsed as Recommendation[]
+    } catch {
+      // give up
+    }
+  }
+  return []
+}
+
 async function generateRecommendations(
   userName: string,
   topics: string[],
   score: number | null
 ): Promise<Recommendation[]> {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error("[recommendations] ANTHROPIC_API_KEY is not configured")
+    return []
+  }
   const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-  const prompt = `Du bist ein AI Visibility Strategist. Deine Aufgabe ist es, konkrete Handlungsempfehlungen zu geben, wie eine Person ihre Sichtbarkeit in KI-Systemen verbessern kann.
+  const system = `You are a strict JSON API. You MUST respond with valid JSON only — no markdown code fences, no explanations, no preamble. Your entire response must be parseable by JSON.parse() directly.`
+
+  const prompt = `Du bist ein AI Visibility Strategist. Gib konkrete Handlungsempfehlungen, wie eine Person ihre Sichtbarkeit in KI-Systemen verbessern kann.
 
 Person: ${userName}
 Überwachte Themen: ${topics.join(", ")}
 Aktueller Visibility Score: ${score != null ? score : "noch nicht gemessen"}
 
-Antworte NUR mit einem JSON-Array (kein Markdown, kein Kommentar) mit genau 5 Empfehlungen:
+Liefere ein JSON-Array mit genau 5 Empfehlungen in diesem Format:
 [{"title":"...","description":"...","impact":"high"|"medium"|"low","category":"content"|"platform"|"seo"|"narrative"}]
 
 Regeln:
-- title: max 8 Wörter, aktionsorientiert
-- description: 1-2 Sätze, konkret und umsetzbar
+- title: max 8 Wörter, aktionsorientiert, auf Deutsch
+- description: 1-2 Sätze, konkret und umsetzbar, auf Deutsch
 - Mindestens 2 verschiedene Kategorien
-- Mindestens 1 "high" impact`
+- Mindestens 1 "high" impact
+- KEINE Markdown-Codeblöcke, kein Kommentar, NUR das Array`
 
-  const message = await client.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 1024,
-    messages: [{ role: "user", content: prompt }],
-  })
-
-  const raw = message.content[0]?.type === "text" ? message.content[0].text : "[]"
   try {
-    return JSON.parse(raw) as Recommendation[]
-  } catch {
+    const message = await client.messages.create({
+      model: "claude-sonnet-4-5",
+      max_tokens: 1024,
+      system,
+      messages: [{ role: "user", content: prompt }],
+    })
+
+    const raw = message.content[0]?.type === "text" ? message.content[0].text : ""
+    const recs = parseRecommendationsJson(raw)
+    if (recs.length === 0) {
+      console.error("[recommendations] parser returned empty. Raw response:", raw.slice(0, 500))
+    }
+    return recs
+  } catch (e) {
+    console.error("[recommendations] Anthropic call failed:", e instanceof Error ? e.message : e)
     return []
   }
 }
