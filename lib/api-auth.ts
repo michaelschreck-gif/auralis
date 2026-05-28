@@ -1,0 +1,200 @@
+/**
+ * Public API authentication (Sprint 13).
+ *
+ * Validates the `Authorization: Bearer aur_sk_…` header against the
+ * `api_keys` table, returns the owning profile + plan, and updates
+ * `last_used_at` on successful match.
+ *
+ * Uses the service-role Supabase client because:
+ *   1) we don't yet know whose key it is (so we can't be RLS-scoped),
+ *   2) we explicitly want bypass to do the lookup + last_used_at write.
+ *
+ * All endpoints layered on this must do their own plan-gating
+ * (Pro/Enterprise) and ownership-scoping.
+ */
+
+import { NextResponse } from "next/server"
+import { createSupabaseServiceClient } from "@/lib/supabase/client"
+import type { Database } from "@/lib/supabase/database.types"
+import crypto from "node:crypto"
+
+type PlanType = Database["public"]["Enums"]["plan_type"]
+
+export type ApiAuthSuccess = {
+  ok: true
+  profile: {
+    id: string
+    email: string
+    full_name: string | null
+    plan: PlanType
+    language: Database["public"]["Enums"]["language_type"]
+  }
+  apiKeyId: string
+}
+
+export type ApiAuthFailure = {
+  ok: false
+  response: NextResponse
+}
+
+export type ApiAuthResult = ApiAuthSuccess | ApiAuthFailure
+
+const PRO_PLANS: PlanType[] = ["pro", "enterprise"]
+
+export function isPlanEligible(plan: PlanType): boolean {
+  return PRO_PLANS.includes(plan)
+}
+
+export function sha256(input: string): string {
+  return crypto.createHash("sha256").update(input).digest("hex")
+}
+
+export function jsonError(
+  message: string,
+  code: string,
+  status: number,
+  extra: Record<string, unknown> = {},
+): NextResponse {
+  return NextResponse.json(
+    { error: message, code, ...extra },
+    { status, headers: { "WWW-Authenticate": status === 401 ? "Bearer" : "" } },
+  )
+}
+
+/**
+ * Pulls `Authorization: Bearer …` from the request, validates it, gates by plan.
+ * On success returns the profile. On failure returns a ready-to-return NextResponse.
+ *
+ * Usage in route handlers:
+ *   const auth = await authenticateApiKey(req)
+ *   if (!auth.ok) return auth.response
+ *   const { profile } = auth
+ *   // … your endpoint logic
+ */
+export async function authenticateApiKey(req: Request): Promise<ApiAuthResult> {
+  const header = req.headers.get("authorization") ?? req.headers.get("Authorization")
+  if (!header || !header.toLowerCase().startsWith("bearer ")) {
+    return {
+      ok: false,
+      response: jsonError(
+        "Missing Authorization header. Use: Authorization: Bearer aur_sk_…",
+        "MISSING_TOKEN",
+        401,
+      ),
+    }
+  }
+  const token = header.slice(7).trim()
+  if (!token || !token.startsWith("aur_sk_")) {
+    return {
+      ok: false,
+      response: jsonError("Invalid API key format.", "INVALID_TOKEN_FORMAT", 401),
+    }
+  }
+
+  let supabase
+  try {
+    supabase = createSupabaseServiceClient()
+  } catch {
+    return {
+      ok: false,
+      response: jsonError("Auth service unavailable.", "INTERNAL", 500),
+    }
+  }
+
+  const hash = sha256(token)
+
+  // Look up key + join profile.
+  const { data: keyRow, error: keyError } = await supabase
+    .from("api_keys")
+    .select(`
+      id,
+      revoked_at,
+      profile_id,
+      profiles!inner ( id, email, full_name, plan, language )
+    `)
+    .eq("key_hash", hash)
+    .maybeSingle()
+
+  if (keyError) {
+    console.error("[api-auth] key lookup failed:", keyError.message)
+    return {
+      ok: false,
+      response: jsonError("Internal error during auth.", "INTERNAL", 500),
+    }
+  }
+  if (!keyRow) {
+    return {
+      ok: false,
+      response: jsonError("Invalid API key.", "INVALID_TOKEN", 401),
+    }
+  }
+  if (keyRow.revoked_at) {
+    return {
+      ok: false,
+      response: jsonError("This API key has been revoked.", "TOKEN_REVOKED", 401),
+    }
+  }
+
+  // Profile shape from join is a single object (because !inner makes it required).
+  const profile = (Array.isArray(keyRow.profiles) ? keyRow.profiles[0] : keyRow.profiles) as
+    | {
+        id: string
+        email: string
+        full_name: string | null
+        plan: PlanType
+        language: Database["public"]["Enums"]["language_type"]
+      }
+    | null
+
+  if (!profile) {
+    return {
+      ok: false,
+      response: jsonError("Profile not found.", "PROFILE_MISSING", 401),
+    }
+  }
+
+  if (!isPlanEligible(profile.plan)) {
+    return {
+      ok: false,
+      response: jsonError(
+        "API access requires Pro or Enterprise plan.",
+        "PLAN_REQUIRED",
+        403,
+        { required_plan: "pro", current_plan: profile.plan },
+      ),
+    }
+  }
+
+  // Best-effort: update last_used_at. Don't block on failures.
+  await supabase
+    .from("api_keys")
+    .update({ last_used_at: new Date().toISOString() })
+    .eq("id", keyRow.id)
+
+  return {
+    ok: true,
+    apiKeyId: keyRow.id,
+    profile,
+  }
+}
+
+/**
+ * Generates a new plaintext API key. Returns the plaintext (for one-time display)
+ * and the prefix to store separately for UI identification.
+ *
+ * Format: `aur_sk_<40-char-base64url>`
+ */
+export function generateApiKey(): { plaintext: string; prefix: string; hash: string } {
+  // 30 bytes -> 40 char base64url
+  const bytes = crypto.randomBytes(30)
+  const base64url = bytes
+    .toString("base64")
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/, "")
+  const plaintext = `aur_sk_${base64url}`
+  // Prefix used for UI display: e.g. "aur_sk_abc123…" (first 14 chars)
+  const prefix = plaintext.slice(0, 14)
+  const hash = sha256(plaintext)
+  return { plaintext, prefix, hash }
+}
