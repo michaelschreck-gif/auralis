@@ -6,35 +6,35 @@ const MODELS = [
   {
     name: "Claude Sonnet",
     slug: "claude",
-    description: "Anthropic's reasoning model — powers your Auralis checks.",
+    description: "Anthropic's Reasoning-Modell — treibt deine Auralis-Analysen an.",
     active: true,
     color: "#4F6EF7",
   },
   {
     name: "GPT-4o",
     slug: "gpt4o",
-    description: "OpenAI's flagship model, widely used in enterprise search.",
+    description: "OpenAIs Flaggschiff-Modell, weit verbreitet in Enterprise-Suchen.",
     active: false,
     color: "#10b981",
   },
   {
     name: "Perplexity",
     slug: "perplexity",
-    description: "Real-time web-connected AI used for brand discovery.",
+    description: "Web-vernetzte KI in Echtzeit für Brand Discovery.",
     active: false,
     color: "#8b5cf6",
   },
   {
     name: "Gemini Pro",
     slug: "gemini",
-    description: "Google's multimodal model, powering AI Overviews in Search.",
+    description: "Googles multimodales Modell, treibt AI Overviews in der Suche.",
     active: false,
     color: "#ef4444",
   },
   {
     name: "Google AI Overview",
     slug: "aio",
-    description: "Generative search results shown above Google SERP.",
+    description: "Generative Suchergebnisse, die über der Google SERP angezeigt werden.",
     active: false,
     color: "#f59e0b",
   },
@@ -75,7 +75,7 @@ function ModelCard({
         </div>
         {active ? (
           <span className="text-xs px-2 py-1 rounded-full bg-green-50 text-green-600 border border-green-100 font-medium">
-            Active
+            Aktiv
           </span>
         ) : (
           <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#94a3b8]">
@@ -89,7 +89,7 @@ function ModelCard({
           {score != null ? (
             <>
               <div className="flex items-center justify-between text-xs">
-                <span className="text-[#64748b]">Visibility Score</span>
+                <span className="text-[#64748b]">Sichtbarkeits-Score</span>
                 <span className="font-semibold" style={{ color }}>{score} / 100</span>
               </div>
               <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -99,16 +99,16 @@ function ModelCard({
                 />
               </div>
               <p className="text-xs text-[#94a3b8]">
-                Based on your most recent visibility check.
+                Basierend auf deiner aktuellsten Analyse.
               </p>
             </>
           ) : (
             <p className="text-xs text-[#94a3b8]">
-              Run a visibility check on the{" "}
-              <a href="/dashboard" className="text-[#4F6EF7] hover:underline font-medium">
-                overview page
-              </a>{" "}
-              to see your score here.
+              Starte eine Analyse auf der{" "}
+              <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline font-medium">
+                Analyse-Seite
+              </a>
+              , um deinen Score hier zu sehen.
             </p>
           )}
         </div>
@@ -117,7 +117,7 @@ function ModelCard({
       {!active && (
         <div className="mt-4 pt-4 border-t border-gray-100">
           <p className="text-xs text-[#94a3b8]">
-            Available on Starter, Pro & Enterprise plans.
+            Verfügbar in den Tarifen Starter, Pro &amp; Enterprise.
           </p>
         </div>
       )}
@@ -188,14 +188,14 @@ export default async function AiVisibilityPage() {
   return (
     <DashboardShell
       userName={profile?.full_name ?? ""}
-      panelHeader="AI Models"
+      panelHeader="KI-Modelle"
       panelContent={panel}
     >
       <div className="p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0f172a]">AI Visibility Breakdown</h1>
+          <h1 className="text-xl font-semibold text-[#0f172a]">KI-Sichtbarkeit pro Modell</h1>
           <p className="text-[#64748b] text-sm mt-1">
-            How each AI system perceives your personal brand.
+            Wie jedes KI-System deine Personal Brand wahrnimmt.
           </p>
         </div>
 
@@ -213,11 +213,11 @@ export default async function AiVisibilityPage() {
         </div>
 
         <div className="mt-8 rounded-xl border border-gray-100 bg-[#f8f9fb] p-5">
-          <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2 font-medium">What this means</p>
+          <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2 font-medium">Was das bedeutet</p>
           <p className="text-sm text-[#64748b] leading-relaxed">
-            AI Visibility measures how prominently your name and expertise appear in responses from AI systems.
-            A higher score means AI assistants are more likely to recommend you when someone asks about your topics.
-            Pro plans unlock multi-model tracking across GPT-4o, Perplexity, Gemini, and Google AI Overviews.
+            KI-Sichtbarkeit misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.
+            Ein höherer Score bedeutet, dass KI-Assistenten dich mit höherer Wahrscheinlichkeit empfehlen, wenn jemand nach deinen Themen fragt.
+            Pro-Tarife schalten Multi-Modell-Tracking über GPT-4o, Perplexity, Gemini und Google AI Overviews frei.
           </p>
         </div>
       </div>
