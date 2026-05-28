@@ -3,17 +3,19 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 import SettingsForm from "@/components/SettingsForm"
 import ApiKeysBlock, { type ApiKeyRow } from "@/components/ApiKeysBlock"
+import PublicProfileBlock from "@/components/PublicProfileBlock"
 import { isPlanEligible } from "@/lib/api-auth"
 import type { Database } from "@/lib/supabase/database.types"
 
 type PlanType = Database["public"]["Enums"]["plan_type"]
 
 const SECTIONS = [
-  { id: "profile", label: "Profil" },
-  { id: "topics",  label: "Überwachte Themen" },
-  { id: "plan",    label: "Tarif" },
-  { id: "api",     label: "API-Keys" },
-  { id: "danger",  label: "Gefahrenzone" },
+  { id: "profile",        label: "Profil" },
+  { id: "topics",         label: "Überwachte Themen" },
+  { id: "plan",           label: "Tarif" },
+  { id: "public-profile", label: "Public Profile" },
+  { id: "api",            label: "API-Keys" },
+  { id: "danger",         label: "Gefahrenzone" },
 ]
 
 export const dynamic = 'force-dynamic'
@@ -37,7 +39,7 @@ export default async function SettingsPage() {
     const [profileResult, schedulesResult, apiKeysResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("full_name, email, language, plan, timezone")
+        .select("full_name, email, language, plan, timezone, public_slug, public_profile_enabled")
         .eq("id", user!.id)
         .single(),
       supabase
@@ -92,8 +94,13 @@ export default async function SettingsPage() {
         schedules={schedules ?? []}
       />
 
-      {/* API-Keys lives below the form; matches its px-8/max-w-2xl rhythm. */}
-      <div className="px-8 pb-8 max-w-2xl">
+      {/* Public Profile + API-Keys live below the form; match its px-8/max-w-2xl rhythm. */}
+      <div className="px-8 pb-8 max-w-2xl space-y-6">
+        <PublicProfileBlock
+          initialEnabled={profile?.public_profile_enabled ?? false}
+          initialSlug={profile?.public_slug ?? null}
+          fullName={profile?.full_name ?? null}
+        />
         <ApiKeysBlock
           keys={apiKeys}
           plan={plan}

@@ -14,6 +14,7 @@ const NAV = [
   { href: "/dashboard/sources",            label: "Quellen",            icon: "sources" },
   { href: "/dashboard/competitors",        label: "Wettbewerber",       icon: "competitors" },
   { href: "/dashboard/recommendations",    label: "Empfehlungen",       icon: "recommendations" },
+  { href: "/dashboard/ask",                label: "Frag dein Profil",   icon: "ask" },
   { href: "/settings",                     label: "Einstellungen",      icon: "settings" },
 ] as const
 
@@ -76,6 +77,14 @@ const Icons: Record<IconKey, ReactNode> = {
   recommendations: (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <path d="M3 12L12 3M12 3H6.5M12 3v5.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ),
+  ask: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M2 4a2 2 0 012-2h7a2 2 0 012 2v5a2 2 0 01-2 2H6l-3 2.5V11H4a2 2 0 01-2-2V4z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <circle cx="5.5" cy="6.5" r="0.7" fill="currentColor"/>
+      <circle cx="7.5" cy="6.5" r="0.7" fill="currentColor"/>
+      <circle cx="9.5" cy="6.5" r="0.7" fill="currentColor"/>
     </svg>
   ),
   settings: (

@@ -19,6 +19,7 @@ export default async function DashboardPage() {
 
   let userName = ""
   let report: VisibilityReport | null = null
+  let latestReportId: string | null = null
 
   try {
     const [profileResult, reportResult] = await Promise.all([
@@ -29,7 +30,7 @@ export default async function DashboardPage() {
         .single(),
       supabase
         .from("visibility_reports")
-        .select("raw_data")
+        .select("id, raw_data")
         .eq("profile_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -37,13 +38,14 @@ export default async function DashboardPage() {
     ])
     userName = profileResult.data?.full_name ?? ""
     report = (reportResult.data?.raw_data ?? null) as VisibilityReport | null
+    latestReportId = reportResult.data?.id ?? null
   } catch {
     // continue with empty defaults
   }
 
   return (
     <DashboardShell userName={userName}>
-      <Cockpit userName={userName} report={report} />
+      <Cockpit userName={userName} report={report} latestReportId={latestReportId} />
     </DashboardShell>
   )
 }
