@@ -232,7 +232,7 @@ export default async function Home() {
         title={<>GEO, Thought Leadership, Digitale Autorität.</>}
         body="Drei Dimensionen, die deine Sichtbarkeit prägen. GEO misst, wie oft du in KI-Antworten erwähnt wirst. Thought Leadership zeigt, ob KI dich als Experte einordnet. Digitale Autorität bewertet die Stärke deiner Online-Spur."
         bullets={[
-          { h: "Bänder statt nackter Zahlen", b: "Vom „Nicht sichtbar" bis „Dominant" — jeder Score hat eine klare Stufe." },
+          { h: "Bänder statt nackter Zahlen", b: "Vom „Nicht sichtbar“ bis „Dominant“ — jeder Score hat eine klare Stufe." },
           { h: "Optimierungs-Tipps inklusive", b: "Jede Karte zeigt 3 konkrete Schritte zur Verbesserung dieser Dimension." },
         ]}
         mockup={<SubScoresMockup />}
@@ -349,7 +349,7 @@ export default async function Home() {
           <div className="grid md:grid-cols-3 gap-5">
             {[
               { n: "1", t: "1 Min", title: "Account anlegen", body: "Mit E-Mail registrieren. Keine Kreditkarte. Sofort startklar." },
-              { n: "2", t: "2 Min", title: "Themen definieren", body: "Welche Begriffe sollen KI-Systeme mit dir verbinden? z.B. „AI-Strategie", „Digitalisierung"." },
+              { n: "2", t: "2 Min", title: "Themen definieren", body: "Welche Begriffe sollen KI-Systeme mit dir verbinden? z.B. „AI-Strategie“, „Digitalisierung“." },
               { n: "3", t: "2 Min", title: "Analyse starten", body: "Auralis fragt Claude in deinem Namen, extrahiert Signale und liefert deinen ersten Aura Score." },
             ].map(s => (
               <div key={s.n} className="rounded-2xl border border-gray-100 bg-[#f8f9fb] p-6">
@@ -546,7 +546,7 @@ export default async function Home() {
               },
               {
                 q: "Wie funktioniert die Messung technisch?",
-                a: "Wir generieren 7 typische User-Anfragen zu deinen Themen (z.B. „Wer sind die führenden Experten für AI im DACH-Raum?"), schicken sie an die KI-Modelle und extrahieren strukturierte Signale aus den Antworten: Wurdest du erwähnt? An welcher Position? Mit welcher Tonalität? Daraus berechnen wir den Aura Score™.",
+                a: "Wir generieren 7 typische User-Anfragen zu deinen Themen (z.B. „Wer sind die führenden Experten für AI im DACH-Raum?“), schicken sie an die KI-Modelle und extrahieren strukturierte Signale aus den Antworten: Wurdest du erwähnt? An welcher Position? Mit welcher Tonalität? Daraus berechnen wir den Aura Score™.",
               },
               {
                 q: "Was kostet Auralis?",
