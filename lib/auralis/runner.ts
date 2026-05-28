@@ -213,7 +213,7 @@ export async function runCompetitorAnalysis(
   // 1. Load the competitor row
   const { data: competitor, error: competitorError } = await supabase
     .from("competitors")
-    .select("id, profile_id, name, topics")
+    .select("id, profile_id, name, topics, language")
     .eq("id", competitorId)
     .single()
   if (competitorError || !competitor) {
@@ -221,18 +221,16 @@ export async function runCompetitorAnalysis(
   }
 
   // 2. Generate queries. If no topics, use a generic "expertise" topic.
+  // Language is per-competitor (Sprint 12): users can pick 'en' for global
+  // figures or 'de' for German-region-specific competitors.
   const topics = (competitor.topics && competitor.topics.length > 0)
     ? competitor.topics
     : ["expertise"]
+  const lang: "de" | "en" = competitor.language === "de" ? "de" : "en"
   const config: QueryConfig = {
     name: competitor.name,
     topics,
-    // Default to English for competitor analyses: the German query templates
-    // hardcode "deutschsprachigen Raum" which excludes global figures
-    // (e.g. asking for AI experts in Germany won't surface Mark Zuckerberg).
-    // English templates are region-neutral and capture global brands.
-    // (A per-competitor language column would be a future-sprint enhancement.)
-    language: "en",
+    language: lang,
   }
   const queries = generateVisibilityQueries(config)
 

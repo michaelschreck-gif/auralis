@@ -162,6 +162,23 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan }
               placeholder="z.B. AI, Social Media, Metaverse"
               className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20"
             />
+            <p className="text-[10px] text-[#94a3b8] leading-snug">
+              💡 <span className="font-medium">Reihenfolge zählt:</span> Das erste Thema ist das Primärthema und bestimmt die Richtung der KI-Abfragen.
+            </p>
+          </div>
+          <div className="space-y-1.5">
+            <label className="text-xs text-[#64748b] font-medium">Sprache der KI-Abfragen</label>
+            <select
+              name="language"
+              defaultValue="en"
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20"
+            >
+              <option value="en">🇬🇧 Englisch (Empfohlen für globale Figuren)</option>
+              <option value="de">🇩🇪 Deutsch (für DACH-Region-spezifische Wettbewerber)</option>
+            </select>
+            <p className="text-[10px] text-[#94a3b8] leading-snug">
+              Englische Templates sind region-neutral und besser für globale Marken (Musk, Zuckerberg). Deutsch ist nur sinnvoll, wenn dein Wettbewerber im deutschsprachigen Raum aktiv ist.
+            </p>
           </div>
           {error && (
             <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-2">

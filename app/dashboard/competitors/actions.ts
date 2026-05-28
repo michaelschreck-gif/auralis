@@ -6,6 +6,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 export async function addCompetitor(formData: FormData): Promise<{ error: string | null }> {
   const name = String(formData.get("name") ?? "").trim()
   const topicsRaw = String(formData.get("topics") ?? "").trim()
+  const languageRaw = String(formData.get("language") ?? "en").trim()
+  const language: "de" | "en" = languageRaw === "de" ? "de" : "en"
 
   if (!name) return { error: "Bitte einen Namen angeben." }
   if (name.length > 100) return { error: "Name zu lang (max. 100 Zeichen)." }
@@ -28,7 +30,7 @@ export async function addCompetitor(formData: FormData): Promise<{ error: string
 
   const { error } = await supabase
     .from("competitors")
-    .insert({ profile_id: user.id, name, topics })
+    .insert({ profile_id: user.id, name, topics, language })
 
   if (error) return { error: error.message }
 

@@ -69,6 +69,7 @@ export type Database = {
         Row: {
           created_at: string
           id: string
+          language: Database["public"]["Enums"]["language_type"]
           last_analyzed_at: string | null
           last_score: number | null
           name: string
@@ -78,6 +79,7 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
+          language?: Database["public"]["Enums"]["language_type"]
           last_analyzed_at?: string | null
           last_score?: number | null
           name: string
@@ -87,6 +89,7 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
+          language?: Database["public"]["Enums"]["language_type"]
           last_analyzed_at?: string | null
           last_score?: number | null
           name?: string
