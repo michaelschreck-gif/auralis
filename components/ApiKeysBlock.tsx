@@ -71,7 +71,10 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
       <div>
         <h2 className="text-base font-semibold text-[#0f172a]">API-Keys</h2>
         <p className="text-xs text-[#64748b] mt-1">
-          Bearer-Tokens für die Auralis-Public-API (<code className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.
+          Bearer-Tokens für die Auralis-Public-API (<code className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.{" "}
+          <a href="/docs/api" target="_blank" rel="noopener" className="text-[#4F6EF7] hover:underline font-medium">
+            API-Dokumentation öffnen ↗
+          </a>
         </p>
       </div>
 
@@ -255,9 +258,10 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
   -H "Authorization: Bearer $AURALIS_KEY"`}
             </pre>
             <p className="text-[10px] text-[#94a3b8]">
-              Weitere Endpoints: <code className="bg-white px-1 rounded border border-gray-100">/api/v1/me</code>,{" "}
-              <code className="bg-white px-1 rounded border border-gray-100">/api/v1/scores/history?days=30</code>,{" "}
-              <code className="bg-white px-1 rounded border border-gray-100">/api/v1/competitors</code>
+              Weitere Endpoints + Code-Beispiele in der{" "}
+              <a href="/docs/api" target="_blank" rel="noopener" className="text-[#4F6EF7] hover:underline font-medium">
+                vollständigen API-Dokumentation
+              </a>.
             </p>
           </div>
         </details>
