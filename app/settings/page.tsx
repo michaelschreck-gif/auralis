@@ -2,12 +2,18 @@ import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 import SettingsForm from "@/components/SettingsForm"
+import ApiKeysBlock, { type ApiKeyRow } from "@/components/ApiKeysBlock"
+import { isPlanEligible } from "@/lib/api-auth"
+import type { Database } from "@/lib/supabase/database.types"
+
+type PlanType = Database["public"]["Enums"]["plan_type"]
 
 const SECTIONS = [
-  { id: "profile", label: "Profile" },
-  { id: "topics",  label: "Monitoring Topics" },
-  { id: "plan",    label: "Plan" },
-  { id: "danger",  label: "Danger Zone" },
+  { id: "profile", label: "Profil" },
+  { id: "topics",  label: "Überwachte Themen" },
+  { id: "plan",    label: "Tarif" },
+  { id: "api",     label: "API-Keys" },
+  { id: "danger",  label: "Gefahrenzone" },
 ]
 
 export const dynamic = 'force-dynamic'
@@ -25,9 +31,10 @@ export default async function SettingsPage() {
 
   let profile = null
   let schedules: { id: string; name: string; query: string; frequency: string; language: string }[] = []
+  let apiKeys: ApiKeyRow[] = []
 
   try {
-    const [profileResult, schedulesResult] = await Promise.all([
+    const [profileResult, schedulesResult, apiKeysResult] = await Promise.all([
       supabase
         .from("profiles")
         .select("full_name, email, language, plan, timezone")
@@ -39,12 +46,21 @@ export default async function SettingsPage() {
         .eq("profile_id", user!.id)
         .eq("is_active", true)
         .order("created_at", { ascending: true }),
+      supabase
+        .from("api_keys")
+        .select("id, name, key_prefix, created_at, last_used_at, revoked_at")
+        .eq("profile_id", user!.id)
+        .order("created_at", { ascending: false }),
     ])
     profile = profileResult.data
     schedules = schedulesResult.data ?? []
+    apiKeys = (apiKeysResult.data ?? []) as ApiKeyRow[]
   } catch {
     // continue with empty defaults
   }
+
+  const plan: PlanType = (profile?.plan ?? "free") as PlanType
+  const isEligible = isPlanEligible(plan)
 
   const panel = (
     <div className="py-2">
@@ -63,7 +79,7 @@ export default async function SettingsPage() {
   return (
     <DashboardShell
       userName={profile?.full_name ?? ""}
-      panelHeader="Settings"
+      panelHeader="Einstellungen"
       panelContent={panel}
     >
       <SettingsForm
@@ -72,9 +88,18 @@ export default async function SettingsPage() {
         initialEmail={profile?.email ?? user.email ?? ""}
         initialLanguage={profile?.language ?? "de"}
         initialTimezone={profile?.timezone ?? "Europe/Berlin"}
-        plan={profile?.plan ?? "free"}
+        plan={plan}
         schedules={schedules ?? []}
       />
+
+      {/* API-Keys lives below the form; matches its px-8/max-w-2xl rhythm. */}
+      <div className="px-8 pb-8 max-w-2xl">
+        <ApiKeysBlock
+          keys={apiKeys}
+          plan={plan}
+          isEligible={isEligible}
+        />
+      </div>
     </DashboardShell>
   )
 }
