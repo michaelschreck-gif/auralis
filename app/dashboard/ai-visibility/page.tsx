@@ -55,18 +55,22 @@ function isUnlocked(unlocksOn: ModelInfo["unlocksOn"], plan: PlanType): boolean 
   return false
 }
 
+type CardState =
+  | { kind: "locked" }                // Plan unlockt dieses Modell nicht
+  | { kind: "noReport" }              // Plan unlockt, aber noch nie eine Analyse gemacht
+  | { kind: "providerMissing" }       // Plan unlockt + Analyse vorhanden, aber dieser Provider lief nicht (kein API-Key auf dem Server)
+  | { kind: "error"; message: string } // Provider lief, aber API gab einen Fehler zurück
+  | { kind: "score"; breakdown: PerModelBreakdown } // Alles ok
+
 function ModelCard({
   model,
-  active,
-  breakdown,
+  state,
 }: {
   model: ModelInfo
-  active: boolean
-  breakdown: PerModelBreakdown | null
+  state: CardState
 }) {
   const initial = model.name[0] ?? "?"
-  const score = breakdown?.overallScore ?? null
-  const error = breakdown?.error ?? null
+  const active = state.kind !== "locked"
 
   return (
     <div className={`rounded-xl border p-6 transition-all ${
@@ -87,64 +91,88 @@ function ModelCard({
             <p className="text-xs text-[#64748b] mt-0.5">{model.description}</p>
           </div>
         </div>
-        {active ? (
+        {state.kind === "score" && (
           <span className="text-xs px-2 py-1 rounded-full bg-green-50 text-green-600 border border-green-100 font-medium">
             Aktiv
           </span>
-        ) : (
+        )}
+        {state.kind === "error" && (
+          <span className="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 font-medium">
+            Fehler
+          </span>
+        )}
+        {state.kind === "providerMissing" && (
+          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#64748b]">
+            Nicht aktiv
+          </span>
+        )}
+        {state.kind === "noReport" && (
+          <span className="text-xs px-2 py-1 rounded-full bg-blue-50 text-[#4F6EF7] border border-blue-100 font-medium">
+            Bereit
+          </span>
+        )}
+        {state.kind === "locked" && (
           <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#94a3b8]">
             🔒 Starter
           </span>
         )}
       </div>
 
-      {active && (
-        <div className="space-y-3 mt-5 pt-5 border-t border-gray-100">
-          {error ? (
-            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1.5">
-              Letzte Analyse fehlgeschlagen: {error.slice(0, 80)}
-            </p>
-          ) : score !== null ? (
-            <>
-              <div className="flex items-center justify-between text-xs">
-                <span className="text-[#64748b]">Sichtbarkeits-Score</span>
-                <span className="font-semibold" style={{ color: model.color }}>{score} / 100</span>
-              </div>
-              <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
-                <div
-                  className="h-full rounded-full transition-all duration-700"
-                  style={{ width: `${score}%`, background: model.color }}
-                />
-              </div>
-              {breakdown && (
-                <div className="grid grid-cols-2 gap-2 pt-2">
-                  <Mini label="Erwähnt" value={`${breakdown.mentionRate}%`} />
-                  <Mini label="Position" value={breakdown.averagePosition !== null ? `Ø ${breakdown.averagePosition.toFixed(1)}` : "—"} />
-                </div>
-              )}
-              <p className="text-xs text-[#94a3b8]">
-                Basierend auf deiner aktuellsten Analyse.
-              </p>
-            </>
-          ) : (
+      <div className="space-y-3 mt-5 pt-5 border-t border-gray-100">
+        {state.kind === "score" && (
+          <>
+            <div className="flex items-center justify-between text-xs">
+              <span className="text-[#64748b]">Sichtbarkeits-Score</span>
+              <span className="font-semibold" style={{ color: model.color }}>{state.breakdown.overallScore} / 100</span>
+            </div>
+            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+              <div
+                className="h-full rounded-full transition-all duration-700"
+                style={{ width: `${state.breakdown.overallScore}%`, background: model.color }}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-2 pt-2">
+              <Mini label="Erwähnt" value={`${state.breakdown.mentionRate}%`} />
+              <Mini label="Position" value={state.breakdown.averagePosition !== null ? `Ø ${state.breakdown.averagePosition.toFixed(1)}` : "—"} />
+            </div>
             <p className="text-xs text-[#94a3b8]">
-              Starte eine Analyse auf der{" "}
-              <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline font-medium">
-                Analyse-Seite
-              </a>
-              , um deinen Score hier zu sehen.
+              Basierend auf deiner aktuellsten Analyse.
             </p>
-          )}
-        </div>
-      )}
+          </>
+        )}
 
-      {!active && (
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <p className="text-xs text-[#94a3b8]">
-            Verfügbar in den Tarifen Starter, Pro &amp; Enterprise.
+        {state.kind === "error" && (
+          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1.5">
+            Letzte Analyse fehlgeschlagen: {state.message.slice(0, 120)}
           </p>
-        </div>
-      )}
+        )}
+
+        {state.kind === "providerMissing" && (
+          <p className="text-xs text-[#64748b]">
+            Dieser Provider ist auf dem Server noch nicht konfiguriert. Sobald der API-Key gesetzt ist,
+            wird er ab der nächsten Analyse automatisch mitgemessen.
+          </p>
+        )}
+
+        {state.kind === "noReport" && (
+          <p className="text-xs text-[#94a3b8]">
+            Starte eine Analyse auf der{" "}
+            <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline font-medium">
+              Analyse-Seite
+            </a>
+            , um deinen Score hier zu sehen.
+          </p>
+        )}
+
+        {state.kind === "locked" && (
+          <p className="text-xs text-[#94a3b8]">
+            Verfügbar in den Tarifen Starter, Pro &amp; Enterprise.{" "}
+            <a href="/#preise" className="text-[#4F6EF7] hover:underline font-medium">
+              Upgrade →
+            </a>
+          </p>
+        )}
+      </div>
     </div>
   )
 }
@@ -174,6 +202,8 @@ export default async function AiVisibilityPage() {
   let userName = ""
   let plan: PlanType = "free"
   let perModelBreakdown: PerModelBreakdown[] = []
+  /** True wenn die jüngste Analyse mit dem neuen Multi-Modell-Runner gelaufen ist. */
+  let hasMultiModelReport = false
 
   try {
     const [profileResult, reportResult] = await Promise.all([
@@ -194,6 +224,7 @@ export default async function AiVisibilityPage() {
     plan = (profileResult.data?.plan ?? "free") as PlanType
     const rawReport = reportResult.data?.raw_data as unknown as MultiModelVisibilityReport | null
     perModelBreakdown = rawReport?.perModelBreakdown ?? []
+    hasMultiModelReport = perModelBreakdown.length > 0
   } catch {
     // continue with empty defaults
   }
@@ -201,6 +232,26 @@ export default async function AiVisibilityPage() {
   // Build a lookup so each card can find its own breakdown
   const breakdownByProvider = new Map<string, PerModelBreakdown>()
   perModelBreakdown.forEach(b => breakdownByProvider.set(b.provider, b))
+
+  /**
+   * Bestimmt den Card-State für ein Modell. Reihenfolge der Checks:
+   *  1. Plan unlockt nicht → locked
+   *  2. Provider hat erfolgreichen Score → score
+   *  3. Provider hat Fehler-Eintrag → error
+   *  4. Plan unlockt, noch keine Multi-Modell-Analyse vorhanden → noReport
+   *  5. Plan unlockt, Multi-Modell-Analyse da, Provider fehlt → providerMissing
+   *     (= Server-seitig nicht konfiguriert)
+   */
+  function deriveCardState(m: ModelInfo): CardState {
+    if (!isUnlocked(m.unlocksOn, plan)) return { kind: "locked" }
+    const breakdown = breakdownByProvider.get(m.providerId)
+    if (breakdown) {
+      if (breakdown.error) return { kind: "error", message: breakdown.error }
+      return { kind: "score", breakdown }
+    }
+    if (!hasMultiModelReport) return { kind: "noReport" }
+    return { kind: "providerMissing" }
+  }
 
   const panel = (
     <div className="py-2">
@@ -248,18 +299,13 @@ export default async function AiVisibilityPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {MODELS.map(m => {
-            const active = isUnlocked(m.unlocksOn, plan)
-            const breakdown = active ? breakdownByProvider.get(m.providerId) ?? null : null
-            return (
-              <ModelCard
-                key={m.providerId}
-                model={m}
-                active={active}
-                breakdown={breakdown}
-              />
-            )
-          })}
+          {MODELS.map(m => (
+            <ModelCard
+              key={m.providerId}
+              model={m}
+              state={deriveCardState(m)}
+            />
+          ))}
         </div>
 
         <div className="mt-8 rounded-xl border border-gray-100 bg-[#f8f9fb] p-5">
