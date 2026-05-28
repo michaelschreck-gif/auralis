@@ -5,21 +5,34 @@
  *   - the user-facing manual trigger at /dashboard/analyze (`trigger: "manual"`)
  *   - the admin's "Analyse jetzt triggern" button (`trigger: "manual"`)
  *
+ * Sprint 14 — Multi-Model: jeder Lauf fragt N Provider parallel (siehe providers.ts).
+ * Der visibility_reports.visibility_score ist der Mean über alle Provider-Reports.
+ * raw_data.perModelBreakdown enthält die per-Provider-Details für UI-Rendering.
+ *
  * NOTE: keep this file logic-only (no Next.js imports) so it stays usable from
  * cron, API routes, server actions, and edge functions alike.
  */
 
-import Anthropic from "@anthropic-ai/sdk"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { generateVisibilityQueries, type QueryConfig } from "./queries"
-import { extractMentionSignal, buildVisibilityReport } from "./analyzer"
+import {
+  extractMentionSignal,
+  buildVisibilityReport,
+  type QueryResult,
+  type VisibilityReport,
+} from "./analyzer"
+import {
+  providersForPlan,
+  claudeProvider,
+  type LLMProvider,
+  type ProviderId,
+} from "./providers"
 import type { Database, Json } from "@/lib/supabase/database.types"
 
 type SentimentType = Database["public"]["Enums"]["sentiment_type"]
 type FrequencyType = Database["public"]["Enums"]["frequency_type"]
 type TriggerType = Database["public"]["Enums"]["trigger_type"]
-
-const MODEL = "claude-sonnet-4-5"
+type PlanType = Database["public"]["Enums"]["plan_type"]
 
 const AI_SIMULATION_SYSTEM_PROMPT = `You are a helpful AI assistant with broad knowledge about professionals, thought leaders, and experts across industries. When asked about experts in a field, you draw on your training knowledge to provide balanced, informative answers. You mention real people you have knowledge about. You respond naturally and helpfully, as you normally would to any user question. Do not add caveats about your knowledge cutoff unless directly relevant. Respond in the same language as the question.`
 
@@ -41,12 +54,129 @@ function deriveSentiment(sentiments: string[]): SentimentType | null {
   return "neutral"
 }
 
+// ─── Multi-Model: Per-Provider Breakdown im raw_data ────────────────────────
+
+export type PerModelBreakdown = {
+  provider: ProviderId
+  label: string
+  modelTag: string
+  overallScore: number
+  mentionRate: number
+  averagePosition: number | null
+  scoreBreakdown: VisibilityReport["scoreBreakdown"]
+  /** Anzahl der Anfragen, die für diesen Provider tatsächlich erfolgreich liefen. */
+  successfulQueries: number
+  /** Wenn dieser Provider gefailed ist, enthält das Feld den Fehler. */
+  error?: string
+}
+
+/**
+ * Erweiterte Form der VisibilityReport mit Multi-Modell-Aufschlüsselung.
+ * Wird als raw_data in visibility_reports gespeichert.
+ */
+export type MultiModelVisibilityReport = VisibilityReport & {
+  perModelBreakdown?: PerModelBreakdown[]
+  /** Welche Provider erfolgreich gelaufen sind. */
+  providersUsed?: ProviderId[]
+}
+
+/**
+ * Berechnet den Mean-Report aus mehreren Provider-Reports.
+ * Numerische Felder werden gemittelt, Topics + Narrativen werden gemerged.
+ */
+function aggregateReports(
+  personName: string,
+  topics: string[],
+  reports: VisibilityReport[],
+  allQueryResults: QueryResult[],
+): VisibilityReport {
+  if (reports.length === 0) {
+    // Fallback: leerer Report (sollte nie passieren wenn min. 1 Provider erfolgreich war)
+    return buildVisibilityReport(personName, topics, [])
+  }
+  if (reports.length === 1) {
+    return reports[0]
+  }
+
+  const meanRound = (vals: number[]) =>
+    Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)
+
+  const meanOrNull = (vals: (number | null)[]) => {
+    const filtered = vals.filter((v): v is number => v !== null)
+    if (filtered.length === 0) return null
+    return Math.round((filtered.reduce((a, b) => a + b, 0) / filtered.length) * 100) / 100
+  }
+
+  // Topics + Narratives mergen
+  const dominantTopicsSet = new Set<string>()
+  const narrativesSet = new Set<string>()
+  reports.forEach(r => {
+    r.dominantTopics.forEach(t => dominantTopicsSet.add(t))
+    r.narratives.forEach(n => narrativesSet.add(n))
+  })
+
+  return {
+    personName,
+    topics,
+    queriedAt: new Date().toISOString(),
+    overallScore:   meanRound(reports.map(r => r.overallScore)),
+    mentionRate:    meanRound(reports.map(r => r.mentionRate)),
+    averagePosition: meanOrNull(reports.map(r => r.averagePosition)),
+    dominantTopics: Array.from(dominantTopicsSet).slice(0, 8),
+    narratives:     Array.from(narrativesSet).slice(0, 10),
+    queryResults:   allQueryResults,
+    scoreBreakdown: {
+      presenceScore:       meanRound(reports.map(r => r.scoreBreakdown.presenceScore)),
+      positionScore:       meanRound(reports.map(r => r.scoreBreakdown.positionScore)),
+      contextScore:        meanRound(reports.map(r => r.scoreBreakdown.contextScore)),
+      topicAlignmentScore: meanRound(reports.map(r => r.scoreBreakdown.topicAlignmentScore)),
+    },
+  }
+}
+
+/**
+ * Führt die N Queries gegen einen Provider aus und gibt die QueryResults zurück.
+ * Wirft NICHT — gibt stattdessen ein Result-Objekt mit `error` zurück, damit
+ * ein Provider-Fehler nicht den ganzen Run killt.
+ */
+async function runProvider(
+  provider: LLMProvider,
+  queries: ReturnType<typeof generateVisibilityQueries>,
+  targetName: string,
+): Promise<{ queryResults: QueryResult[]; error?: string }> {
+  try {
+    const queryResults = await Promise.all(
+      queries.map(async (query) => {
+        const rawResponse = await provider.call(
+          query.prompt,
+          AI_SIMULATION_SYSTEM_PROMPT,
+        )
+        const qr = extractMentionSignal(
+          rawResponse,
+          targetName,
+          query.id,
+          query.weight,
+          query.prompt,
+          query.type,
+        )
+        return qr
+      }),
+    )
+    return { queryResults }
+  } catch (e) {
+    const message = e instanceof Error ? e.message : String(e)
+    console.error(`[runner] provider ${provider.id} failed:`, message)
+    return { queryResults: [], error: message }
+  }
+}
+
 export type RunAnalysisResult = {
   reportId: string
   score: number
   sentiment: SentimentType | null
   mentionRate: number
   queryCount: number
+  providersUsed: ProviderId[]
 }
 
 export type RunAnalysisOptions = {
@@ -54,28 +184,24 @@ export type RunAnalysisOptions = {
   trigger: TriggerType
   /** When true, also advance `next_run_at` after successful run (cron-only). */
   advanceNextRunAt?: boolean
-  /** Anthropic API key – defaults to process.env.ANTHROPIC_API_KEY. */
-  anthropicApiKey?: string
+  /** Optional override of which providers to use. Defaults to providersForPlan(profile.plan). */
+  providerOverride?: LLMProvider[]
 }
 
 /**
- * Runs a single visibility analysis for the given schedule.
- * Writes one `visibility_reports` row and N `query_results` rows.
+ * Runs a single visibility analysis for the given schedule across all enabled providers.
+ * Writes one `visibility_reports` row (with per-model breakdown in raw_data) and
+ * N×M `query_results` rows (where N=queries, M=providers).
  *
- * Throws on any failure – caller decides whether to surface to UI or log.
+ * Throws on any failure that prevents persisting at all — provider-level failures
+ * are absorbed and reported via perModelBreakdown.error.
  */
 export async function runAnalysisForSchedule(
   scheduleId: string,
   supabase: SupabaseClient<Database>,
   options: RunAnalysisOptions,
 ): Promise<RunAnalysisResult> {
-  const apiKey = options.anthropicApiKey ?? process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not configured.")
-  }
-  const anthropic = new Anthropic({ apiKey })
-
-  // 1. Load the schedule
+  // 1. Load the schedule + owning profile (to determine plan + provider set)
   const { data: schedule, error: scheduleError } = await supabase
     .from("monitoring_schedules")
     .select("*")
@@ -85,7 +211,20 @@ export async function runAnalysisForSchedule(
     throw new Error(`Schedule ${scheduleId} not found: ${scheduleError?.message ?? "unknown"}`)
   }
 
-  // 2. Generate 5 visibility queries
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("plan")
+    .eq("id", schedule.profile_id)
+    .single()
+  const plan = (profile?.plan ?? "free") as PlanType
+
+  // 2. Pick providers (plan-gated, env-var-gated)
+  const providers = options.providerOverride ?? providersForPlan(plan)
+  if (providers.length === 0) {
+    throw new Error("No LLM providers configured. Set ANTHROPIC_API_KEY at minimum.")
+  }
+
+  // 3. Generate the standard 7 queries
   const config: QueryConfig = {
     name: schedule.name,
     topics: [schedule.query],
@@ -93,33 +232,68 @@ export async function runAnalysisForSchedule(
   }
   const queries = generateVisibilityQueries(config)
 
-  // 3. Fan-out to Anthropic, extract signal per query
-  const queryResults = await Promise.all(
-    queries.map(async (query) => {
-      const message = await anthropic.messages.create({
-        model: MODEL,
-        max_tokens: 600,
-        system: AI_SIMULATION_SYSTEM_PROMPT,
-        messages: [{ role: "user", content: query.prompt }],
-      })
-      const rawResponse = message.content
-        .filter(b => b.type === "text")
-        .map(b => (b as { type: "text"; text: string }).text)
-        .join("\n")
-      return extractMentionSignal(
-        rawResponse,
-        schedule.name,
-        query.id,
-        query.weight,
-        query.prompt,
-        query.type,
-      )
+  // 4. Fan-out per provider, in parallel
+  const providerOutcomes = await Promise.all(
+    providers.map(async (provider) => {
+      const { queryResults, error } = await runProvider(provider, queries, schedule.name)
+      const report = error
+        ? null
+        : buildVisibilityReport(schedule.name, [schedule.query], queryResults)
+      return { provider, queryResults, report, error }
     }),
   )
 
-  // 4. Build report and persist
-  const report = buildVisibilityReport(schedule.name, [schedule.query], queryResults)
-  const sentiment = deriveSentiment(queryResults.map(r => r.signal.sentiment))
+  const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
+  if (successfulProviders.length === 0) {
+    const errors = providerOutcomes.map(o => `${o.provider.id}: ${o.error ?? "no report"}`).join("; ")
+    throw new Error(`All providers failed: ${errors}`)
+  }
+
+  // 5. Build per-model breakdown for raw_data
+  const perModelBreakdown: PerModelBreakdown[] = providerOutcomes.map(o => {
+    if (!o.report || o.error) {
+      return {
+        provider: o.provider.id,
+        label: o.provider.label,
+        modelTag: o.provider.modelTag,
+        overallScore: 0,
+        mentionRate: 0,
+        averagePosition: null,
+        scoreBreakdown: { presenceScore: 0, positionScore: 0, contextScore: 0, topicAlignmentScore: 0 },
+        successfulQueries: 0,
+        error: o.error ?? "no report",
+      }
+    }
+    return {
+      provider: o.provider.id,
+      label: o.provider.label,
+      modelTag: o.provider.modelTag,
+      overallScore: o.report.overallScore,
+      mentionRate: o.report.mentionRate,
+      averagePosition: o.report.averagePosition,
+      scoreBreakdown: o.report.scoreBreakdown,
+      successfulQueries: o.queryResults.length,
+    }
+  })
+
+  // 6. Aggregate across successful providers (mean of per-model scores)
+  const allQueryResults = providerOutcomes.flatMap(o => o.queryResults)
+  const aggregateReport = aggregateReports(
+    schedule.name,
+    [schedule.query],
+    successfulProviders.map(o => o.report!),
+    allQueryResults,
+  )
+
+  // 7. Sentiment over all signals from all providers
+  const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
+
+  // 8. Persist the consolidated report
+  const finalRawData: MultiModelVisibilityReport = {
+    ...aggregateReport,
+    perModelBreakdown,
+    providersUsed: successfulProviders.map(o => o.provider.id),
+  }
 
   const { data: savedReport, error: reportError } = await supabase
     .from("visibility_reports")
@@ -127,10 +301,10 @@ export async function runAnalysisForSchedule(
       profile_id: schedule.profile_id,
       schedule_id: schedule.id,
       trigger: options.trigger,
-      visibility_score: report.overallScore,
+      visibility_score: aggregateReport.overallScore,
       sentiment,
-      summary: `Score: ${report.overallScore}/100. Erwähnt in ${report.mentionRate}% der Abfragen.`,
-      raw_data: report as unknown as Json,
+      summary: `Score: ${aggregateReport.overallScore}/100 (Mean über ${successfulProviders.length} Modelle). Erwähnt in ${aggregateReport.mentionRate}% der Abfragen.`,
+      raw_data: finalRawData as unknown as Json,
     })
     .select("id")
     .single()
@@ -139,28 +313,30 @@ export async function runAnalysisForSchedule(
     throw new Error(`Report save failed: ${reportError?.message ?? "unknown"}`)
   }
 
-  // 5. Persist granular query_results
-  const { error: qrError } = await supabase.from("query_results").insert(
-    queryResults.map(r => ({
-      profile_id: schedule.profile_id,
-      report_id: savedReport.id,
-      model: MODEL,
-      prompt: r.prompt,
-      response: r.rawResponse,
-      brand_mentioned: r.signal.mentioned,
-      sentiment:
-        r.signal.sentiment === "not_mentioned"
-          ? null
-          : (r.signal.sentiment as SentimentType),
-      position: r.signal.position,
-    })),
-  )
-  if (qrError) {
-    // Report is saved already – log but don't undo
-    console.error("query_results insert failed:", qrError)
+  // 9. Persist granular query_results (one row per (query × provider))
+  if (allQueryResults.length > 0) {
+    const queryResultRows = providerOutcomes.flatMap(o =>
+      o.queryResults.map(r => ({
+        profile_id: schedule.profile_id,
+        report_id: savedReport.id,
+        model: o.provider.modelTag,
+        prompt: r.prompt,
+        response: r.rawResponse,
+        brand_mentioned: r.signal.mentioned,
+        sentiment:
+          r.signal.sentiment === "not_mentioned"
+            ? null
+            : (r.signal.sentiment as SentimentType),
+        position: r.signal.position,
+      })),
+    )
+    const { error: qrError } = await supabase.from("query_results").insert(queryResultRows)
+    if (qrError) {
+      console.error("query_results insert failed:", qrError)
+    }
   }
 
-  // 6. Touch schedule timestamps
+  // 10. Touch schedule timestamps
   const scheduleUpdate: Database["public"]["Tables"]["monitoring_schedules"]["Update"] = {
     last_run_at: new Date().toISOString(),
   }
@@ -174,10 +350,11 @@ export async function runAnalysisForSchedule(
 
   return {
     reportId: savedReport.id,
-    score: report.overallScore,
+    score: aggregateReport.overallScore,
     sentiment,
-    mentionRate: report.mentionRate,
-    queryCount: queryResults.length,
+    mentionRate: aggregateReport.mentionRate,
+    queryCount: allQueryResults.length,
+    providersUsed: successfulProviders.map(o => o.provider.id),
   }
 }
 
@@ -189,27 +366,19 @@ export type RunCompetitorAnalysisResult = {
   sentiment: SentimentType | null
   mentionRate: number
   queryCount: number
+  providersUsed: ProviderId[]
 }
 
 /**
- * Runs a visibility analysis for a competitor. Same prompt structure as the
- * user's own analysis, but the "target person" is the competitor's name.
- * Stores result in `competitor_reports` and updates the parent `competitors`
- * row's `last_score` + `last_analyzed_at`.
- *
- * Caller must verify ownership + plan eligibility before invoking.
+ * Wettbewerber-Analyse — Sprint 14: nutzt jetzt auch alle freigeschalteten
+ * Provider, sofern der Owner ein Pro-Tarif hat (canAnalyzeCompetitors gated
+ * ohnehin auf nicht-free).
  */
 export async function runCompetitorAnalysis(
   competitorId: string,
   supabase: SupabaseClient<Database>,
   options: RunAnalysisOptions,
 ): Promise<RunCompetitorAnalysisResult> {
-  const apiKey = options.anthropicApiKey ?? process.env.ANTHROPIC_API_KEY
-  if (!apiKey) {
-    throw new Error("ANTHROPIC_API_KEY is not configured.")
-  }
-  const anthropic = new Anthropic({ apiKey })
-
   // 1. Load the competitor row
   const { data: competitor, error: competitorError } = await supabase
     .from("competitors")
@@ -220,9 +389,19 @@ export async function runCompetitorAnalysis(
     throw new Error(`Competitor ${competitorId} not found: ${competitorError?.message ?? "unknown"}`)
   }
 
-  // 2. Generate queries. If no topics, use a generic "expertise" topic.
-  // Language is per-competitor (Sprint 12): users can pick 'en' for global
-  // figures or 'de' for German-region-specific competitors.
+  // 2. Determine plan -> providers
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("plan")
+    .eq("id", competitor.profile_id)
+    .single()
+  const plan = (profile?.plan ?? "free") as PlanType
+  const providers = options.providerOverride ?? providersForPlan(plan)
+  if (providers.length === 0) {
+    throw new Error("No LLM providers configured.")
+  }
+
+  // 3. Generate queries (per-competitor language from Sprint 12)
   const topics = (competitor.topics && competitor.topics.length > 0)
     ? competitor.topics
     : ["expertise"]
@@ -234,44 +413,76 @@ export async function runCompetitorAnalysis(
   }
   const queries = generateVisibilityQueries(config)
 
-  // 3. Fan-out to Anthropic
-  const queryResults = await Promise.all(
-    queries.map(async (query) => {
-      const message = await anthropic.messages.create({
-        model: MODEL,
-        max_tokens: 600,
-        system: AI_SIMULATION_SYSTEM_PROMPT,
-        messages: [{ role: "user", content: query.prompt }],
-      })
-      const rawResponse = message.content
-        .filter(b => b.type === "text")
-        .map(b => (b as { type: "text"; text: string }).text)
-        .join("\n")
-      return extractMentionSignal(
-        rawResponse,
-        competitor.name,
-        query.id,
-        query.weight,
-        query.prompt,
-        query.type,
-      )
+  // 4. Fan-out
+  const providerOutcomes = await Promise.all(
+    providers.map(async (provider) => {
+      const { queryResults, error } = await runProvider(provider, queries, competitor.name)
+      const report = error
+        ? null
+        : buildVisibilityReport(competitor.name, topics, queryResults)
+      return { provider, queryResults, report, error }
     }),
   )
+  const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
+  if (successfulProviders.length === 0) {
+    const errors = providerOutcomes.map(o => `${o.provider.id}: ${o.error ?? "no report"}`).join("; ")
+    throw new Error(`All providers failed: ${errors}`)
+  }
 
-  // 4. Build report and persist
-  const report = buildVisibilityReport(competitor.name, topics, queryResults)
-  const sentiment = deriveSentiment(queryResults.map(r => r.signal.sentiment))
+  // 5. Per-model breakdown
+  const perModelBreakdown: PerModelBreakdown[] = providerOutcomes.map(o => {
+    if (!o.report || o.error) {
+      return {
+        provider: o.provider.id,
+        label: o.provider.label,
+        modelTag: o.provider.modelTag,
+        overallScore: 0,
+        mentionRate: 0,
+        averagePosition: null,
+        scoreBreakdown: { presenceScore: 0, positionScore: 0, contextScore: 0, topicAlignmentScore: 0 },
+        successfulQueries: 0,
+        error: o.error ?? "no report",
+      }
+    }
+    return {
+      provider: o.provider.id,
+      label: o.provider.label,
+      modelTag: o.provider.modelTag,
+      overallScore: o.report.overallScore,
+      mentionRate: o.report.mentionRate,
+      averagePosition: o.report.averagePosition,
+      scoreBreakdown: o.report.scoreBreakdown,
+      successfulQueries: o.queryResults.length,
+    }
+  })
 
+  // 6. Aggregate
+  const allQueryResults = providerOutcomes.flatMap(o => o.queryResults)
+  const aggregateReport = aggregateReports(
+    competitor.name,
+    topics,
+    successfulProviders.map(o => o.report!),
+    allQueryResults,
+  )
+  const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
+
+  const finalRawData: MultiModelVisibilityReport = {
+    ...aggregateReport,
+    perModelBreakdown,
+    providersUsed: successfulProviders.map(o => o.provider.id),
+  }
+
+  // 7. Persist competitor_reports row
   const { data: savedReport, error: reportError } = await supabase
     .from("competitor_reports")
     .insert({
       competitor_id: competitor.id,
       profile_id: competitor.profile_id,
       trigger: options.trigger,
-      visibility_score: report.overallScore,
+      visibility_score: aggregateReport.overallScore,
       sentiment,
-      summary: `${competitor.name}: Score ${report.overallScore}/100, erwähnt in ${report.mentionRate}% der Abfragen.`,
-      raw_data: report as unknown as Json,
+      summary: `${competitor.name}: Score ${aggregateReport.overallScore}/100 (Mean über ${successfulProviders.length} Modelle), erwähnt in ${aggregateReport.mentionRate}% der Abfragen.`,
+      raw_data: finalRawData as unknown as Json,
     })
     .select("id")
     .single()
@@ -280,27 +491,28 @@ export async function runCompetitorAnalysis(
     throw new Error(`Competitor report save failed: ${reportError?.message ?? "unknown"}`)
   }
 
-  // 5. Update competitor's last_score + last_analyzed_at
+  // 8. Update competitor's last_score
   await supabase
     .from("competitors")
     .update({
-      last_score: report.overallScore,
+      last_score: aggregateReport.overallScore,
       last_analyzed_at: new Date().toISOString(),
     })
     .eq("id", competitor.id)
 
   return {
     reportId: savedReport.id,
-    score: report.overallScore,
+    score: aggregateReport.overallScore,
     sentiment,
-    mentionRate: report.mentionRate,
-    queryCount: queryResults.length,
+    mentionRate: aggregateReport.mentionRate,
+    queryCount: allQueryResults.length,
+    providersUsed: successfulProviders.map(o => o.provider.id),
   }
 }
 
 // ─── Plan-Limit ───────────────────────────────────────────────────────────────
 
-export type PlanType = Database["public"]["Enums"]["plan_type"]
+export { type PlanType }
 
 /** How many manual analyses each plan can trigger per rolling 30-day window. */
 export const MANUAL_LIMIT_PER_30D: Record<PlanType, number | null> = {
@@ -314,11 +526,6 @@ export type LimitCheckResult =
   | { allowed: true; remaining: number | null }
   | { allowed: false; reason: string; resetAt: string | null }
 
-/**
- * Checks whether a user is allowed to trigger a manual analysis right now.
- * Counts visibility_reports with trigger='manual' in the last 30 days.
- * RLS-safe: the caller's supabase client should be auth-scoped to the user.
- */
 export async function checkManualAnalysisLimit(
   profileId: string,
   plan: PlanType,
@@ -341,7 +548,6 @@ export async function checkManualAnalysisLimit(
     .order("created_at", { ascending: true })
 
   if (error) {
-    // Fail open: if the count fails, don't block the user
     console.error("limit check failed:", error)
     return { allowed: true, remaining: null }
   }
@@ -351,7 +557,6 @@ export async function checkManualAnalysisLimit(
     return { allowed: true, remaining: limit - used }
   }
 
-  // Limit reached — figure out when the oldest qualifying run rolls off
   const oldest = data?.[0]?.created_at
   const resetAt = oldest
     ? new Date(new Date(oldest).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
@@ -371,3 +576,6 @@ export async function checkManualAnalysisLimit(
 export function canAnalyzeCompetitors(plan: PlanType): boolean {
   return plan !== "free"
 }
+
+// Re-exports for backward-compatibility with old imports
+export { claudeProvider }
