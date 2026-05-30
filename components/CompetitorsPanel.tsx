@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react"
 import { useRouter } from "next/navigation"
 import { addCompetitor, removeCompetitor } from "@/app/dashboard/competitors/actions"
+import type { ScoreDerivation } from "@/lib/auralis/master-scores"
+import ScoreDerivationTable from "./ScoreDerivation"
 
 export type CompetitorRow = {
   id: string
@@ -23,6 +25,8 @@ type Props = {
   /** From server: whether the user's plan permits competitor analyses. */
   canAnalyze: boolean
   plan: string
+  /** Aura-Herleitung je Zeile: "self" oder competitor-id → ScoreDerivation. */
+  derivations?: Record<string, ScoreDerivation>
 }
 
 function scoreBand(s: number): { color: string; bg: string; label: string } {
@@ -32,7 +36,7 @@ function scoreBand(s: number): { color: string; bg: string; label: string } {
   return { color: "#791F1F", bg: "#FCEBEB", label: "Nicht sichtbar" }
 }
 
-export default function CompetitorsPanel({ self, competitors, canAnalyze, plan }: Props) {
+export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, derivations = {} }: Props) {
   const router = useRouter()
   const [showAdd, setShowAdd] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -209,13 +213,11 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan }
           </p>
         </div>
         <div className="divide-y divide-gray-100">
-          {rows.map((r, i) => (
-            <div
-              key={r.key}
-              className={`px-6 py-4 flex items-center gap-4 ${
-                r.isSelf ? "bg-blue-50/40" : ""
-              }`}
-            >
+          {rows.map((r, i) => {
+            const deriv = derivations[r.key]
+            return (
+            <div key={r.key} className={r.isSelf ? "bg-blue-50/40" : ""}>
+            <div className="px-6 py-4 flex items-center gap-4">
               <div className="w-6 text-sm text-[#94a3b8] font-medium tabular-nums">
                 {i + 1}
               </div>
@@ -297,7 +299,22 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan }
                 )}
               </div>
             </div>
-          ))}
+            {deriv && (
+              <div className="px-6 pb-4 -mt-1">
+                <details className="group">
+                  <summary className="text-xs text-[#4F6EF7] hover:underline cursor-pointer list-none flex items-center gap-1">
+                    <span aria-hidden className="transition-transform group-open:rotate-90">›</span>
+                    So kommt {r.isSelf ? "dein" : "dieser"} Score zustande
+                  </summary>
+                  <div className="mt-2 max-w-xl">
+                    <ScoreDerivationTable derivation={deriv} compact />
+                  </div>
+                </details>
+              </div>
+            )}
+            </div>
+            )
+          })}
           {competitors.length === 0 && (
             <div className="px-6 py-8 text-center">
               <p className="text-sm text-[#64748b]">

@@ -5,6 +5,7 @@ import { useMemo, useState } from "react"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
 import {
   computeMasterScores,
+  computeScoreDerivation,
   SCORE_DEFINITIONS,
   type MasterScore,
   type ScoreKey,
@@ -132,10 +133,11 @@ export default function Cockpit({
       )}
 
       {/* ─── Score Explainer Modal ─── */}
-      {openKey && masters && (
+      {openKey && masters && report && (
         <ScoreExplainer
           score={pickScore(masters, openKey)}
           definition={SCORE_DEFINITIONS[openKey]}
+          derivation={computeScoreDerivation(openKey, report)}
           onClose={() => setOpenKey(null)}
         />
       )}

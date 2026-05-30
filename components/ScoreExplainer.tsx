@@ -1,7 +1,8 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import type { MasterScore, ScoreDefinition } from "@/lib/auralis/master-scores"
+import type { MasterScore, ScoreDefinition, ScoreDerivation } from "@/lib/auralis/master-scores"
+import ScoreDerivationTable from "./ScoreDerivation"
 
 const BAND_FILL = ["#FCEBEB", "#FAEEDA", "#E1F5EE", "#E6F1FB"]
 const BAND_TEXT = ["#791F1F", "#854F0B", "#0F6E56", "#0C447C"]
@@ -9,13 +10,17 @@ const BAND_TEXT = ["#791F1F", "#854F0B", "#0F6E56", "#0C447C"]
 export default function ScoreExplainer({
   score,
   definition,
+  derivation,
   onClose,
 }: {
   score: MasterScore
   definition: ScoreDefinition
+  /** Konkrete Herleitung aus den Messwerten der letzten Analyse. */
+  derivation?: ScoreDerivation | null
   onClose: () => void
 }) {
   const [mounted, setMounted] = useState(false)
+  const [showMath, setShowMath] = useState(false)
   useEffect(() => {
     setMounted(true)
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
@@ -64,6 +69,31 @@ export default function ScoreExplainer({
         <div className="bg-[#f8f9fb] border border-gray-100 rounded-xl p-3 text-sm text-[#0f172a] leading-relaxed">
           {definition.what}
         </div>
+
+        {/* So wird gerechnet — ausklappbar (konkrete Messwerte dieses Users) */}
+        {derivation && (
+          <div className="border border-gray-100 rounded-xl overflow-hidden">
+            <button
+              type="button"
+              onClick={() => setShowMath(s => !s)}
+              aria-expanded={showMath}
+              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-gray-50 transition-colors"
+            >
+              <span className="text-sm font-medium text-[#0f172a]">
+                So wird dieser Score gerechnet
+              </span>
+              <span className="text-xs text-[#64748b] flex items-center gap-1.5">
+                {showMath ? "verbergen" : "anzeigen"}
+                <span aria-hidden className={`transition-transform ${showMath ? "rotate-180" : ""}`}>⌄</span>
+              </span>
+            </button>
+            {showMath && (
+              <div className="px-3 pb-3 pt-1">
+                <ScoreDerivationTable derivation={derivation} compact />
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Donut + Weights */}
         <div>

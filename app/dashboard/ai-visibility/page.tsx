@@ -3,6 +3,8 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 import type { MultiModelVisibilityReport, PerModelBreakdown } from "@/lib/auralis/runner"
 import type { Database } from "@/lib/supabase/database.types"
+import ScoreDerivationTable from "@/components/ScoreDerivation"
+import { computeScoreDerivationFromSignals } from "@/lib/auralis/master-scores"
 
 type PlanType = Database["public"]["Enums"]["plan_type"]
 
@@ -135,9 +137,22 @@ function ModelCard({
               <Mini label="Erwähnt" value={`${state.breakdown.mentionRate}%`} />
               <Mini label="Position" value={state.breakdown.averagePosition !== null ? `Ø ${state.breakdown.averagePosition.toFixed(1)}` : "—"} />
             </div>
-            <p className="text-xs text-[#94a3b8]">
-              Basierend auf deiner aktuellsten Analyse.
-            </p>
+            <details className="group mt-1">
+              <summary className="text-xs text-[#4F6EF7] hover:underline cursor-pointer list-none flex items-center gap-1">
+                <span aria-hidden className="transition-transform group-open:rotate-90">›</span>
+                So kommt dieser Score zustande
+              </summary>
+              <div className="mt-2">
+                <ScoreDerivationTable
+                  derivation={computeScoreDerivationFromSignals(
+                    "aura",
+                    state.breakdown.scoreBreakdown,
+                    state.breakdown.mentionRate,
+                  )}
+                  compact
+                />
+              </div>
+            </details>
           </>
         )}
 
@@ -308,7 +323,40 @@ export default async function AiVisibilityPage() {
           ))}
         </div>
 
-        <div className="mt-8 rounded-xl border border-gray-100 bg-[#f8f9fb] p-5">
+        {(() => {
+          const ok = perModelBreakdown.filter(b => !b.error)
+          if (ok.length < 1) return null
+          const mean = Math.round(ok.reduce((a, b) => a + b.overallScore, 0) / ok.length)
+          return (
+            <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50/40 p-5">
+              <p className="text-xs text-[#4F6EF7] uppercase tracking-wider mb-2 font-medium">
+                So entsteht dein Aura Score aus den Modellen
+              </p>
+              <p className="text-sm text-[#0f172a] leading-relaxed mb-3">
+                Dein Aura Score ist der <span className="font-medium">Durchschnitt</span> der
+                Sichtbarkeits-Scores aller aktiven Modelle der letzten Analyse.
+              </p>
+              <div className="flex flex-wrap items-center gap-2 text-sm">
+                {ok.map((b, i) => (
+                  <span key={b.provider} className="inline-flex items-center gap-1.5">
+                    {i > 0 && <span className="text-[#94a3b8]">+</span>}
+                    <span className="px-2 py-1 rounded-md bg-white border border-gray-100 tabular-nums">
+                      <span className="text-[#64748b]">{b.label}:</span>{" "}
+                      <span className="font-semibold text-[#0f172a]">{b.overallScore}</span>
+                    </span>
+                  </span>
+                ))}
+                <span className="text-[#94a3b8]">÷ {ok.length}</span>
+                <span className="text-[#94a3b8]">=</span>
+                <span className="px-2.5 py-1 rounded-md bg-[#4F6EF7] text-white font-semibold tabular-nums">
+                  {mean}
+                </span>
+              </div>
+            </div>
+          )
+        })()}
+
+        <div className="mt-4 rounded-xl border border-gray-100 bg-[#f8f9fb] p-5">
           <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2 font-medium">Was das bedeutet</p>
           <p className="text-sm text-[#64748b] leading-relaxed">
             KI-Sichtbarkeit misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.

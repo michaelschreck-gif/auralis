@@ -6,6 +6,18 @@ import CompetitorsPanel, {
   type SelfRow,
 } from "@/components/CompetitorsPanel"
 import { canAnalyzeCompetitors, type PlanType } from "@/lib/auralis/runner"
+import {
+  computeScoreDerivationFromSignals,
+  type ScoreDerivation,
+} from "@/lib/auralis/master-scores"
+import type { VisibilityReport } from "@/lib/auralis/analyzer"
+
+/** Baut die Aura-Herleitung aus einem gespeicherten raw_data-Report. */
+function derivationFromRaw(raw: unknown): ScoreDerivation | null {
+  const r = raw as VisibilityReport | null
+  if (!r || !r.scoreBreakdown) return null
+  return computeScoreDerivationFromSignals("aura", r.scoreBreakdown, r.mentionRate ?? 0)
+}
 
 export const dynamic = "force-dynamic"
 
@@ -26,9 +38,11 @@ export default async function CompetitorsPage() {
   let selfScore: number | null = null
   let plan: PlanType = "free"
   let competitors: CompetitorRow[] = []
+  /** Herleitung (Aura) je Zeile: "self" oder competitor-id → ScoreDerivation. */
+  const derivations: Record<string, ScoreDerivation> = {}
 
   try {
-    const [profileResult, competitorsResult, latestReportResult] =
+    const [profileResult, competitorsResult, latestReportResult, competitorReportsResult] =
       await Promise.all([
         supabase
           .from("profiles")
@@ -42,11 +56,16 @@ export default async function CompetitorsPage() {
           .order("created_at", { ascending: true }),
         supabase
           .from("visibility_reports")
-          .select("visibility_score")
+          .select("visibility_score, raw_data")
           .eq("profile_id", user!.id)
           .order("created_at", { ascending: false })
           .limit(1)
           .maybeSingle(),
+        supabase
+          .from("competitor_reports")
+          .select("competitor_id, raw_data, created_at")
+          .eq("profile_id", user!.id)
+          .order("created_at", { ascending: false }),
       ])
 
     userName = profileResult.data?.full_name ?? ""
@@ -56,6 +75,22 @@ export default async function CompetitorsPage() {
     selfScore = rawScore !== null && rawScore !== undefined
       ? Math.round(Number(rawScore))
       : null
+
+    // Self-Herleitung aus dem letzten eigenen Report
+    const selfDeriv = derivationFromRaw(latestReportResult.data?.raw_data)
+    if (selfDeriv) derivations["self"] = selfDeriv
+
+    // Pro Wettbewerber die jüngste Report-Herleitung (erste = neueste je id)
+    const seen = new Set<string>()
+    for (const row of competitorReportsResult.data ?? []) {
+      const cid = row.competitor_id as string | null
+      if (!cid || seen.has(cid)) continue
+      const d = derivationFromRaw(row.raw_data)
+      if (d) {
+        derivations[cid] = d
+        seen.add(cid)
+      }
+    }
   } catch {
     // continue with empty defaults
   }
@@ -70,6 +105,7 @@ export default async function CompetitorsPage() {
         competitors={competitors}
         canAnalyze={canAnalyze}
         plan={plan}
+        derivations={derivations}
       />
     </DashboardShell>
   )

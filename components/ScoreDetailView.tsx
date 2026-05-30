@@ -1,5 +1,6 @@
 import Link from "next/link"
-import type { MasterScore, ScoreDefinition } from "@/lib/auralis/master-scores"
+import type { MasterScore, ScoreDefinition, ScoreDerivation } from "@/lib/auralis/master-scores"
+import ScoreDerivationTable from "./ScoreDerivation"
 
 const BAND_FILL = ["#FCEBEB", "#FAEEDA", "#E1F5EE", "#E6F1FB"]
 const BAND_BORDER = ["#F09595", "#FAC775", "#9FE1CB", "#B5D4F4"]
@@ -8,9 +9,12 @@ const BAND_TEXT = ["#791F1F", "#854F0B", "#0F6E56", "#0C447C"]
 export default function ScoreDetailView({
   score,
   definition,
+  derivation,
 }: {
   score: MasterScore
   definition: ScoreDefinition
+  /** Konkrete Herleitung aus den Messwerten der letzten Analyse. */
+  derivation?: ScoreDerivation | null
 }) {
   return (
     <div className="p-8 max-w-5xl mx-auto space-y-6">
@@ -76,10 +80,10 @@ export default function ScoreDetailView({
         </div>
       </section>
 
-      {/* Score Breakdown */}
+      {/* Score Breakdown — Gewichtungen */}
       <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
         <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
-          Score-Aufschlüsselung
+          Gewichtung der Signale
         </p>
         <div className="space-y-3">
           {definition.weights.map(w => (
@@ -94,9 +98,19 @@ export default function ScoreDetailView({
           ))}
         </div>
         <p className="text-xs text-[#94a3b8] mt-4">
-          Gewichtungen zeigen den Anteil jedes Sub-Faktors am {definition.title}.
+          Gewichtungen zeigen den Anteil jedes Signals am {definition.title}.
         </p>
       </section>
+
+      {/* So wird gerechnet — konkrete Messwerte dieses Users */}
+      {derivation && (
+        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
+            So wird dein {definition.title} gerechnet
+          </p>
+          <ScoreDerivationTable derivation={derivation} />
+        </section>
+      )}
 
       {/* Tips */}
       <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">

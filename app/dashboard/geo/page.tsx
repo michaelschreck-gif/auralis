@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
-import { computeMasterScores, SCORE_DEFINITIONS } from "@/lib/auralis/master-scores"
+import { computeMasterScores, computeScoreDerivation, SCORE_DEFINITIONS } from "@/lib/auralis/master-scores"
 import ScoreDetailView from "@/components/ScoreDetailView"
 import DashboardShell from "@/components/DashboardShell"
 
@@ -62,6 +62,7 @@ export default async function GeoScorePage() {
       <ScoreDetailView
         score={masters.geo}
         definition={SCORE_DEFINITIONS["geo"]}
+        derivation={computeScoreDerivation("geo", report)}
       />
     </DashboardShell>
   )

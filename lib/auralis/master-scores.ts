@@ -1,18 +1,21 @@
 /**
  * Master-Scores für das Dashboard-Cockpit.
  *
- * Aus dem klassischen VisibilityReport (overallScore + 4 Sub-Scores) leiten
+ * Aus dem klassischen VisibilityReport (overallScore + 4 Roh-Signale) leiten
  * wir die 4 sichtbaren Dimensionen ab, die im Cockpit angezeigt werden:
  *
- *   AURA SCORE            – gewichteter Master-Score
+ *   AURA SCORE            – gewichteter Master-Score über alle Signale
  *   GEO SCORE             – Sichtbarkeit in KI-Suchergebnissen
  *   THOUGHT LEADERSHIP    – Expertenwahrnehmung
  *   DIGITALE AUTORITÄT    – Online-Stärke / Erwähnungs-Häufigkeit
  *
- * Hinweis: Die Mappings sind heuristisch und beruhen auf den 4 Signalen, die
- * der Analyzer aktuell produziert (Presence / Position / Context / Topic-
- * Alignment). Falls später echte Signale für Earned Media, Backlinks etc.
- * dazukommen, sollte `digitalAuthority` neu modelliert werden.
+ * WICHTIG (Transparenz): Jede Dimension ist ein gewichteter Mix derselben
+ * Roh-Signale, die der Analyzer pro Analyse liefert (Presence / Position /
+ * Context / Topic-Alignment / Mention-Häufigkeit). Die Zusammensetzung ist in
+ * `DIMENSION_COMPOSITION` zentral definiert und wird sowohl für die Berechnung
+ * (`computeMasterScores`) als auch für die Erklärung (`computeScoreDerivation`,
+ * `SCORE_DEFINITIONS`) genutzt — Anzeige und Rechnung können also nie
+ * auseinanderdriften.
  */
 
 import type { VisibilityReport } from "./analyzer"
@@ -58,7 +61,7 @@ const DEFAULT_BANDS: Band[] = [
 ]
 
 const AURA_BANDS: Band[] = [
-  { label: "Schwache Sichtbarkeit",  min: 0,  max: 25  },
+  { label: "Schwache Sichtbarkeit",   min: 0,  max: 25  },
   { label: "Beginnende Sichtbarkeit", min: 26, max: 50  },
   { label: "Starke Sichtbarkeit",     min: 51, max: 75  },
   { label: "Sehr starke Sichtbarkeit", min: 76, max: 100 },
@@ -84,41 +87,117 @@ function pickBand(bands: Band[], value: number): { band: Band; index: number } {
   return { band: bands[safe], index: safe }
 }
 
+// ─── Roh-Signale & Zusammensetzung (EINE Wahrheitsquelle) ─────────────────────
+
+export type RawFactorKey = "presence" | "position" | "context" | "topic" | "mention"
+
+const COLOR_BLUE   = "#378ADD"
+const COLOR_TEAL   = "#1D9E75"
+const COLOR_AMBER  = "#EF9F27"
+const COLOR_CORAL  = "#D85A30"
+const COLOR_PURPLE = "#7F77DD"
+
+export const RAW_FACTOR_META: Record<
+  RawFactorKey,
+  { label: string; color: string; description: string }
+> = {
+  presence: {
+    label: "Erwähnungsrate",
+    color: COLOR_BLUE,
+    description:
+      "Anteil der KI-Abfragen (gewichtet), in denen du überhaupt namentlich genannt wirst. Pro Analyse laufen 7 Abfragen mit unterschiedlicher Gewichtung.",
+  },
+  position: {
+    label: "Positionsqualität",
+    color: COLOR_TEAL,
+    description:
+      "Wie weit oben du in Aufzählungen der KI auftauchst. Platz 1 = 100, jeder weitere Listenplatz zieht ca. 15 Punkte ab.",
+  },
+  context: {
+    label: "Tonalität",
+    color: COLOR_AMBER,
+    description:
+      "Wie positiv bzw. autoritativ die KI über dich spricht. Positiv = 100, neutral = 60, negativ = 20.",
+  },
+  topic: {
+    label: "Themenabdeckung",
+    color: COLOR_CORAL,
+    description:
+      "Wie gut die Themen, mit denen die KI dich verknüpft, zu deinen überwachten Zielthemen passen.",
+  },
+  mention: {
+    label: "Erwähnungs-Häufigkeit",
+    color: COLOR_PURPLE,
+    description:
+      "Prozentsatz der Abfragen, in denen du genannt wirst (ungewichtet) — ein Maß für deine schiere Präsenz.",
+  },
+}
+
+type FactorWeight = { factor: RawFactorKey; weight: number }
+
+/**
+ * Zusammensetzung jeder Dimension aus den Roh-Signalen.
+ * Die Aura-Gewichte entsprechen exakt der Formel von
+ * `buildVisibilityReport.overallScore` — dadurch ist der hier berechnete
+ * Aura-Wert identisch mit `report.overallScore`.
+ */
+export const DIMENSION_COMPOSITION: Record<ScoreKey, FactorWeight[]> = {
+  "aura": [
+    { factor: "presence", weight: 0.35 },
+    { factor: "position", weight: 0.25 },
+    { factor: "context",  weight: 0.25 },
+    { factor: "topic",    weight: 0.15 },
+  ],
+  "geo": [
+    { factor: "presence", weight: 0.40 },
+    { factor: "position", weight: 0.30 },
+    { factor: "context",  weight: 0.20 },
+    { factor: "topic",    weight: 0.10 },
+  ],
+  "thought-leadership": [
+    { factor: "topic",    weight: 0.35 },
+    { factor: "context",  weight: 0.25 },
+    { factor: "presence", weight: 0.25 },
+    { factor: "position", weight: 0.15 },
+  ],
+  "digital-authority": [
+    { factor: "presence", weight: 0.40 },
+    { factor: "position", weight: 0.35 },
+    { factor: "mention",  weight: 0.25 },
+  ],
+}
+
+function rawFactorValue(key: RawFactorKey, report: VisibilityReport): number {
+  const b = report.scoreBreakdown
+  switch (key) {
+    case "presence": return b.presenceScore
+    case "position": return b.positionScore
+    case "context":  return b.contextScore
+    case "topic":    return b.topicAlignmentScore
+    case "mention":  return report.mentionRate
+  }
+}
+
+function computeDimensionValue(key: ScoreKey, report: VisibilityReport): number {
+  const sum = DIMENSION_COMPOSITION[key].reduce(
+    (acc, { factor, weight }) => acc + rawFactorValue(factor, report) * weight,
+    0,
+  )
+  return clamp(Math.round(sum))
+}
+
 // ─── Master-Scores aus VisibilityReport ───────────────────────────────────────
 
 export function computeMasterScores(report: VisibilityReport): MasterScores {
-  const { overallScore, scoreBreakdown, mentionRate } = report
-  const { presenceScore, positionScore, contextScore, topicAlignmentScore } = scoreBreakdown
+  const geoValue       = computeDimensionValue("geo", report)
+  const tlValue        = computeDimensionValue("thought-leadership", report)
+  const authorityValue = computeDimensionValue("digital-authority", report)
 
-  // GEO Score: gewichteter Mix mit Fokus auf Erwähnungs-Frequenz + Position
-  const geoValue = Math.round(
-    presenceScore       * 0.40 +
-    positionScore       * 0.30 +
-    contextScore        * 0.20 +
-    topicAlignmentScore * 0.10,
-  )
-
-  // Thought Leadership: Fokus auf Kontextqualität + Themenpassung
-  const tlValue = Math.round(
-    topicAlignmentScore * 0.35 +
-    contextScore        * 0.25 +
-    presenceScore       * 0.25 +
-    positionScore       * 0.15,
-  )
-
-  // Digitale Autorität: Fokus auf Erwähnungsrate + Positions-Stärke
-  const authorityValue = Math.round(
-    presenceScore  * 0.40 +
-    positionScore  * 0.35 +
-    (mentionRate)  * 0.25,
-  )
-
-  // Aura Score: gewichteter Mix der oberen 3 (overallScore ist als
-  // Fallback gleichwertig, aber wir berechnen explizit damit alles konsistent ist).
-  const auraValue = Math.round(geoValue * 0.4 + tlValue * 0.4 + authorityValue * 0.2)
-  // Falls overallScore weit weg vom berechneten Wert ist (Drift), bevorzugen wir
-  // overallScore wenn definiert – das ist die kanonische Auralis-Metrik.
-  const finalAura = clamp(overallScore || auraValue)
+  // Aura: gewichteter Mix der 4 Roh-Signale (= kanonischer overallScore).
+  // overallScore wird bevorzugt; der berechnete Composite ist Fallback und
+  // stimmt mit overallScore überein (identische Formel).
+  const auraComposite = computeDimensionValue("aura", report)
+  const finalAura = clamp(report.overallScore || auraComposite)
 
   const aura: MasterScore = build("aura", "Aura Score™", "Aura", finalAura, AURA_BANDS)
   const geo:  MasterScore = build("geo",  "GEO Score", "GEO", clamp(geoValue), DEFAULT_BANDS)
@@ -140,6 +219,80 @@ export function computeMasterScores(report: VisibilityReport): MasterScores {
   return { aura, geo, thoughtLeadership, digitalAuthority, strongest, biggestOpportunity }
 }
 
+// ─── Score-Herleitung (konkrete Eingangswerte pro User) ───────────────────────
+
+export type ScoreFactor = {
+  key: RawFactorKey
+  label: string
+  description: string
+  /** Roh-Eingangswert dieses Signals aus der letzten Analyse (0–100). */
+  rawValue: number
+  /** Gewicht dieses Signals in der Dimension (0–1). */
+  weight: number
+  /** Beitrag zum Score = rawValue × weight (gerundet). */
+  contribution: number
+  color: string
+}
+
+export type ScoreDerivation = {
+  key: ScoreKey
+  factors: ScoreFactor[]
+  /** Summe der Beiträge = der Score (≈ angezeigter Wert). */
+  total: number
+}
+
+/**
+ * Liefert die vollständige Herleitung eines Scores aus den echten
+ * Eingangswerten des Reports: pro Signal Rohwert, Gewicht und Beitrag.
+ * Die Summe der Beiträge ergibt den angezeigten Score.
+ */
+export function computeScoreDerivation(
+  key: ScoreKey,
+  report: VisibilityReport,
+): ScoreDerivation {
+  return computeScoreDerivationFromSignals(
+    key,
+    report.scoreBreakdown,
+    report.mentionRate,
+  )
+}
+
+/**
+ * Wie `computeScoreDerivation`, aber direkt aus den Roh-Signalen — nützlich für
+ * per-Modell- oder per-Wettbewerber-Aufschlüsselungen (PerModelBreakdown), wo
+ * kein vollständiger VisibilityReport vorliegt.
+ */
+export function computeScoreDerivationFromSignals(
+  key: ScoreKey,
+  scoreBreakdown: VisibilityReport["scoreBreakdown"],
+  mentionRate: number,
+): ScoreDerivation {
+  const lookup = (factor: RawFactorKey): number => {
+    switch (factor) {
+      case "presence": return scoreBreakdown.presenceScore
+      case "position": return scoreBreakdown.positionScore
+      case "context":  return scoreBreakdown.contextScore
+      case "topic":    return scoreBreakdown.topicAlignmentScore
+      case "mention":  return mentionRate
+    }
+  }
+  const factors: ScoreFactor[] = DIMENSION_COMPOSITION[key].map(({ factor, weight }) => {
+    const rawValue = clamp(Math.round(lookup(factor)))
+    const meta = RAW_FACTOR_META[factor]
+    return {
+      key: factor,
+      label: meta.label,
+      description: meta.description,
+      rawValue,
+      weight,
+      contribution: Math.round(rawValue * weight),
+      color: meta.color,
+    }
+  })
+  const total = clamp(factors.reduce((acc, f) => acc + f.contribution, 0))
+  return { key, factors, total }
+}
+
 function build(
   key: ScoreKey,
   label: string,
@@ -155,7 +308,7 @@ function clamp(n: number): number {
   return Math.max(0, Math.min(100, Math.round(n)))
 }
 
-// ─── Statische Definitionen für ScoreExplainer ────────────────────────────────
+// ─── Statische Definitionen für ScoreExplainer / ScoreDetailView ──────────────
 
 export type ScoreDefinition = {
   key: ScoreKey
@@ -167,23 +320,22 @@ export type ScoreDefinition = {
   tips: string[]
 }
 
-const COLOR_BLUE   = "#378ADD"
-const COLOR_TEAL   = "#1D9E75"
-const COLOR_AMBER  = "#EF9F27"
-const COLOR_CORAL  = "#D85A30"
-const COLOR_PURPLE = "#7F77DD"
+/** Erzeugt die Gewichts-Liste einer Dimension direkt aus der Komposition. */
+function weightsFor(key: ScoreKey): ScoreDefinition["weights"] {
+  return DIMENSION_COMPOSITION[key].map(({ factor, weight }) => ({
+    label: RAW_FACTOR_META[factor].label,
+    value: Math.round(weight * 100),
+    color: RAW_FACTOR_META[factor].color,
+  }))
+}
 
 export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
   "aura": {
     key: "aura",
     title: "Aura Score™",
     subtitle: "Die Master-Metrik deiner KI-Sichtbarkeit",
-    what: "Der Aura Score ist eine gewichtete Zusammenfassung von GEO Score (40%), Thought Leadership (40%) und Digitaler Autorität (20%). Er zeigt auf einen Blick, wie gut KI-Systeme dich insgesamt wahrnehmen.",
-    weights: [
-      { label: "GEO Score",          value: 40, color: COLOR_BLUE   },
-      { label: "Thought Leadership", value: 40, color: COLOR_PURPLE },
-      { label: "Digitale Autorität", value: 20, color: COLOR_TEAL   },
-    ],
+    what: "Der Aura Score ist der Gesamtwert über alle vier Roh-Signale jeder Analyse: Erwähnungsrate (35%), Positionsqualität (25%), Tonalität (25%) und Themenabdeckung (15%). Er fasst zusammen, wie gut KI-Systeme dich insgesamt wahrnehmen. GEO Score, Thought Leadership und Digitale Autorität betonen jeweils andere dieser Signale.",
+    weights: weightsFor("aura"),
     bands: AURA_BANDS,
     tips: [
       "Veröffentliche regelmäßig zu deinen Zielthemen.",
@@ -196,12 +348,7 @@ export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
     title: "GEO Score",
     subtitle: "Generative Engine Optimization – sichtbar in KI-Suche",
     what: "Wie häufig und prominent KI-Systeme (ChatGPT, Claude, Perplexity) dich bei thematischen Anfragen erwähnen. Setzt sich zusammen aus Erwähnungsrate, Position in Listen, Tonalität der Erwähnung und Themenabdeckung.",
-    weights: [
-      { label: "Erwähnungsrate",  value: 40, color: COLOR_BLUE  },
-      { label: "Positionsqualität", value: 30, color: COLOR_TEAL  },
-      { label: "Tonalität",       value: 20, color: COLOR_AMBER },
-      { label: "Themenabdeckung", value: 10, color: COLOR_CORAL },
-    ],
+    weights: weightsFor("geo"),
     bands: DEFAULT_BANDS,
     tips: [
       "Schreibe Long-Form-Content zu deinen Kernthemen (Whitepaper, Studien, Essays).",
@@ -213,13 +360,8 @@ export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
     key: "thought-leadership",
     title: "Thought Leadership",
     subtitle: "Vordenker- & Expertenwahrnehmung",
-    what: "Wie stark KI-Systeme dich als Vordenker und Experte in deinen Zielthemen einordnen. Misst Themenführerschaft, Narrativqualität, Zitierfrequenz und Expertensignale.",
-    weights: [
-      { label: "Themenführerschaft", value: 35, color: COLOR_BLUE   },
-      { label: "Narrativqualität",   value: 25, color: COLOR_TEAL   },
-      { label: "Zitierfrequenz",     value: 25, color: COLOR_AMBER  },
-      { label: "Expertensignale",    value: 15, color: COLOR_PURPLE },
-    ],
+    what: "Wie stark KI-Systeme dich als Vordenker und Experte einordnen. Betont dieselben Roh-Signale wie der GEO Score, gewichtet aber Themenabdeckung und Tonalität höher: Themenabdeckung (35%), Tonalität (25%), Erwähnungsrate (25%) und Positionsqualität (15%).",
+    weights: weightsFor("thought-leadership"),
     bands: TL_BANDS,
     tips: [
       "Publiziere häufiger über deine Zielthemen mit klarem, eigenständigem Standpunkt.",
@@ -231,12 +373,8 @@ export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
     key: "digital-authority",
     title: "Digitale Autorität",
     subtitle: "Stärke deiner Online-Präsenz",
-    what: "Wie autoritativ deine digitale Spur insgesamt ist – über Eigenkanäle, Drittnennungen und Backlink-Profile hinweg. Eine starke Autorität verstärkt deine Sichtbarkeit in KI-Antworten.",
-    weights: [
-      { label: "Owned Content",       value: 40, color: COLOR_BLUE  },
-      { label: "Earned Media",        value: 35, color: COLOR_TEAL  },
-      { label: "Authoritative Links", value: 25, color: COLOR_AMBER },
-    ],
+    what: "Wie autoritativ deine digitale Spur insgesamt wirkt. Betont die schiere Präsenz: Erwähnungsrate (40%), Positionsqualität (35%) und Erwähnungs-Häufigkeit (25%). Eine starke Autorität verstärkt deine Sichtbarkeit in KI-Antworten.",
+    weights: weightsFor("digital-authority"),
     bands: AUTHORITY_BANDS,
     tips: [
       "Halte deine Eigenkanäle (Website, LinkedIn) aktuell und konsistent.",
