@@ -342,6 +342,22 @@ export type Database = {
           status?: string
           title?: string
         }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recommendations_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_reports"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       visibility_reports: {
         Row: {
