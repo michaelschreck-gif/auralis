@@ -299,6 +299,50 @@ export type Database = {
           },
         ]
       }
+      recommendations: {
+        Row: {
+          category: string
+          created_at: string
+          description: string
+          done_at: string | null
+          id: string
+          impact: string
+          profile_id: string
+          report_id: string | null
+          score_at_creation: number | null
+          score_at_done: number | null
+          status: string
+          title: string
+        }
+        Insert: {
+          category?: string
+          created_at?: string
+          description: string
+          done_at?: string | null
+          id?: string
+          impact?: string
+          profile_id: string
+          report_id?: string | null
+          score_at_creation?: number | null
+          score_at_done?: number | null
+          status?: string
+          title: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string
+          done_at?: string | null
+          id?: string
+          impact?: string
+          profile_id?: string
+          report_id?: string | null
+          score_at_creation?: number | null
+          score_at_done?: number | null
+          status?: string
+          title?: string
+        }
+      }
       visibility_reports: {
         Row: {
           created_at: string

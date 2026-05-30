@@ -12,6 +12,7 @@ const NAV = [
   { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
   { href: "/dashboard/topics",             label: "Themen",             icon: "topics" },
   { href: "/dashboard/sources",            label: "Quellen",            icon: "sources" },
+  { href: "/dashboard/responses",          label: "KI-Antworten",       icon: "responses" },
   { href: "/dashboard/competitors",        label: "Wettbewerber",       icon: "competitors" },
   { href: "/dashboard/recommendations",    label: "Empfehlungen",       icon: "recommendations" },
   { href: "/dashboard/ask",                label: "Frag dein Profil",   icon: "ask" },
@@ -85,6 +86,12 @@ const Icons: Record<IconKey, ReactNode> = {
       <circle cx="5.5" cy="6.5" r="0.7" fill="currentColor"/>
       <circle cx="7.5" cy="6.5" r="0.7" fill="currentColor"/>
       <circle cx="9.5" cy="6.5" r="0.7" fill="currentColor"/>
+    </svg>
+  ),
+  responses: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M3 2.5h9a1 1 0 011 1V10a1 1 0 01-1 1H6l-3 2.5V11a1 1 0 01-1-1V3.5a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M5 5.5h5M5 7.8h3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
   settings: (

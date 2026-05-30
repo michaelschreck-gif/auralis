@@ -11,6 +11,15 @@ import {
   type ScoreDerivation,
 } from "@/lib/auralis/master-scores"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
+import { computeGapAnalysis, type GapAnalysis } from "@/lib/auralis/gap-analysis"
+import GapAnalysisSection from "@/components/GapAnalysisSection"
+
+/** Castet gespeicherte raw_data zu einem VisibilityReport (oder null). */
+function asReport(raw: unknown): VisibilityReport | null {
+  const r = raw as VisibilityReport | null
+  if (!r || !Array.isArray(r.queryResults)) return null
+  return r
+}
 
 /** Baut die Aura-Herleitung aus einem gespeicherten raw_data-Report. */
 function derivationFromRaw(raw: unknown): ScoreDerivation | null {
@@ -40,6 +49,7 @@ export default async function CompetitorsPage() {
   let competitors: CompetitorRow[] = []
   /** Herleitung (Aura) je Zeile: "self" oder competitor-id → ScoreDerivation. */
   const derivations: Record<string, ScoreDerivation> = {}
+  let gapAnalyses: GapAnalysis[] = []
 
   try {
     const [profileResult, competitorsResult, latestReportResult, competitorReportsResult] =
@@ -77,19 +87,33 @@ export default async function CompetitorsPage() {
       : null
 
     // Self-Herleitung aus dem letzten eigenen Report
-    const selfDeriv = derivationFromRaw(latestReportResult.data?.raw_data)
+    const selfRaw = latestReportResult.data?.raw_data
+    const selfDeriv = derivationFromRaw(selfRaw)
     if (selfDeriv) derivations["self"] = selfDeriv
+    const selfReport = asReport(selfRaw)
 
-    // Pro Wettbewerber die jüngste Report-Herleitung (erste = neueste je id)
+    // Pro Wettbewerber die jüngste Report-Herleitung + Roh-Report (erste = neueste je id)
     const seen = new Set<string>()
+    const latestCompetitorReport = new Map<string, VisibilityReport>()
     for (const row of competitorReportsResult.data ?? []) {
       const cid = row.competitor_id as string | null
       if (!cid || seen.has(cid)) continue
       const d = derivationFromRaw(row.raw_data)
-      if (d) {
-        derivations[cid] = d
-        seen.add(cid)
-      }
+      if (d) derivations[cid] = d
+      const rep = asReport(row.raw_data)
+      if (rep) latestCompetitorReport.set(cid, rep)
+      seen.add(cid)
+    }
+
+    // Lückenanalyse: eigener Report vs. jeweils jüngster Wettbewerber-Report
+    if (selfReport) {
+      gapAnalyses = competitors
+        .map(c => {
+          const rep = latestCompetitorReport.get(c.id)
+          if (!rep) return null
+          return computeGapAnalysis(selfReport, rep, c.name)
+        })
+        .filter((g): g is GapAnalysis => g !== null)
     }
   } catch {
     // continue with empty defaults
@@ -107,6 +131,11 @@ export default async function CompetitorsPage() {
         plan={plan}
         derivations={derivations}
       />
+      {gapAnalyses.length > 0 && (
+        <div className="px-8 pb-8 max-w-4xl mx-auto">
+          <GapAnalysisSection analyses={gapAnalyses} />
+        </div>
+      )}
     </DashboardShell>
   )
 }
