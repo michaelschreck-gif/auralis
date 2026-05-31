@@ -13,6 +13,7 @@ import {
   extractMentionSignal,
   sanitizeTargetName,
   buildVisibilityReport,
+  validateReportIntegrity,
 } from "./analyzer.ts"
 
 // ─── Echte Fixtures aus der DB (gekürzt) ──────────────────────────────────────
@@ -132,4 +133,45 @@ test("buildVisibilityReport: voller Treffer auf Platz 1 → hoher, aber plausibl
   const report = buildVisibilityReport("Maud Schock", ["Personal Branding"], qr)
   assert.equal(report.mentionRate, 100)
   assert.ok(report.overallScore > 0 && report.overallScore <= 100)
+})
+
+// ─── Laufzeit-Invariante (validateReportIntegrity) ────────────────────────────
+
+test("Integrität: sauberer Report mit echtem Treffer → ok", () => {
+  const qr = [extractMentionSignal(MENTIONS_MAUD, "Maud Schock", "q1", 1.0, "p", "expert_discovery")]
+  const report = buildVisibilityReport("Maud Schock", ["Personal Branding"], qr)
+  const res = validateReportIntegrity(report, "Maud Schock")
+  assert.equal(res.ok, true, JSON.stringify(res.violations))
+})
+
+test("Integrität: der MAUD-BUG würde gefangen (100/100 ohne Namensbeleg)", () => {
+  // Konstruiere genau den Bug: alle Queries 'mentioned=true' auf Platz 1,
+  // obwohl der Name nirgends im Text steht → künstliche 100/100.
+  const fakeHits: ReturnType<typeof extractMentionSignal>[] = [1, 2, 3].map(i => ({
+    queryId: `q${i}`,
+    queryType: "expert_discovery",
+    prompt: "p",
+    rawResponse: "Ben Schulz ist führend im Personal Branding.", // KEIN „Maud Schock"
+    weight: 1 / 3,
+    signal: {
+      mentioned: true,
+      position: 1,
+      contextSnippet: "Ben Schulz ist führend",
+      associatedTopics: ["Personal Brand"],
+      sentiment: "positive",
+      citedSources: [],
+    },
+  }))
+  const report = buildVisibilityReport("Maud Schock", ["Personal Branding"], fakeHits)
+  const res = validateReportIntegrity(report, "Maud Schock — Personal Branding")
+  assert.equal(res.ok, false)
+  assert.ok(res.violations.some(v => v.code === "MENTION_WITHOUT_NAME"))
+  assert.ok(res.violations.some(v => v.code === "PERFECT_SCORE_NO_EVIDENCE"))
+})
+
+test("Integrität: leerer Report (keine Treffer) ist konsistent → ok", () => {
+  const qr = [extractMentionSignal(BEN_SCHULZ_ANSWER, "Maud Schock", "q1", 1.0, "p", "expert_discovery")]
+  const report = buildVisibilityReport("Maud Schock", ["Personal Branding"], qr)
+  const res = validateReportIntegrity(report, "Maud Schock")
+  assert.equal(res.ok, true, JSON.stringify(res.violations))
 })

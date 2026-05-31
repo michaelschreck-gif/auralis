@@ -19,6 +19,7 @@ import {
   extractMentionSignal,
   buildVisibilityReport,
   sanitizeTargetName,
+  validateReportIntegrity,
   type QueryResult,
   type VisibilityReport,
 } from "./analyzer"
@@ -298,6 +299,16 @@ export async function runAnalysisForSchedule(
   // 7. Sentiment over all signals from all providers
   const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
 
+  // 7b. Laufzeit-Invariante: Plausibilität prüfen, bevor gespeichert wird.
+  //     Nicht-blockierend — Verstöße werden geloggt (sichtbar in Vercel-Logs).
+  const integrity = validateReportIntegrity(aggregateReport, targetName)
+  if (!integrity.ok) {
+    console.error(
+      `[runner] INTEGRITY-WARNUNG für schedule ${schedule.id} (${targetName}):`,
+      JSON.stringify(integrity.violations),
+    )
+  }
+
   // 8. Persist the consolidated report
   const finalRawData: MultiModelVisibilityReport = {
     ...aggregateReport,
@@ -475,6 +486,15 @@ export async function runCompetitorAnalysis(
     allQueryResults,
   )
   const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
+
+  // Laufzeit-Invariante (nicht-blockierend) auch für Wettbewerber-Reports.
+  const integrity = validateReportIntegrity(aggregateReport, competitor.name)
+  if (!integrity.ok) {
+    console.error(
+      `[runner] INTEGRITY-WARNUNG für competitor ${competitor.id} (${competitor.name}):`,
+      JSON.stringify(integrity.violations),
+    )
+  }
 
   const finalRawData: MultiModelVisibilityReport = {
     ...aggregateReport,
