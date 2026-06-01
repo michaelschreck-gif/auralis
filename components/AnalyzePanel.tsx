@@ -190,14 +190,18 @@ export default function AnalyzePanel({
       </section>
 
       {/* History Chart */}
-      {history.length > 1 && (
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
-            Score-Verlauf (30 Tage)
-          </p>
+      <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
+          Score-Verlauf (30 Tage)
+        </p>
+        {history.length > 1 ? (
           <HistoryChart points={history} />
-        </section>
-      )}
+        ) : (
+          <p className="text-sm text-[#64748b]">
+            Sobald mindestens zwei Analysen vorliegen, zeigt sich hier dein Score-Verlauf der letzten 30 Tage. Starte oben eine weitere Analyse, um den Trend sichtbar zu machen.
+          </p>
+        )}
+      </section>
     </div>
   )
 }

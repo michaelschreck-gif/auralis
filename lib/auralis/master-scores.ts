@@ -60,11 +60,14 @@ const DEFAULT_BANDS: Band[] = [
   { label: "Dominant",       min: 76, max: 100 },
 ]
 
+// Aura-Bänder bewusst gleich benannt wie DEFAULT_BANDS (GEO), damit dieselbe
+// Zahl (z.B. 58) nicht oben „Starke Sichtbarkeit" und beim Sub-Score „Etabliert"
+// heißt — das verwirrte Nutzer. Ein Wert = ein Label, überall.
 const AURA_BANDS: Band[] = [
-  { label: "Schwache Sichtbarkeit",   min: 0,  max: 25  },
-  { label: "Beginnende Sichtbarkeit", min: 26, max: 50  },
-  { label: "Starke Sichtbarkeit",     min: 51, max: 75  },
-  { label: "Sehr starke Sichtbarkeit", min: 76, max: 100 },
+  { label: "Nicht sichtbar", min: 0,  max: 25  },
+  { label: "Aufbauend",      min: 26, max: 50  },
+  { label: "Etabliert",      min: 51, max: 75  },
+  { label: "Dominant",       min: 76, max: 100 },
 ]
 
 const TL_BANDS: Band[] = [

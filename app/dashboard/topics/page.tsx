@@ -21,7 +21,7 @@ function Sparkline({ scores }: { scores: number[] }) {
   if (scores.length < 2) {
     return (
       <div className="h-8 flex items-center">
-        <span className="text-xs text-[#94a3b8]">Kein Verlauf</span>
+        <span className="text-xs text-[#94a3b8]">Verlauf ab der 2. Analyse</span>
       </div>
     )
   }

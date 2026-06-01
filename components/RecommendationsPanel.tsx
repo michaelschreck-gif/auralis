@@ -99,10 +99,21 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
       )}
 
       {hasReport && open.length === 0 && done.length === 0 && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
-          <p className="text-sm text-[#64748b]">
-            Noch keine Empfehlungen. Klicke auf „Empfehlungen generieren", damit Claude konkrete Maßnahmen aus deiner letzten Analyse ableitet.
+        <div className="rounded-2xl border border-blue-100 bg-blue-50/40 p-8 text-center">
+          <p className="text-base font-medium text-[#0f172a]">
+            Lass dir konkrete Maßnahmen vorschlagen
           </p>
+          <p className="text-sm text-[#64748b] mt-2 mb-5 max-w-md mx-auto leading-relaxed">
+            Claude analysiert deine schwächsten Signale aus der letzten Sichtbarkeits-Analyse und leitet daraus 5 konkrete Schritte ab, mit denen du deinen Score verbesserst.
+          </p>
+          <button
+            type="button"
+            onClick={() => run(generateAndSaveRecommendations)}
+            disabled={pending}
+            className="inline-block px-5 py-2.5 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-40"
+          >
+            {pending ? "Generiere…" : "Empfehlungen erstellen →"}
+          </button>
         </div>
       )}
 
