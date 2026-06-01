@@ -27,6 +27,16 @@ export const AURA_THEME = {
   light: "#CECBF6",
 }
 
+/**
+ * SEO-Dimension (klassische Google-Suche). Bewusst eine eigene Farbfamilie
+ * (Bernstein/Orange), damit „GEO = KI-Suche" und „SEO = Google-Suche" optisch
+ * klar getrennt sind. SEO ist KEIN ScoreKey (eigene Pipeline, eigene Tabelle),
+ * deshalb als Standalone-Theme statt im DIMENSION_THEME-Record.
+ */
+export const SEO_THEME: DimensionTheme = {
+  bg: "#FBF0DE", track: "#F6D79B", accent: "#E08A1E", text: "#5C3A06", label: "#8A5A0E",
+}
+
 export const DIMENSION_THEME: Record<ScoreKey, DimensionTheme> = {
   "aura": {
     bg: "#EEEDFE", track: "#CECBF6", accent: "#7F77DD", text: "#26215C", label: "#534AB7",

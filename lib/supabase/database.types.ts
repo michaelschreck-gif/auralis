@@ -16,33 +16,33 @@ export type Database = {
     Tables: {
       api_keys: {
         Row: {
+          created_at: string
           id: string
-          profile_id: string
-          name: string
           key_hash: string
           key_prefix: string
-          created_at: string
           last_used_at: string | null
+          name: string
+          profile_id: string
           revoked_at: string | null
         }
         Insert: {
+          created_at?: string
           id?: string
-          profile_id: string
-          name: string
           key_hash: string
           key_prefix: string
-          created_at?: string
           last_used_at?: string | null
+          name: string
+          profile_id: string
           revoked_at?: string | null
         }
         Update: {
+          created_at?: string
           id?: string
-          profile_id?: string
-          name?: string
           key_hash?: string
           key_prefix?: string
-          created_at?: string
           last_used_at?: string | null
+          name?: string
+          profile_id?: string
           revoked_at?: string | null
         }
         Relationships: [
@@ -55,39 +55,72 @@ export type Database = {
           },
         ]
       }
-      competitor_reports: {
+      audit_log: {
         Row: {
-          id: string
-          competitor_id: string
-          profile_id: string
-          trigger: Database["public"]["Enums"]["trigger_type"]
-          visibility_score: number | null
-          sentiment: Database["public"]["Enums"]["sentiment_type"] | null
-          summary: string | null
-          raw_data: Json | null
+          action: string
+          actor_email: string | null
+          actor_id: string | null
           created_at: string
+          id: string
+          payload: Json | null
+          target_id: string | null
+          target_type: string | null
         }
         Insert: {
-          id?: string
-          competitor_id: string
-          profile_id: string
-          trigger?: Database["public"]["Enums"]["trigger_type"]
-          visibility_score?: number | null
-          sentiment?: Database["public"]["Enums"]["sentiment_type"] | null
-          summary?: string | null
-          raw_data?: Json | null
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
           created_at?: string
+          id?: string
+          payload?: Json | null
+          target_id?: string | null
+          target_type?: string | null
         }
         Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
           id?: string
-          competitor_id?: string
-          profile_id?: string
-          trigger?: Database["public"]["Enums"]["trigger_type"]
-          visibility_score?: number | null
+          payload?: Json | null
+          target_id?: string | null
+          target_type?: string | null
+        }
+        Relationships: []
+      }
+      competitor_reports: {
+        Row: {
+          competitor_id: string
+          created_at: string
+          id: string
+          profile_id: string
+          raw_data: Json | null
+          sentiment: Database["public"]["Enums"]["sentiment_type"] | null
+          summary: string | null
+          trigger: Database["public"]["Enums"]["trigger_type"]
+          visibility_score: number | null
+        }
+        Insert: {
+          competitor_id: string
+          created_at?: string
+          id?: string
+          profile_id: string
+          raw_data?: Json | null
           sentiment?: Database["public"]["Enums"]["sentiment_type"] | null
           summary?: string | null
-          raw_data?: Json | null
+          trigger?: Database["public"]["Enums"]["trigger_type"]
+          visibility_score?: number | null
+        }
+        Update: {
+          competitor_id?: string
           created_at?: string
+          id?: string
+          profile_id?: string
+          raw_data?: Json | null
+          sentiment?: Database["public"]["Enums"]["sentiment_type"] | null
+          summary?: string | null
+          trigger?: Database["public"]["Enums"]["trigger_type"]
+          visibility_score?: number | null
         }
         Relationships: [
           {
@@ -200,42 +233,51 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          banned_at: string | null
           created_at: string
           email: string
           full_name: string | null
           id: string
+          is_admin: boolean
           language: Database["public"]["Enums"]["language_type"]
           plan: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled: boolean
           public_slug: string | null
           timezone: string
           updated_at: string
+          website_url: string | null
         }
         Insert: {
           avatar_url?: string | null
+          banned_at?: string | null
           created_at?: string
           email: string
           full_name?: string | null
           id: string
+          is_admin?: boolean
           language?: Database["public"]["Enums"]["language_type"]
           plan?: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled?: boolean
           public_slug?: string | null
           timezone?: string
           updated_at?: string
+          website_url?: string | null
         }
         Update: {
           avatar_url?: string | null
+          banned_at?: string | null
           created_at?: string
           email?: string
           full_name?: string | null
           id?: string
+          is_admin?: boolean
           language?: Database["public"]["Enums"]["language_type"]
           plan?: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled?: boolean
           public_slug?: string | null
           timezone?: string
           updated_at?: string
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -355,6 +397,54 @@ export type Database = {
             columns: ["report_id"]
             isOneToOne: false
             referencedRelation: "visibility_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      seo_reports: {
+        Row: {
+          created_at: string
+          id: string
+          profile_id: string
+          raw_data: Json | null
+          schedule_id: string | null
+          seo_score: number | null
+          source: string
+          trigger: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          profile_id: string
+          raw_data?: Json | null
+          schedule_id?: string | null
+          seo_score?: number | null
+          source?: string
+          trigger?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          profile_id?: string
+          raw_data?: Json | null
+          schedule_id?: string | null
+          seo_score?: number | null
+          source?: string
+          trigger?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "seo_reports_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "seo_reports_schedule_id_fkey"
+            columns: ["schedule_id"]
+            isOneToOne: false
+            referencedRelation: "monitoring_schedules"
             referencedColumns: ["id"]
           },
         ]

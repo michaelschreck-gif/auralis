@@ -10,19 +10,23 @@ import {
   type MasterScore,
   type ScoreKey,
 } from "@/lib/auralis/master-scores"
-import { AURA_THEME, DIMENSION_THEME } from "@/lib/auralis/theme"
+import { AURA_THEME, DIMENSION_THEME, SEO_THEME } from "@/lib/auralis/theme"
+import type { SeoScore } from "@/lib/auralis/seo-score"
 import ScoreExplainer from "./ScoreExplainer"
 
 export default function Cockpit({
   userName,
   report,
   latestReportId,
+  seoScore = null,
 }: {
   userName: string
   /** Latest visibility report from raw_data jsonb, or null if user has none yet. */
   report: VisibilityReport | null
   /** id der `visibility_reports`-Row, deren raw_data hier angezeigt wird. */
   latestReportId?: string | null
+  /** Aktueller SEO-Score (eigene Pipeline), null wenn noch keine SEO-Analyse. */
+  seoScore?: SeoScore | null
 }) {
   const [openKey, setOpenKey] = useState<ScoreKey | null>(null)
 
@@ -117,9 +121,10 @@ export default function Cockpit({
             </div>
           </div>
 
-          {/* ─── 3 Sub-Score-Karten ─── */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3.5">
+          {/* ─── Sub-Score-Karten (GEO · SEO · Thought Leadership · Digitale Autorität) ─── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3.5">
             <SubScoreCard score={masters.geo} onExplain={() => setOpenKey("geo")} />
+            <SeoMiniCard score={seoScore} />
             <SubScoreCard score={masters.thoughtLeadership} onExplain={() => setOpenKey("thought-leadership")} />
             <SubScoreCard score={masters.digitalAuthority} onExplain={() => setOpenKey("digital-authority")} />
           </div>
@@ -188,6 +193,44 @@ function SubScoreCard({ score, onExplain }: { score: MasterScore; onExplain: () 
         <div className="h-1.5 rounded-full" style={{ width: `${score.value}%`, background: t.accent }} />
       </div>
     </div>
+  )
+}
+
+/** SEO-Karte: eigene Pipeline, daher Link zur Detailseite statt Explainer-Modal. */
+function SeoMiniCard({ score }: { score: SeoScore | null }) {
+  const t = SEO_THEME
+  return (
+    <Link href="/dashboard/seo" className="rounded-xl p-4 block" style={{ background: t.bg }}>
+      <div className="flex items-start justify-between">
+        <span className="text-[13px] font-medium" style={{ color: t.label }}>SEO Score</span>
+        <span
+          className="w-5 h-5 rounded-full text-[11px] font-semibold flex items-center justify-center"
+          style={{ background: t.track, color: t.text }}
+          aria-hidden
+        >
+          ›
+        </span>
+      </div>
+      {score ? (
+        <>
+          <div className="text-3xl font-semibold mt-1 tabular-nums" style={{ color: t.text }}>
+            {score.value}
+          </div>
+          <div className="text-[13px]" style={{ color: t.label }}>{score.band.label}</div>
+          <div className="h-1.5 rounded-full mt-2.5 overflow-hidden" style={{ background: t.track }}>
+            <div className="h-1.5 rounded-full" style={{ width: `${score.value}%`, background: t.accent }} />
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="text-3xl font-semibold mt-1 tabular-nums" style={{ color: t.text }}>—</div>
+          <div className="text-[13px]" style={{ color: t.label }}>Noch nicht aktiv</div>
+          <div className="h-1.5 rounded-full mt-2.5 overflow-hidden" style={{ background: t.track }}>
+            <div className="h-1.5 rounded-full" style={{ width: "0%", background: t.accent }} />
+          </div>
+        </>
+      )}
+    </Link>
   )
 }
 

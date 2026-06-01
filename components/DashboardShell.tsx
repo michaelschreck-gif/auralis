@@ -9,6 +9,7 @@ const NAV = [
   { href: "/dashboard/analyze",            label: "Analyse",            icon: "analyze" },
   { href: "/dashboard/ai-visibility",      label: "KI-Sichtbarkeit",    icon: "visibility" },
   { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
+  { href: "/dashboard/seo",                label: "SEO Score",          icon: "seo" },
   { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
   { href: "/dashboard/topics",             label: "Themen",             icon: "topics" },
   { href: "/dashboard/sources",            label: "Quellen",            icon: "sources" },
@@ -60,6 +61,12 @@ const Icons: Record<IconKey, ReactNode> = {
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <path d="M7.5 1C4.46 1 2 3.46 2 6.5c0 4 5.5 7.5 5.5 7.5S13 10.5 13 6.5C13 3.46 10.54 1 7.5 1z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
       <circle cx="7.5" cy="6.5" r="1.8" stroke="currentColor" strokeWidth="1.2"/>
+    </svg>
+  ),
+  seo: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <circle cx="6.5" cy="6.5" r="5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M10.5 10.5L14 14" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
   thought: (
