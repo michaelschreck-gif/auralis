@@ -22,6 +22,13 @@ const TOC = [
   { id: "ep-latest",     label: "  GET /scores/latest", indent: true },
   { id: "ep-history",    label: "  GET /scores/history", indent: true },
   { id: "ep-competitors", label: "  GET /competitors", indent: true },
+  { id: "ep-competitors-add", label: "  POST /competitors", indent: true },
+  { id: "ep-competitors-del", label: "  DELETE /competitors/{id}", indent: true },
+  { id: "ep-competitors-analyze", label: "  POST /competitors/{id}/analyze", indent: true },
+  { id: "ep-gaps",       label: "  GET /competitors/{id}/gaps", indent: true },
+  { id: "ep-responses",  label: "  GET /responses", indent: true },
+  { id: "ep-recommendations", label: "  GET /recommendations", indent: true },
+  { id: "ep-analyze",    label: "  POST /analyze/{id}", indent: true },
   { id: "examples",      label: "Code-Beispiele" },
   { id: "support",       label: "Support" },
 ] as const
@@ -108,7 +115,7 @@ export default function ApiDocsPage() {
               authentifizieren.
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>4 GET-Endpoints (siehe unten)</li>
+              <li>11 Endpoints: lesen (GET), Wettbewerber anlegen/löschen, Analysen auslösen (POST/DELETE)</li>
               <li>JSON-Responses mit konsistenter Fehler-Struktur</li>
               <li>Bearer-Token-Authentifizierung</li>
               <li>HTTPS-Pflicht</li>
@@ -179,7 +186,10 @@ export default function ApiDocsPage() {
           {/* Endpoints */}
           <Section id="endpoints" title="Endpoints">
             <p>
-              Alle Endpoints sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code> und liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
+              Alle Endpoints liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
+              Sieben sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code> (nur lesend);
+              ein Endpoint (<code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">POST /analyze</code>)
+              löst eine neue Analyse aus.
             </p>
           </Section>
 
@@ -203,18 +213,39 @@ export default function ApiDocsPage() {
             id="ep-latest"
             method="GET"
             path="/scores/latest"
-            description="Aktuelle Werte für die 4 Master-Scores (Aura, GEO, Thought Leadership, Digitale Autorität), abgeleitet aus dem zuletzt erstellten Sichtbarkeits-Report. Antwortet mit 404, wenn noch keine Analyse durchgeführt wurde."
+            description="Aktuelle Werte für die 4 Master-Scores (Aura, GEO, Thought Leadership, Digitale Autorität) aus dem jüngsten Report — inkl. Score-Herleitung pro Dimension (Messwert × Gewicht = Beitrag) und Per-Modell-Aufschlüsselung. Antwortet 404, wenn noch keine Analyse durchgeführt wurde."
             example={`curl ${BASE_URL}${API_PREFIX}/scores/latest \\
   -H "Authorization: Bearer aur_sk_xxxxx"`}
             response={`{
-  "aura":              { "value": 58, "band": "Starke Sichtbarkeit" },
-  "geo":               { "value": 56, "band": "Etabliert" },
-  "thought_leadership":{ "value": 52, "band": "Anerkannt" },
-  "digital_authority": { "value": 42, "band": "Etablierend" },
-  "strongest":         { "key": "geo", "value": 56 },
-  "biggest_opportunity": { "key": "digital-authority", "value": 42 },
-  "queried_at": "2026-05-26T10:20:43.249Z",
-  "summary": "Score: 58/100. Erwähnt in 40% der Abfragen."
+  "aura": {
+    "value": 58,
+    "band": "Etabliert",
+    "breakdown": {
+      "total": 58,
+      "factors": [
+        { "key": "presence",  "label": "Erwähnungsrate",
+          "raw_value": 29, "weight": 0.35, "contribution": 10 },
+        { "key": "position",  "label": "Positionsqualität",
+          "raw_value": 85, "weight": 0.25, "contribution": 21 }
+        // … context, topic
+      ]
+    }
+  },
+  "geo":                { "value": 58, "band": "Etabliert", "breakdown": { ... } },
+  "thought_leadership": { "value": 48, "band": "Bekannt im Fachkreis", "breakdown": { ... } },
+  "digital_authority":  { "value": 49, "band": "Etablierend", "breakdown": { ... } },
+  "strongest":          { "key": "geo", "value": 58 },
+  "biggest_opportunity":{ "key": "thought-leadership", "value": 48 },
+  "mention_rate": 29,
+  "average_position": 2.0,
+  "per_model": [
+    { "provider": "claude-sonnet", "label": "Claude Sonnet",
+      "model": "claude-sonnet-4-5", "score": 58, "mention_rate": 29,
+      "average_position": 2.0, "error": null }
+  ],
+  "providers_used": ["claude-sonnet"],
+  "queried_at": "2026-05-31T06:19:12Z",
+  "summary": "Score: 58/100. Erwähnt in 29% der Abfragen."
 }`}
           />
 
@@ -269,6 +300,163 @@ export default function ApiDocsPage() {
       "last_analyzed_at": "2026-05-26T14:42:39Z"
     }
   ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-competitors-add"
+            method="POST"
+            path="/competitors"
+            description="Legt einen neuen Wettbewerber an. topics kann ein Array oder ein kommagetrennter String sein (max. 10). language steuert die Sprache der KI-Abfragen (Standard en, region-neutral für globale Figuren)."
+            example={`curl -X POST ${BASE_URL}${API_PREFIX}/competitors \\
+  -H "Authorization: Bearer aur_sk_xxxxx" \\
+  -H "Content-Type: application/json" \\
+  -d '{"name":"Andrew Ng","topics":["AI","Machine Learning"],"language":"en"}'`}
+            response={`{
+  "competitor": {
+    "id": "uuid",
+    "name": "Andrew Ng",
+    "topics": ["AI", "Machine Learning"],
+    "language": "en",
+    "last_score": null,
+    "last_analyzed_at": null
+  }
+}`}
+          />
+
+          <Endpoint
+            id="ep-competitors-del"
+            method="DELETE"
+            path="/competitors/{id}"
+            description="Entfernt einen Wettbewerber samt seiner gespeicherten Analyse-Berichte."
+            params={[
+              { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers (aus /competitors)." },
+            ]}
+            example={`curl -X DELETE ${BASE_URL}${API_PREFIX}/competitors/8eb0e9ef-... \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{ "deleted": true, "id": "8eb0e9ef-..." }`}
+          />
+
+          <Endpoint
+            id="ep-competitors-analyze"
+            method="POST"
+            path="/competitors/{id}/analyze"
+            description="Löst eine Sichtbarkeits-Analyse für einen Wettbewerber aus (entspricht „Analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden. Kein Request-Body nötig."
+            params={[
+              { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers." },
+            ]}
+            example={`curl -X POST ${BASE_URL}${API_PREFIX}/competitors/8eb0e9ef-.../analyze \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "competitor": { "id": "8eb0e9ef-...", "name": "Andrew Ng" },
+  "report_id": "uuid",
+  "score": 84,
+  "sentiment": "positive",
+  "mention_rate": 100,
+  "providers_used": ["claude-sonnet"]
+}`}
+          />
+
+          <Endpoint
+            id="ep-gaps"
+            method="GET"
+            path="/competitors/{id}/gaps"
+            description="Lückenanalyse zwischen dir und einem Wettbewerber: pro Frage-Archetyp, wer genannt wird. Zeigt konkrete inhaltliche Lücken (Wettbewerber genannt, du nicht) und Vorsprünge. Nutzt deinen jüngsten Report und den jüngsten Report des Wettbewerbers (404, falls einer fehlt)."
+            params={[
+              { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers (aus /competitors)." },
+            ]}
+            example={`curl ${BASE_URL}${API_PREFIX}/competitors/8eb0e9ef-.../gaps \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "competitor": { "id": "8eb0e9ef-...", "name": "Andrew Ng" },
+  "gap_count": 3,
+  "advantage_count": 2,
+  "comparisons": [
+    {
+      "type": "expert_discovery",
+      "label": "Experten-Suche",
+      "hint": "Wer gilt als führende Expertin/Experte für das Thema?",
+      "self_mentioned": false,
+      "competitor_mentioned": true,
+      "verdict": "gap"
+    }
+    // … topic_authority, recommendation, leadership, popular_figures
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-responses"
+            method="GET"
+            path="/responses"
+            description="Die tatsächlichen KI-Antworten hinter deinen Scores (Belege) aus der jüngsten Analyse, gruppiert nach Frage. Pro Antwort: Modell, ob du genannt wurdest, Listenposition, Tonalität und der volle Antworttext."
+            example={`curl ${BASE_URL}${API_PREFIX}/responses \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "analyzed_at": "2026-05-31T06:19:12Z",
+  "total": 7,
+  "mentioned": 2,
+  "groups": [
+    {
+      "prompt": "Wer sind die führenden Experten für …?",
+      "answers": [
+        {
+          "model": "claude-sonnet-4-5",
+          "mentioned": true,
+          "position": 2,
+          "sentiment": "positive",
+          "response": "… vollständiger Antworttext …"
+        }
+      ]
+    }
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-recommendations"
+            method="GET"
+            path="/recommendations"
+            description="Persistierte Handlungsempfehlungen (offen + umgesetzt), inkl. Score-Stand bei Erstellung und Umsetzung für die Wirkungs-Messung."
+            params={[
+              { name: "status", type: "string", desc: "open | done | all. Optional; Standard = offen + umgesetzt (dismissed ausgeblendet)." },
+            ]}
+            example={`curl "${BASE_URL}${API_PREFIX}/recommendations?status=open" \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "recommendations": [
+    {
+      "id": "uuid",
+      "title": "Veröffentliche regelmäßig zu deinen Zielthemen",
+      "description": "…",
+      "impact": "high",
+      "category": "Inhalt",
+      "status": "open",
+      "score_at_creation": 58,
+      "score_at_done": null,
+      "created_at": "2026-05-31T06:20:00Z",
+      "done_at": null
+    }
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-analyze"
+            method="POST"
+            path="/analyze/{scheduleId}"
+            description="Löst eine neue Sichtbarkeits-Analyse für eines deiner Themen aus (entspricht „Jetzt analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden und gibt das Ergebnis zurück. Erfordert kein Request-Body."
+            params={[
+              { name: "scheduleId", type: "uuid (Pfad)", desc: "ID des Themas (monitoring_schedule). IDs findest du in /me-Kontext bzw. im Dashboard." },
+            ]}
+            example={`curl -X POST ${BASE_URL}${API_PREFIX}/analyze/02f2c43e-... \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "report_id": "uuid",
+  "score": 58,
+  "sentiment": "positive",
+  "mention_rate": 29,
+  "providers_used": ["claude-sonnet"]
 }`}
           />
 
@@ -413,7 +601,11 @@ function Endpoint({
   return (
     <section id={id} className="scroll-mt-6 rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
-        <span className="px-2 py-0.5 rounded-md bg-green-50 text-green-700 border border-green-100 text-xs font-semibold font-mono">
+        <span className={`px-2 py-0.5 rounded-md border text-xs font-semibold font-mono ${
+          method === "POST"
+            ? "bg-amber-50 text-amber-700 border-amber-100"
+            : "bg-green-50 text-green-700 border-green-100"
+        }`}>
           {method}
         </span>
         <code className="text-base font-mono font-semibold text-[#0f172a]">{API_PREFIX}{path}</code>

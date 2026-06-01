@@ -22,8 +22,28 @@
 import { NextResponse } from "next/server"
 import { authenticateApiKey, jsonError } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
-import { computeMasterScores } from "@/lib/auralis/master-scores"
+import {
+  computeMasterScores,
+  computeScoreDerivation,
+  type ScoreKey,
+} from "@/lib/auralis/master-scores"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
+import type { MultiModelVisibilityReport } from "@/lib/auralis/runner"
+
+/** Baut die Faktor-Herleitung (Messwert × Gewicht = Beitrag) für eine Dimension. */
+function derivationJson(key: ScoreKey, report: VisibilityReport) {
+  const d = computeScoreDerivation(key, report)
+  return {
+    total: d.total,
+    factors: d.factors.map(f => ({
+      key: f.key,
+      label: f.label,
+      raw_value: f.rawValue,
+      weight: f.weight,
+      contribution: f.contribution,
+    })),
+  }
+}
 
 export const dynamic = "force-dynamic"
 
@@ -54,24 +74,51 @@ export async function GET(req: Request) {
   }
 
   const report = data.raw_data as unknown as VisibilityReport
+  const multi = data.raw_data as unknown as MultiModelVisibilityReport
   const masters = computeMasterScores(report)
 
+  // Per-Modell-Aufschlüsselung (nur wenn Multi-Modell-Report) — gespiegelt aus
+  // raw_data.perModelBreakdown; Fehler-Provider werden mit ausgegeben.
+  const perModel = (multi.perModelBreakdown ?? []).map(b => ({
+    provider: b.provider,
+    label: b.label,
+    model: b.modelTag,
+    score: b.overallScore,
+    mention_rate: b.mentionRate,
+    average_position: b.averagePosition,
+    error: b.error ?? null,
+  }))
+
   return NextResponse.json({
-    aura: { value: masters.aura.value, band: masters.aura.band.label },
-    geo: { value: masters.geo.value, band: masters.geo.band.label },
+    aura: {
+      value: masters.aura.value,
+      band: masters.aura.band.label,
+      breakdown: derivationJson("aura", report),
+    },
+    geo: {
+      value: masters.geo.value,
+      band: masters.geo.band.label,
+      breakdown: derivationJson("geo", report),
+    },
     thought_leadership: {
       value: masters.thoughtLeadership.value,
       band: masters.thoughtLeadership.band.label,
+      breakdown: derivationJson("thought-leadership", report),
     },
     digital_authority: {
       value: masters.digitalAuthority.value,
       band: masters.digitalAuthority.band.label,
+      breakdown: derivationJson("digital-authority", report),
     },
     strongest: { key: masters.strongest.key, value: masters.strongest.value },
     biggest_opportunity: {
       key: masters.biggestOpportunity.key,
       value: masters.biggestOpportunity.value,
     },
+    mention_rate: report.mentionRate,
+    average_position: report.averagePosition,
+    per_model: perModel,
+    providers_used: multi.providersUsed ?? [],
     queried_at: report.queriedAt ?? data.created_at,
     summary: data.summary,
   })
