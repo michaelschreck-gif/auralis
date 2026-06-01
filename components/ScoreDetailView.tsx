@@ -1,5 +1,6 @@
 import Link from "next/link"
 import type { MasterScore, ScoreDefinition, ScoreDerivation } from "@/lib/auralis/master-scores"
+import { DIMENSION_THEME } from "@/lib/auralis/theme"
 import ScoreDerivationTable from "./ScoreDerivation"
 
 const BAND_FILL = ["#FCEBEB", "#FAEEDA", "#E1F5EE", "#E6F1FB"]
@@ -16,8 +17,9 @@ export default function ScoreDetailView({
   /** Konkrete Herleitung aus den Messwerten der letzten Analyse. */
   derivation?: ScoreDerivation | null
 }) {
+  const t = DIMENSION_THEME[score.key]
   return (
-    <div className="p-8 max-w-5xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
       {/* Breadcrumb */}
       <nav className="text-sm text-[#64748b]">
         <Link href="/dashboard" className="hover:text-[#0f172a] transition-colors">
@@ -27,19 +29,25 @@ export default function ScoreDetailView({
         <span className="text-[#0f172a] font-medium">{definition.title}</span>
       </nav>
 
-      {/* Hero */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+      {/* Hero — in der Dimensionsfarbe */}
+      <div className="rounded-2xl p-5 md:p-6" style={{ background: t.bg }}>
+        <p className="text-[11px] uppercase tracking-wider font-medium" style={{ color: t.label }}>
           Dein {definition.title}
         </p>
-        <div className="flex items-baseline gap-2 mt-2">
-          <span className="text-5xl font-semibold text-[#0f172a] tabular-nums">{score.value}</span>
-          <span className="text-base text-[#94a3b8]">/100</span>
+        <div className="flex items-baseline gap-2 mt-1.5">
+          <span className="text-5xl font-semibold tabular-nums" style={{ color: t.text }}>{score.value}</span>
+          <span className="text-base" style={{ color: t.label }}>/100</span>
+          <span
+            className="text-xs font-medium px-2.5 py-1 rounded-full ml-1"
+            style={{ background: t.accent, color: "#fff" }}
+          >
+            {score.band.label}
+          </span>
         </div>
-        <p className="text-sm text-[#0f172a] mt-2 font-medium">
-          {score.band.label}
-        </p>
-        <p className="text-sm text-[#64748b] mt-1 leading-relaxed">
+        <div className="h-2 rounded-full mt-3 overflow-hidden max-w-md" style={{ background: t.track }}>
+          <div className="h-2 rounded-full" style={{ width: `${score.value}%`, background: t.accent }} />
+        </div>
+        <p className="text-sm mt-3 leading-relaxed max-w-2xl" style={{ color: t.text }}>
           {definition.what}
         </p>
       </div>
@@ -120,7 +128,7 @@ export default function ScoreDetailView({
         <div className="divide-y divide-gray-100">
           {definition.tips.map((t, i) => (
             <div key={i} className="flex items-start gap-3 py-3 text-sm leading-snug">
-              <div className="w-6 h-6 rounded-full bg-blue-50 text-[#4F6EF7] text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-[#EEEDFE] text-[#7F77DD] text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
                 {i + 1}
               </div>
               <span className="text-[#0f172a]">{t}</span>
@@ -131,7 +139,7 @@ export default function ScoreDetailView({
 
       <Link
         href="/dashboard"
-        className="inline-block text-sm text-[#4F6EF7] hover:underline"
+        className="inline-block text-sm text-[#7F77DD] hover:underline"
       >
         ← Zurück zum Cockpit
       </Link>

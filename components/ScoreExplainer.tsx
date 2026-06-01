@@ -136,7 +136,7 @@ export default function ScoreExplainer({
           <div className="divide-y divide-gray-100">
             {definition.tips.map((t, i) => (
               <div key={i} className="flex items-start gap-3 py-2.5 text-sm leading-snug">
-                <div className="w-5 h-5 rounded-full bg-blue-50 text-[#4F6EF7] text-[11px] font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 rounded-full bg-[#EEEDFE] text-[#7F77DD] text-[11px] font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
                   {i + 1}
                 </div>
                 <span className="text-[#0f172a]">{t}</span>

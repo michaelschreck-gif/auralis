@@ -42,7 +42,7 @@ export default async function AskPage() {
   if (!allowed) {
     return (
       <DashboardShell userName={userName}>
-        <div className="p-8 max-w-2xl mx-auto">
+        <div className="p-4 md:p-8 max-w-2xl mx-auto">
           <div className="mb-2">
             <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
               Frag dein Profil
@@ -56,8 +56,8 @@ export default async function AskPage() {
             Claude antwortet auf Basis deiner echten Auralis-Daten.
           </p>
 
-          <div className="mt-8 rounded-2xl border border-[#4F6EF7]/20 bg-blue-50/40 p-6">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#4F6EF7]">
+          <div className="mt-8 rounded-2xl border border-[#7F77DD]/20 bg-[#EEEDFE]/40 p-6">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#7F77DD]">
               Pro-Feature
             </p>
             <h2 className="text-lg font-semibold text-[#0f172a] mt-2">
@@ -70,7 +70,7 @@ export default async function AskPage() {
             </p>
             <a
               href="/#pricing"
-              className="inline-block mt-4 px-4 py-2 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+              className="inline-block mt-4 px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors"
             >
               Tarife ansehen →
             </a>

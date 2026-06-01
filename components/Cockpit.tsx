@@ -10,6 +10,7 @@ import {
   type MasterScore,
   type ScoreKey,
 } from "@/lib/auralis/master-scores"
+import { AURA_THEME, DIMENSION_THEME } from "@/lib/auralis/theme"
 import ScoreExplainer from "./ScoreExplainer"
 
 export default function Cockpit({
@@ -30,104 +31,113 @@ export default function Cockpit({
   const firstName = (userName ?? "").split(" ")[0] || "👋"
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      {/* ─── Greeting ─── */}
-      <header className="mb-6">
-        <h1 className="text-2xl font-semibold text-[#0f172a]">
-          Hallo, {firstName} 👋
-        </h1>
-        <p className="text-sm text-[#64748b] mt-0.5">
-          Diese vier Werte zeigen, wie sichtbar du in KI-Antworten bist — je höher, desto eher nennt dich eine KI bei deinen Themen. Klick auf das „?", um zu sehen, wie ein Wert berechnet wird.
-        </p>
-      </header>
-
+    <div className="p-4 md:p-8 max-w-6xl mx-auto">
       {!masters && (
-        <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-8 text-center mb-6">
-          <p className="text-base font-medium text-[#0f172a]">
-            Noch keine Analyse vorhanden.
-          </p>
-          <p className="text-sm text-[#64748b] mt-2 mb-5">
-            Triggere deine erste Sichtbarkeitsanalyse, um Aura Score und die Dimensionen zu sehen.
-          </p>
-          <Link
-            href="/dashboard/analyze"
-            className="inline-block px-5 py-2.5 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-medium transition-colors"
-          >
-            Neue Analyse starten →
-          </Link>
-        </div>
+        <>
+          <header className="mb-6">
+            <h1 className="text-2xl font-semibold text-[#0f172a]">Hallo, {firstName} 👋</h1>
+          </header>
+          <div className="rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/60 p-8 text-center">
+            <p className="text-base font-medium text-[#26215C]">Noch keine Analyse vorhanden.</p>
+            <p className="text-sm text-[#534AB7] mt-2 mb-5">
+              Starte deine erste Sichtbarkeitsanalyse, um deinen Aura Score und die drei Dimensionen zu sehen.
+            </p>
+            <Link
+              href="/dashboard/analyze"
+              className="inline-block px-5 py-2.5 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors"
+            >
+              Neue Analyse starten →
+            </Link>
+          </div>
+        </>
       )}
 
       {masters && (
         <>
-          {/* ─── 4 KPI Cards ─── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-            <KpiCard
-              score={masters.aura}
-              tag={trendTag(report!)}
-              onExplain={() => setOpenKey("aura")}
-              accent="#4F6EF7"
-              isMaster
-            />
-            <KpiCard
-              score={masters.geo}
-              onExplain={() => setOpenKey("geo")}
-              accent="#378ADD"
-            />
-            <KpiCard
-              score={masters.thoughtLeadership}
-              onExplain={() => setOpenKey("thought-leadership")}
-              accent="#7F77DD"
-            />
-            <KpiCard
-              score={masters.digitalAuthority}
-              onExplain={() => setOpenKey("digital-authority")}
-              accent="#1D9E75"
-            />
-          </div>
-
-          {/* ─── Stärkste / Größte Chance ─── */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
-            <HighlightCard
-              tone="success"
-              eyebrow="Stärkste Dimension"
-              title={masters.strongest.shortLabel}
-              detail={`${masters.strongest.value}/100 — halte diesen Vorsprung`}
-            />
-            <HighlightCard
-              tone="warning"
-              eyebrow="Größte Chance"
-              title={masters.biggestOpportunity.shortLabel}
-              detail={`${masters.biggestOpportunity.value}/100 — hier liegt Potenzial`}
-            />
-          </div>
-
-          {/* ─── Letzte Analyse + CTA ─── */}
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            {lastAnalyzedAt ? (
-              <p className="text-xs text-[#94a3b8]">
-                Letzte Analyse: {relativeTime(lastAnalyzedAt)}
-              </p>
-            ) : (
-              <span />
-            )}
-            <div className="flex items-center gap-4">
-              {latestReportId && (
-                <a
-                  href={`/api/reports/${latestReportId}/pdf`}
-                  className="text-sm text-[#64748b] hover:text-[#0f172a] hover:underline font-medium inline-flex items-center gap-1"
-                  download
-                >
-                  <span aria-hidden>↓</span> PDF-Report
-                </a>
-              )}
-              <Link
-                href="/dashboard/analyze"
-                className="text-sm text-[#4F6EF7] hover:underline font-medium"
+          {/* ─── Hero: Aura Score ─── */}
+          <div
+            className="rounded-2xl p-5 md:p-7 mb-3.5"
+            style={{ background: AURA_THEME.bg }}
+          >
+            <div className="flex items-center gap-2.5 mb-3">
+              <div
+                className="w-8 h-8 rounded-lg flex items-center justify-center font-semibold text-sm"
+                style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
               >
-                Neue Analyse starten →
-              </Link>
+                A
+              </div>
+              <span className="text-sm" style={{ color: AURA_THEME.light }}>Hallo, {firstName} 👋</span>
             </div>
+
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+              <div>
+                <div className="text-[11px] uppercase tracking-wider" style={{ color: AURA_THEME.light }}>
+                  Dein Aura Score™
+                </div>
+                <div className="flex items-baseline gap-2.5 mt-1">
+                  <span className="text-5xl md:text-6xl font-semibold text-white leading-none tabular-nums">
+                    {masters.aura.value}
+                  </span>
+                  <span className="text-lg" style={{ color: AURA_THEME.light }}>/100</span>
+                  <button
+                    type="button"
+                    onClick={() => setOpenKey("aura")}
+                    className="text-xs font-medium px-2.5 py-1 rounded-full"
+                    style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
+                  >
+                    {masters.aura.band.label}
+                  </button>
+                </div>
+                <p className="text-sm mt-2.5 max-w-md leading-relaxed" style={{ color: AURA_THEME.light }}>
+                  So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden.
+                  {lastAnalyzedAt && <> · Letzte Analyse {relativeTime(lastAnalyzedAt)}</>}
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dashboard/analyze"
+                  className="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                  style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
+                >
+                  Neue Analyse
+                </Link>
+                {latestReportId && (
+                  <a
+                    href={`/api/reports/${latestReportId}/pdf`}
+                    download
+                    aria-label="PDF-Report herunterladen"
+                    className="px-3.5 py-2.5 rounded-lg text-sm text-white border transition-colors hover:bg-white/10"
+                    style={{ borderColor: AURA_THEME.accent }}
+                  >
+                    ↓ PDF
+                  </a>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* ─── 3 Sub-Score-Karten ─── */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3.5">
+            <SubScoreCard score={masters.geo} onExplain={() => setOpenKey("geo")} />
+            <SubScoreCard score={masters.thoughtLeadership} onExplain={() => setOpenKey("thought-leadership")} />
+            <SubScoreCard score={masters.digitalAuthority} onExplain={() => setOpenKey("digital-authority")} />
+          </div>
+
+          {/* ─── Highlights ─── */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <HighlightCard
+              accent="#1D9E75"
+              eyebrow="Stärkster Bereich"
+              title={`${masters.strongest.shortLabel} · ${masters.strongest.value}`}
+              detail="Hier wirst du am ehesten genannt."
+            />
+            <HighlightCard
+              accent="#EF9F27"
+              eyebrow="Größtes Potenzial"
+              title={`${masters.biggestOpportunity.shortLabel} · ${masters.biggestOpportunity.value}`}
+              detail="Hier ist am meisten zu holen."
+            />
           </div>
         </>
       )}
@@ -145,103 +155,53 @@ export default function Cockpit({
   )
 }
 
-/* ─────────────────── Helpers + Sub-Components ─────────────────── */
+/* ─────────────────── Sub-Components ─────────────────── */
 
-function pickScore(
-  m: ReturnType<typeof computeMasterScores>,
-  key: ScoreKey,
-): MasterScore {
+function pickScore(m: ReturnType<typeof computeMasterScores>, key: ScoreKey): MasterScore {
   if (key === "aura") return m.aura
   if (key === "geo") return m.geo
   if (key === "thought-leadership") return m.thoughtLeadership
   return m.digitalAuthority
 }
 
-/** Optional delta tag for the Aura card (e.g. -2 vs last report). Not computed
- *  in this version since we'd need a history fetch; placeholder for now. */
-function trendTag(_r: VisibilityReport): { label: string; tone: "up" | "down" } | null {
-  void _r
-  return null
-}
-
-function KpiCard({
-  score,
-  tag,
-  onExplain,
-  accent,
-  isMaster = false,
-}: {
-  score: MasterScore
-  tag?: { label: string; tone: "up" | "down" } | null
-  onExplain: () => void
-  accent: string
-  isMaster?: boolean
-}) {
+function SubScoreCard({ score, onExplain }: { score: MasterScore; onExplain: () => void }) {
+  const t = DIMENSION_THEME[score.key]
   return (
-    <div className={`relative bg-white rounded-2xl border ${isMaster ? "border-[#4F6EF7]/30 ring-1 ring-[#4F6EF7]/10" : "border-gray-100"} shadow-sm p-5`}>
-      <div className="flex items-start justify-between gap-2">
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
-          {score.label}
-        </p>
+    <div className="rounded-xl p-4" style={{ background: t.bg }}>
+      <div className="flex items-start justify-between">
+        <span className="text-[13px] font-medium" style={{ color: t.label }}>{score.label}</span>
         <button
           type="button"
           onClick={onExplain}
           aria-label={`${score.label} erklären`}
-          className="w-6 h-6 rounded-full border border-gray-200 text-[#94a3b8] hover:text-[#4F6EF7] hover:border-[#4F6EF7] transition-colors flex items-center justify-center text-xs font-semibold leading-none"
+          className="w-5 h-5 rounded-full text-[11px] font-semibold flex items-center justify-center"
+          style={{ background: t.track, color: t.text }}
         >
           ?
         </button>
       </div>
-      <div className="flex items-baseline gap-1.5 mt-2">
-        <span className="text-4xl font-semibold text-[#0f172a] tabular-nums" style={{ color: accent }}>
-          {score.value}
-        </span>
-        <span className="text-sm text-[#94a3b8]">/100</span>
-        {tag && (
-          <span
-            className={`text-xs px-2 py-0.5 rounded-md ml-2 font-medium ${
-              tag.tone === "up"
-                ? "bg-green-50 text-green-700 border border-green-100"
-                : "bg-red-50 text-red-700 border border-red-100"
-            }`}
-          >
-            {tag.label}
-          </span>
-        )}
+      <div className="text-3xl font-semibold mt-1 tabular-nums" style={{ color: t.text }}>
+        {score.value}
       </div>
-      <p className="text-sm text-[#64748b] mt-1">{score.band.label}</p>
-      <div className="mt-3 h-1.5 bg-gray-100 rounded-full overflow-hidden">
-        <div
-          className="h-full rounded-full transition-all duration-500"
-          style={{ width: `${score.value}%`, background: accent }}
-        />
+      <div className="text-[13px]" style={{ color: t.label }}>{score.band.label}</div>
+      <div className="h-1.5 rounded-full mt-2.5 overflow-hidden" style={{ background: t.track }}>
+        <div className="h-1.5 rounded-full" style={{ width: `${score.value}%`, background: t.accent }} />
       </div>
     </div>
   )
 }
 
 function HighlightCard({
-  tone,
-  eyebrow,
-  title,
-  detail,
-}: {
-  tone: "success" | "warning"
-  eyebrow: string
-  title: string
-  detail: string
-}) {
-  const styles =
-    tone === "success"
-      ? "bg-green-50/40 border-green-100 text-green-800"
-      : "bg-amber-50/40 border-amber-100 text-amber-800"
+  accent, eyebrow, title, detail,
+}: { accent: string; eyebrow: string; title: string; detail: string }) {
   return (
-    <div className={`rounded-2xl border p-5 ${styles}`}>
-      <p className="text-[10px] uppercase tracking-wider font-semibold mb-2 opacity-80">
-        {eyebrow}
-      </p>
-      <p className="text-base font-semibold text-[#0f172a]">{title}</p>
-      <p className="text-xs mt-1 opacity-90 text-[#64748b]">{detail}</p>
+    <div
+      className="bg-white rounded-xl p-3.5 border border-gray-100"
+      style={{ borderLeft: `4px solid ${accent}` }}
+    >
+      <div className="text-[11px] uppercase tracking-wider text-[#94a3b8]">{eyebrow}</div>
+      <div className="text-[15px] font-medium text-[#0f172a] mt-0.5">{title}</div>
+      <div className="text-[13px] text-[#64748b]">{detail}</div>
     </div>
   )
 }
@@ -254,5 +214,5 @@ function relativeTime(d: Date): string {
   const hours = Math.round(minutes / 60)
   if (hours < 24) return `vor ${hours} h`
   const days = Math.round(hours / 24)
-  return `vor ${days} Tagen`
+  return days === 1 ? "vor 1 Tag" : `vor ${days} Tagen`
 }

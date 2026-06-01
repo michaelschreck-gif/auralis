@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import type { ReactNode } from "react"
+import { useState, type ReactNode } from "react"
 
 const NAV = [
   { href: "/dashboard",                    label: "Übersicht",          icon: "overview" },
@@ -120,31 +120,93 @@ export default function DashboardShell({
   children,
 }: Props) {
   const pathname = usePathname()
+  const [mobileOpen, setMobileOpen] = useState(false)
   const initials = userName
     ? userName.split(" ").map(n => n[0] ?? "").join("").toUpperCase().slice(0, 2)
     : "?"
   const breadcrumb = NAV.find(n => n.href === pathname)?.label ?? "Dashboard"
 
+  const navList = (
+    <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+      {NAV.map(item => {
+        const active = pathname === item.href
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={() => setMobileOpen(false)}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+              active
+                ? "bg-[#7F77DD] text-white font-medium"
+                : "text-[#CECBF6] hover:text-white hover:bg-white/10"
+            }`}
+          >
+            <span className="w-4 flex-shrink-0 flex items-center justify-center">
+              {Icons[item.icon]}
+            </span>
+            {item.label}
+          </Link>
+        )
+      })}
+    </nav>
+  )
+
+  const sidebarFooter = (
+    <div className="px-5 py-4 border-t border-white/10 space-y-2.5">
+      <a
+        href="/"
+        target="_blank"
+        rel="noopener"
+        className="block text-xs text-[#CECBF6] hover:text-white transition-colors"
+      >
+        Zur Auralis-Webseite ↗
+      </a>
+      <form action="/auth/signout" method="POST">
+        <button
+          type="submit"
+          className="text-xs text-[#CECBF6] hover:text-white transition-colors"
+        >
+          Abmelden →
+        </button>
+      </form>
+    </div>
+  )
+
+  const brand = (
+    <div className="flex items-center gap-2.5">
+      <div className="w-7 h-7 rounded-lg bg-[#7F77DD] flex items-center justify-center flex-shrink-0">
+        <span className="text-[#26215C] text-xs font-bold">A</span>
+      </div>
+      <span className="text-white font-semibold text-sm tracking-tight">Auralis</span>
+    </div>
+  )
+
   return (
     <div className="flex flex-col h-screen bg-[#f8f9fb] overflow-hidden">
 
-      {/* ─── Topbar ─── */}
-      <header className="h-[60px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-6 gap-6 z-10">
-        <div className="flex items-center gap-2.5 w-[240px] flex-shrink-0">
-          <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center flex-shrink-0">
-            <span className="text-white text-xs font-bold">A</span>
-          </div>
-          <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+      {/* ─── Topbar (mobil: Hamburger + Brand; desktop: Breadcrumb + User) ─── */}
+      <header className="h-[56px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 md:px-6 gap-3 z-20">
+        <button
+          type="button"
+          onClick={() => setMobileOpen(true)}
+          aria-label="Menü öffnen"
+          className="md:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center text-[#475569] hover:bg-gray-100"
+        >
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+        </button>
+        <div className="md:hidden flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-[#26215C] flex items-center justify-center"><span className="text-white text-xs font-bold">A</span></div>
+          <span className="text-[#0f172a] font-semibold text-sm">Auralis</span>
         </div>
-        <div className="flex-1">
+        <div className="flex-1 hidden md:block">
           <span className="text-sm text-[#64748b] font-medium">{breadcrumb}</span>
         </div>
-        <div className="flex items-center gap-3 flex-shrink-0">
+        <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
           {userName && (
             <>
               <span className="text-sm text-[#64748b] hidden md:block">{userName}</span>
-              <div className="w-8 h-8 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-semibold text-[#4F6EF7]">{initials}</span>
+              <div className="w-8 h-8 rounded-full bg-[#EEEDFE] border border-[#CECBF6] flex items-center justify-center flex-shrink-0">
+                <span className="text-xs font-semibold text-[#534AB7]">{initials}</span>
               </div>
             </>
           )}
@@ -154,53 +216,42 @@ export default function DashboardShell({
       {/* ─── Body ─── */}
       <div className="flex flex-1 overflow-hidden">
 
-        {/* ─── Sidebar ─── */}
-        <aside className="w-[240px] flex-shrink-0 bg-white border-r border-gray-100 flex flex-col">
-          <nav className="flex-1 px-3 py-4 space-y-0.5">
-            {NAV.map(item => {
-              const active = pathname === item.href
-              return (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                    active
-                      ? "bg-blue-50 text-[#4F6EF7] font-medium"
-                      : "text-[#64748b] hover:text-[#0f172a] hover:bg-gray-50"
-                  }`}
-                >
-                  <span className="w-4 flex-shrink-0 flex items-center justify-center">
-                    {Icons[item.icon]}
-                  </span>
-                  {item.label}
-                </Link>
-              )
-            })}
-          </nav>
-
-          <div className="px-5 py-4 border-t border-gray-100 space-y-2.5">
-            <a
-              href="/"
-              target="_blank"
-              rel="noopener"
-              className="block text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
-            >
-              Zur Auralis-Webseite ↗
-            </a>
-            <form action="/auth/signout" method="POST">
-              <button
-                type="submit"
-                className="text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
-              >
-                Abmelden →
-              </button>
-            </form>
-          </div>
+        {/* ─── Sidebar (desktop) ─── */}
+        <aside className="hidden md:flex w-[230px] flex-shrink-0 bg-[#1B1830] flex-col">
+          <div className="px-5 pt-4 pb-2">{brand}</div>
+          {navList}
+          {sidebarFooter}
         </aside>
 
-        {/* ─── Panel column ─── */}
+        {/* ─── Sidebar (mobile drawer) ─── */}
+        {mobileOpen && (
+          <div className="md:hidden fixed inset-0 z-40 flex">
+            <div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setMobileOpen(false)}
+              aria-hidden="true"
+            />
+            <aside className="relative w-[260px] max-w-[80%] bg-[#1B1830] flex flex-col h-full">
+              <div className="px-5 pt-4 pb-2 flex items-center justify-between">
+                {brand}
+                <button
+                  type="button"
+                  onClick={() => setMobileOpen(false)}
+                  aria-label="Menü schließen"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[#CECBF6] hover:bg-white/10"
+                >
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
+                </button>
+              </div>
+              {navList}
+              {sidebarFooter}
+            </aside>
+          </div>
+        )}
+
+        {/* ─── Panel column (desktop only) ─── */}
         {panelContent !== undefined && (
-          <div className="w-[300px] flex-shrink-0 bg-[#f8f9fb] border-r border-gray-100 flex flex-col overflow-hidden">
+          <div className="hidden lg:flex w-[300px] flex-shrink-0 bg-[#f8f9fb] border-r border-gray-100 flex-col overflow-hidden">
             <div className="px-4 py-3.5 border-b border-gray-100 flex items-center justify-between bg-white">
               <span className="text-sm font-semibold text-[#0f172a]">{panelHeader}</span>
               {panelCount && (
@@ -219,7 +270,7 @@ export default function DashboardShell({
         )}
 
         {/* ─── Main content ─── */}
-        <main className="flex-1 overflow-y-auto bg-white">
+        <main className="flex-1 overflow-y-auto bg-[#f8f9fb]">
           {children}
         </main>
       </div>

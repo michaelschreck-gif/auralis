@@ -72,7 +72,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
         <h2 className="text-base font-semibold text-[#0f172a]">API-Keys</h2>
         <p className="text-xs text-[#64748b] mt-1">
           Bearer-Tokens für die Auralis-Public-API (<code className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.{" "}
-          <a href="/docs/api" target="_blank" rel="noopener" className="text-[#4F6EF7] hover:underline font-medium">
+          <a href="/docs/api" target="_blank" rel="noopener" className="text-[#7F77DD] hover:underline font-medium">
             API-Dokumentation öffnen ↗
           </a>
         </p>
@@ -141,7 +141,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
                 maxLength={100}
                 autoFocus
                 placeholder="z.B. Production CRM-Integration"
-                className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20"
+                className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20"
               />
               <p className="text-[10px] text-[#94a3b8]">Wähle einen Namen, der dir hilft, den Key später zu identifizieren.</p>
             </div>
@@ -149,7 +149,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
               <button
                 type="submit"
                 disabled={pending}
-                className="px-4 py-2 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-medium transition-colors disabled:opacity-40"
+                className="px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors disabled:opacity-40"
               >
                 {pending ? "Generiere…" : "API-Key generieren"}
               </button>
@@ -166,7 +166,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
           <button
             type="button"
             onClick={() => { setShowCreate(true); setError(null) }}
-            className="px-4 py-2 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-medium transition-colors"
+            className="px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors"
           >
             + Neuen API-Key generieren
           </button>
@@ -259,7 +259,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
             </pre>
             <p className="text-[10px] text-[#94a3b8]">
               Weitere Endpoints + Code-Beispiele in der{" "}
-              <a href="/docs/api" target="_blank" rel="noopener" className="text-[#4F6EF7] hover:underline font-medium">
+              <a href="/docs/api" target="_blank" rel="noopener" className="text-[#7F77DD] hover:underline font-medium">
                 vollständigen API-Dokumentation
               </a>.
             </p>

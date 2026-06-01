@@ -23,7 +23,7 @@ const MODELS: ModelInfo[] = [
     providerId: "claude-sonnet",
     name: "Claude Sonnet",
     description: "Anthropic's Reasoning-Modell — treibt deine Auralis-Analysen an.",
-    color: "#4F6EF7",
+    color: "#7F77DD",
     unlocksOn: "free",
   },
   {
@@ -109,7 +109,7 @@ function ModelCard({
           </span>
         )}
         {state.kind === "noReport" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-blue-50 text-[#4F6EF7] border border-blue-100 font-medium">
+          <span className="text-xs px-2 py-1 rounded-full bg-[#EEEDFE] text-[#7F77DD] border border-[#CECBF6] font-medium">
             Bereit
           </span>
         )}
@@ -138,7 +138,7 @@ function ModelCard({
               <Mini label="Position" value={state.breakdown.averagePosition !== null ? `Ø ${state.breakdown.averagePosition.toFixed(1)}` : "—"} />
             </div>
             <details className="group mt-1">
-              <summary className="text-xs text-[#4F6EF7] hover:underline cursor-pointer list-none flex items-center gap-1">
+              <summary className="text-xs text-[#7F77DD] hover:underline cursor-pointer list-none flex items-center gap-1">
                 <span aria-hidden className="transition-transform group-open:rotate-90">›</span>
                 So kommt dieser Score zustande
               </summary>
@@ -172,7 +172,7 @@ function ModelCard({
         {state.kind === "noReport" && (
           <p className="text-xs text-[#94a3b8]">
             Starte eine Analyse auf der{" "}
-            <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline font-medium">
+            <a href="/dashboard/analyze" className="text-[#7F77DD] hover:underline font-medium">
               Analyse-Seite
             </a>
             , um deinen Score hier zu sehen.
@@ -182,7 +182,7 @@ function ModelCard({
         {state.kind === "locked" && (
           <p className="text-xs text-[#94a3b8]">
             Verfügbar in den Tarifen Starter, Pro &amp; Enterprise.{" "}
-            <a href="/#preise" className="text-[#4F6EF7] hover:underline font-medium">
+            <a href="/#preise" className="text-[#7F77DD] hover:underline font-medium">
               Upgrade →
             </a>
           </p>
@@ -300,14 +300,14 @@ export default async function AiVisibilityPage() {
       panelHeader="KI-Modelle"
       panelContent={panel}
     >
-      <div className="p-8">
+      <div className="p-4 md:p-8">
         <div className="mb-8">
           <h1 className="text-xl font-semibold text-[#0f172a]">KI-Sichtbarkeit pro Modell</h1>
           <p className="text-[#64748b] text-sm mt-1">
             Wie jedes KI-System deine Personal Brand wahrnimmt.{" "}
             {plan === "free" && (
               <span className="text-[#94a3b8]">
-                Free-Tarif misst nur Claude — <a href="/#preise" className="text-[#4F6EF7] hover:underline">Starter wechselt auf Multi-Modell</a>.
+                Free-Tarif misst nur Claude — <a href="/#preise" className="text-[#7F77DD] hover:underline">Starter wechselt auf Multi-Modell</a>.
               </span>
             )}
           </p>
@@ -328,8 +328,8 @@ export default async function AiVisibilityPage() {
           if (ok.length < 1) return null
           const mean = Math.round(ok.reduce((a, b) => a + b.overallScore, 0) / ok.length)
           return (
-            <div className="mt-8 rounded-xl border border-blue-100 bg-blue-50/40 p-5">
-              <p className="text-xs text-[#4F6EF7] uppercase tracking-wider mb-2 font-medium">
+            <div className="mt-8 rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/40 p-5">
+              <p className="text-xs text-[#7F77DD] uppercase tracking-wider mb-2 font-medium">
                 So entsteht dein Aura Score aus den Modellen
               </p>
               <p className="text-sm text-[#0f172a] leading-relaxed mb-3">
@@ -348,7 +348,7 @@ export default async function AiVisibilityPage() {
                 ))}
                 <span className="text-[#94a3b8]">÷ {ok.length}</span>
                 <span className="text-[#94a3b8]">=</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#4F6EF7] text-white font-semibold tabular-nums">
+                <span className="px-2.5 py-1 rounded-md bg-[#7F77DD] text-white font-semibold tabular-nums">
                   {mean}
                 </span>
               </div>

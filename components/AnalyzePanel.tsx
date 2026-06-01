@@ -69,7 +69,7 @@ export default function AnalyzePanel({
   const isFree = plan === "free"
 
   return (
-    <div className="p-8 max-w-4xl mx-auto space-y-6">
+    <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <header>
         <h1 className="text-2xl font-semibold text-[#0f172a]">Analyse</h1>
         <p className="text-sm text-[#64748b] mt-1">
@@ -84,7 +84,7 @@ export default function AnalyzePanel({
           className={`rounded-xl border p-4 ${
             limitReached
               ? "bg-amber-50 border-amber-100"
-              : "bg-blue-50 border-blue-100"
+              : "bg-[#EEEDFE] border-[#CECBF6]"
           }`}
         >
           <p className="text-sm font-medium text-[#0f172a]">
@@ -107,7 +107,7 @@ export default function AnalyzePanel({
               .{" "}
               <a
                 href="/settings"
-                className="text-[#4F6EF7] hover:underline font-medium"
+                className="text-[#7F77DD] hover:underline font-medium"
               >
                 Upgrade →
               </a>
@@ -132,7 +132,7 @@ export default function AnalyzePanel({
             Noch keine Themen.{" "}
             <a
               href="/settings"
-              className="text-[#4F6EF7] hover:underline font-medium"
+              className="text-[#7F77DD] hover:underline font-medium"
             >
               In Einstellungen hinzufügen →
             </a>
@@ -168,7 +168,7 @@ export default function AnalyzePanel({
                     className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
                       wasSuccess
                         ? "bg-green-100 text-green-700 border border-green-200"
-                        : "bg-[#4F6EF7] hover:bg-blue-700 text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                        : "bg-[#7F77DD] hover:bg-[#534AB7] text-white disabled:opacity-40 disabled:cursor-not-allowed"
                     }`}
                   >
                     {isRunning ? (
@@ -238,7 +238,7 @@ function HistoryChart({ points }: { points: ScoreHistoryPoint[] }) {
         width="100%"
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
-        className="text-[#4F6EF7]"
+        className="text-[#7F77DD]"
       >
         {/* Y-Axis ticks */}
         {[0, 25, 50, 75, 100].map(v => (

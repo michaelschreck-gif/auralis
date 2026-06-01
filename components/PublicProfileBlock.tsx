@@ -101,7 +101,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
           onClick={() => handleToggle(!enabled)}
           disabled={pending}
           className={`relative inline-flex h-7 w-12 flex-shrink-0 rounded-full transition-colors ${
-            enabled ? "bg-[#4F6EF7]" : "bg-gray-300"
+            enabled ? "bg-[#7F77DD]" : "bg-gray-300"
           } disabled:opacity-50`}
         >
           <span
@@ -132,7 +132,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                 type="text"
                 value={slug}
                 onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                className="flex-1 bg-white border border-gray-200 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20 font-mono"
+                className="flex-1 bg-white border border-gray-200 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20 font-mono"
                 placeholder="elon-musk"
               />
               <button
@@ -150,8 +150,8 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
           </div>
 
           {/* Public URL */}
-          <div className="rounded-xl bg-blue-50/40 border border-blue-100 p-4 space-y-2">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#4F6EF7]">
+          <div className="rounded-xl bg-[#EEEDFE]/40 border border-[#CECBF6] p-4 space-y-2">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#7F77DD]">
               Deine öffentliche URL
             </p>
             <a
@@ -187,7 +187,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
               <button
                 type="button"
                 onClick={copyEmbed}
-                className="mt-2 px-3 py-1.5 rounded-md bg-[#4F6EF7] hover:bg-blue-700 text-white text-xs font-medium transition-colors"
+                className="mt-2 px-3 py-1.5 rounded-md bg-[#7F77DD] hover:bg-[#534AB7] text-white text-xs font-medium transition-colors"
               >
                 {copied ? "✓ Kopiert" : "HTML kopieren"}
               </button>

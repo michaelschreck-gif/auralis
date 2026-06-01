@@ -78,7 +78,7 @@ export default async function ResponsesPage() {
 
   return (
     <DashboardShell userName={userName}>
-      <div className="p-8 max-w-4xl mx-auto space-y-6">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">KI-Antworten</h1>
           <p className="text-sm text-[#64748b] mt-1">
@@ -90,14 +90,14 @@ export default async function ResponsesPage() {
           <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
             <p className="text-sm text-[#64748b]">
               Noch keine gespeicherten KI-Antworten.{" "}
-              <a href="/dashboard/analyze" className="text-[#4F6EF7] hover:underline">
+              <a href="/dashboard/analyze" className="text-[#7F77DD] hover:underline">
                 Erste Analyse starten →
               </a>
             </p>
           </div>
         ) : (
           <>
-            <div className="rounded-xl border border-blue-100 bg-blue-50/40 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+            <div className="rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/40 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
               <span className="text-[#0f172a]">
                 <span className="font-semibold">{mentionedAnswers}</span> von{" "}
                 <span className="font-semibold">{totalAnswers}</span> Antworten nennen dich

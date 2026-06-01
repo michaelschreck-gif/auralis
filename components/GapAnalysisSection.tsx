@@ -21,7 +21,7 @@ export default function GapAnalysisSection({ analyses }: { analyses: GapAnalysis
         <div key={a.competitorName} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3 flex-wrap">
             <p className="text-sm font-medium text-[#0f172a]">
-              Du vs. <span className="text-[#4F6EF7]">{a.competitorName}</span>
+              Du vs. <span className="text-[#7F77DD]">{a.competitorName}</span>
             </p>
             <div className="flex items-center gap-2 text-xs">
               {a.gapCount > 0 && (

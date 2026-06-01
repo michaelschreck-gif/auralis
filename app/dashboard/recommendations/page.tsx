@@ -62,7 +62,7 @@ export default async function RecommendationsPage() {
 
   return (
     <DashboardShell userName={userName}>
-      <div className="p-8 max-w-4xl mx-auto space-y-6">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">Empfehlungen</h1>
           <p className="text-sm text-[#64748b] mt-1">

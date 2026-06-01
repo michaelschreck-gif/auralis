@@ -93,7 +93,7 @@ export default async function SourcesPage() {
 
   return (
     <DashboardShell userName={userName}>
-      <div className="p-8 max-w-4xl mx-auto space-y-6">
+      <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">Quellen</h1>
           <p className="text-sm text-[#64748b] mt-1">
@@ -110,14 +110,14 @@ export default async function SourcesPage() {
               Sobald die KI deine Sichtbarkeit analysiert, erscheinen hier genannte Quellen.{" "}
               <a
                 href="/dashboard/analyze"
-                className="text-[#4F6EF7] hover:underline font-medium"
+                className="text-[#7F77DD] hover:underline font-medium"
               >
                 Erste Analyse starten →
               </a>
             </p>
           </section>
         ) : sources.length === 0 ? (
-          <section className="bg-white rounded-2xl border border-blue-100 bg-blue-50/40 shadow-sm p-8">
+          <section className="bg-white rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/40 shadow-sm p-8">
             <p className="text-base font-medium text-[#0f172a]">
               Quellen erscheinen nur bei web-vernetzten KI-Modellen
             </p>
@@ -137,7 +137,7 @@ export default async function SourcesPage() {
             </div>
             <p className="text-xs text-[#94a3b8] mt-4">
               Tipp: Die tatsächlichen KI-Antworten hinter deinen Scores findest du unter{" "}
-              <a href="/dashboard/responses" className="text-[#4F6EF7] hover:underline font-medium">
+              <a href="/dashboard/responses" className="text-[#7F77DD] hover:underline font-medium">
                 KI-Antworten
               </a>.
             </p>
@@ -172,7 +172,7 @@ export default async function SourcesPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-blue-50 text-[#4F6EF7] text-xs font-semibold tabular-nums">
+                  <div className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-[#EEEDFE] text-[#7F77DD] text-xs font-semibold tabular-nums">
                     {s.count}× zitiert
                   </div>
                 </div>

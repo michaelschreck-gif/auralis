@@ -108,7 +108,7 @@ function EvidenceRow({ item, personName }: { item: EvidenceItem; personName: str
         <button
           type="button"
           onClick={() => setOpen(o => !o)}
-          className="text-xs text-[#4F6EF7] hover:underline font-medium flex items-center gap-1"
+          className="text-xs text-[#7F77DD] hover:underline font-medium flex items-center gap-1"
           aria-expanded={open}
         >
           {open ? "Antwort verbergen" : "Antwort anzeigen"}
