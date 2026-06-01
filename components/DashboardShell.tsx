@@ -124,7 +124,6 @@ export default function DashboardShell({
   const initials = userName
     ? userName.split(" ").map(n => n[0] ?? "").join("").toUpperCase().slice(0, 2)
     : "?"
-  const breadcrumb = NAV.find(n => n.href === pathname)?.label ?? "Dashboard"
 
   const navList = (
     <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
@@ -184,31 +183,25 @@ export default function DashboardShell({
   return (
     <div className="flex flex-col h-screen bg-[#f8f9fb] overflow-hidden">
 
-      {/* ─── Topbar (mobil: Hamburger + Brand; desktop: Breadcrumb + User) ─── */}
-      <header className="h-[56px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 md:px-6 gap-3 z-20">
+      {/* ─── Topbar (nur mobil: Hamburger + Brand + Avatar) ─── */}
+      <header className="md:hidden h-[56px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 gap-3 z-20">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Menü öffnen"
-          className="md:hidden w-9 h-9 -ml-1 rounded-lg flex items-center justify-center text-[#475569] hover:bg-gray-100"
+          className="w-9 h-9 -ml-1 rounded-lg flex items-center justify-center text-[#475569] hover:bg-gray-100"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
         </button>
-        <div className="md:hidden flex items-center gap-2">
+        <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-lg bg-[#26215C] flex items-center justify-center"><span className="text-white text-xs font-bold">A</span></div>
           <span className="text-[#0f172a] font-semibold text-sm">Auralis</span>
         </div>
-        <div className="flex-1 hidden md:block">
-          <span className="text-sm text-[#64748b] font-medium">{breadcrumb}</span>
-        </div>
         <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
           {userName && (
-            <>
-              <span className="text-sm text-[#64748b] hidden md:block">{userName}</span>
-              <div className="w-8 h-8 rounded-full bg-[#EEEDFE] border border-[#CECBF6] flex items-center justify-center flex-shrink-0">
-                <span className="text-xs font-semibold text-[#534AB7]">{initials}</span>
-              </div>
-            </>
+            <div className="w-8 h-8 rounded-full bg-[#EEEDFE] border border-[#CECBF6] flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-semibold text-[#534AB7]">{initials}</span>
+            </div>
           )}
         </div>
       </header>
