@@ -97,7 +97,7 @@ export default async function SourcesPage() {
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">Quellen</h1>
           <p className="text-sm text-[#64748b] mt-1">
-            Welche Quellen zitieren KI-Systeme, wenn sie über dich sprechen?
+            Welche Webseiten KI-Systeme nennen, wenn sie über dich sprechen.
           </p>
         </header>
 
@@ -107,7 +107,7 @@ export default async function SourcesPage() {
               Noch keine Analysen vorhanden.
             </p>
             <p className="text-sm text-[#64748b] mt-2">
-              Sobald die KI deine Sichtbarkeit analysiert, erscheinen hier die zitierten Quellen.{" "}
+              Sobald die KI deine Sichtbarkeit analysiert, erscheinen hier genannte Quellen.{" "}
               <a
                 href="/dashboard/analyze"
                 className="text-[#4F6EF7] hover:underline font-medium"
@@ -117,13 +117,29 @@ export default async function SourcesPage() {
             </p>
           </section>
         ) : sources.length === 0 ? (
-          <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
+          <section className="bg-white rounded-2xl border border-blue-100 bg-blue-50/40 shadow-sm p-8">
             <p className="text-base font-medium text-[#0f172a]">
-              Noch keine Quellen gefunden.
+              Quellen erscheinen nur bei web-vernetzten KI-Modellen
             </p>
-            <p className="text-sm text-[#64748b] mt-2 max-w-md mx-auto leading-relaxed">
-              Die letzten {reportCount} Analyse{reportCount === 1 ? "" : "n"} {reportCount === 1 ? "enthält" : "enthalten"} keine zitierten Quellen.
-              Führe mehrere Analysen durch, um Quellenmuster zu erkennen — KI-Systeme zitieren oft erst bei spezifischeren Anfragen.
+            <div className="text-sm text-[#475569] mt-3 space-y-3 leading-relaxed max-w-xl">
+              <p>
+                Deine Analysen laufen aktuell mit <span className="font-medium text-[#0f172a]">Claude</span>.
+                Claude antwortet aus seinem Trainingswissen und gibt dabei – wie die meisten
+                KI-Assistenten – normalerweise keine konkreten Webadressen an. Deshalb gibt es hier
+                nichts auszuwerten, obwohl deine Analysen einwandfrei funktionieren.
+              </p>
+              <p>
+                Echte Quell-Links liefern vor allem <span className="font-medium text-[#0f172a]">web-vernetzte
+                Modelle wie Perplexity</span>, die live im Internet suchen. Sobald ein solches Modell für
+                dein Konto aktiv ist, werden die genannten Webseiten hier automatisch gesammelt und nach
+                Häufigkeit sortiert.
+              </p>
+            </div>
+            <p className="text-xs text-[#94a3b8] mt-4">
+              Tipp: Die tatsächlichen KI-Antworten hinter deinen Scores findest du unter{" "}
+              <a href="/dashboard/responses" className="text-[#4F6EF7] hover:underline font-medium">
+                KI-Antworten
+              </a>.
             </p>
           </section>
         ) : (
@@ -165,10 +181,13 @@ export default async function SourcesPage() {
           </section>
         )}
 
-        <p className="text-xs text-[#94a3b8]">
-          Hinweis: KI-Systeme zitieren Quellen heuristisch. Diese Liste zeigt URLs/Domains,
-          die in den Antworten der letzten {reportCount} Analyse{reportCount === 1 ? "" : "n"} erwähnt wurden.
-        </p>
+        {sources.length > 0 && (
+          <p className="text-xs text-[#94a3b8]">
+            Hinweis: Diese Liste zeigt Webadressen, die KI-Modelle in den Antworten der letzten{" "}
+            {reportCount} Analyse{reportCount === 1 ? "" : "n"} genannt haben. Web-vernetzte Modelle
+            (z.&nbsp;B. Perplexity) liefern hier deutlich mehr als reine Wissensmodelle wie Claude.
+          </p>
+        )}
       </div>
     </DashboardShell>
   )
