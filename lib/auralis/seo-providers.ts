@@ -16,6 +16,7 @@
  */
 
 import type { SeoSignals } from "./seo-score"
+import { sanitizeTargetName } from "./analyzer"
 
 export type SeoSource = "serp" | "gsc"
 
@@ -43,26 +44,128 @@ export type SeoProvider = {
 
 // ─── off-site: Google SERP ────────────────────────────────────────────────────
 
+/** Rang → Punktwert: Platz 1 = 100, danach ca. −8 pro Position (Platz 10 ≈ 28). */
+function rankToScore(rank: number): number {
+  return Math.max(0, Math.min(100, Math.round(100 - (rank - 1) * 8)))
+}
+
+/** Ganzwort-Treffer (Unicode-bewusst), beide Argumente lower-case. */
+function containsWholeName(haystackLower: string, nameLower: string): boolean {
+  if (!nameLower) return false
+  const escaped = nameLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
+  return new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, "u").test(haystackLower)
+}
+
+function hostOf(url: string | null | undefined): string | null {
+  if (!url) return null
+  try {
+    return new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "")
+  } catch {
+    return null
+  }
+}
+
+/** Sprache → DataForSEO language_code + location_name. */
+function localeFor(language?: string): { language_code: string; location_name: string } {
+  if (language === "de") return { language_code: "de", location_name: "Germany" }
+  return { language_code: "en", location_name: "United States" }
+}
+
+type DfsItem = {
+  type?: string
+  rank_absolute?: number
+  title?: string
+  url?: string
+  domain?: string
+  description?: string
+  text?: string
+}
+
 export const serpProvider: SeoProvider = {
   source: "serp",
   label: "Google-Suche (SERP)",
   isConfigured() {
-    return (
-      !!process.env.SERPAPI_KEY ||
-      (!!process.env.DATAFORSEO_LOGIN && !!process.env.DATAFORSEO_PASSWORD)
-    )
+    return !!process.env.DATAFORSEO_LOGIN && !!process.env.DATAFORSEO_PASSWORD
   },
-  async run() {
-    // TODO(seo): echte SERP-API-Anbindung (SerpApi /search.json oder DataForSEO
-    // SERP-Endpoint) — pro Thema "name + topic" abfragen, Position der Person
-    // in organic_results bestimmen, knowledge_graph + ai_overview-Präsenz lesen,
-    // in SeoSignals umrechnen.
-    if (!this.isConfigured()) return { ok: false, reason: "not_configured" }
-    return {
-      ok: false,
-      reason: "error",
-      message: "SERP-Provider konfiguriert, aber Anbindung noch nicht implementiert.",
+  async run(input) {
+    const login = process.env.DATAFORSEO_LOGIN
+    const password = process.env.DATAFORSEO_PASSWORD
+    if (!login || !password) return { ok: false, reason: "not_configured" }
+
+    const topics = input.topics.filter(Boolean)
+    if (topics.length === 0) {
+      return { ok: false, reason: "error", message: "Keine Themen zum Abfragen." }
     }
+
+    const name = sanitizeTargetName(input.targetName).toLowerCase()
+    const ownHost = hostOf(input.websiteUrl)
+    const { language_code, location_name } = localeFor(input.language)
+    const auth = "Basic " + Buffer.from(`${login}:${password}`).toString("base64")
+
+    const perTopic: { topic: string; position: number | null; url?: string | null }[] = []
+    const positionScores: number[] = []
+    let knowledgePanel = false
+    let aiOverview = false
+
+    for (const topic of topics) {
+      try {
+        const res = await fetch(
+          "https://api.dataforseo.com/v3/serp/google/organic/live/advanced",
+          {
+            method: "POST",
+            headers: { Authorization: auth, "Content-Type": "application/json" },
+            body: JSON.stringify([{ keyword: topic, language_code, location_name, depth: 20 }]),
+          },
+        )
+        if (!res.ok) {
+          // Ein fehlgeschlagenes Thema soll den Lauf nicht killen.
+          perTopic.push({ topic, position: null })
+          continue
+        }
+        const json = await res.json()
+        const items: DfsItem[] = json?.tasks?.[0]?.result?.[0]?.items ?? []
+
+        // Position in den organischen Treffern: erster Treffer, dessen Titel/
+        // Beschreibung den Namen als ganzes Wort enthält ODER dessen Domain die
+        // eigene Website ist.
+        let foundRank: number | null = null
+        for (const it of items) {
+          if (it.type !== "organic") continue
+          const hay = `${it.title ?? ""} ${it.description ?? ""}`.toLowerCase()
+          const domainMatch = ownHost && hostOf(it.url ?? it.domain) === ownHost
+          if (containsWholeName(hay, name) || domainMatch) {
+            foundRank = typeof it.rank_absolute === "number" ? it.rank_absolute : null
+            perTopic.push({ topic, position: foundRank, url: it.url ?? null })
+            break
+          }
+        }
+        if (foundRank === null) perTopic.push({ topic, position: null })
+        else positionScores.push(rankToScore(foundRank))
+
+        // Knowledge Panel: knowledge_graph-Item, dessen Titel den Namen enthält.
+        if (items.some(it => it.type === "knowledge_graph" && containsWholeName((it.title ?? "").toLowerCase(), name))) {
+          knowledgePanel = true
+        }
+        // AI Overview: ai_overview-Item, dessen Text den Namen enthält.
+        if (items.some(it => it.type === "ai_overview" && containsWholeName(`${it.text ?? ""} ${it.title ?? ""}`.toLowerCase(), name))) {
+          aiOverview = true
+        }
+      } catch {
+        perTopic.push({ topic, position: null })
+      }
+    }
+
+    const foundCount = perTopic.filter(t => t.position !== null).length
+    const signals: SeoSignals = {
+      serpPresence: Math.round((foundCount / topics.length) * 100),
+      serpPosition: positionScores.length
+        ? Math.round(positionScores.reduce((a, b) => a + b, 0) / positionScores.length)
+        : 0,
+      knowledgePanel: knowledgePanel ? 100 : 0,
+      aiOverview: aiOverview ? 100 : 0,
+    }
+
+    return { ok: true, signals, perTopic }
   },
 }
 

@@ -9,6 +9,8 @@ import {
   type SeoReportData,
   type SeoScore,
 } from "@/lib/auralis/seo-score"
+import { serpProvider } from "@/lib/auralis/seo-providers"
+import SeoRunButton from "@/components/SeoRunButton"
 
 export const dynamic = "force-dynamic"
 
@@ -50,6 +52,7 @@ export default async function SeoScorePage() {
   }
 
   const score: SeoScore | null = computeSeoScore(seoData)
+  const configured = serpProvider.isConfigured()
   const t = SEO_THEME
 
   return (
@@ -96,6 +99,9 @@ export default async function SeoScorePage() {
           <p className="text-sm mt-3 leading-relaxed max-w-2xl" style={{ color: t.text }}>
             {SEO_DEFINITION.what}
           </p>
+          <div className="mt-4">
+            <SeoRunButton configured={configured} />
+          </div>
         </div>
 
         {/* Setup-Hinweis wenn noch keine Daten */}
@@ -126,8 +132,9 @@ export default async function SeoScorePage() {
               </div>
             </div>
             <p className="text-xs text-[#94a3b8] mt-4">
-              Status: Gerüst steht. Sobald die Datenquellen serverseitig konfiguriert sind, erscheinen
-              hier echte Werte — die Themen und die Anzeige sind bereits vorbereitet.
+              {configured
+                ? "Die Google-Suche (SERP) ist verbunden. Starte oben eine SEO-Analyse, um deine echten Werte zu sehen."
+                : "Status: Gerüst steht. Sobald die Datenquellen serverseitig konfiguriert sind, erscheinen hier echte Werte — die Themen und die Anzeige sind bereits vorbereitet."}
             </p>
           </section>
         )}
