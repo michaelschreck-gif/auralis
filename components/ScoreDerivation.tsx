@@ -23,7 +23,9 @@ export default function ScoreDerivationTable({
       <p className="text-xs text-[#64748b] mb-3 leading-relaxed">
         Jeder Score ist die Summe aus{" "}
         <span className="font-medium text-[#0f172a]">Messwert × Gewichtung</span>{" "}
-        über alle Signale. Die Messwerte stammen aus deiner letzten Analyse.
+        über alle Signale. Die Messwerte stammen aus deiner letzten Analyse. Die
+        Beiträge sind gerundet — die Gesamtsumme kann daher um 1 Punkt von der
+        Addition der angezeigten Werte abweichen.
       </p>
 
       <div className="overflow-hidden rounded-xl border border-gray-100">
@@ -68,7 +70,7 @@ export default function ScoreDerivationTable({
         {/* Summen-Zeile */}
         <div className="grid grid-cols-[1fr_auto] gap-2 px-3 py-2.5 bg-[#f8f9fb] border-t border-gray-100 items-baseline">
           <span className="text-xs font-semibold text-[#0f172a]">
-            = Score (Summe der Beiträge)
+            = Score (gerundet)
           </span>
           <span className="text-right tabular-nums text-base font-semibold text-[#0f172a]">
             {total}<span className="text-xs text-[#94a3b8] font-normal">/100</span>

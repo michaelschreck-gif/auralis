@@ -74,7 +74,7 @@ export default function AnalyzePanel({
         <h1 className="text-2xl font-semibold text-[#0f172a]">Analyse</h1>
         <p className="text-sm text-[#64748b] mt-1">
           Starte eine neue Sichtbarkeits-Analyse für eines deiner Themen.
-          Die KI generiert 5 Abfragen und prüft, wie prominent du erwähnt wirst.
+          Die KI stellt 7 typische Suchfragen und prüft, wie prominent du in den Antworten erwähnt wirst. Eine Analyse dauert ca. 20 Sekunden.
         </p>
       </header>
 
@@ -153,7 +153,7 @@ export default function AnalyzePanel({
                       {s.query}
                     </p>
                     <p className="text-xs text-[#94a3b8] mt-0.5">
-                      {s.language === "en" ? "🇬🇧" : "🇩🇪"} {s.name} · {frequencyLabel(s.frequency)}
+                      {frequencyLabel(s.frequency)}
                       {s.last_run_at && (
                         <>
                           {" · "}letzte Analyse: {relativeTime(new Date(s.last_run_at))}

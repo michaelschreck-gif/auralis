@@ -99,8 +99,8 @@ function ModelCard({
           </span>
         )}
         {state.kind === "error" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-100 font-medium">
-            Fehler
+          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#64748b]">
+            Zurzeit nicht verfügbar
           </span>
         )}
         {state.kind === "providerMissing" && (
@@ -157,8 +157,8 @@ function ModelCard({
         )}
 
         {state.kind === "error" && (
-          <p className="text-xs text-amber-700 bg-amber-50 border border-amber-100 rounded px-2 py-1.5">
-            Letzte Analyse fehlgeschlagen: {state.message.slice(0, 120)}
+          <p className="text-xs text-[#64748b]">
+            Dieses Modell konnte bei der letzten Analyse nicht abgefragt werden und wird beim nächsten Lauf automatisch erneut versucht.
           </p>
         )}
 

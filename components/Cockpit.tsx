@@ -37,7 +37,7 @@ export default function Cockpit({
           Hallo, {firstName} 👋
         </h1>
         <p className="text-sm text-[#64748b] mt-0.5">
-          Dein KI-Sichtbarkeits-Cockpit.
+          Diese vier Werte zeigen, wie sichtbar du in KI-Antworten bist — je höher, desto eher nennt dich eine KI bei deinen Themen. Klick auf das „?", um zu sehen, wie ein Wert berechnet wird.
         </p>
       </header>
 

@@ -289,7 +289,12 @@ export function computeScoreDerivationFromSignals(
       color: meta.color,
     }
   })
-  const total = clamp(factors.reduce((acc, f) => acc + f.contribution, 0))
+  // Total = gerundete Summe der UNgerundeten Beiträge — identisch zur Headline-
+  // Score-Formel (computeDimensionValue). So zeigt die Tabelle nie einen anderen
+  // Wert als die große Score-Zahl (vermeidet z.B. 58 oben vs. 59 in der Summe).
+  const total = clamp(
+    Math.round(factors.reduce((acc, f) => acc + f.rawValue * f.weight, 0)),
+  )
   return { key, factors, total }
 }
 

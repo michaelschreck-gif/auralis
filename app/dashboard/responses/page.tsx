@@ -82,7 +82,7 @@ export default async function ResponsesPage() {
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">KI-Antworten</h1>
           <p className="text-sm text-[#64748b] mt-1">
-            Die tatsächlichen Antworten der KI-Systeme aus deiner letzten Analyse — die Rohdaten hinter deinen Scores.
+            Die tatsächlichen Antworten der KI-Systeme aus deiner letzten Analyse — die Rohdaten hinter deinen Scores. Dass du nicht in jeder Antwort genannt wirst, ist völlig normal; jede Nennung verbessert deinen Score.
           </p>
         </header>
 

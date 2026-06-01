@@ -178,7 +178,7 @@ export default async function TopicsPage() {
                     <div>
                       <h3 className="text-base font-semibold text-[#0f172a]">{s.query}</h3>
                       <p className="text-xs text-[#94a3b8] mt-0.5">
-                        {s.language === "en" ? "🇬🇧" : "🇩🇪"} {s.name} · {frequencyLabel(s.frequency)}
+                        {frequencyLabel(s.frequency)}
                       </p>
                     </div>
                     {hasData && (

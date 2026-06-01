@@ -89,18 +89,18 @@ export default function SettingsForm({
       {/* Profile */}
       <section id="profile" className="space-y-5">
         <div>
-          <h2 className="text-base font-semibold text-[#0f172a]">Profile</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">How AI sees you in visibility checks.</p>
+          <h2 className="text-base font-semibold text-[#0f172a]">Profil</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">So sehen dich KI-Systeme in den Sichtbarkeits-Analysen.</p>
         </div>
 
         <div className="space-y-4">
           <div className="space-y-1.5">
-            <label className={labelCls}>Full Name</label>
+            <label className={labelCls}>Voller Name</label>
             <input type="text" value={name} onChange={e => setName(e.target.value)} className={inputCls}/>
           </div>
 
           <div className="space-y-1.5">
-            <label className={labelCls}>Email</label>
+            <label className={labelCls}>E-Mail</label>
             <input
               type="email"
               value={initialEmail}
@@ -110,7 +110,7 @@ export default function SettingsForm({
           </div>
 
           <div className="space-y-1.5">
-            <label className={labelCls}>AI Query Language</label>
+            <label className={labelCls}>Sprache der KI-Abfragen</label>
             <div className="flex gap-2">
               {(["de", "en"] as const).map(lang => (
                 <button
@@ -140,21 +140,21 @@ export default function SettingsForm({
           {saving ? (
             <>
               <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin"/>
-              Saving…
+              Speichert…
             </>
-          ) : saved ? "Saved ✓" : "Save Changes"}
+          ) : saved ? "Gespeichert ✓" : "Änderungen speichern"}
         </button>
       </section>
 
       {/* Monitoring Topics */}
       <section id="topics" className="space-y-5">
         <div>
-          <h2 className="text-base font-semibold text-[#0f172a]">Monitoring Topics</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Topics tracked by scheduled AI visibility checks.</p>
+          <h2 className="text-base font-semibold text-[#0f172a]">Überwachte Themen</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">Themen, die automatisch per geplanter KI-Sichtbarkeits-Analyse verfolgt werden.</p>
         </div>
 
         {schedules.length === 0 && (
-          <p className="text-sm text-[#64748b]">No active topics. Go to the dashboard to add one.</p>
+          <p className="text-sm text-[#64748b]">Noch keine aktiven Themen. Füge im Dashboard eines hinzu.</p>
         )}
 
         <div className="space-y-3">
@@ -162,23 +162,22 @@ export default function SettingsForm({
             <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center gap-4">
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#0f172a] font-medium truncate">{s.query}</p>
-                <p className="text-xs text-[#94a3b8] mt-0.5">{s.name}</p>
               </div>
               <select
                 value={s.frequency}
                 onChange={e => updateScheduleFrequency(s.id, e.target.value)}
                 className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-[#64748b] focus:outline-none focus:border-[#4F6EF7] transition-colors"
               >
-                <option value="daily">Daily</option>
-                <option value="weekly">Weekly</option>
-                <option value="monthly">Monthly</option>
+                <option value="daily">Täglich</option>
+                <option value="weekly">Wöchentlich</option>
+                <option value="monthly">Monatlich</option>
               </select>
               <button
                 onClick={() => deleteSchedule(s.id)}
                 disabled={deletingId === s.id}
                 className="text-xs text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-40"
               >
-                {deletingId === s.id ? "…" : "Remove"}
+                {deletingId === s.id ? "…" : "Entfernen"}
               </button>
             </div>
           ))}
@@ -188,14 +187,14 @@ export default function SettingsForm({
       {/* Plan */}
       <section id="plan" className="space-y-4">
         <div>
-          <h2 className="text-base font-semibold text-[#0f172a]">Plan</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Your current subscription.</p>
+          <h2 className="text-base font-semibold text-[#0f172a]">Tarif</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">Dein aktuelles Abonnement.</p>
         </div>
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center justify-between">
           <div>
             <p className="text-sm text-[#0f172a] font-medium capitalize">{plan}</p>
             <p className="text-xs text-[#64748b] mt-0.5">
-              {plan === "free" ? "1 visibility check per month" : "Unlimited checks"}
+              {plan === "free" ? "1 Analyse pro Monat" : "Unbegrenzte Analysen"}
             </p>
           </div>
           {plan === "free" && (
@@ -209,8 +208,8 @@ export default function SettingsForm({
       {/* Danger Zone */}
       <section id="danger" className="space-y-4">
         <div>
-          <h2 className="text-base font-semibold text-red-500">Danger Zone</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Irreversible actions.</p>
+          <h2 className="text-base font-semibold text-red-500">Gefahrenzone</h2>
+          <p className="text-xs text-[#64748b] mt-0.5">Unwiderrufliche Aktionen.</p>
         </div>
 
         {!showDeleteConfirm ? (
@@ -218,25 +217,25 @@ export default function SettingsForm({
             onClick={() => setShowDeleteConfirm(true)}
             className="px-5 py-2.5 rounded-lg text-sm border border-red-200 text-red-500 bg-red-50 hover:bg-red-100 transition-colors font-medium"
           >
-            Delete Account
+            Konto löschen
           </button>
         ) : (
           <div className="rounded-xl border border-red-100 bg-red-50 p-4 space-y-3">
             <p className="text-sm text-red-600">
-              This will permanently delete your profile, all topics, and all visibility reports. Are you sure?
+              Damit werden dein Profil, alle Themen und alle Sichtbarkeits-Reports unwiderruflich gelöscht. Bist du sicher?
             </p>
             <div className="flex gap-3">
               <button
                 onClick={deleteAccount}
                 className="px-4 py-2 rounded-lg text-sm bg-red-500 text-white hover:bg-red-600 transition-colors font-medium"
               >
-                Yes, delete everything
+                Ja, alles löschen
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
                 className="px-4 py-2 rounded-lg text-sm text-[#64748b] hover:text-[#0f172a] transition-colors"
               >
-                Cancel
+                Abbrechen
               </button>
             </div>
           </div>
