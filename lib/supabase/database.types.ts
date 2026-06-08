@@ -266,6 +266,7 @@ export type Database = {
           id: string
           is_admin: boolean
           language: Database["public"]["Enums"]["language_type"]
+          parent_account_id: string | null
           plan: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled: boolean
           public_slug: string | null
@@ -282,6 +283,7 @@ export type Database = {
           id: string
           is_admin?: boolean
           language?: Database["public"]["Enums"]["language_type"]
+          parent_account_id?: string | null
           plan?: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled?: boolean
           public_slug?: string | null
@@ -298,6 +300,7 @@ export type Database = {
           id?: string
           is_admin?: boolean
           language?: Database["public"]["Enums"]["language_type"]
+          parent_account_id?: string | null
           plan?: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled?: boolean
           public_slug?: string | null

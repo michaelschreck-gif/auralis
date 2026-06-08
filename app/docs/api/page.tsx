@@ -30,6 +30,8 @@ const TOC = [
   { id: "ep-responses",  label: "  GET /responses", indent: true },
   { id: "ep-recommendations", label: "  GET /recommendations", indent: true },
   { id: "ep-analyze",    label: "  POST /analyze/{id}", indent: true },
+  { id: "ep-subaccounts-list", label: "  GET /sub-accounts", indent: true },
+  { id: "ep-subaccounts",  label: "  POST /sub-accounts", indent: true },
   { id: "examples",      label: "Code-Beispiele" },
   { id: "support",       label: "Support" },
 ] as const
@@ -247,6 +249,8 @@ export default function ApiDocsPage() {
                   <ErrorRow http="403" code="PLAN_REQUIRED" meaning="Tarif unterstützt API nicht. Upgrade auf Pro/Enterprise nötig." />
                   <ErrorRow http="429" code="RATE_LIMITED" meaning="Tägliches Abfragelimit erreicht. Reset um 00:00 UTC — oder Enterprise-Lizenz für unbegrenzte Abfragen." />
                   <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Sichtbarkeits-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
+                  <ErrorRow http="409" code="EMAIL_EXISTS" meaning="Beim Anlegen eines Sub-Accounts: ein Account mit dieser E-Mail existiert bereits." />
+                  <ErrorRow http="400" code="INVALID_INPUT" meaning="Ungültiger Request-Body (z.B. fehlendes Pflichtfeld beim Anlegen/POST)." />
                   <ErrorRow http="500" code="INTERNAL" meaning="Serverseitiger Fehler — Support kontaktieren falls anhaltend." />
                 </tbody>
               </table>
@@ -527,6 +531,53 @@ export default function ApiDocsPage() {
   "sentiment": "positive",
   "mention_rate": 29,
   "providers_used": ["claude-sonnet"]
+}`}
+          />
+
+          <Endpoint
+            id="ep-subaccounts-list"
+            method="GET"
+            path="/sub-accounts"
+            description="Listet alle Sub-Accounts, die unter diesem Account angelegt wurden. Verwaltete Sub-Accounts sind eigene Auralis-Profile (eigene Themen & Scores), die über den Eltern-Account verknüpft sind."
+            example={`curl ${BASE_URL}${API_PREFIX}/sub-accounts \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "sub_accounts": [
+    {
+      "id": "uuid",
+      "email": "kunde@example.com",
+      "full_name": "Kunden-Name",
+      "plan": "pro",
+      "language": "de",
+      "created_at": "2026-06-08T09:12:00Z"
+    }
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-subaccounts"
+            method="POST"
+            path="/sub-accounts"
+            description="Legt einen neuen verwalteten Sub-Account an. Nur mit Enterprise-Lizenz verfügbar, ohne Mengenbegrenzung. Der Sub-Account erhält den Tarif „Pro“ und wird über den Eltern-Account gesteuert (kein eigener Login-Flow — es wird keine Einladungs- oder Bestätigungsmail versendet)."
+            params={[
+              { name: "full_name", type: "string (Body)", desc: "Anzeigename des Sub-Accounts. Pflicht, max. 120 Zeichen." },
+              { name: "email", type: "string (Body)", desc: "Eindeutige E-Mail-Adresse. Pflicht. Wird zur Identifikation genutzt." },
+              { name: "language", type: "string (Body)", desc: "Abfragesprache (de, en, fr, es, it, nl, pt). Optional, Default = Sprache des Eltern-Accounts." },
+            ]}
+            example={`curl -X POST ${BASE_URL}${API_PREFIX}/sub-accounts \\
+  -H "Authorization: Bearer aur_sk_xxxxx" \\
+  -H "Content-Type: application/json" \\
+  -d '{"full_name":"Kunden-Name","email":"kunde@example.com","language":"de"}'`}
+            response={`{
+  "sub_account": {
+    "id": "uuid",
+    "email": "kunde@example.com",
+    "full_name": "Kunden-Name",
+    "plan": "pro",
+    "language": "de",
+    "parent_account_id": "uuid-des-eltern-accounts"
+  }
 }`}
           />
 
