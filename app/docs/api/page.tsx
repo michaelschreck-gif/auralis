@@ -29,6 +29,9 @@ const TOC = [
   { id: "ep-gaps",       label: "  GET /competitors/{id}/gaps", indent: true },
   { id: "ep-responses",  label: "  GET /responses", indent: true },
   { id: "ep-recommendations", label: "  GET /recommendations", indent: true },
+  { id: "ep-topics-list", label: "  GET /topics", indent: true },
+  { id: "ep-topics",     label: "  POST /topics", indent: true },
+  { id: "ep-topics-del", label: "  DELETE /topics/{id}", indent: true },
   { id: "ep-analyze",    label: "  POST /analyze/{id}", indent: true },
   { id: "ep-subaccounts-list", label: "  GET /sub-accounts", indent: true },
   { id: "ep-subaccounts",  label: "  POST /sub-accounts", indent: true },
@@ -120,11 +123,26 @@ export default function ApiDocsPage() {
               authentifizieren.
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>13 Endpoints: 8× GET (lesen), 4× POST (anlegen/auslösen), 1× DELETE</li>
+              <li>16 Endpoints: 9× GET (lesen), 5× POST (anlegen/auslösen), 2× DELETE</li>
               <li>Tageslimit je Tarif — Pro 1.000/Tag, <strong>Enterprise unbegrenzt</strong> (siehe Limits &amp; Tarife)</li>
               <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
               <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
             </ul>
+            <div className="rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/50 p-5 mt-2">
+              <p className="text-sm font-semibold text-[#0f172a]">
+                Lebenszyklus eines (Sub-)Accounts
+              </p>
+              <ol className="list-decimal pl-5 mt-1.5 space-y-1 text-sm text-[#475569]">
+                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">POST /sub-accounts</code> — Account anlegen (nur Enterprise; bei sich selbst überspringen)</li>
+                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">POST /topics?sub_account_id=…</code> — mindestens ein Thema anlegen</li>
+                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">POST /analyze/&#123;id&#125;?sub_account_id=…</code> — Analyse für dieses Thema auslösen</li>
+                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">GET /scores/latest?sub_account_id=…</code> — Ergebnisse abrufen</li>
+              </ol>
+              <p className="text-xs text-[#94a3b8] mt-2">
+                Ohne Thema (Schritt 2) liefern /analyze und /scores nichts, da der Account kein
+                Tracking-Ziel hat. Die Analyse sucht nach dem Namen des Accounts (full_name).
+              </p>
+            </div>
           </Section>
 
           {/* Auth */}
@@ -266,8 +284,8 @@ export default function ApiDocsPage() {
               Alle Endpoints liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
               Lesende Endpoints sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code>;
               schreibende nutzen <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">POST</code>{" "}
-              (Wettbewerber anlegen, Analyse/Wettbewerber-Analyse auslösen, Sub-Account anlegen) bzw.{" "}
-              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">DELETE</code> (Wettbewerber entfernen).
+              (Thema/Wettbewerber anlegen, Analyse/Wettbewerber-Analyse auslösen, Sub-Account anlegen) bzw.{" "}
+              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">DELETE</code> (Thema/Wettbewerber entfernen).
               Daten-Endpoints akzeptieren zusätzlich den optionalen Query-Parameter{" "}
               <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
               (siehe Hinweis am Ende dieses Abschnitts).
@@ -520,6 +538,71 @@ export default function ApiDocsPage() {
     }
   ]
 }`}
+          />
+
+          <Endpoint
+            id="ep-topics-list"
+            method="GET"
+            path="/topics"
+            description="Listet die Themen (monitoring_schedules) des Accounts. Jedes Thema hat eine ID, die als scheduleId für POST /analyze dient."
+            example={`curl ${BASE_URL}${API_PREFIX}/topics \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "topics": [
+    {
+      "id": "uuid",
+      "name": "Personal Branding",
+      "query": "Personal Branding",
+      "frequency": "weekly",
+      "language": "de",
+      "is_active": true,
+      "last_run_at": null,
+      "next_run_at": "2026-06-15T06:00:00Z",
+      "created_at": "2026-06-08T09:12:00Z"
+    }
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-topics"
+            method="POST"
+            path="/topics"
+            description="Legt ein neues Thema an. Pflicht für frisch erstellte (Sub-)Accounts, bevor /analyze und /scores funktionieren. Die zurückgegebene id ist die scheduleId für POST /analyze."
+            params={[
+              { name: "query", type: "string (Body)", desc: "Das zu trackende Thema (z.B. „Personal Branding“). Pflicht, max. 200 Zeichen." },
+              { name: "name", type: "string (Body)", desc: "Anzeige-Label. Optional, Default = query." },
+              { name: "frequency", type: "string (Body)", desc: "daily | weekly | monthly. Optional, Default weekly." },
+              { name: "language", type: "string (Body)", desc: "Abfragesprache (de, en, fr, es, it, nl, pt). Optional, Default = Sprache des Accounts." },
+            ]}
+            example={`curl -X POST ${BASE_URL}${API_PREFIX}/topics \\
+  -H "Authorization: Bearer aur_sk_xxxxx" \\
+  -H "Content-Type: application/json" \\
+  -d '{"query":"Personal Branding","frequency":"weekly","language":"de"}'`}
+            response={`{
+  "topic": {
+    "id": "uuid",
+    "name": "Personal Branding",
+    "query": "Personal Branding",
+    "frequency": "weekly",
+    "language": "de",
+    "is_active": true,
+    "next_run_at": "2026-06-15T06:00:00Z"
+  }
+}`}
+          />
+
+          <Endpoint
+            id="ep-topics-del"
+            method="DELETE"
+            path="/topics/{id}"
+            description="Löscht ein Thema des Accounts."
+            params={[
+              { name: "id", type: "uuid (Pfad)", desc: "ID des Themas (aus GET /topics bzw. POST /topics)." },
+            ]}
+            example={`curl -X DELETE ${BASE_URL}${API_PREFIX}/topics/02f2c43e-... \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{ "deleted": true, "id": "uuid" }`}
           />
 
           <Endpoint
