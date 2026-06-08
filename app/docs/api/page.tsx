@@ -112,16 +112,18 @@ export default function ApiDocsPage() {
           {/* Intro */}
           <Section id="introduction" title="Einführung">
             <p>
-              Die API liefert <strong>Read-only</strong> Zugriff auf die Sichtbarkeits-Daten
-              eines Auralis-Accounts. Sie ist als <strong>Pro-Feature</strong> Bestandteil der
-              Tarife Pro und Enterprise. Free- und Starter-Accounts können sich derzeit nicht
+              Die API gibt programmatischen Zugriff auf die Sichtbarkeits-Daten eines
+              Auralis-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen,
+              Wettbewerber) und verwaltend (Wettbewerber anlegen/löschen, Analysen auslösen,
+              Sub-Accounts anlegen). Sie ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
+              <strong>Enterprise</strong>; Free- und Starter-Accounts können sich nicht
               authentifizieren.
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>11 Endpoints: lesen (GET), Wettbewerber anlegen/löschen, Analysen auslösen (POST/DELETE)</li>
-              <li>JSON-Responses mit konsistenter Fehler-Struktur</li>
-              <li>Bearer-Token-Authentifizierung</li>
-              <li>HTTPS-Pflicht</li>
+              <li>13 Endpoints: 8× GET (lesen), 4× POST (anlegen/auslösen), 1× DELETE</li>
+              <li>Tageslimit je Tarif — Pro 1.000/Tag, <strong>Enterprise unbegrenzt</strong> (siehe Limits &amp; Tarife)</li>
+              <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
+              <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
             </ul>
           </Section>
 
@@ -262,9 +264,13 @@ export default function ApiDocsPage() {
           <Section id="endpoints" title="Endpoints">
             <p>
               Alle Endpoints liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
-              Sieben sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code> (nur lesend);
-              ein Endpoint (<code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">POST /analyze</code>)
-              löst eine neue Analyse aus.
+              Lesende Endpoints sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code>;
+              schreibende nutzen <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">POST</code>{" "}
+              (Wettbewerber anlegen, Analyse/Wettbewerber-Analyse auslösen, Sub-Account anlegen) bzw.{" "}
+              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">DELETE</code> (Wettbewerber entfernen).
+              Daten-Endpoints akzeptieren zusätzlich den optionalen Query-Parameter{" "}
+              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
+              (siehe Hinweis am Ende dieses Abschnitts).
             </p>
           </Section>
 
