@@ -28,7 +28,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
@@ -36,6 +36,9 @@ export const dynamic = "force-dynamic"
 export async function GET(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
+
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
 
   const url = new URL(req.url)
   const statusParam = (url.searchParams.get("status") ?? "").toLowerCase()
@@ -49,7 +52,7 @@ export async function GET(req: Request) {
   const { data, error } = await supabase
     .from("recommendations")
     .select("id, title, description, impact, category, status, score_at_creation, score_at_done, created_at, done_at")
-    .eq("profile_id", auth.profile.id)
+    .eq("profile_id", target.profile.id)
     .in("status", statuses)
     .order("created_at", { ascending: false })
 

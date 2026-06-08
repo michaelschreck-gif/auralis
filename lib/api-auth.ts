@@ -224,6 +224,83 @@ export async function authenticateApiKey(req: Request): Promise<ApiAuthResult> {
 }
 
 /**
+ * Ziel-Profil eines API-Calls auflösen.
+ *
+ * Ohne `?sub_account_id=` ist das Ziel der authentifizierte Account selbst.
+ * Mit `sub_account_id` wird auf einen Sub-Account gezielt — erlaubt nur, wenn
+ * dessen `parent_account_id` dem authentifizierten Account entspricht. So kann
+ * ein Eltern-Account die Daten seiner Sub-Accounts über dieselben Endpoints
+ * lesen/verwalten (z.B. `GET /scores/latest?sub_account_id=…`).
+ */
+export type ResolvedProfile = {
+  id: string
+  email: string
+  full_name: string | null
+  plan: PlanType
+  language: Database["public"]["Enums"]["language_type"]
+}
+
+export type ResolveTargetResult =
+  | { ok: true; profile: ResolvedProfile }
+  | { ok: false; response: NextResponse }
+
+export async function resolveTargetProfile(
+  auth: ApiAuthSuccess,
+  req: Request,
+): Promise<ResolveTargetResult> {
+  let subId: string | null = null
+  try {
+    subId = new URL(req.url).searchParams.get("sub_account_id")
+  } catch {
+    subId = null
+  }
+
+  // Kein sub_account_id → der authentifizierte Account selbst.
+  if (!subId) {
+    return { ok: true, profile: auth.profile }
+  }
+
+  let supabase
+  try {
+    supabase = createSupabaseServiceClient()
+  } catch {
+    return { ok: false, response: jsonError("Auth service unavailable.", "INTERNAL", 500) }
+  }
+
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, email, full_name, plan, language, parent_account_id")
+    .eq("id", subId)
+    .maybeSingle()
+
+  if (error) {
+    console.error("[api-auth] sub-account lookup failed:", error.message)
+    return { ok: false, response: jsonError("Internal error.", "INTERNAL", 500) }
+  }
+  if (!data || data.parent_account_id !== auth.profile.id) {
+    return {
+      ok: false,
+      response: jsonError(
+        "Sub-account not found or not owned by this account.",
+        "SUB_ACCOUNT_FORBIDDEN",
+        403,
+      ),
+    }
+  }
+
+  return {
+    ok: true,
+    profile: {
+      id: data.id,
+      email: data.email,
+      full_name: data.full_name,
+      plan: data.plan,
+      language: data.language,
+    },
+  }
+}
+
+/**
  * Generates a new plaintext API key. Returns the plaintext (for one-time display)
  * and the prefix to store separately for UI identification.
  *

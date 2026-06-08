@@ -20,7 +20,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import {
   computeMasterScores,
@@ -51,12 +51,15 @@ export async function GET(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
   const supabase = createSupabaseServiceClient()
 
   const { data, error } = await supabase
     .from("visibility_reports")
     .select("raw_data, summary, created_at")
-    .eq("profile_id", auth.profile.id)
+    .eq("profile_id", target.profile.id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle()

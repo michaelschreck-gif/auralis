@@ -31,7 +31,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
@@ -40,13 +40,16 @@ export async function GET(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
   const supabase = createSupabaseServiceClient()
 
   // Newest report id for this profile.
   const { data: latest, error: latestErr } = await supabase
     .from("visibility_reports")
     .select("id, created_at")
-    .eq("profile_id", auth.profile.id)
+    .eq("profile_id", target.profile.id)
     .order("created_at", { ascending: false })
     .limit(1)
     .maybeSingle()

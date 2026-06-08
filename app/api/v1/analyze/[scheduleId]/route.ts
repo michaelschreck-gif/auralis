@@ -22,7 +22,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import {
   runAnalysisForSchedule,
@@ -40,6 +40,9 @@ export async function POST(
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
   const { scheduleId } = await ctx.params
   const supabase = createSupabaseServiceClient()
 
@@ -54,7 +57,7 @@ export async function POST(
     console.error("[api/v1/analyze]", scheduleError.message)
     return jsonError("Failed to load topic.", "INTERNAL", 500)
   }
-  if (!schedule || schedule.profile_id !== auth.profile.id) {
+  if (!schedule || schedule.profile_id !== target.profile.id) {
     return jsonError("Topic not found.", "TOPIC_NOT_FOUND", 404)
   }
   if (!schedule.is_active) {
@@ -63,7 +66,7 @@ export async function POST(
 
   // Plan limit (Free is 1/30d; Pro/Enterprise unlimited — but API is Pro-only
   // anyway, so this is effectively always allowed. Kept for correctness.)
-  const limit = await checkManualAnalysisLimit(auth.profile.id, auth.profile.plan, supabase)
+  const limit = await checkManualAnalysisLimit(target.profile.id, target.profile.plan, supabase)
   if (!limit.allowed) {
     return jsonError(limit.reason, "LIMIT_REACHED", 429, { reset_at: limit.resetAt })
   }

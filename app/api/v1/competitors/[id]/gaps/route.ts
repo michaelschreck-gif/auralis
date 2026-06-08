@@ -23,7 +23,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import { computeGapAnalysis } from "@/lib/auralis/gap-analysis"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
@@ -43,6 +43,9 @@ export async function GET(
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
   const { id: competitorId } = await ctx.params
   const supabase = createSupabaseServiceClient()
 
@@ -57,7 +60,7 @@ export async function GET(
     console.error("[api/v1/gaps]", cErr.message)
     return jsonError("Failed to load competitor.", "INTERNAL", 500)
   }
-  if (!competitor || competitor.profile_id !== auth.profile.id) {
+  if (!competitor || competitor.profile_id !== target.profile.id) {
     return jsonError("Competitor not found.", "COMPETITOR_NOT_FOUND", 404)
   }
 
@@ -66,7 +69,7 @@ export async function GET(
     supabase
       .from("visibility_reports")
       .select("raw_data")
-      .eq("profile_id", auth.profile.id)
+      .eq("profile_id", target.profile.id)
       .order("created_at", { ascending: false })
       .limit(1)
       .maybeSingle(),

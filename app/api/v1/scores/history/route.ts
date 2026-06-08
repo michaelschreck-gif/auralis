@@ -16,7 +16,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
@@ -27,6 +27,9 @@ const DEFAULT_DAYS = 30
 export async function GET(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
+
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
 
   const url = new URL(req.url)
   const daysParam = url.searchParams.get("days")
@@ -42,7 +45,7 @@ export async function GET(req: Request) {
   const { data, error } = await supabase
     .from("visibility_reports")
     .select("visibility_score, sentiment, trigger, created_at")
-    .eq("profile_id", auth.profile.id)
+    .eq("profile_id", target.profile.id)
     .gte("created_at", since.toISOString())
     .order("created_at", { ascending: true })
 

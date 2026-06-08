@@ -10,7 +10,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
@@ -21,6 +21,9 @@ export async function DELETE(
 ) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
+
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
 
   const { id } = await ctx.params
   const supabase = createSupabaseServiceClient()
@@ -36,7 +39,7 @@ export async function DELETE(
     console.error("[api/v1/competitors DELETE]", loadErr.message)
     return jsonError("Failed to load competitor.", "INTERNAL", 500)
   }
-  if (!competitor || competitor.profile_id !== auth.profile.id) {
+  if (!competitor || competitor.profile_id !== target.profile.id) {
     return jsonError("Competitor not found.", "COMPETITOR_NOT_FOUND", 404)
   }
 
@@ -44,7 +47,7 @@ export async function DELETE(
     .from("competitors")
     .delete()
     .eq("id", id)
-    .eq("profile_id", auth.profile.id)
+    .eq("profile_id", target.profile.id)
 
   if (delErr) {
     console.error("[api/v1/competitors DELETE]", delErr.message)

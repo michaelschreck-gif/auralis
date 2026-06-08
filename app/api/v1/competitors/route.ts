@@ -21,7 +21,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 
 export const dynamic = "force-dynamic"
@@ -30,12 +30,15 @@ export async function GET(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
   const supabase = createSupabaseServiceClient()
 
   const { data, error } = await supabase
     .from("competitors")
     .select("id, name, topics, language, last_score, last_analyzed_at, created_at")
-    .eq("profile_id", auth.profile.id)
+    .eq("profile_id", target.profile.id)
     .order("created_at", { ascending: true })
 
   if (error) {
@@ -77,6 +80,9 @@ export async function POST(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
   let body: unknown
   try {
     body = await req.json()
@@ -106,7 +112,7 @@ export async function POST(req: Request) {
   const supabase = createSupabaseServiceClient()
   const { data, error } = await supabase
     .from("competitors")
-    .insert({ profile_id: auth.profile.id, name, topics, language })
+    .insert({ profile_id: target.profile.id, name, topics, language })
     .select("id, name, topics, language, last_score, last_analyzed_at")
     .single()
 

@@ -250,6 +250,7 @@ export default function ApiDocsPage() {
                   <ErrorRow http="429" code="RATE_LIMITED" meaning="Tägliches Abfragelimit erreicht. Reset um 00:00 UTC — oder Enterprise-Lizenz für unbegrenzte Abfragen." />
                   <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Sichtbarkeits-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
                   <ErrorRow http="409" code="EMAIL_EXISTS" meaning="Beim Anlegen eines Sub-Accounts: ein Account mit dieser E-Mail existiert bereits." />
+                  <ErrorRow http="403" code="SUB_ACCOUNT_FORBIDDEN" meaning="sub_account_id gehört nicht zu diesem Account (oder existiert nicht)." />
                   <ErrorRow http="400" code="INVALID_INPUT" meaning="Ungültiger Request-Body (z.B. fehlendes Pflichtfeld beim Anlegen/POST)." />
                   <ErrorRow http="500" code="INTERNAL" meaning="Serverseitiger Fehler — Support kontaktieren falls anhaltend." />
                 </tbody>
@@ -580,6 +581,28 @@ export default function ApiDocsPage() {
   }
 }`}
           />
+
+          <div className="rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/50 p-5">
+            <p className="text-sm font-semibold text-[#0f172a]">
+              Im Namen eines Sub-Accounts handeln
+            </p>
+            <p className="text-sm text-[#475569] mt-1.5 leading-relaxed">
+              Alle Daten-Endpoints akzeptieren den optionalen Query-Parameter{" "}
+              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">sub_account_id</code>.
+              Damit liest oder verwaltet der Eltern-Account die Daten eines seiner Sub-Accounts mit
+              demselben API-Key — z.B.{" "}
+              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">
+                GET /scores/latest?sub_account_id=…
+              </code>{" "}
+              oder{" "}
+              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">
+                POST /analyze/&#123;id&#125;?sub_account_id=…
+              </code>. Ohne den Parameter bezieht sich jeder Aufruf auf den eigenen Account. Gehört die
+              angegebene <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
+              nicht zum authentifizierten Account, antwortet die API mit{" "}
+              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">403 SUB_ACCOUNT_FORBIDDEN</code>.
+            </p>
+          </div>
 
           {/* Examples */}
           <Section id="examples" title="Code-Beispiele">

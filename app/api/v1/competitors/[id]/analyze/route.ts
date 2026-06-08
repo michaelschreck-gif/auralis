@@ -21,7 +21,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey, jsonError } from "@/lib/api-auth"
+import { authenticateApiKey, jsonError, resolveTargetProfile } from "@/lib/api-auth"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import { runCompetitorAnalysis, canAnalyzeCompetitors } from "@/lib/auralis/runner"
 
@@ -34,6 +34,9 @@ export async function POST(
 ) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
+
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
 
   const { id: competitorId } = await ctx.params
   const supabase = createSupabaseServiceClient()
@@ -48,13 +51,13 @@ export async function POST(
     console.error("[api/v1/competitors analyze]", cErr.message)
     return jsonError("Failed to load competitor.", "INTERNAL", 500)
   }
-  if (!competitor || competitor.profile_id !== auth.profile.id) {
+  if (!competitor || competitor.profile_id !== target.profile.id) {
     return jsonError("Competitor not found.", "COMPETITOR_NOT_FOUND", 404)
   }
 
   // Competitor analyses are Pro-only (Starter+). API auth already gates to
   // Pro/Enterprise, but keep this explicit for correctness.
-  if (!canAnalyzeCompetitors(auth.profile.plan)) {
+  if (!canAnalyzeCompetitors(target.profile.plan)) {
     return jsonError(
       "Competitor analyses require a paid plan.",
       "PLAN_REQUIRED",

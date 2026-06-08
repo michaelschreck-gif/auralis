@@ -15,7 +15,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { authenticateApiKey } from "@/lib/api-auth"
+import { authenticateApiKey, resolveTargetProfile } from "@/lib/api-auth"
 
 export const dynamic = "force-dynamic"
 
@@ -23,7 +23,11 @@ export async function GET(req: Request) {
   const auth = await authenticateApiKey(req)
   if (!auth.ok) return auth.response
 
-  const { profile } = auth
+  // Optional ?sub_account_id= → Profil des Sub-Accounts (wenn berechtigt).
+  const target = await resolveTargetProfile(auth, req)
+  if (!target.ok) return target.response
+
+  const { profile } = target
   return NextResponse.json({
     id: profile.id,
     email: profile.email,
