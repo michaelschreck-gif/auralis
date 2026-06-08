@@ -2,6 +2,7 @@ import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { runSeoAnalysis } from "@/lib/auralis/seo-providers"
 import { computeSeoScore, type SeoReportData } from "@/lib/auralis/seo-score"
+import type { Json } from "@/lib/supabase/database.types"
 
 // SERP-Abfragen über mehrere Themen können einige Sekunden dauern.
 export const maxDuration = 60
@@ -83,7 +84,7 @@ export async function POST() {
         source,
         trigger: "manual",
         seo_score: score?.value ?? null,
-        raw_data: raw as unknown as Record<string, unknown>,
+        raw_data: raw as unknown as Json,
       })
       .select("id")
       .single()

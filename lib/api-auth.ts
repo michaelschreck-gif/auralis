@@ -45,6 +45,26 @@ export function isPlanEligible(plan: PlanType): boolean {
   return PRO_PLANS.includes(plan)
 }
 
+/**
+ * Tägliches API-Abfragelimit pro Tarif. `null` = unbegrenzt (Enterprise).
+ * Free/Starter haben ohnehin keinen API-Zugang (siehe isPlanEligible).
+ */
+export const DAILY_LIMIT_BY_PLAN: Record<PlanType, number | null> = {
+  free: 0,
+  starter: 0,
+  pro: 1000,
+  enterprise: null, // unbegrenzt — Enterprise-Lizenz
+}
+
+/** Nächster UTC-Mitternachts-Zeitpunkt als ISO-String (Reset des Tageslimits). */
+function nextUtcMidnightISO(): string {
+  const now = new Date()
+  const reset = new Date(Date.UTC(
+    now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0,
+  ))
+  return reset.toISOString()
+}
+
 export function sha256(input: string): string {
   return crypto.createHash("sha256").update(input).digest("hex")
 }
@@ -161,6 +181,31 @@ export async function authenticateApiKey(req: Request): Promise<ApiAuthResult> {
         "PLAN_REQUIRED",
         403,
         { required_plan: "pro", current_plan: profile.plan },
+      ),
+    }
+  }
+
+  // Rate-Limiting: Tagesnutzung atomar hochzählen und gegen das Tarif-Limit
+  // prüfen. Enterprise (limit === null) ist unbegrenzt. Zählt für alle Tarife
+  // (auch für Analytics), erzwingt aber nur bei gesetztem Limit.
+  const limit = DAILY_LIMIT_BY_PLAN[profile.plan]
+  const { data: usedToday, error: usageError } = await supabase.rpc(
+    "increment_api_usage",
+    { p_profile_id: profile.id },
+  )
+  if (usageError) {
+    // Zähler-Fehler darf legitime Requests nicht blockieren (fail-open).
+    console.error("[api-auth] usage increment failed:", usageError.message)
+  } else if (limit !== null && typeof usedToday === "number" && usedToday > limit) {
+    const reset = nextUtcMidnightISO()
+    return {
+      ok: false,
+      response: jsonError(
+        `Tägliches API-Limit erreicht (${limit} Abfragen/Tag im Tarif ${profile.plan}). ` +
+          `Für unbegrenzte Abfragen ist eine Enterprise-Lizenz verfügbar.`,
+        "RATE_LIMITED",
+        429,
+        { limit, used: usedToday, reset, plan: profile.plan },
       ),
     }
   }

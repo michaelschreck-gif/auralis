@@ -16,6 +16,7 @@ const API_PREFIX = "/api/v1"
 const TOC = [
   { id: "introduction",  label: "Einführung" },
   { id: "authentication", label: "Authentifizierung" },
+  { id: "limits",        label: "Limits & Tarife" },
   { id: "errors",        label: "Fehler-Codes" },
   { id: "endpoints",     label: "Endpoints" },
   { id: "ep-me",         label: "  GET /me", indent: true },
@@ -153,6 +154,74 @@ export default function ApiDocsPage() {
           </Section>
 
           {/* Errors */}
+          {/* Limits & Tarife */}
+          <Section id="limits" title="Limits & Tarife">
+            <p>
+              Der API-Zugang ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
+              <strong>Enterprise</strong>. Die Anzahl der Abfragen pro Tag hängt vom Tarif ab:
+            </p>
+            <div className="overflow-x-auto mt-4">
+              <table className="w-full text-sm border-collapse">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Tarif</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">API-Zugang</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Abfragen / Tag</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  <tr>
+                    <td className="py-2.5 px-3 text-sm text-[#0f172a]">Free / Starter</td>
+                    <td className="py-2.5 px-3 text-sm text-[#64748b]">—</td>
+                    <td className="py-2.5 px-3 text-sm text-[#64748b]">Kein API-Zugang</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 px-3 text-sm text-[#0f172a]">Pro</td>
+                    <td className="py-2.5 px-3 text-sm text-[#64748b]">✓</td>
+                    <td className="py-2.5 px-3 text-sm text-[#64748b] tabular-nums">1.000</td>
+                  </tr>
+                  <tr>
+                    <td className="py-2.5 px-3 text-sm text-[#0f172a] font-medium">Enterprise</td>
+                    <td className="py-2.5 px-3 text-sm text-[#64748b]">✓</td>
+                    <td className="py-2.5 px-3 text-sm font-medium text-[#0f172a]">Unbegrenzt</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <p>
+              Das Limit wird pro Account gezählt und setzt sich täglich um{" "}
+              <strong>00:00 UTC</strong> zurück. Wird es überschritten, antwortet die API mit{" "}
+              <code className="bg-gray-100 px-1 rounded">429 RATE_LIMITED</code>; die Antwort enthält
+              das erreichte Limit und den Reset-Zeitpunkt:
+            </p>
+            <CodeBlock language="json">{`{
+  "error": "Tägliches API-Limit erreicht (1000 Abfragen/Tag im Tarif pro). …",
+  "code": "RATE_LIMITED",
+  "limit": 1000,
+  "used": 1001,
+  "reset": "2026-06-09T00:00:00.000Z",
+  "plan": "pro"
+}`}</CodeBlock>
+            <div className="mt-5 rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/50 p-5">
+              <p className="text-sm font-semibold text-[#0f172a]">
+                Enterprise-Lizenz — unbegrenzte Abfragen
+              </p>
+              <p className="text-sm text-[#475569] mt-1.5 leading-relaxed">
+                Für produktive Integrationen mit hohem Volumen bieten wir Enterprise-Lizenzen{" "}
+                <strong>ohne Abfragelimit</strong> an, inklusive priorisiertem Support. Schreib uns
+                für ein Angebot an{" "}
+                <a href="mailto:michael.schreck@entrenous.de?subject=Auralis%20Enterprise-API-Lizenz" className="text-[#7F77DD] hover:underline font-medium">
+                  michael.schreck@entrenous.de
+                </a>{" "}
+                oder sieh dir die{" "}
+                <a href="/#preise" className="text-[#7F77DD] hover:underline font-medium">
+                  Tarifübersicht
+                </a>{" "}
+                an.
+              </p>
+            </div>
+          </Section>
+
           <Section id="errors" title="Fehler-Codes">
             <p>
               Alle Fehlerantworten haben das gleiche JSON-Schema:
@@ -176,6 +245,7 @@ export default function ApiDocsPage() {
                   <ErrorRow http="401" code="INVALID_TOKEN" meaning="Token nicht gefunden — wurde er ggf. widerrufen oder falsch kopiert?" />
                   <ErrorRow http="401" code="TOKEN_REVOKED" meaning="Der Key wurde in den Einstellungen widerrufen." />
                   <ErrorRow http="403" code="PLAN_REQUIRED" meaning="Tarif unterstützt API nicht. Upgrade auf Pro/Enterprise nötig." />
+                  <ErrorRow http="429" code="RATE_LIMITED" meaning="Tägliches Abfragelimit erreicht. Reset um 00:00 UTC — oder Enterprise-Lizenz für unbegrenzte Abfragen." />
                   <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Sichtbarkeits-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
                   <ErrorRow http="500" code="INTERNAL" meaning="Serverseitiger Fehler — Support kontaktieren falls anhaltend." />
                 </tbody>

@@ -55,6 +55,32 @@ export type Database = {
           },
         ]
       }
+      api_usage: {
+        Row: {
+          count: number
+          day: string
+          profile_id: string
+        }
+        Insert: {
+          count?: number
+          day?: string
+          profile_id: string
+        }
+        Update: {
+          count?: number
+          day?: string
+          profile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_usage_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       audit_log: {
         Row: {
           action: string
@@ -527,6 +553,7 @@ export type Database = {
           isSetofReturn: true
         }
       }
+      increment_api_usage: { Args: { p_profile_id: string }; Returns: number }
     }
     Enums: {
       frequency_type: "daily" | "weekly" | "monthly"
