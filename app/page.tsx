@@ -27,14 +27,14 @@ export default async function Home() {
   if (isLoggedIn) redirect("/dashboard")
 
   return (
-    <div className="min-h-screen bg-white text-[#1B1830]">
+    <div id="top" className="min-h-screen bg-white text-[#1B1830]">
       {/* ─── Nav ─── */}
       <nav className="bg-white/90 backdrop-blur border-b border-[#EEEDFE] sticky top-0 z-50">
         <div className="max-w-6xl mx-auto px-6 h-[64px] flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2.5">
+          <a href="#top" className="flex items-center gap-2.5">
             <Ring size={26} stroke={4} />
             <span className="font-semibold text-[15px] tracking-tight text-[#26215C]">Halo</span>
-          </Link>
+          </a>
           <div className="hidden md:flex items-center gap-7 text-sm">
             <a href="#funktionen" className="text-[#6B6790] hover:text-[#26215C] transition-colors">Funktionen</a>
             <a href="#ablauf" className="text-[#6B6790] hover:text-[#26215C] transition-colors">So funktioniert&apos;s</a>
@@ -375,7 +375,7 @@ export default async function Home() {
           <FooterCol title="Rechtliches" links={[["Impressum", "/legal/impressum"], ["Datenschutz", "/legal/datenschutz"], ["AGB", "/legal/agb"]]} />
         </div>
         <div className="border-t border-[#EEEDFE] py-5 text-center text-xs text-[#9A95BE]">
-          © 2026 Halo · Operated by Halo UG (haftungsbeschränkt)
+          © 2026 Halo · Operated by Halo UG (haftungsbeschränkt) i. G.
         </div>
       </footer>
     </div>
