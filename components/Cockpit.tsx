@@ -73,50 +73,62 @@ export default function Cockpit({
               <span className="text-sm" style={{ color: AURA_THEME.light }}>Hallo, {firstName} 👋</span>
             </div>
 
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
-              <div>
+            <div className="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-7">
+              {/* Radial Halo-Ring */}
+              <svg
+                width="124" height="124" viewBox="0 0 124 124"
+                className="flex-shrink-0 mx-auto sm:mx-0"
+                role="img" aria-label={`Halo Score ${masters.aura.value} von 100`}
+              >
+                <circle cx="62" cy="62" r="48" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="12" />
+                <circle
+                  cx="62" cy="62" r="48" fill="none" stroke={AURA_THEME.accent} strokeWidth="12" strokeLinecap="round"
+                  strokeDasharray={`${(masters.aura.value / 100) * 301.6} 301.6`}
+                  transform="rotate(-90 62 62)"
+                />
+                <text x="62" y="60" textAnchor="middle" fill="#ffffff" fontSize="34" fontWeight="600" fontFamily="sans-serif">{masters.aura.value}</text>
+                <text x="62" y="80" textAnchor="middle" fill={AURA_THEME.light} fontSize="12" fontFamily="sans-serif">/ 100</text>
+              </svg>
+
+              <div className="flex-1 min-w-0">
                 <div className="text-[11px] uppercase tracking-wider" style={{ color: AURA_THEME.light }}>
                   Dein Halo Score™
                 </div>
-                <div className="flex items-baseline gap-2.5 mt-1">
-                  <span className="text-5xl md:text-6xl font-semibold text-white leading-none tabular-nums">
-                    {masters.aura.value}
-                  </span>
-                  <span className="text-lg" style={{ color: AURA_THEME.light }}>/100</span>
+                <div className="flex items-center gap-2.5 mt-1 flex-wrap">
+                  <span className="text-2xl font-semibold text-white">{masters.aura.band.label}</span>
                   <button
                     type="button"
                     onClick={() => setOpenKey("aura")}
                     className="text-xs font-medium px-2.5 py-1 rounded-full"
                     style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
                   >
-                    {masters.aura.band.label}
+                    So wird gerechnet
                   </button>
                 </div>
-                <p className="text-sm mt-2.5 max-w-md leading-relaxed" style={{ color: AURA_THEME.light }}>
+                <p className="text-sm mt-2 max-w-md leading-relaxed" style={{ color: AURA_THEME.light }}>
                   So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden.
                   {lastAnalyzedAt && <> · Letzte Analyse {relativeTime(lastAnalyzedAt)}</>}
                 </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/dashboard/analyze"
-                  className="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
-                  style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
-                >
-                  Neue Analyse
-                </Link>
-                {latestReportId && (
-                  <a
-                    href={`/api/reports/${latestReportId}/pdf`}
-                    download
-                    aria-label="PDF-Report herunterladen"
-                    className="px-3.5 py-2.5 rounded-lg text-sm text-white border transition-colors hover:bg-white/10"
-                    style={{ borderColor: AURA_THEME.accent }}
+                <div className="flex items-center gap-2 mt-4">
+                  <Link
+                    href="/dashboard/analyze"
+                    className="px-4 py-2.5 rounded-lg text-sm font-medium transition-colors"
+                    style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
                   >
-                    ↓ PDF
-                  </a>
-                )}
+                    Neue Analyse
+                  </Link>
+                  {latestReportId && (
+                    <a
+                      href={`/api/reports/${latestReportId}/pdf`}
+                      download
+                      aria-label="PDF-Report herunterladen"
+                      className="px-3.5 py-2.5 rounded-lg text-sm text-white border transition-colors hover:bg-white/10"
+                      style={{ borderColor: AURA_THEME.accent }}
+                    >
+                      ↓ PDF
+                    </a>
+                  )}
+                </div>
               </div>
             </div>
           </div>

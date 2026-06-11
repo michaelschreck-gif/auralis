@@ -19,6 +19,7 @@ export default async function DashboardPage() {
   if (!user) redirect("/login")
 
   let userName = ""
+  let plan = "free"
   let report: VisibilityReport | null = null
   let latestReportId: string | null = null
   let seoScore: SeoScore | null = null
@@ -27,7 +28,7 @@ export default async function DashboardPage() {
     const [profileResult, reportResult, seoResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, plan")
         .eq("id", user!.id)
         .single(),
       supabase
@@ -46,6 +47,7 @@ export default async function DashboardPage() {
         .maybeSingle(),
     ])
     userName = profileResult.data?.full_name ?? ""
+    plan = profileResult.data?.plan ?? "free"
     report = (reportResult.data?.raw_data ?? null) as VisibilityReport | null
     latestReportId = reportResult.data?.id ?? null
     seoScore = computeSeoScore((seoResult.data?.raw_data ?? null) as SeoReportData | null)
@@ -54,7 +56,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <Cockpit userName={userName} report={report} latestReportId={latestReportId} seoScore={seoScore} />
     </DashboardShell>
   )
