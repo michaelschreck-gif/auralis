@@ -32,13 +32,13 @@ export async function synthesizeSpeech(text: string): Promise<VoiceResult> {
   // Sicherheitslimit: ElevenLabs erlaubt viel, aber wir kappen großzügig.
   const input = text.slice(0, 5000)
 
-  try {
+  async function call(vid: string): Promise<{ status: number; audio?: ArrayBuffer; detail?: string }> {
     const res = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      `https://api.elevenlabs.io/v1/text-to-speech/${vid}?output_format=mp3_44100_128`,
       {
         method: "POST",
         headers: {
-          "xi-api-key": apiKey,
+          "xi-api-key": apiKey as string,
           "Content-Type": "application/json",
           Accept: "audio/mpeg",
         },
@@ -49,14 +49,27 @@ export async function synthesizeSpeech(text: string): Promise<VoiceResult> {
         }),
       },
     )
-
     if (!res.ok) {
       const detail = await res.text().catch(() => "")
-      return { ok: false, reason: "error", message: `ElevenLabs ${res.status}: ${detail.slice(0, 200)}` }
+      return { status: res.status, detail }
+    }
+    return { status: 200, audio: await res.arrayBuffer() }
+  }
+
+  try {
+    let r = await call(voiceId)
+
+    // Free-Tarif darf keine Library-Stimmen über die API nutzen (402 paid_plan_required).
+    // In dem Fall automatisch auf die Premade-Default-Stimme ausweichen, statt auf die
+    // (schlechte) Browser-Stimme zurückzufallen.
+    if (r.status === 402 && voiceId !== DEFAULT_VOICE_ID) {
+      r = await call(DEFAULT_VOICE_ID)
     }
 
-    const audio = await res.arrayBuffer()
-    return { ok: true, audio }
+    if (r.status !== 200 || !r.audio) {
+      return { ok: false, reason: "error", message: `ElevenLabs ${r.status}: ${(r.detail ?? "").slice(0, 200)}` }
+    }
+    return { ok: true, audio: r.audio }
   } catch (e) {
     return { ok: false, reason: "error", message: e instanceof Error ? e.message : "unknown error" }
   }
