@@ -13,6 +13,7 @@ const NAV = [
   { href: "/dashboard/seo",                label: "SEO Score",          icon: "seo" },
   { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
   { href: "/dashboard/topics",             label: "Themen",             icon: "topics" },
+  { href: "/dashboard/monopoly",           label: "Themen-Monopol",     icon: "monopoly" },
   { href: "/dashboard/sources",            label: "Quellen",            icon: "sources" },
   { href: "/dashboard/responses",          label: "KI-Antworten",       icon: "responses" },
   { href: "/dashboard/competitors",        label: "Wettbewerber",       icon: "competitors" },
@@ -43,6 +44,11 @@ const Icons: Record<IconKey, ReactNode> = {
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <circle cx="7.5" cy="5" r="2.6" stroke="currentColor" strokeWidth="1.2"/>
       <path d="M2.5 13c0-2.5 2.2-4.2 5-4.2s5 1.7 5 4.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  monopoly: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M2 4.5l2.5 2L7.5 2l3 4.5L13 4.5l-1 7.5H3l-1-7.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
     </svg>
   ),
   analyze: (

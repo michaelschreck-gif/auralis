@@ -28,6 +28,7 @@ const TOC = [
   { id: "ep-competitors-analyze", label: "  POST /competitors/{id}/analyze", indent: true },
   { id: "ep-gaps",       label: "  GET /competitors/{id}/gaps", indent: true },
   { id: "ep-responses",  label: "  GET /responses", indent: true },
+  { id: "ep-monopoly",   label: "  GET /monopoly", indent: true },
   { id: "ep-recommendations", label: "  GET /recommendations", indent: true },
   { id: "ep-topics-list", label: "  GET /topics", indent: true },
   { id: "ep-topics",     label: "  POST /topics", indent: true },
@@ -123,7 +124,7 @@ export default function ApiDocsPage() {
               authentifizieren.
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>16 Endpoints: 9× GET (lesen), 5× POST (anlegen/auslösen), 2× DELETE</li>
+              <li>17 Endpoints: 10× GET (lesen), 5× POST (anlegen/auslösen), 2× DELETE</li>
               <li>Tageslimit je Tarif — Pro 1.000/Tag, <strong>Enterprise unbegrenzt</strong> (siehe Limits &amp; Tarife)</li>
               <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
               <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
@@ -507,6 +508,30 @@ export default function ApiDocsPage() {
           "response": "… vollständiger Antworttext …"
         }
       ]
+    }
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-monopoly"
+            method="GET"
+            path="/monopoly"
+            description="Expert Monopoly Score je Thema: wie konsequent KI dich auf die vordersten Plätze setzt, wenn sie offen nach den führenden Köpfen eines Themas gefragt wird. Rein aus Positions-/Nennungsdaten der jüngsten Analyse je Thema abgeleitet — kein zusätzlicher LLM-Aufruf. Bänder: Monopol (80+), Dominant (60+), Umkämpft (40+), Randständig (20+), Unsichtbar (0+)."
+            example={`curl ${BASE_URL}${API_PREFIX}/monopoly \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "average": 64,
+  "topics": [
+    {
+      "topic": "Elektroautos",
+      "score": 88,
+      "band": "Monopol",
+      "mention_share": 100,
+      "top_position_share": 80,
+      "best_position": 1,
+      "rivals_mentioned": 4,
+      "analyzed_at": "2026-06-11T06:19:12Z"
     }
   ]
 }`}
