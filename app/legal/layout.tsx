@@ -66,7 +66,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
 
           <footer className="pt-6 border-t border-gray-200 text-xs text-[#94a3b8]">
             <p>
-              Halo · Betrieb durch Entrenous · <Link href="/" className="hover:underline">Startseite</Link>
+              Halo · LinkedIn Consulting by Michael Schreck · <Link href="/" className="hover:underline">Startseite</Link>
             </p>
           </footer>
         </main>

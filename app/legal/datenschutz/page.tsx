@@ -17,148 +17,165 @@ export default function DatenschutzPage() {
         </p>
       </header>
 
-      <Section title="1. Verantwortlicher">
+      <Section title="1. Datenschutz auf einen Blick">
         <p>
-          Verantwortlicher im Sinne der DSGVO ist:
+          Die folgenden Hinweise geben einen einfachen Überblick darüber, was mit Ihren personenbezogenen
+          Daten passiert, wenn Sie diese Website und die Halo-Anwendung („Halo") nutzen. Personenbezogene
+          Daten sind alle Daten, mit denen Sie persönlich identifiziert werden können. Ausführliche
+          Informationen entnehmen Sie der nachfolgenden Datenschutzerklärung.
         </p>
         <p>
-          <strong className="text-[#0f172a]">Entrenous</strong> · Michael Schreck<br />
-          <span className="text-[#94a3b8]">[Adresse — siehe Impressum]</span><br />
-          E-Mail:{" "}
-          <a href="mailto:hello@entrenous.de" className="text-[#4F6EF7] hover:underline">
-            hello@entrenous.de
-          </a>
+          <strong className="text-[#0f172a]">Wer ist verantwortlich?</strong> Die Datenverarbeitung erfolgt
+          durch den Websitebetreiber (siehe Abschnitt „Hinweis zur verantwortlichen Stelle").
+        </p>
+        <p>
+          <strong className="text-[#0f172a]">Wie erfassen wir Ihre Daten?</strong> Zum einen, indem Sie sie
+          uns mitteilen (z. B. bei Registrierung, im Profil oder durch Eingabe Ihrer Themen). Zum anderen
+          erfassen unsere IT-Systeme beim Besuch automatisch technische Daten (z. B. Browser, Betriebssystem,
+          Zugriffszeit).
+        </p>
+        <p>
+          <strong className="text-[#0f172a]">Wofür nutzen wir Ihre Daten?</strong> Zur Bereitstellung des
+          Dienstes (KI-Sichtbarkeits-Analyse für Ihre Person/Marke), zur Vertragsabwicklung und zur
+          Sicherstellung eines fehlerfreien Betriebs.
         </p>
       </Section>
 
-      <Section title="2. Welche Daten werden verarbeitet?">
+      <Section title="2. Hinweis zur verantwortlichen Stelle">
         <p>
-          Wir verarbeiten ausschließlich die Daten, die für den Betrieb der Halo-Plattform und
-          die Erbringung unserer Leistungen erforderlich sind:
+          Verantwortliche Stelle für die Datenverarbeitung auf dieser Website und in der Anwendung ist:
         </p>
-        <ul className="list-disc pl-6 space-y-1.5">
-          <li><strong className="text-[#0f172a]">Account-Daten:</strong> E-Mail-Adresse, Name (optional), Sprache, Passwort (gehashed)</li>
-          <li><strong className="text-[#0f172a]">Profildaten:</strong> Die Themen, die du tracken möchtest, deine Wettbewerber, deine Tarifwahl</li>
-          <li><strong className="text-[#0f172a]">Analyse-Daten:</strong> Sichtbarkeits-Reports (Halo Score, Sub-Scores, KI-Antworten als Volltext, Zitate)</li>
-          <li><strong className="text-[#0f172a]">API-Tokens:</strong> SHA-256-Hashes deiner generierten API-Keys (Plaintext wird nie gespeichert)</li>
-          <li><strong className="text-[#0f172a]">Technische Daten:</strong> IP-Adresse, User-Agent und Zeitpunkt bei jedem Login / API-Call (in Server-Logs)</li>
+        <p>
+          <strong className="text-[#0f172a]">LinkedIn Consulting by Michael Schreck</strong><br />
+          Goldbacher Straße 100<br />
+          63741 Aschaffenburg<br />
+          Telefon: <a href="tel:+4915563664275" className="text-[#534AB7] hover:underline">+49 155 63664275</a><br />
+          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] hover:underline">michael@linkedinconsulting.digital</a>
+        </p>
+        <p>
+          Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit
+          anderen über die Zwecke und Mittel der Verarbeitung von personenbezogenen Daten entscheidet.
+        </p>
+      </Section>
+
+      <Section title="3. Welche Daten wir verarbeiten">
+        <p>Im Rahmen der Nutzung von Halo verarbeiten wir insbesondere:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong className="text-[#0f172a]">Konto- und Profildaten:</strong> Name, E-Mail-Adresse, gewählte Sprache, Tarif.</li>
+          <li><strong className="text-[#0f172a]">Inhaltsdaten:</strong> die von Ihnen angelegten Themen, Wettbewerber sowie die daraus erzeugten Analyse-Ergebnisse (Scores, KI-Antworten, Empfehlungen).</li>
+          <li><strong className="text-[#0f172a]">Nutzungs- und Metadaten:</strong> technische Zugriffsdaten (IP-Adresse, Browser, Zeitpunkt) zur sicheren Bereitstellung.</li>
+          <li><strong className="text-[#0f172a]">Sprachdaten (optional):</strong> wenn Sie den Sprach-Avatar nutzen, werden Mikrofon-Eingaben zur Spracherkennung sowie Antworttexte zur Sprachausgabe verarbeitet (siehe Abschnitt 6).</li>
         </ul>
       </Section>
 
-      <Section title="3. Zwecke und Rechtsgrundlagen">
+      <Section title="4. Hosting & technische Infrastruktur">
         <p>
-          Die Verarbeitung erfolgt zu folgenden Zwecken und auf folgenden Rechtsgrundlagen:
+          Wir hosten die Inhalte und betreiben die Anwendung bei den folgenden Anbietern. Mit allen
+          eingesetzten Auftragsverarbeitern bestehen Verträge zur Auftragsverarbeitung (AVV) gemäß Art. 28
+          DSGVO.
         </p>
-        <ul className="list-disc pl-6 space-y-1.5">
+        <ul className="list-disc pl-5 space-y-2">
           <li>
-            <strong className="text-[#0f172a]">Vertragserfüllung</strong> (Art. 6 Abs. 1 lit. b DSGVO):
-            Account-Verwaltung, Analyse-Durchführung, Score-Berechnung, API-Zugang.
+            <strong className="text-[#0f172a]">Vercel Inc.</strong> (340 S Lemon Ave #4133, Walnut, CA 91789,
+            USA) — Hosting und Auslieferung der Web-Anwendung. Dabei werden technische Zugriffsdaten
+            (z. B. IP-Adresse) verarbeitet. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (sichere, effiziente
+            Bereitstellung). Datenübertragung in die USA gestützt auf die EU-Standardvertragsklauseln (SCC).
           </li>
           <li>
-            <strong className="text-[#0f172a]">Berechtigte Interessen</strong> (Art. 6 Abs. 1 lit. f DSGVO):
-            Betriebssicherheit (Logs, Rate-Limits, Missbrauchserkennung), interne Statistiken
-            (anonymisiert, ohne Personenbezug).
-          </li>
-          <li>
-            <strong className="text-[#0f172a]">Gesetzliche Verpflichtungen</strong> (Art. 6 Abs. 1 lit. c DSGVO):
-            Aufbewahrung steuerlich relevanter Unterlagen, Auskunftspflichten.
-          </li>
-        </ul>
-      </Section>
-
-      <Section title="4. Speicherdauer">
-        <p>
-          Wir speichern personenbezogene Daten nur, solange sie zur Erbringung unserer Leistungen
-          erforderlich sind oder solange gesetzliche Aufbewahrungspflichten bestehen:
-        </p>
-        <ul className="list-disc pl-6 space-y-1.5">
-          <li>Account- und Analyse-Daten: bis zur Account-Löschung durch den Nutzer.</li>
-          <li>Server-Logs: maximal 30 Tage.</li>
-          <li>Buchhaltungs- und Rechnungsdaten: 10 Jahre (§ 147 AO).</li>
-          <li>Nach Account-Löschung: vollständige Löschung innerhalb 30 Tagen, ausgenommen gesetzlich aufbewahrungspflichtige Belege.</li>
-        </ul>
-      </Section>
-
-      <Section title="5. Empfänger / Auftragsverarbeiter">
-        <p>
-          Wir nutzen folgende Dienstleister, die im Rahmen der DSGVO als Auftragsverarbeiter
-          für uns tätig sind. Mit jedem dieser Anbieter besteht ein Auftragsverarbeitungsvertrag (AV).
-        </p>
-        <ul className="list-disc pl-6 space-y-2">
-          <li>
-            <strong className="text-[#0f172a]">Supabase, Inc.</strong> (Datenbank + Auth) — Server in Frankfurt
-            (EU-Region). Verschlüsselte Speicherung der Account- und Analyse-Daten.
-          </li>
-          <li>
-            <strong className="text-[#0f172a]">Vercel Inc.</strong> (Hosting + Edge-Functions) — Verarbeitung
-            kann teilweise in den USA stattfinden, abgesichert durch EU-Standardvertragsklauseln.
-          </li>
-          <li>
-            <strong className="text-[#0f172a]">Anthropic PBC</strong> (KI-Modell Claude Sonnet) —
-            Wir senden die generierten Anfrage-Strings (z.B. „Wer sind die führenden Experten in X?“)
-            an die Anthropic-API. Diese Anfragen enthalten den Namen der getrackten Person.
-            Anthropic verwendet die Daten gemäß ihrer Privacy Policy ausschließlich zur API-Antwort
-            und nicht zum Modelltraining (Commercial-Terms).
-          </li>
-          <li>
-            <strong className="text-[#0f172a]">Weitere KI-Anbieter</strong> (Pro/Enterprise):
-            OpenAI Ireland, Perplexity AI, Google Ireland. Jeweils zur Erbringung
-            des Multi-Modell-Sichtbarkeits-Tracking. AV-Verträge liegen vor oder werden vor Aktivierung
-            geschlossen.
+            <strong className="text-[#0f172a]">Supabase</strong> (Datenbank & Authentifizierung) — Speicherung
+            der Konto-, Profil- und Analysedaten. Die Datenbank wird in einer EU-Region (Frankfurt/EU)
+            betrieben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und f DSGVO. Zur Sitzungsverwaltung werden
+            technisch notwendige Cookies gesetzt.
           </li>
         </ul>
       </Section>
 
-      <Section title="6. Drittlandtransfer">
+      <Section title="5. KI-Analyse (Kernfunktion)">
         <p>
-          Soweit Daten an Anbieter außerhalb der EU/des EWR übermittelt werden (insbesondere
-          Anthropic, OpenAI, Vercel mit Sitz in den USA), erfolgt dies auf Basis von
-          EU-Standardvertragsklauseln (Art. 46 Abs. 2 lit. c DSGVO). Wir minimieren den Transfer,
-          indem wir wo möglich die EU-Regionen der Anbieter wählen.
+          Kern von Halo ist die Auswertung, wie sichtbar eine Person oder Marke in KI-Systemen ist. Dazu
+          werden die von Ihnen angegebenen Themen sowie Ihr Name als Suchabfragen an externe KI-Anbieter
+          übermittelt und die Antworten ausgewertet. Eingesetzt werden – je nach Tarif und Konfiguration:
         </p>
-      </Section>
-
-      <Section title="7. Deine Rechte">
-        <p>Du hast jederzeit das Recht auf:</p>
-        <ul className="list-disc pl-6 space-y-1.5">
-          <li><strong className="text-[#0f172a]">Auskunft</strong> über deine gespeicherten Daten (Art. 15 DSGVO)</li>
-          <li><strong className="text-[#0f172a]">Berichtigung</strong> unrichtiger Daten (Art. 16 DSGVO)</li>
-          <li><strong className="text-[#0f172a]">Löschung</strong> deiner Daten (Art. 17 DSGVO)</li>
-          <li><strong className="text-[#0f172a]">Einschränkung</strong> der Verarbeitung (Art. 18 DSGVO)</li>
-          <li><strong className="text-[#0f172a]">Datenübertragbarkeit</strong> (Art. 20 DSGVO)</li>
-          <li><strong className="text-[#0f172a]">Widerspruch</strong> gegen Verarbeitung nach Art. 6 Abs. 1 lit. f (Art. 21 DSGVO)</li>
-          <li><strong className="text-[#0f172a]">Beschwerde</strong> bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
+        <ul className="list-disc pl-5 space-y-1">
+          <li><strong className="text-[#0f172a]">Anthropic (Claude)</strong> — Standard-Analyse-Modell, alle Tarife.</li>
+          <li><strong className="text-[#0f172a]">OpenAI (GPT-4o)</strong>, <strong className="text-[#0f172a]">Perplexity</strong>, <strong className="text-[#0f172a]">Google (Gemini)</strong> — zusätzliche Modelle ab kostenpflichtigen Tarifen.</li>
+          <li><strong className="text-[#0f172a]">DataForSEO</strong> — Auswertung der Google-Suchergebnisse (SEO-Score), sofern aktiviert.</li>
         </ul>
         <p>
-          Zur Ausübung dieser Rechte genügt eine formlose E-Mail an{" "}
-          <a href="mailto:hello@entrenous.de" className="text-[#4F6EF7] hover:underline">
-            hello@entrenous.de
-          </a>.
-          Den eigenen Account kannst du jederzeit direkt im Tool unter „Einstellungen → Gefahrenzone → Konto löschen“ entfernen.
+          Übermittelt werden dabei in der Regel Ihr Name und Ihre Themen (Suchanfragen). Eine Übermittlung
+          besonderer Kategorien personenbezogener Daten ist nicht vorgesehen. Rechtsgrundlage ist die
+          Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO) bzw. unser berechtigtes Interesse an der Erbringung
+          der Analyse (Art. 6 Abs. 1 lit. f DSGVO). Soweit diese Anbieter Daten außerhalb der EU verarbeiten,
+          wird die Übermittlung auf die EU-Standardvertragsklauseln (SCC) bzw. einen Angemessenheitsbeschluss
+          gestützt.
         </p>
       </Section>
 
-      <Section title="8. Cookies und Tracking">
+      <Section title="6. Sprach-Avatar (optionale Funktion)">
         <p>
-          Halo nutzt ausschließlich technisch notwendige Cookies für die Auth-Session
-          (Supabase-Session-Cookie). Es findet kein Marketing-Tracking, kein Cross-Site-Tracking
-          und keine Werbung statt. Es werden keine Cookies von Drittanbietern für Werbezwecke gesetzt.
+          Wenn Sie den Sprach-Avatar („Sprich mit deinem KI-Ich") aktiv nutzen, wird Ihre gesprochene Eingabe
+          über die Spracherkennung Ihres Browsers in Text umgewandelt; je nach Browser kann dabei eine
+          Übermittlung an den jeweiligen Browser-Anbieter erfolgen. Der erzeugte Antworttext wird zur
+          Sprachausgabe an <strong className="text-[#0f172a]">ElevenLabs, Inc.</strong> (USA) übermittelt und
+          als Audiodatei zurückgegeben. Es wird <strong className="text-[#0f172a]">keine Kamera</strong>
+          genutzt und kein Video verarbeitet. Rechtsgrundlage ist Ihre Nutzungshandlung im Rahmen der
+          Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO); die Übermittlung in die USA wird auf die
+          EU-Standardvertragsklauseln gestützt. Die Funktion ist optional — ohne Nutzung werden keine
+          Sprachdaten verarbeitet.
         </p>
       </Section>
 
-      <Section title="9. Verschlüsselung und Sicherheit">
+      <Section title="7. Cookies">
         <p>
-          Alle Verbindungen erfolgen ausschließlich über TLS (HTTPS). Die Datenbank wird verschlüsselt
-          gespeichert. API-Keys werden als SHA-256-Hashes abgelegt — der Plaintext-Schlüssel wird
-          nach Erzeugung nie gespeichert und kann nicht wiederhergestellt werden. Row-Level-Security
-          stellt sicher, dass jeder Nutzer ausschließlich seine eigenen Daten sieht.
+          Halo verwendet technisch notwendige Cookies, insbesondere zur Verwaltung Ihrer Anmeldesitzung
+          (Login). Diese sind für den Betrieb erforderlich; Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO
+          bzw. § 25 Abs. 2 TDDDG. Nicht notwendige Cookies (z. B. zu Analyse-/Marketingzwecken) setzen wir
+          nur nach Ihrer Einwilligung ein (Art. 6 Abs. 1 lit. a DSGVO, § 25 Abs. 1 TDDDG); eine erteilte
+          Einwilligung ist jederzeit widerrufbar.
         </p>
       </Section>
 
-      <Section title="10. Änderungen dieser Datenschutzerklärung">
+      <Section title="8. SSL-/TLS-Verschlüsselung">
         <p>
-          Wir behalten uns vor, diese Erklärung anzupassen, sobald sich Funktionen, Anbieter oder
-          rechtliche Anforderungen ändern. Die jeweils aktuelle Version ist hier zu finden.
+          Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine
+          SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie am „https://" in der
+          Adresszeile und am Schloss-Symbol Ihres Browsers. API-Schlüssel werden ausschließlich als
+          SHA-256-Hash gespeichert; der Zugriff auf Ihre Daten ist über Row-Level-Security auf Ihr eigenes
+          Konto beschränkt.
+        </p>
+      </Section>
+
+      <Section title="9. Speicherdauer">
+        <p>
+          Soweit innerhalb dieser Erklärung keine speziellere Speicherdauer genannt wird, verbleiben Ihre
+          personenbezogenen Daten bei uns, bis der Zweck der Verarbeitung entfällt – etwa bei Löschung Ihres
+          Kontos. Gesetzliche Aufbewahrungsfristen (z. B. steuer- und handelsrechtliche) bleiben unberührt.
+        </p>
+      </Section>
+
+      <Section title="10. Ihre Rechte">
+        <p>Ihnen stehen nach der DSGVO insbesondere folgende Rechte zu:</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Auskunft über die zu Ihnen gespeicherten Daten (Art. 15 DSGVO),</li>
+          <li>Berichtigung unrichtiger Daten (Art. 16 DSGVO),</li>
+          <li>Löschung (Art. 17 DSGVO) und Einschränkung der Verarbeitung (Art. 18 DSGVO),</li>
+          <li>Datenübertragbarkeit (Art. 20 DSGVO),</li>
+          <li>Widerspruch gegen Verarbeitungen auf Grundlage berechtigter Interessen (Art. 21 DSGVO),</li>
+          <li>Widerruf erteilter Einwilligungen mit Wirkung für die Zukunft,</li>
+          <li>Beschwerde bei einer Datenschutz-Aufsichtsbehörde (Art. 77 DSGVO).</li>
+        </ul>
+        <p>
+          Zur Ausübung Ihrer Rechte oder bei Fragen zum Datenschutz wenden Sie sich bitte an die unter
+          Abschnitt 2 genannte verantwortliche Stelle.
+        </p>
+      </Section>
+
+      <Section title="11. Widerspruch gegen Direktwerbung">
+        <p>
+          Werden Ihre personenbezogenen Daten zum Zwecke der Direktwerbung verarbeitet, haben Sie das Recht,
+          jederzeit Widerspruch gegen die Verarbeitung Sie betreffender Daten zu diesem Zweck einzulegen.
+          Nach einem Widerspruch werden Ihre Daten nicht mehr zu Direktwerbezwecken verwendet (Art. 21
+          Abs. 2 DSGVO).
         </p>
       </Section>
     </article>
@@ -167,7 +184,7 @@ export default function DatenschutzPage() {
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="space-y-2.5">
+    <section className="space-y-2">
       <h2 className="text-base font-semibold text-[#0f172a]">{title}</h2>
       <div className="space-y-2">{children}</div>
     </section>

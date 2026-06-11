@@ -2,7 +2,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Impressum – Halo",
-  description: "Impressum der Halo-Plattform nach § 5 TMG.",
+  description: "Impressum der Halo-Plattform nach § 5 DDG.",
 }
 
 export default function ImpressumPage() {
@@ -11,79 +11,68 @@ export default function ImpressumPage() {
       <header>
         <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
         <h1 className="text-2xl font-bold text-[#0f172a]">Impressum</h1>
-        <p className="text-xs text-[#94a3b8] mt-2">Angaben gemäß § 5 TMG.</p>
+        <p className="text-xs text-[#94a3b8] mt-2">Angaben gemäß § 5 DDG.</p>
       </header>
 
       <Section title="Anbieter">
         <p>
-          <strong className="text-[#0f172a]">Entrenous</strong><br />
-          <span className="text-[#94a3b8]">[Straße + Hausnummer]</span><br />
-          <span className="text-[#94a3b8]">[PLZ + Ort]</span><br />
+          <strong className="text-[#0f172a]">LinkedIn Consulting by Michael Schreck</strong><br />
+          Goldbacher Straße 100<br />
+          63741 Aschaffenburg<br />
           Deutschland
         </p>
       </Section>
 
-      <Section title="Vertretungsberechtigter">
-        <p>
-          Michael Schreck
-        </p>
+      <Section title="Vertreten durch">
+        <p>Michael Schreck</p>
       </Section>
 
       <Section title="Kontakt">
         <p>
-          E-Mail: <a href="mailto:hello@entrenous.de" className="text-[#4F6EF7] hover:underline">hello@entrenous.de</a><br />
-          Support: <a href="mailto:support@entrenous.de" className="text-[#4F6EF7] hover:underline">support@entrenous.de</a>
+          Telefon: <a href="tel:+4915563664275" className="text-[#534AB7] hover:underline">0155-63664275</a><br />
+          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] hover:underline">michael@linkedinconsulting.digital</a>
         </p>
       </Section>
 
       <Section title="Umsatzsteuer-Identifikationsnummer">
-        <p className="text-[#94a3b8]">
-          [USt-IdNr. gem. § 27 a UStG einsetzen, z.B. DE000000000]
+        <p>
+          Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br />
+          DE292683364
         </p>
       </Section>
 
-      <Section title="Handelsregister">
-        <p className="text-[#94a3b8]">
-          [Sofern als Kapitalgesellschaft eingetragen: Amtsgericht + HRB-Nummer einsetzen.
-          Bei Einzelunternehmen kann diese Sektion entfallen.]
-        </p>
-      </Section>
-
-      <Section title="Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV">
+      <Section title="Verbraucherstreitbeilegung / Universalschlichtungsstelle">
         <p>
-          Michael Schreck<br />
-          <span className="text-[#94a3b8]">[Adresse wie oben]</span>
-        </p>
-      </Section>
-
-      <Section title="EU-Streitschlichtung">
-        <p>
-          Die Europäische Kommission stellt eine Plattform zur Online-Streitbeilegung (OS) bereit:{" "}
-          <a href="https://ec.europa.eu/consumers/odr/" target="_blank" rel="noopener noreferrer" className="text-[#4F6EF7] hover:underline">
-            https://ec.europa.eu/consumers/odr/
-          </a>.
-          Unsere E-Mail-Adresse finden Sie oben im Impressum.
-        </p>
-        <p>
-          Wir sind nicht bereit oder verpflichtet, an Streitbeilegungsverfahren vor einer
-          Verbraucherschlichtungsstelle teilzunehmen.
+          Wir nehmen nicht an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teil
+          und sind dazu auch nicht verpflichtet.
         </p>
       </Section>
 
       <Section title="Haftung für Inhalte">
         <p>
-          Als Diensteanbieter sind wir für eigene Inhalte auf diesen Seiten nach den allgemeinen Gesetzen
-          verantwortlich. Wir sind jedoch nicht verpflichtet, übermittelte oder gespeicherte fremde
-          Informationen zu überwachen oder nach Umständen zu forschen, die auf eine rechtswidrige Tätigkeit
-          hinweisen (§§ 8 bis 10 TMG).
+          Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit,
+          Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen. Als
+          Diensteanbieter sind wir gemäß § 7 Abs. 1 DDG für eigene Inhalte auf diesen Seiten nach den
+          allgemeinen Gesetzen verantwortlich. Nach §§ 8 bis 10 DDG sind wir als Diensteanbieter jedoch
+          nicht verpflichtet, übermittelte oder gespeicherte fremde Informationen zu überwachen oder nach
+          Umständen zu forschen, die auf eine rechtswidrige Tätigkeit hinweisen. Verpflichtungen zur
+          Entfernung oder Sperrung der Nutzung von Informationen nach den allgemeinen Gesetzen bleiben
+          hiervon unberührt. Eine diesbezügliche Haftung ist jedoch erst ab dem Zeitpunkt der Kenntnis
+          einer konkreten Rechtsverletzung möglich. Bei Bekanntwerden von entsprechenden Rechtsverletzungen
+          werden wir diese Inhalte umgehend entfernen.
         </p>
       </Section>
 
       <Section title="Haftung für Links">
         <p>
-          Unser Angebot enthält Links zu externen Websites Dritter, auf deren Inhalte wir keinen Einfluss
+          Unser Angebot enthält Links zu externen Webseiten Dritter, auf deren Inhalte wir keinen Einfluss
           haben. Deshalb können wir für diese fremden Inhalte auch keine Gewähr übernehmen. Für die Inhalte
           der verlinkten Seiten ist stets der jeweilige Anbieter oder Betreiber der Seiten verantwortlich.
+          Die verlinkten Seiten wurden zum Zeitpunkt der Verlinkung auf mögliche Rechtsverstöße überprüft.
+          Rechtswidrige Inhalte waren zum Zeitpunkt der Verlinkung nicht erkennbar. Eine permanente
+          inhaltliche Kontrolle der verlinkten Seiten ist jedoch ohne konkrete Anhaltspunkte einer
+          Rechtsverletzung nicht zumutbar. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige
+          Links umgehend entfernen.
         </p>
       </Section>
 
@@ -91,8 +80,13 @@ export default function ImpressumPage() {
         <p>
           Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem
           deutschen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung und jede Art der Verwertung
-          außerhalb der Grenzen des Urheberrechts bedürfen der schriftlichen Zustimmung des jeweiligen Autors
-          bzw. Erstellers.
+          außerhalb der Grenzen des Urheberrechtes bedürfen der schriftlichen Zustimmung des jeweiligen
+          Autors bzw. Erstellers. Downloads und Kopien dieser Seite sind nur für den privaten, nicht
+          kommerziellen Gebrauch gestattet. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt
+          wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche
+          gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten
+          wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige
+          Inhalte umgehend entfernen.
         </p>
       </Section>
     </article>
