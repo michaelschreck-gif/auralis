@@ -18,6 +18,7 @@ export default async function RecommendationsPage() {
   if (!user) redirect("/login")
 
   let userName = ""
+  let plan = "free"
   let openRecs: RecRow[] = []
   let doneRecs: RecRow[] = []
   let currentScore: number | null = null
@@ -25,7 +26,7 @@ export default async function RecommendationsPage() {
 
   try {
     const [profileResult, reportResult, recsResult] = await Promise.all([
-      supabase.from("profiles").select("full_name").eq("id", user!.id).single(),
+      supabase.from("profiles").select("full_name, plan").eq("id", user!.id).single(),
       supabase
         .from("visibility_reports")
         .select("raw_data, visibility_score")
@@ -42,6 +43,7 @@ export default async function RecommendationsPage() {
     ])
 
     userName = profileResult.data?.full_name ?? ""
+    plan = profileResult.data?.plan ?? "free"
 
     if (reportResult.data) {
       hasReport = true
@@ -61,7 +63,7 @@ export default async function RecommendationsPage() {
   }
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">Empfehlungen</h1>

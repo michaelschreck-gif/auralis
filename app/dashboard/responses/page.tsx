@@ -17,16 +17,18 @@ export default async function ResponsesPage() {
   if (!user) redirect("/login")
 
   let userName = ""
+  let plan = "free"
   let groups: EvidenceGroup[] = []
   let analyzedAt: string | null = null
 
   try {
     const profileResult = await supabase
       .from("profiles")
-      .select("full_name")
+      .select("full_name, plan")
       .eq("id", user!.id)
       .single()
     userName = profileResult.data?.full_name ?? ""
+    plan = profileResult.data?.plan ?? "free"
 
     // Jüngsten Report finden
     const latestReport = await supabase
@@ -77,7 +79,7 @@ export default async function ResponsesPage() {
   )
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">KI-Antworten</h1>

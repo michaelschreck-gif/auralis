@@ -41,7 +41,7 @@ export default async function AskPage() {
 
   if (!allowed) {
     return (
-      <DashboardShell userName={userName}>
+      <DashboardShell userName={userName} plan={plan}>
         <div className="p-4 md:p-8 max-w-2xl mx-auto">
           <div className="mb-2">
             <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
@@ -97,7 +97,7 @@ export default async function AskPage() {
   }
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <AskChat userName={userName} suggestions={SUGGESTIONS} />
     </DashboardShell>
   )

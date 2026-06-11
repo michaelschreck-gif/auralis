@@ -123,7 +123,7 @@ export default async function CompetitorsPage() {
   const canAnalyze = canAnalyzeCompetitors(plan)
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <CompetitorsPanel
         self={self}
         competitors={competitors}

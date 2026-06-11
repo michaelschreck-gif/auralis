@@ -19,12 +19,13 @@ export default async function ThoughtLeadershipPage() {
   if (!user) redirect("/login")
 
   let userName = ""
+  let plan = "free"
   let report: VisibilityReport | null = null
   try {
     const [profileResult, reportResult] = await Promise.all([
       supabase
         .from("profiles")
-        .select("full_name")
+        .select("full_name, plan")
         .eq("id", user!.id)
         .single(),
       supabase
@@ -36,6 +37,7 @@ export default async function ThoughtLeadershipPage() {
         .maybeSingle(),
     ])
     userName = profileResult.data?.full_name ?? ""
+    plan = profileResult.data?.plan ?? "free"
     report = (reportResult.data?.raw_data ?? null) as VisibilityReport | null
   } catch {
     // fall through
@@ -43,7 +45,7 @@ export default async function ThoughtLeadershipPage() {
 
   if (!report) {
     return (
-      <DashboardShell userName={userName}>
+      <DashboardShell userName={userName} plan={plan}>
         <div className="p-4 md:p-8 max-w-3xl mx-auto">
           <p className="text-sm text-[#64748b]">
             Noch keine Analyse vorhanden.{" "}
@@ -58,7 +60,7 @@ export default async function ThoughtLeadershipPage() {
 
   const masters = computeMasterScores(report)
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <ScoreDetailView
         score={masters.thoughtLeadership}
         definition={SCORE_DEFINITIONS["thought-leadership"]}

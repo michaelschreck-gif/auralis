@@ -79,7 +79,7 @@ export default async function AnalyzePage() {
   const resetAt = limit.allowed ? null : limit.resetAt
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <AnalyzePanel
         schedules={schedules}
         history={history}

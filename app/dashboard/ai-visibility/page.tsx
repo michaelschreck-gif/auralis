@@ -297,6 +297,7 @@ export default async function AiVisibilityPage() {
   return (
     <DashboardShell
       userName={userName}
+      plan={plan}
       panelHeader="KI-Modelle"
       panelContent={panel}
     >

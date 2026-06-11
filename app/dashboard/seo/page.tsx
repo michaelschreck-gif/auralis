@@ -30,12 +30,13 @@ export default async function SeoScorePage() {
   if (!user) redirect("/login")
 
   let userName = ""
+  let plan = "free"
   let websiteUrl: string | null = null
   let seoData: SeoReportData | null = null
 
   try {
     const [profileResult, reportResult] = await Promise.all([
-      supabase.from("profiles").select("full_name, website_url").eq("id", user!.id).single(),
+      supabase.from("profiles").select("full_name, website_url, plan").eq("id", user!.id).single(),
       supabase
         .from("seo_reports")
         .select("raw_data, seo_score")
@@ -45,6 +46,7 @@ export default async function SeoScorePage() {
         .maybeSingle(),
     ])
     userName = profileResult.data?.full_name ?? ""
+    plan = profileResult.data?.plan ?? "free"
     websiteUrl = profileResult.data?.website_url ?? null
     seoData = (reportResult.data?.raw_data ?? null) as SeoReportData | null
   } catch {
@@ -56,7 +58,7 @@ export default async function SeoScorePage() {
   const t = SEO_THEME
 
   return (
-    <DashboardShell userName={userName}>
+    <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
         <nav className="text-sm text-[#64748b]">
           <a href="/dashboard" className="hover:text-[#0f172a] transition-colors">Cockpit</a>

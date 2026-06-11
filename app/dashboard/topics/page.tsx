@@ -73,7 +73,7 @@ export default async function TopicsPage() {
 
   try {
     const [profileResult, schedulesResult] = await Promise.all([
-      supabase.from("profiles").select("full_name").eq("id", user!.id).single(),
+      supabase.from("profiles").select("full_name, plan").eq("id", user!.id).single(),
       supabase
         .from("monitoring_schedules")
         .select("id, name, query, frequency, language")
@@ -143,6 +143,7 @@ export default async function TopicsPage() {
   return (
     <DashboardShell
       userName={profile?.full_name ?? ""}
+      plan={profile?.plan ?? "free"}
       panelHeader="Themen"
       panelCount={`${(schedules ?? []).length}`}
       panelContent={panel}

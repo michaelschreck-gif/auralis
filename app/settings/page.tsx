@@ -81,6 +81,7 @@ export default async function SettingsPage() {
   return (
     <DashboardShell
       userName={profile?.full_name ?? ""}
+      plan={plan}
       panelHeader="Einstellungen"
       panelContent={panel}
     >
