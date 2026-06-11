@@ -49,7 +49,7 @@ export default async function AskPage() {
             </span>
           </div>
           <h1 className="text-2xl font-semibold text-[#0f172a]">
-            Dein persönlicher KI-Sichtbarkeits-Coach
+            Dein persönlicher KI-Reputations-Coach
           </h1>
           <p className="text-sm text-[#64748b] mt-2">
             Stelle Claude Fragen zu deinem Halo Score, deinen Themen und deinen Wettbewerbern.

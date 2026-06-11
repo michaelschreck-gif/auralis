@@ -16,7 +16,7 @@ export default function ImpressumPage() {
 
       <Section title="Anbieter">
         <p>
-          <strong className="text-[#0f172a]">LinkedIn Consulting by Michael Schreck</strong><br />
+          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt)</strong><br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
           Deutschland
@@ -24,7 +24,18 @@ export default function ImpressumPage() {
       </Section>
 
       <Section title="Vertreten durch">
-        <p>Michael Schreck</p>
+        <p>
+          Geschäftsführerin: Maud Schock<br />
+          Geschäftsführer: Michael Schreck
+        </p>
+      </Section>
+
+      <Section title="Handelsregister">
+        <p className="text-[#94a3b8]">
+          Eingetragen im Handelsregister.<br />
+          Registergericht: [Amtsgericht einsetzen]<br />
+          Registernummer: [HRB einsetzen]
+        </p>
       </Section>
 
       <Section title="Kontakt">

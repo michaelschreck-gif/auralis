@@ -34,7 +34,7 @@ export async function POST() {
   const reportId = latestReport?.id ?? null
   if (!reportId) {
     return NextResponse.json(
-      { error: "Noch keine Analyse vorhanden. Starte zuerst eine Sichtbarkeits-Analyse." },
+      { error: "Noch keine Analyse vorhanden. Starte zuerst eine Reputations-Analyse." },
       { status: 400 },
     )
   }

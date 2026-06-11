@@ -44,7 +44,7 @@ export default function Cockpit({
           <div className="rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/60 p-8 text-center">
             <p className="text-base font-medium text-[#26215C]">Noch keine Analyse vorhanden.</p>
             <p className="text-sm text-[#534AB7] mt-2 mb-5">
-              Starte deine erste Sichtbarkeitsanalyse, um deinen Halo Score und die drei Dimensionen zu sehen.
+              Starte deine erste Reputationsanalyse, um deinen Halo Score und die drei Dimensionen zu sehen.
             </p>
             <Link
               href="/dashboard/analyze"

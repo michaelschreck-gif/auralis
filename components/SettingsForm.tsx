@@ -90,7 +90,7 @@ export default function SettingsForm({
       <section id="profile" className="space-y-5">
         <div>
           <h2 className="text-base font-semibold text-[#0f172a]">Profil</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">So sehen dich KI-Systeme in den Sichtbarkeits-Analysen.</p>
+          <p className="text-xs text-[#64748b] mt-0.5">So sehen dich KI-Systeme in den Reputations-Analysen.</p>
         </div>
 
         <div className="space-y-4">
@@ -150,7 +150,7 @@ export default function SettingsForm({
       <section id="topics" className="space-y-5">
         <div>
           <h2 className="text-base font-semibold text-[#0f172a]">Überwachte Themen</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Themen, die automatisch per geplanter KI-Sichtbarkeits-Analyse verfolgt werden.</p>
+          <p className="text-xs text-[#64748b] mt-0.5">Themen, die automatisch per geplanter KI-Reputations-Analyse verfolgt werden.</p>
         </div>
 
         {schedules.length === 0 && (
@@ -222,7 +222,7 @@ export default function SettingsForm({
         ) : (
           <div className="rounded-xl border border-red-100 bg-red-50 p-4 space-y-3">
             <p className="text-sm text-red-600">
-              Damit werden dein Profil, alle Themen und alle Sichtbarkeits-Reports unwiderruflich gelöscht. Bist du sicher?
+              Damit werden dein Profil, alle Themen und alle Reputations-Reports unwiderruflich gelöscht. Bist du sicher?
             </p>
             <div className="flex gap-3">
               <button

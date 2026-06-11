@@ -255,7 +255,7 @@ export default function OnboardingPage() {
                   disabled={topics.length === 0}
                   className="flex-1 py-3 rounded-xl text-sm font-semibold bg-[#7F77DD] hover:bg-[#534AB7] text-white transition-colors disabled:opacity-40"
                 >
-                  Meine KI-Sichtbarkeit messen →
+                  Meine KI-Reputation messen →
                 </button>
               </div>
               <p className="text-[11px] text-[#9A95BE] text-center">

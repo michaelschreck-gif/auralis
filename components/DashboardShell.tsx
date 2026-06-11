@@ -8,7 +8,7 @@ const NAV = [
   { href: "/dashboard",                    label: "Übersicht",          icon: "overview" },
   { href: "/dashboard/persona",            label: "KI-Persona",         icon: "persona" },
   { href: "/dashboard/analyze",            label: "Analyse",            icon: "analyze" },
-  { href: "/dashboard/ai-visibility",      label: "KI-Sichtbarkeit",    icon: "visibility" },
+  { href: "/dashboard/ai-visibility",      label: "KI-Reputation",    icon: "visibility" },
   { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
   { href: "/dashboard/seo",                label: "SEO Score",          icon: "seo" },
   { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },

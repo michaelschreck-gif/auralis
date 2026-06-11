@@ -18,9 +18,9 @@ export default function AgbPage() {
 
       <Section title="§ 1 Geltungsbereich">
         <p>
-          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0f172a]">Entrenous</strong>
+          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt)</strong>
           {" "}(nachfolgend „Anbieter“) und dem registrierten Nutzer (nachfolgend „Kunde“) über die Nutzung
-          der unter <a href="https://digital-halo.de" className="text-[#4F6EF7] hover:underline">digital-halo.de</a>{" "}
+          der unter <a href="https://digital-halo.de" className="text-[#534AB7] hover:underline">digital-halo.de</a>{" "}
           (sowie etwaigen Folge-Domains) erreichbaren Plattform „Halo“.
         </p>
         <p>
@@ -44,12 +44,12 @@ export default function AgbPage() {
       <Section title="§ 3 Leistungen">
         <p>
           Der Anbieter stellt dem Kunden im Rahmen des gewählten Tarifs eine Software-as-a-Service-Plattform
-          zur Verfügung, mit der die Sichtbarkeit einer Person in KI-Antwortsystemen
+          zur Verfügung, mit der die Reputation einer Person in KI-Antwortsystemen
           (u.a. Claude, ChatGPT, Perplexity, Gemini, Google AI Overview) überwacht und analysiert wird.
         </p>
         <p>
           Konkrete Leistungsmerkmale je Tarif (Free, Starter, Pro, Enterprise) ergeben sich aus der
-          aktuellen <a href="/#preise" className="text-[#4F6EF7] hover:underline">Preisseite</a>.
+          aktuellen <a href="/#preise" className="text-[#534AB7] hover:underline">Preisseite</a>.
           Der Anbieter ist berechtigt, den Leistungsumfang weiterzuentwickeln. Wesentliche Reduktionen
           werden mit angemessener Frist angekündigt.
         </p>
@@ -78,8 +78,8 @@ export default function AgbPage() {
         </p>
         <p>
           Die Kündigung erfolgt direkt im Tool unter „Einstellungen“ oder formlos per E-Mail an{" "}
-          <a href="mailto:hello@entrenous.de" className="text-[#4F6EF7] hover:underline">
-            hello@entrenous.de
+          <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] hover:underline">
+            michael@linkedinconsulting.digital
           </a>.
         </p>
         <p>
@@ -113,7 +113,7 @@ export default function AgbPage() {
         <p>
           Der Anbieter verarbeitet personenbezogene Daten ausschließlich im Einklang mit der DSGVO
           und der separaten{" "}
-          <a href="/legal/datenschutz" className="text-[#4F6EF7] hover:underline">
+          <a href="/legal/datenschutz" className="text-[#534AB7] hover:underline">
             Datenschutzerklärung
           </a>.
         </p>
@@ -154,7 +154,7 @@ export default function AgbPage() {
           Es gilt deutsches Recht unter Ausschluss des UN-Kaufrechts.
         </p>
         <p>
-          Gerichtsstand ist, soweit zulässig, der Sitz des Anbieters in <span className="text-[#94a3b8]">[Ort einsetzen]</span>.
+          Gerichtsstand ist, soweit zulässig, der Sitz des Anbieters in Aschaffenburg.
         </p>
         <p>
           Sollten einzelne Bestimmungen dieser AGB unwirksam sein, bleibt die Wirksamkeit der übrigen

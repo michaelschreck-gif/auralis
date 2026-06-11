@@ -124,7 +124,7 @@ function ModelCard({
         {state.kind === "score" && (
           <>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#64748b]">Sichtbarkeits-Score</span>
+              <span className="text-[#64748b]">Reputations-Score</span>
               <span className="font-semibold" style={{ color: model.color }}>{state.breakdown.overallScore} / 100</span>
             </div>
             <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
@@ -303,7 +303,7 @@ export default async function AiVisibilityPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0f172a]">KI-Sichtbarkeit pro Modell</h1>
+          <h1 className="text-xl font-semibold text-[#0f172a]">KI-Reputation pro Modell</h1>
           <p className="text-[#64748b] text-sm mt-1">
             Wie jedes KI-System deine Personal Brand wahrnimmt.{" "}
             {plan === "free" && (
@@ -335,7 +335,7 @@ export default async function AiVisibilityPage() {
               </p>
               <p className="text-sm text-[#0f172a] leading-relaxed mb-3">
                 Dein Halo Score ist der <span className="font-medium">Durchschnitt</span> der
-                Sichtbarkeits-Scores aller aktiven Modelle der letzten Analyse.
+                Reputations-Scores aller aktiven Modelle der letzten Analyse.
               </p>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 {ok.map((b, i) => (
@@ -360,7 +360,7 @@ export default async function AiVisibilityPage() {
         <div className="mt-4 rounded-xl border border-gray-100 bg-[#f8f9fb] p-5">
           <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2 font-medium">Was das bedeutet</p>
           <p className="text-sm text-[#64748b] leading-relaxed">
-            KI-Sichtbarkeit misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.
+            KI-Reputation misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.
             Ein höherer Score bedeutet, dass KI-Assistenten dich mit höherer Wahrscheinlichkeit empfehlen, wenn jemand nach deinen Themen fragt.
             Multi-Modell-Tracking ist ab Tarif Starter freigeschaltet — dein Halo-Score ist dann der Durchschnitt über alle aktiven Modelle.
           </p>

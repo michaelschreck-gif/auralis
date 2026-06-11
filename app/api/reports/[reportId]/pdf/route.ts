@@ -60,7 +60,7 @@ async function generateRecommendations(
     const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
     const system =
       `You are a strict JSON API. You MUST respond with valid JSON only — no markdown code fences, no explanations, no preamble. Your entire response must be parseable by JSON.parse() directly.`
-    const prompt = `Du bist ein AI Visibility Strategist. Gib konkrete Handlungsempfehlungen, wie eine Person ihre Sichtbarkeit in KI-Systemen verbessern kann.
+    const prompt = `Du bist ein AI Visibility Strategist. Gib konkrete Handlungsempfehlungen, wie eine Person ihre Reputation in KI-Systemen verbessern kann.
 
 Person: ${userName}
 Überwachte Themen: ${topics.join(", ")}

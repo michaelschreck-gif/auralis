@@ -112,7 +112,7 @@ export default async function MonopolyPage() {
             Wie sehr „besitzt" du ein Thema in den KI-Systemen? Der Monopoly-Score misst, wie
             konsequent KI dich auf die vordersten Plätze setzt, wenn sie offen nach den führenden
             Köpfen eines Themas gefragt wird — die Frage, die über Speaker-Gagen, Mandate und
-            Sichtbarkeit entscheidet.
+            Reputation entscheidet.
           </p>
         </header>
 

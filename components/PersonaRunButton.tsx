@@ -38,7 +38,7 @@ export default function PersonaRunButton({
       <p className="text-sm text-[#6B6790]">
         Starte zuerst eine{" "}
         <a href="/dashboard/analyze" className="text-[#534AB7] hover:underline font-medium">
-          Sichtbarkeits-Analyse
+          Reputations-Analyse
         </a>
         , dann kann Halo deine KI-Persona aus den Antworten destillieren.
       </p>

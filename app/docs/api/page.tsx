@@ -7,7 +7,7 @@ import type { Metadata } from "next"
 
 export const metadata: Metadata = {
   title: "Halo API – Dokumentation",
-  description: "Public REST API für Halo — KI-Sichtbarkeits-Scores per HTTP abfragen.",
+  description: "Public REST API für Halo — KI-Reputations-Scores per HTTP abfragen.",
 }
 
 const BASE_URL = "https://digital-halo.de"
@@ -101,7 +101,7 @@ export default function ApiDocsPage() {
               Public API Dokumentation
             </h1>
             <p className="text-base text-[#64748b] mt-3 leading-relaxed">
-              Über die Halo Public-API kannst du die KI-Sichtbarkeits-Scores einer Person
+              Über die Halo Public-API kannst du die KI-Reputations-Scores einer Person
               programmatisch abfragen — z.B. um Halo-Score, GEO-Score, Thought Leadership
               oder Wettbewerber-Vergleiche in eigene Dashboards, CRMs oder Reports
               einzubinden.
@@ -117,7 +117,7 @@ export default function ApiDocsPage() {
           {/* Intro */}
           <Section id="introduction" title="Einführung">
             <p>
-              Die API gibt programmatischen Zugriff auf die Sichtbarkeits-Daten eines
+              Die API gibt programmatischen Zugriff auf die Reputations-Daten eines
               Halo-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen,
               Wettbewerber) und verwaltend (Wettbewerber anlegen/löschen, Analysen auslösen,
               Sub-Accounts anlegen). Sie ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
@@ -169,7 +169,7 @@ export default function ApiDocsPage() {
               <p className="text-sm font-medium text-[#0f172a]">⚠ Schlüssel-Sicherheit</p>
               <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed">
                 API-Keys gewähren <strong>vollen Lesezugriff</strong> auf alle deine
-                Sichtbarkeits-Daten. Behandle sie wie Passwörter: niemals in Frontend-Code
+                Reputations-Daten. Behandle sie wie Passwörter: niemals in Frontend-Code
                 hardcoden, niemals in Git committen, niemals öffentlich teilen.
                 Bei Verdacht auf Kompromittierung den Key sofort in den Einstellungen
                 widerrufen.
@@ -270,7 +270,7 @@ export default function ApiDocsPage() {
                   <ErrorRow http="401" code="TOKEN_REVOKED" meaning="Der Key wurde in den Einstellungen widerrufen." />
                   <ErrorRow http="403" code="PLAN_REQUIRED" meaning="Tarif unterstützt API nicht. Upgrade auf Pro/Enterprise nötig." />
                   <ErrorRow http="429" code="RATE_LIMITED" meaning="Tägliches Abfragelimit erreicht. Reset um 00:00 UTC — oder Enterprise-Lizenz für unbegrenzte Abfragen." />
-                  <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Sichtbarkeits-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
+                  <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Reputations-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
                   <ErrorRow http="409" code="EMAIL_EXISTS" meaning="Beim Anlegen eines Sub-Accounts: ein Account mit dieser E-Mail existiert bereits." />
                   <ErrorRow http="403" code="SUB_ACCOUNT_FORBIDDEN" meaning="sub_account_id gehört nicht zu diesem Account (oder existiert nicht)." />
                   <ErrorRow http="400" code="INVALID_INPUT" meaning="Ungültiger Request-Body (z.B. fehlendes Pflichtfeld beim Anlegen/POST)." />
@@ -442,7 +442,7 @@ export default function ApiDocsPage() {
             id="ep-competitors-analyze"
             method="POST"
             path="/competitors/{id}/analyze"
-            description="Löst eine Sichtbarkeits-Analyse für einen Wettbewerber aus (entspricht „Analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden. Kein Request-Body nötig."
+            description="Löst eine Reputations-Analyse für einen Wettbewerber aus (entspricht „Analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden. Kein Request-Body nötig."
             params={[
               { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers." },
             ]}
@@ -659,7 +659,7 @@ export default function ApiDocsPage() {
             id="ep-analyze"
             method="POST"
             path="/analyze/{scheduleId}"
-            description="Löst eine neue Sichtbarkeits-Analyse für eines deiner Themen aus (entspricht „Jetzt analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden und gibt das Ergebnis zurück. Erfordert kein Request-Body."
+            description="Löst eine neue Reputations-Analyse für eines deiner Themen aus (entspricht „Jetzt analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden und gibt das Ergebnis zurück. Erfordert kein Request-Body."
             params={[
               { name: "scheduleId", type: "uuid (Pfad)", desc: "ID des Themas (monitoring_schedule). IDs findest du in /me-Kontext bzw. im Dashboard." },
             ]}
@@ -806,7 +806,7 @@ print(get_latest_scores())`}</CodeBlock>
           {/* Footer */}
           <footer className="pt-8 border-t border-gray-200 text-xs text-[#94a3b8]">
             <p>
-              Halo — AI Visibility Monitoring · Operated by Entrenous ·{" "}
+              Halo — AI Visibility Monitoring · Operated by Halo UG (haftungsbeschränkt) ·{" "}
               <a href="/" className="hover:underline">Zurück zur Hauptseite</a>
             </p>
           </footer>

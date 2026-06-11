@@ -44,7 +44,7 @@ export async function generateMetadata(
   const title = score != null
     ? `${name} · Halo Score™ ${score}/100 – Halo`
     : `${name} – Halo`
-  const desc = `${name}s KI-Sichtbarkeit in ChatGPT, Claude, Perplexity, Gemini — gemessen von Halo.`
+  const desc = `${name}s KI-Reputation in ChatGPT, Claude, Perplexity, Gemini — gemessen von Halo.`
   return {
     title,
     description: desc,
@@ -111,7 +111,7 @@ export default async function PublicProfilePage(
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
-                KI-Sichtbarkeits-Profil
+                KI-Reputations-Profil
               </p>
               <h1 className="text-2xl font-bold text-[#0f172a] mt-1">{name}</h1>
               {lastAnalyzedDate && (
@@ -171,7 +171,7 @@ export default async function PublicProfilePage(
             </>
           ) : (
             <div className="text-center py-10 text-sm text-[#64748b]">
-              Noch keine Sichtbarkeits-Messung verfügbar.
+              Noch keine Reputations-Messung verfügbar.
             </div>
           )}
         </section>
@@ -208,7 +208,7 @@ export default async function PublicProfilePage(
 
       <footer className="bg-[#0f172a] text-gray-400 mt-8">
         <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between text-xs flex-wrap gap-2">
-          <p>© {new Date().getFullYear()} Halo · Operated by Entrenous</p>
+          <p>© {new Date().getFullYear()} Halo · Operated by Halo UG (haftungsbeschränkt)</p>
           <div className="flex items-center gap-4">
             <a href="/" className="hover:text-white">Halo</a>
             <a href="/legal/impressum" className="hover:text-white">Impressum</a>

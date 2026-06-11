@@ -122,7 +122,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
         <div>
           <h1 className="text-2xl font-semibold text-[#0f172a]">Wettbewerber</h1>
           <p className="text-sm text-[#64748b] mt-1">
-            Vergleiche deine KI-Sichtbarkeit mit deinen Wettbewerbern.
+            Vergleiche deine KI-Reputation mit deinen Wettbewerbern.
           </p>
         </div>
         <button

@@ -6,7 +6,7 @@
  *
  * Response 200:
  *   {
- *     "aura":              { "value": 58, "band": "Starke Sichtbarkeit" },
+ *     "aura":              { "value": 58, "band": "Starke Reputation" },
  *     "geo":               { "value": 56, "band": "Etabliert" },
  *     "thought_leadership":{ "value": 52, "band": "Anerkannt" },
  *     "digital_authority": { "value": 42, "band": "Etablierend" },

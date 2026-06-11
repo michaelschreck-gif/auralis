@@ -2,7 +2,7 @@
  * POST /api/ask
  *
  * „Frag dein Profil" (Sprint 17) — Chat-Endpoint, der dem eingeloggten User
- * Fragen zu seiner KI-Sichtbarkeit beantwortet. Claude bekommt:
+ * Fragen zu seiner KI-Reputation beantwortet. Claude bekommt:
  *
  *   - User-Profil-Basics (Name, Plan)
  *   - Aktueller Halo Score + Sub-Scores
@@ -158,7 +158,7 @@ export async function POST(req: Request) {
     const lastDate = latestReport.queriedAt
       ? new Date(latestReport.queriedAt).toLocaleDateString("de-DE")
       : "—"
-    lines.push(`# Aktuelle Sichtbarkeits-Scores (letzte Analyse: ${lastDate})`)
+    lines.push(`# Aktuelle Reputations-Scores (letzte Analyse: ${lastDate})`)
     lines.push(`- Halo Score: ${masters.aura.value}/100 — ${masters.aura.band.label}`)
     lines.push(`- GEO: ${masters.geo.value}/100 — ${masters.geo.band.label}`)
     lines.push(`- Thought Leadership: ${masters.thoughtLeadership.value}/100 — ${masters.thoughtLeadership.band.label}`)
@@ -179,7 +179,7 @@ export async function POST(req: Request) {
     }
     lines.push("")
   } else {
-    lines.push("# Aktuelle Sichtbarkeits-Scores")
+    lines.push("# Aktuelle Reputations-Scores")
     lines.push("Noch keine Analyse durchgeführt.")
     lines.push("")
   }
@@ -219,7 +219,7 @@ export async function POST(req: Request) {
   const contextBlock = lines.join("\n").trim()
 
   // System-Prompt — Claude als Halo-Coach
-  const system = `Du bist „Frag dein Profil" — der persönliche KI-Sichtbarkeits-Coach in Halo. Du analysierst die Daten der eingeloggten Person und gibst konkrete, umsetzbare Antworten auf Deutsch.
+  const system = `Du bist „Frag dein Profil" — der persönliche KI-Reputations-Coach in Halo. Du analysierst die Daten der eingeloggten Person und gibst konkrete, umsetzbare Antworten auf Deutsch.
 
 Regeln:
 - Antworte immer auf Deutsch, höflich und direkt.

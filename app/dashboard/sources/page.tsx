@@ -109,7 +109,7 @@ export default async function SourcesPage() {
               Noch keine Analysen vorhanden.
             </p>
             <p className="text-sm text-[#64748b] mt-2">
-              Sobald die KI deine Sichtbarkeit analysiert, erscheinen hier genannte Quellen.{" "}
+              Sobald die KI deine Reputation analysiert, erscheinen hier genannte Quellen.{" "}
               <a
                 href="/dashboard/analyze"
                 className="text-[#7F77DD] hover:underline font-medium"

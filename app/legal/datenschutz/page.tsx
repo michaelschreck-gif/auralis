@@ -36,7 +36,7 @@ export default function DatenschutzPage() {
         </p>
         <p>
           <strong className="text-[#0f172a]">Wofür nutzen wir Ihre Daten?</strong> Zur Bereitstellung des
-          Dienstes (KI-Sichtbarkeits-Analyse für Ihre Person/Marke), zur Vertragsabwicklung und zur
+          Dienstes (KI-Reputations-Analyse für Ihre Person/Marke), zur Vertragsabwicklung und zur
           Sicherstellung eines fehlerfreien Betriebs.
         </p>
       </Section>
@@ -46,7 +46,8 @@ export default function DatenschutzPage() {
           Verantwortliche Stelle für die Datenverarbeitung auf dieser Website und in der Anwendung ist:
         </p>
         <p>
-          <strong className="text-[#0f172a]">LinkedIn Consulting by Michael Schreck</strong><br />
+          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt)</strong><br />
+          Vertreten durch die Geschäftsführer Maud Schock und Michael Schreck<br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
           Telefon: <a href="tel:+4915563664275" className="text-[#534AB7] hover:underline">+49 155 63664275</a><br />

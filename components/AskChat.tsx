@@ -96,7 +96,7 @@ export default function AskChat({ userName, suggestions }: Props) {
           {firstName ? `Hallo ${firstName}` : "Hallo"} 👋
         </h1>
         <p className="text-sm text-[#64748b] mt-1">
-          Stell mir Fragen zu deinen Sichtbarkeitsdaten — ich antworte mit Claude auf Basis deines aktuellen Halo Scores, deiner Themen und deiner Wettbewerber.
+          Stell mir Fragen zu deinen Reputationsdaten — ich antworte mit Claude auf Basis deines aktuellen Halo Scores, deiner Themen und deiner Wettbewerber.
         </p>
       </div>
 

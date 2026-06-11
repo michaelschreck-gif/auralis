@@ -6,7 +6,7 @@ import type { Metadata } from "next"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Halo — KI-Sichtbarkeits-Monitoring für Personal Brands",
+  title: "Halo — KI-Reputations-Monitoring für Personal Brands",
   description:
     "Halo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
 }
@@ -64,7 +64,7 @@ export default async function Home() {
             Endlich siehst du, wie<br className="hidden sm:inline" /> KI-Systeme dich sehen.
           </h1>
           <p className="text-base sm:text-lg text-[#6B6790] leading-relaxed mt-6 max-w-xl mx-auto">
-            Halo misst deine Sichtbarkeit in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
+            Halo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
             — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.
           </p>
 
@@ -109,7 +109,7 @@ export default async function Home() {
           <div className="rounded-3xl border border-[#9FE1CB] bg-[#E1F5EE]/60 p-7">
             <div className="text-[#0F6E56] font-semibold mb-4">Mit Halo</div>
             <ul className="space-y-3 text-sm text-[#04342C]">
-              {["Halo Score™: eine Zahl für deine KI-Sichtbarkeit", "Wettbewerber-Benchmark mit harten Zahlen", "Trend pro Thema über 30 Tage", "Konkrete Empfehlungen, von Claude generiert"].map(t => (
+              {["Halo Score™: eine Zahl für deine KI-Reputation", "Wettbewerber-Benchmark mit harten Zahlen", "Trend pro Thema über 30 Tage", "Konkrete Empfehlungen, von Claude generiert"].map(t => (
                 <li key={t} className="flex gap-2.5"><span className="text-[#1D9E75]">✓</span>{t}</li>
               ))}
             </ul>
@@ -151,7 +151,7 @@ export default async function Home() {
           <div>
             <Eyebrow dark>Master-Metrik</Eyebrow>
             <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mt-3 leading-tight">
-              Eine Zahl, die deine KI-Sichtbarkeit zusammenfasst.
+              Eine Zahl, die deine KI-Reputation zusammenfasst.
             </h2>
             <p className="text-[#CECBF6] mt-4 leading-relaxed">
               Der Halo Score™ kombiniert vier Dimensionen — GEO, SEO, Thought Leadership und Digitale
@@ -177,7 +177,7 @@ export default async function Home() {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <DimCard tint="#E6F1FB" label="#185FA5" text="#0C447C" bar="#378ADD" track="#B5D4F4" name="GEO Score" val={72} desc="Wie oft KI-Systeme dich in Antworten nennen." />
-          <DimCard tint="#FBF0DE" label="#8A5A0E" text="#5C3A06" bar="#E08A1E" track="#F6D79B" name="SEO Score" val={64} desc="Deine Sichtbarkeit in der klassischen Google-Suche." />
+          <DimCard tint="#FBF0DE" label="#8A5A0E" text="#5C3A06" bar="#E08A1E" track="#F6D79B" name="SEO Score" val={64} desc="Deine Reputation in der klassischen Google-Suche." />
           <DimCard tint="#EEEDFE" label="#534AB7" text="#26215C" bar="#7F77DD" track="#CECBF6" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
           <DimCard tint="#E1F5EE" label="#0F6E56" text="#04342C" bar="#1D9E75" track="#9FE1CB" name="Digitale Autorität" val={63} desc="Die Stärke deiner Online-Spur." />
         </div>
@@ -250,14 +250,14 @@ export default async function Home() {
         <div className="text-center max-w-2xl mx-auto mb-12">
           <Eyebrow>Funktionen</Eyebrow>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight mt-3 text-[#1B1830]">
-            Alles für deine KI-Sichtbarkeit.
+            Alles für deine KI-Reputation.
           </h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[
             { i: "◎", t: "Halo Score™", d: "Eine Master-Metrik von 0–100." },
-            { i: "📡", t: "GEO Score", d: "Sichtbarkeit in KI-Antworten." },
-            { i: "🔍", t: "SEO Score", d: "Sichtbarkeit in der Google-Suche." },
+            { i: "📡", t: "GEO Score", d: "Reputation in KI-Antworten." },
+            { i: "🔍", t: "SEO Score", d: "Reputation in der Google-Suche." },
             { i: "🏆", t: "Thought Leadership", d: "Expertenwahrnehmung messbar." },
             { i: "📊", t: "Score-Verlauf", d: "30-Tage-Trends pro Thema." },
             { i: "⚔️", t: "Wettbewerber", d: "Benchmark + Lückenanalyse." },
@@ -324,7 +324,7 @@ export default async function Home() {
         </div>
         <div className="space-y-3">
           {[
-            { q: "Was ist Halo?", a: "Halo ist ein KI-Sichtbarkeits-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
+            { q: "Was ist Halo?", a: "Halo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
             { q: "Wie unterscheidet sich Halo von klassischem SEO?", a: "Klassisches SEO misst dein Google-Ranking. Halo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren. Mit dem SEO Score deckt Halo beides ab." },
             { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
             { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Free-Account erstellen, 1 Analyse starten, alle Cockpit-Funktionen sehen. Upgrade ist optional." },
@@ -347,7 +347,7 @@ export default async function Home() {
         <div className="max-w-5xl mx-auto rounded-[32px] bg-gradient-to-b from-[#EEEDFE] to-[#F4F2FE] border border-[#CECBF6] px-6 py-16 text-center">
           <div className="flex justify-center mb-6"><Ring size={48} stroke={6} /></div>
           <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#1B1830]">
-            Mehr Sichtbarkeit. Weniger Rätselraten.
+            Mehr Reputation. Weniger Rätselraten.
           </h2>
           <p className="text-[#6B6790] mt-4 max-w-md mx-auto leading-relaxed">
             Sieh in 60 Sekunden, wo du in der KI-Suche stehst. Kostenlos, keine Kreditkarte.
@@ -367,7 +367,7 @@ export default async function Home() {
               <span className="font-semibold text-[#26215C]">Halo</span>
             </div>
             <p className="text-[#9A95BE] leading-relaxed text-[13px]">
-              KI-Sichtbarkeits-Monitor für Personal Brands. Gehostet in der EU.
+              KI-Reputations-Monitor für Personal Brands. Gehostet in der EU.
             </p>
           </div>
           <FooterCol title="Produkt" links={[["Funktionen", "#funktionen"], ["Preise", "#preise"], ["API-Doku", "/docs/api"], ["Anmelden", "/login"]]} />
@@ -375,7 +375,7 @@ export default async function Home() {
           <FooterCol title="Rechtliches" links={[["Impressum", "/legal/impressum"], ["Datenschutz", "/legal/datenschutz"], ["AGB", "/legal/agb"]]} />
         </div>
         <div className="border-t border-[#EEEDFE] py-5 text-center text-xs text-[#9A95BE]">
-          © 2026 Halo · Operated by Entrenous
+          © 2026 Halo · Operated by Halo UG (haftungsbeschränkt)
         </div>
       </footer>
     </div>
@@ -445,7 +445,7 @@ function HeroCockpit() {
         </svg>
         <div>
           <div className="text-[11px] uppercase tracking-wider text-[#CECBF6]">Dein Halo Score™</div>
-          <div className="text-white font-semibold text-lg mt-0.5">Starke Sichtbarkeit</div>
+          <div className="text-white font-semibold text-lg mt-0.5">Starke Reputation</div>
           <div className="text-xs text-[#CECBF6] mt-1">Letzte Analyse vor 2 h</div>
         </div>
       </div>

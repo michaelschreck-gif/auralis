@@ -68,7 +68,7 @@ export default async function RecommendationsPage() {
         <header>
           <h1 className="text-2xl font-semibold text-[#0f172a]">Empfehlungen</h1>
           <p className="text-sm text-[#64748b] mt-1">
-            Personalisierte Maßnahmen zur Verbesserung deiner KI-Sichtbarkeit — generiert von Claude. Hake erledigte Maßnahmen ab und verfolge ihre Wirkung auf deinen Score.
+            Personalisierte Maßnahmen zur Verbesserung deiner KI-Reputation — generiert von Claude. Hake erledigte Maßnahmen ab und verfolge ihre Wirkung auf deinen Score.
           </p>
         </header>
 

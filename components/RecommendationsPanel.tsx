@@ -104,7 +104,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
             Lass dir konkrete Maßnahmen vorschlagen
           </p>
           <p className="text-sm text-[#64748b] mt-2 mb-5 max-w-md mx-auto leading-relaxed">
-            Claude analysiert deine schwächsten Signale aus der letzten Sichtbarkeits-Analyse und leitet daraus 5 konkrete Schritte ab, mit denen du deinen Score verbesserst.
+            Claude analysiert deine schwächsten Signale aus der letzten Reputations-Analyse und leitet daraus 5 konkrete Schritte ab, mit denen du deinen Score verbesserst.
           </p>
           <button
             type="button"
