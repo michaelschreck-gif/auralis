@@ -371,7 +371,7 @@ export default async function Home() {
             </p>
           </div>
           <FooterCol title="Produkt" links={[["Funktionen", "#funktionen"], ["Preise", "#preise"], ["API-Doku", "/docs/api"], ["Anmelden", "/login"]]} />
-          <FooterCol title="Unternehmen" links={[["Kontakt", "mailto:michael@linkedinconsulting.digital"]]} />
+          <FooterCol title="Unternehmen" links={[["Kontakt", "/kontakt"]]} />
           <FooterCol title="Rechtliches" links={[["Impressum", "/legal/impressum"], ["Datenschutz", "/legal/datenschutz"], ["AGB", "/legal/agb"]]} />
         </div>
         <div className="border-t border-[#EEEDFE] py-5 text-center text-xs text-[#9A95BE]">
