@@ -40,7 +40,6 @@ export default async function Home() {
             <a href="#ablauf" className="text-[#6B6790] hover:text-[#26215C] transition-colors">So funktioniert&apos;s</a>
             <a href="#preise" className="text-[#6B6790] hover:text-[#26215C] transition-colors">Preise</a>
             <a href="#faq" className="text-[#6B6790] hover:text-[#26215C] transition-colors">FAQ</a>
-            <a href="/docs/api" className="text-[#6B6790] hover:text-[#26215C] transition-colors">API</a>
           </div>
           <div className="flex items-center gap-2.5">
             <Link href="/login" className="text-sm px-3.5 py-2 rounded-full text-[#534AB7] hover:bg-[#F4F2FE] transition-colors font-medium">
@@ -313,7 +312,7 @@ export default async function Home() {
         </div>
         <p className="text-center text-sm text-[#6B6790] mt-6">
           Enterprise mit unbegrenzter API, Sub-Accounts, SSO &amp; Onboarding —{" "}
-          <a href="mailto:michael.schreck@entrenous.de" className="text-[#534AB7] font-medium hover:underline">auf Anfrage</a>.
+          <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] font-medium hover:underline">auf Anfrage</a>.
         </p>
       </section>
 
@@ -372,7 +371,7 @@ export default async function Home() {
             </p>
           </div>
           <FooterCol title="Produkt" links={[["Funktionen", "#funktionen"], ["Preise", "#preise"], ["API-Doku", "/docs/api"], ["Anmelden", "/login"]]} />
-          <FooterCol title="Unternehmen" links={[["Kontakt", "mailto:hello@entrenous.de"], ["Support", "mailto:support@entrenous.de"]]} />
+          <FooterCol title="Unternehmen" links={[["Kontakt", "mailto:michael@linkedinconsulting.digital"]]} />
           <FooterCol title="Rechtliches" links={[["Impressum", "/legal/impressum"], ["Datenschutz", "/legal/datenschutz"], ["AGB", "/legal/agb"]]} />
         </div>
         <div className="border-t border-[#EEEDFE] py-5 text-center text-xs text-[#9A95BE]">
