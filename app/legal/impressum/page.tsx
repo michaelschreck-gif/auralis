@@ -16,7 +16,7 @@ export default function ImpressumPage() {
 
       <Section title="Anbieter">
         <p>
-          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt)</strong><br />
+          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
           Deutschland
@@ -31,10 +31,10 @@ export default function ImpressumPage() {
       </Section>
 
       <Section title="Handelsregister">
-        <p className="text-[#94a3b8]">
-          Eingetragen im Handelsregister.<br />
-          Registergericht: [Amtsgericht einsetzen]<br />
-          Registernummer: [HRB einsetzen]
+        <p>
+          Die Gesellschaft befindet sich derzeit in Gründung („i. G."). Die Eintragung in das
+          Handelsregister ist beantragt bzw. steht noch aus. Registergericht und Registernummer
+          werden nach erfolgter Eintragung ergänzt.
         </p>
       </Section>
 

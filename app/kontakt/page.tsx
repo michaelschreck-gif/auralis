@@ -67,7 +67,7 @@ export default function KontaktPage() {
         <section className="mt-6 rounded-2xl bg-white border border-[#EEEDFE] p-6">
           <div className="text-[11px] uppercase tracking-wider font-semibold text-[#9A95BE] mb-3">Anbieter</div>
           <p className="text-sm text-[#1B1830] leading-relaxed">
-            <strong>Halo UG (haftungsbeschränkt)</strong><br />
+            <strong>Halo UG (haftungsbeschränkt) i. G.</strong><br />
             Goldbacher Straße 100<br />
             63741 Aschaffenburg<br />
             Deutschland

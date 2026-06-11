@@ -18,7 +18,7 @@ export default function AgbPage() {
 
       <Section title="§ 1 Geltungsbereich">
         <p>
-          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt)</strong>
+          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt) i. G.</strong>
           {" "}(nachfolgend „Anbieter“) und dem registrierten Nutzer (nachfolgend „Kunde“) über die Nutzung
           der unter <a href="https://digital-halo.de" className="text-[#534AB7] hover:underline">digital-halo.de</a>{" "}
           (sowie etwaigen Folge-Domains) erreichbaren Plattform „Halo“.

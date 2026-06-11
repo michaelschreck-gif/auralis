@@ -208,7 +208,7 @@ export default async function PublicProfilePage(
 
       <footer className="bg-[#0f172a] text-gray-400 mt-8">
         <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between text-xs flex-wrap gap-2">
-          <p>© {new Date().getFullYear()} Halo · Operated by Halo UG (haftungsbeschränkt)</p>
+          <p>© {new Date().getFullYear()} Halo · Operated by Halo UG (haftungsbeschränkt) i. G.</p>
           <div className="flex items-center gap-4">
             <a href="/" className="hover:text-white">Halo</a>
             <a href="/legal/impressum" className="hover:text-white">Impressum</a>

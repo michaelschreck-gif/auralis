@@ -806,7 +806,7 @@ print(get_latest_scores())`}</CodeBlock>
           {/* Footer */}
           <footer className="pt-8 border-t border-gray-200 text-xs text-[#94a3b8]">
             <p>
-              Halo — AI Visibility Monitoring · Operated by Halo UG (haftungsbeschränkt) ·{" "}
+              Halo — AI Visibility Monitoring · Operated by Halo UG (haftungsbeschränkt) i. G. ·{" "}
               <a href="/" className="hover:underline">Zurück zur Hauptseite</a>
             </p>
           </footer>

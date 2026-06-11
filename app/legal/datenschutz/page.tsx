@@ -46,7 +46,7 @@ export default function DatenschutzPage() {
           Verantwortliche Stelle für die Datenverarbeitung auf dieser Website und in der Anwendung ist:
         </p>
         <p>
-          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt)</strong><br />
+          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
           Vertreten durch die Geschäftsführer Maud Schock und Michael Schreck<br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
