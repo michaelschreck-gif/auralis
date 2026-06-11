@@ -2,6 +2,8 @@ import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 import PersonaRunButton from "@/components/PersonaRunButton"
+import PersonaChat from "@/components/PersonaChat"
+import PersonaAvatar from "@/components/PersonaAvatar"
 
 export const dynamic = "force-dynamic"
 
@@ -140,6 +142,12 @@ export default async function PersonaPage() {
             </p>
           </section>
         )}
+
+        {/* Sprich mit deinem KI-Ich */}
+        {hasPersona && <PersonaChat name={userName} />}
+
+        {/* Video-Avatar (graceful, bis Tavus-Keys gesetzt) */}
+        {hasPersona && <PersonaAvatar />}
       </div>
     </DashboardShell>
   )
