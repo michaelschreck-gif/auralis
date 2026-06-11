@@ -3,22 +3,23 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
 /**
- * Sprich mit deinem KI-Ich — Sprach-Agent mit Comic-Avatar.
+ * Sprich mit deinem KI-Ich — reiner Sprach-Agent mit Comic-Avatar.
  *
- * Komplett im Browser, KEINE Kamera, KEINE Personen-Analyse:
+ * Komplett ohne Kamera/Gesichtsanalyse:
  *  - Mikrofon → Web Speech API (Spracherkennung, de-DE)
  *  - Antwort über /api/persona/chat (geerdet in Persona + Scores)
- *  - Sprachausgabe via SpeechSynthesis (Browser-Stimme)
- *  - Comic-Figur mit Halo-Ring, deren Mund sich beim Sprechen bewegt
+ *  - Sprachausgabe: ElevenLabs (/api/persona/speak) — fällt auf Browser-Stimme
+ *    zurück, falls kein ELEVENLABS_API_KEY gesetzt ist
+ *  - Comic-Figur mit Halo-Ring, Mund bewegt sich beim Sprechen
  *
- * Fällt sauber auf Text-Eingabe zurück, wenn Spracherkennung nicht unterstützt
- * wird (z. B. außerhalb von Chrome).
+ * Bewusst KEINE Text-Wiedergabe der Antwort — die Interaktion ist rein per
+ * Sprache. Nur wenn Spracherkennung fehlt (z. B. außerhalb Chrome), gibt es ein
+ * Texteingabefeld als Fallback.
  */
 
 type Msg = { role: "user" | "assistant"; content: string }
 type Phase = "idle" | "listening" | "thinking" | "speaking"
 
-// ─── Minimale Typen für die Web Speech API (nicht in lib.dom enthalten) ───────
 interface SpeechRecognitionAlternativeLike { transcript: string }
 interface SpeechRecognitionResultLike { 0: SpeechRecognitionAlternativeLike; isFinal: boolean }
 interface SpeechRecognitionEventLike { results: ArrayLike<SpeechRecognitionResultLike> }
@@ -44,37 +45,39 @@ function getRecognitionCtor(): SpeechRecognitionCtor | null {
 }
 
 export default function PersonaVoiceAgent({ name }: { name: string }) {
+  void name
   const [phase, setPhase] = useState<Phase>("idle")
-  const [messages, setMessages] = useState<Msg[]>([])
   const [partial, setPartial] = useState("")
   const [error, setError] = useState<string | null>(null)
   const [sttSupported, setSttSupported] = useState(true)
-  const [muted, setMuted] = useState(false) // Sprachausgabe stummschalten
+  const [muted, setMuted] = useState(false)
   const [textInput, setTextInput] = useState("")
 
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const messagesRef = useRef<Msg[]>([])
-  messagesRef.current = messages
 
   useEffect(() => {
     setSttSupported(getRecognitionCtor() !== null)
     return () => {
       try { window.speechSynthesis?.cancel() } catch {}
       try { recognitionRef.current?.stop() } catch {}
+      try { audioRef.current?.pause() } catch {}
     }
   }, [])
 
-  const speak = useCallback((text: string) => {
-    if (muted || typeof window === "undefined" || !window.speechSynthesis) {
-      setPhase("idle")
-      return
-    }
+  const stopAudio = useCallback(() => {
+    try { window.speechSynthesis?.cancel() } catch {}
+    try { audioRef.current?.pause(); audioRef.current = null } catch {}
+  }, [])
+
+  const browserSpeak = useCallback((text: string) => {
+    if (typeof window === "undefined" || !window.speechSynthesis) { setPhase("idle"); return }
     try {
       window.speechSynthesis.cancel()
       const u = new SpeechSynthesisUtterance(text)
       u.lang = "de-DE"
-      const voices = window.speechSynthesis.getVoices()
-      const de = voices.find(v => v.lang?.toLowerCase().startsWith("de"))
+      const de = window.speechSynthesis.getVoices().find(v => v.lang?.toLowerCase().startsWith("de"))
       if (de) u.voice = de
       u.rate = 1.02
       u.pitch = 1.05
@@ -85,7 +88,34 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
     } catch {
       setPhase("idle")
     }
-  }, [muted])
+  }, [])
+
+  const speak = useCallback(async (text: string) => {
+    if (muted) { setPhase("idle"); return }
+    // 1. Versuch: natürliche Stimme vom Server (ElevenLabs)
+    try {
+      const res = await fetch("/api/persona/speak", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text }),
+      })
+      if (res.ok) {
+        const blob = await res.blob()
+        const url = URL.createObjectURL(blob)
+        const audio = new Audio(url)
+        audioRef.current = audio
+        setPhase("speaking")
+        audio.onended = () => { setPhase("idle"); URL.revokeObjectURL(url) }
+        audio.onerror = () => { setPhase("idle"); URL.revokeObjectURL(url) }
+        await audio.play()
+        return
+      }
+      // 422 / Fehler → Browser-Stimme
+    } catch {
+      // Netzwerk → Browser-Stimme
+    }
+    browserSpeak(text)
+  }, [muted, browserSpeak])
 
   const ask = useCallback(async (text: string) => {
     const content = text.trim()
@@ -93,7 +123,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
     setError(null)
     setPartial("")
     const next: Msg[] = [...messagesRef.current, { role: "user", content }]
-    setMessages([...next, { role: "assistant", content: "" }])
+    messagesRef.current = next
     setPhase("thinking")
 
     try {
@@ -106,7 +136,6 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
         let msg = "Fehler bei der Anfrage."
         try { msg = (await res.json())?.error ?? msg } catch {}
         setError(msg)
-        setMessages(prev => prev.slice(0, -1))
         setPhase("idle")
         return
       }
@@ -117,23 +146,18 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
         const { done, value } = await reader.read()
         if (done) break
         acc += decoder.decode(value, { stream: true })
-        setMessages(prev => {
-          const copy = [...prev]
-          copy[copy.length - 1] = { role: "assistant", content: acc }
-          return copy
-        })
       }
-      speak(acc)
+      messagesRef.current = [...next, { role: "assistant", content: acc }]
+      await speak(acc)
     } catch (e) {
       setError(e instanceof Error ? e.message : "Netzwerkfehler.")
-      setMessages(prev => prev.slice(0, -1))
       setPhase("idle")
     }
   }, [speak])
 
   const startListening = useCallback(() => {
     setError(null)
-    try { window.speechSynthesis?.cancel() } catch {}
+    stopAudio()
     const Ctor = getRecognitionCtor()
     if (!Ctor) { setSttSupported(false); return }
     const rec = new Ctor()
@@ -161,62 +185,53 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
       }
       setPhase("idle")
     }
-    rec.onend = () => {
-      setPhase(p => (p === "listening" ? "idle" : p))
-    }
+    rec.onend = () => setPhase(p => (p === "listening" ? "idle" : p))
     recognitionRef.current = rec
     setPhase("listening")
     try { rec.start() } catch { setPhase("idle") }
-  }, [ask])
+  }, [ask, stopAudio])
 
   const stopListening = useCallback(() => {
     try { recognitionRef.current?.stop() } catch {}
     setPhase("idle")
   }, [])
 
-  const lastAssistant = [...messages].reverse().find(m => m.role === "assistant")?.content ?? ""
   const speaking = phase === "speaking"
   const listening = phase === "listening"
   const thinking = phase === "thinking"
 
+  const statusText =
+    listening ? "Ich höre zu…"
+    : thinking ? "Ich denke nach…"
+    : speaking ? "…"
+    : "Tippe auf das Mikrofon und frag mich z. B. „Als was werde ich wahrgenommen?“"
+
   return (
     <section className="bg-white rounded-2xl border border-[#EEEDFE] overflow-hidden">
       <div className="px-5 py-4 border-b border-[#EEEDFE]">
-        <div className="text-sm font-semibold text-[#1B1830]">Per Sprache mit deinem KI-Ich</div>
-        <div className="text-xs text-[#9A95BE]">
-          Nur Mikrofon — keine Kamera. Frag mich zu deinen Ergebnissen.
-        </div>
+        <div className="text-sm font-semibold text-[#1B1830]">Sprich mit deinem KI-Ich</div>
+        <div className="text-xs text-[#9A95BE]">Nur Sprache — keine Kamera, kein Text.</div>
       </div>
 
       <div className="p-6 flex flex-col items-center">
         <ComicAvatar speaking={speaking} listening={listening} thinking={thinking} />
 
-        {/* Status / Untertitel */}
-        <div className="mt-4 min-h-[3.5rem] w-full max-w-md text-center">
+        <div className="mt-4 min-h-[2.5rem] w-full max-w-md text-center">
           {partial ? (
             <p className="text-sm text-[#6B6790] italic">„{partial}…"</p>
-          ) : thinking ? (
-            <p className="text-sm text-[#9A95BE]">denkt nach…</p>
-          ) : lastAssistant ? (
-            <p className="text-sm text-[#1B1830] leading-relaxed">{lastAssistant}</p>
           ) : (
-            <p className="text-sm text-[#9A95BE]">
-              Tippe auf das Mikrofon und frag mich z. B. „Als was werde ich wahrgenommen?"
-            </p>
+            <p className="text-sm text-[#9A95BE]">{statusText}</p>
           )}
         </div>
 
-        {/* Mikro-Steuerung */}
         {sttSupported ? (
-          <div className="mt-5 flex items-center gap-3">
+          <div className="mt-4 flex items-center gap-3">
             <button
               type="button"
               onClick={listening ? stopListening : startListening}
               disabled={thinking}
               className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-colors disabled:opacity-50 ${
-                listening
-                  ? "bg-[#D1495B] text-white hover:bg-[#b83b4c]"
-                  : "bg-[#7F77DD] text-white hover:bg-[#534AB7]"
+                listening ? "bg-[#D1495B] text-white hover:bg-[#b83b4c]" : "bg-[#7F77DD] text-white hover:bg-[#534AB7]"
               }`}
             >
               <MicIcon />
@@ -226,7 +241,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
               type="button"
               onClick={() => {
                 setMuted(m => !m)
-                if (!muted) { try { window.speechSynthesis?.cancel() } catch {}; setPhase("idle") }
+                if (!muted) { stopAudio(); setPhase("idle") }
               }}
               className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[#EEEDFE] text-[#6B6790] hover:bg-[#F4F2FE] transition-colors"
               title={muted ? "Sprachausgabe an" : "Sprachausgabe aus"}
@@ -236,10 +251,9 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
             </button>
           </div>
         ) : (
-          // Fallback: Text-Eingabe, wenn Spracherkennung nicht verfügbar ist
           <form
             onSubmit={e => { e.preventDefault(); const t = textInput; setTextInput(""); ask(t) }}
-            className="mt-5 w-full max-w-md flex items-end gap-2"
+            className="mt-4 w-full max-w-md flex items-end gap-2"
           >
             <input
               value={textInput}
@@ -252,7 +266,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
               disabled={thinking || !textInput.trim()}
               className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#7F77DD] hover:bg-[#534AB7] transition-colors disabled:opacity-40"
             >
-              Senden
+              Fragen
             </button>
           </form>
         )}
@@ -268,14 +282,11 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
   )
 }
 
-// ─── Comic-Avatar (SVG mit Halo-Ring + animiertem Mund) ───────────────────────
-
 function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; listening: boolean; thinking: boolean }) {
-  // Mund-Animation beim Sprechen: zwischen offen/zu wechseln.
   const [mouthOpen, setMouthOpen] = useState(false)
   useEffect(() => {
     if (!speaking) { setMouthOpen(false); return }
-    const id = setInterval(() => setMouthOpen(o => !o), 160)
+    const id = setInterval(() => setMouthOpen(o => !o), 150)
     return () => clearInterval(id)
   }, [speaking])
 
@@ -284,24 +295,14 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
   return (
     <div className="relative" style={{ width: 180, height: 190 }}>
       <svg viewBox="0 0 180 190" width="180" height="190" aria-hidden="true">
-        {/* Halo-Ring */}
-        <ellipse
-          cx="90" cy="34" rx="46" ry="13"
-          fill="none" stroke={ringColor} strokeWidth="7"
-          style={{ transition: "stroke 0.3s" }}
-        >
+        <ellipse cx="90" cy="34" rx="46" ry="13" fill="none" stroke={ringColor} strokeWidth="7" style={{ transition: "stroke 0.3s" }}>
           {(speaking || listening || thinking) && (
             <animate attributeName="opacity" values="1;0.45;1" dur="1.4s" repeatCount="indefinite" />
           )}
         </ellipse>
-
-        {/* Kopf */}
         <circle cx="90" cy="100" r="58" fill="#EEEDFE" stroke="#CECBF6" strokeWidth="2" />
-        {/* Wangen */}
         <circle cx="62" cy="112" r="9" fill="#F7C6D9" opacity="0.7" />
         <circle cx="118" cy="112" r="9" fill="#F7C6D9" opacity="0.7" />
-
-        {/* Augen */}
         {thinking ? (
           <>
             <circle cx="72" cy="92" r="7" fill="#1B1830" />
@@ -317,8 +318,6 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
             <circle cx="110" cy="89" r="2.5" fill="#fff" />
           </>
         )}
-
-        {/* Mund */}
         {speaking ? (
           mouthOpen ? (
             <ellipse cx="90" cy="124" rx="14" ry="11" fill="#534AB7" />
@@ -332,19 +331,13 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
         )}
       </svg>
 
-      {/* Hör-Indikator */}
       {listening && (
         <span className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1">
           {[0, 1, 2].map(i => (
-            <span
-              key={i}
-              className="w-1.5 rounded-full bg-[#D1495B]"
-              style={{ height: 10, animation: `vp-bounce 0.9s ${i * 0.15}s infinite ease-in-out` }}
-            />
+            <span key={i} className="w-1.5 rounded-full bg-[#D1495B]" style={{ height: 10, animation: `vp-bounce 0.9s ${i * 0.15}s infinite ease-in-out` }} />
           ))}
         </span>
       )}
-
       <style>{`@keyframes vp-bounce {0%,100%{transform:scaleY(0.5)}50%{transform:scaleY(1.4)}}`}</style>
     </div>
   )
