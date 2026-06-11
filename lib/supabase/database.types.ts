@@ -256,6 +256,51 @@ export type Database = {
           },
         ]
       }
+      persona_profiles: {
+        Row: {
+          generated_at: string
+          id: string
+          model: string | null
+          profile_id: string
+          report_id: string | null
+          roles: Json
+          summary: string | null
+        }
+        Insert: {
+          generated_at?: string
+          id?: string
+          model?: string | null
+          profile_id: string
+          report_id?: string | null
+          roles?: Json
+          summary?: string | null
+        }
+        Update: {
+          generated_at?: string
+          id?: string
+          model?: string | null
+          profile_id?: string
+          report_id?: string | null
+          roles?: Json
+          summary?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "persona_profiles_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "persona_profiles_report_id_fkey"
+            columns: ["report_id"]
+            isOneToOne: false
+            referencedRelation: "visibility_reports"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

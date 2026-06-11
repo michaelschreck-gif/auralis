@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react"
 
 const NAV = [
   { href: "/dashboard",                    label: "Übersicht",          icon: "overview" },
+  { href: "/dashboard/persona",            label: "KI-Persona",         icon: "persona" },
   { href: "/dashboard/analyze",            label: "Analyse",            icon: "analyze" },
   { href: "/dashboard/ai-visibility",      label: "KI-Sichtbarkeit",    icon: "visibility" },
   { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
@@ -36,6 +37,12 @@ const Icons: Record<IconKey, ReactNode> = {
       <circle cx="7.5" cy="7.5" r="6" stroke="currentColor" strokeWidth="1.2"/>
       <circle cx="7.5" cy="7.5" r="3" stroke="currentColor" strokeWidth="1.2"/>
       <circle cx="7.5" cy="7.5" r="1.2" fill="currentColor"/>
+    </svg>
+  ),
+  persona: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <circle cx="7.5" cy="5" r="2.6" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M2.5 13c0-2.5 2.2-4.2 5-4.2s5 1.7 5 4.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
   analyze: (
