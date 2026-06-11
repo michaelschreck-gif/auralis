@@ -44,7 +44,7 @@ export default function Cockpit({
           <div className="rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/60 p-8 text-center">
             <p className="text-base font-medium text-[#26215C]">Noch keine Analyse vorhanden.</p>
             <p className="text-sm text-[#534AB7] mt-2 mb-5">
-              Starte deine erste Sichtbarkeitsanalyse, um deinen Aura Score und die drei Dimensionen zu sehen.
+              Starte deine erste Sichtbarkeitsanalyse, um deinen Halo Score und die drei Dimensionen zu sehen.
             </p>
             <Link
               href="/dashboard/analyze"
@@ -58,7 +58,7 @@ export default function Cockpit({
 
       {masters && (
         <>
-          {/* ─── Hero: Aura Score ─── */}
+          {/* ─── Hero: Halo Score ─── */}
           <div
             className="rounded-2xl p-5 md:p-7 mb-3.5"
             style={{ background: AURA_THEME.bg }}
@@ -68,7 +68,7 @@ export default function Cockpit({
                 className="w-8 h-8 rounded-lg flex items-center justify-center font-semibold text-sm"
                 style={{ background: AURA_THEME.accent, color: AURA_THEME.accentText }}
               >
-                A
+                H
               </div>
               <span className="text-sm" style={{ color: AURA_THEME.light }}>Hallo, {firstName} 👋</span>
             </div>
@@ -76,7 +76,7 @@ export default function Cockpit({
             <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
               <div>
                 <div className="text-[11px] uppercase tracking-wider" style={{ color: AURA_THEME.light }}>
-                  Dein Aura Score™
+                  Dein Halo Score™
                 </div>
                 <div className="flex items-baseline gap-2.5 mt-1">
                   <span className="text-5xl md:text-6xl font-semibold text-white leading-none tabular-nums">

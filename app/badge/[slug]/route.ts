@@ -2,7 +2,7 @@
  * GET /badge/[slug]
  *
  * Liefert einen SVG-Embeddable-Badge für ein Public Profile.
- * Beispiel: <img src="https://auralis-plum.vercel.app/badge/elon-musk" alt="Aura Score" />
+ * Beispiel: <img src="https://digital-halo.de/badge/elon-musk" alt="Halo Score" />
  *
  * Caching: 5 Minuten Edge-Cache + 1h stale-while-revalidate, damit Embedding
  * auf fremden Websites nicht jedes Mal die DB hämmert.
@@ -42,7 +42,7 @@ function renderBadge(opts: {
     : score >= 26 ? "#854F0B"
     : "#791F1F"
 
-  return `<svg xmlns="http://www.w3.org/2000/svg" width="${BADGE_W}" height="${BADGE_H}" viewBox="0 0 ${BADGE_W} ${BADGE_H}" role="img" aria-label="Aura Score for ${safeName}">
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${BADGE_W}" height="${BADGE_H}" viewBox="0 0 ${BADGE_W} ${BADGE_H}" role="img" aria-label="Halo Score for ${safeName}">
   <style>
     .label { font: 600 9px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase; fill: #94a3b8; }
     .name  { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; fill: #0f172a; }
@@ -57,10 +57,10 @@ function renderBadge(opts: {
 
   <!-- Brand block (left) -->
   <rect x="12" y="14" width="36" height="36" rx="8" fill="#4F6EF7"/>
-  <text x="30" y="38" text-anchor="middle" fill="white" font-family="-apple-system, system-ui, sans-serif" font-weight="800" font-size="18">A</text>
+  <text x="30" y="38" text-anchor="middle" fill="white" font-family="-apple-system, system-ui, sans-serif" font-weight="800" font-size="18">H</text>
 
   <!-- Labels -->
-  <text x="58" y="24" class="label">Aura Score™</text>
+  <text x="58" y="24" class="label">Halo Score™</text>
   <text x="58" y="42" class="name">${safeName}</text>
 
   <!-- Score (right) -->
@@ -70,7 +70,7 @@ function renderBadge(opts: {
   <!-- Bottom strip with band + brand -->
   <line x1="14" y1="74" x2="${BADGE_W - 14}" y2="74" stroke="#f1f5f9" stroke-width="1"/>
   <text x="14" y="90" class="band">${safeBand || "—"}</text>
-  <text x="${BADGE_W - 14}" y="90" text-anchor="end" class="brand">powered by auralis</text>
+  <text x="${BADGE_W - 14}" y="90" text-anchor="end" class="brand">powered by halo</text>
 </svg>`
 }
 

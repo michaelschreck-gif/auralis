@@ -4,7 +4,7 @@
  * Aus dem klassischen VisibilityReport (overallScore + 4 Roh-Signale) leiten
  * wir die 4 sichtbaren Dimensionen ab, die im Cockpit angezeigt werden:
  *
- *   AURA SCORE            – gewichteter Master-Score über alle Signale
+ *   HALO SCORE            – gewichteter Master-Score über alle Signale
  *   GEO SCORE             – Sichtbarkeit in KI-Suchergebnissen
  *   THOUGHT LEADERSHIP    – Expertenwahrnehmung
  *   DIGITALE AUTORITÄT    – Online-Stärke / Erwähnungs-Häufigkeit
@@ -202,7 +202,7 @@ export function computeMasterScores(report: VisibilityReport): MasterScores {
   const auraComposite = computeDimensionValue("aura", report)
   const finalAura = clamp(report.overallScore || auraComposite)
 
-  const aura: MasterScore = build("aura", "Aura Score™", "Aura", finalAura, AURA_BANDS)
+  const aura: MasterScore = build("aura", "Halo Score™", "Halo", finalAura, AURA_BANDS)
   const geo:  MasterScore = build("geo",  "GEO Score", "GEO", clamp(geoValue), DEFAULT_BANDS)
   const thoughtLeadership: MasterScore = build(
     "thought-leadership", "Thought Leadership", "Thought Leadership",
@@ -340,9 +340,9 @@ function weightsFor(key: ScoreKey): ScoreDefinition["weights"] {
 export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
   "aura": {
     key: "aura",
-    title: "Aura Score™",
+    title: "Halo Score™",
     subtitle: "Die Master-Metrik deiner KI-Sichtbarkeit",
-    what: "Der Aura Score ist der Gesamtwert über alle vier Roh-Signale jeder Analyse: Erwähnungsrate (35%), Positionsqualität (25%), Tonalität (25%) und Themenabdeckung (15%). Er fasst zusammen, wie gut KI-Systeme dich insgesamt wahrnehmen. GEO Score, Thought Leadership und Digitale Autorität betonen jeweils andere dieser Signale.",
+    what: "Der Halo Score ist der Gesamtwert über alle vier Roh-Signale jeder Analyse: Erwähnungsrate (35%), Positionsqualität (25%), Tonalität (25%) und Themenabdeckung (15%). Er fasst zusammen, wie gut KI-Systeme dich insgesamt wahrnehmen. GEO Score, Thought Leadership und Digitale Autorität betonen jeweils andere dieser Signale.",
     weights: weightsFor("aura"),
     bands: AURA_BANDS,
     tips: [

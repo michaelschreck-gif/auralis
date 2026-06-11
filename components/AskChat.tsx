@@ -96,7 +96,7 @@ export default function AskChat({ userName, suggestions }: Props) {
           {firstName ? `Hallo ${firstName}` : "Hallo"} 👋
         </h1>
         <p className="text-sm text-[#64748b] mt-1">
-          Stell mir Fragen zu deinen Sichtbarkeitsdaten — ich antworte mit Claude auf Basis deines aktuellen Aura Scores, deiner Themen und deiner Wettbewerber.
+          Stell mir Fragen zu deinen Sichtbarkeitsdaten — ich antworte mit Claude auf Basis deines aktuellen Halo Scores, deiner Themen und deiner Wettbewerber.
         </p>
       </div>
 
@@ -161,7 +161,7 @@ export default function AskChat({ userName, suggestions }: Props) {
           </button>
         </div>
         <p className="text-[10px] text-[#94a3b8] mt-2 text-center">
-          Antworten werden von Claude generiert und können ungenau sein. Prüfe wichtige Aussagen gegen deine Auralis-Daten.
+          Antworten werden von Claude generiert und können ungenau sein. Prüfe wichtige Aussagen gegen deine Halo-Daten.
         </p>
       </form>
     </div>
@@ -189,7 +189,7 @@ function MessageBubble({
   return (
     <div className="flex gap-3 items-start">
       <div className="w-7 h-7 rounded-lg bg-[#7F77DD] flex items-center justify-center flex-shrink-0 mt-0.5">
-        <span className="text-white text-xs font-bold">A</span>
+        <span className="text-white text-xs font-bold">H</span>
       </div>
       <div className="flex-1 text-sm text-[#0f172a] whitespace-pre-wrap leading-relaxed">
         {content || (pending && <TypingDots />)}

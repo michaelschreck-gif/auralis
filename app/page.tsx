@@ -6,9 +6,9 @@ import type { Metadata } from "next"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Auralis — KI-Sichtbarkeits-Monitoring für Personal Brands",
+  title: "Halo — KI-Sichtbarkeits-Monitoring für Personal Brands",
   description:
-    "Auralis misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Aura Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
+    "Halo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
 }
 
 export default async function Home() {
@@ -31,9 +31,9 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-6 h-[60px] flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center flex-shrink-0">
-              <span className="text-white text-xs font-bold">A</span>
+              <span className="text-white text-xs font-bold">H</span>
             </div>
-            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
           </Link>
           <div className="hidden md:flex items-center gap-7 text-sm">
             <a href="#funktionen" className="text-[#64748b] hover:text-[#0f172a] transition-colors">Funktionen</a>
@@ -71,8 +71,8 @@ export default async function Home() {
         </h1>
 
         <p className="text-lg text-[#475569] max-w-2xl mx-auto leading-relaxed mb-10">
-          Auralis misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist —
-          mit Aura Score™, Wettbewerber-Benchmark und KI-generierten Empfehlungen.
+          Halo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist —
+          mit Halo Score™, Wettbewerber-Benchmark und KI-generierten Empfehlungen.
         </p>
 
         <div className="flex items-center justify-center gap-3 flex-wrap mb-6">
@@ -114,7 +114,7 @@ export default async function Home() {
             </h2>
             <p className="text-[#64748b] text-base mt-3 max-w-xl mx-auto">
               Vom Solo-Berater über CMOs bis zu globalen Personal Brands —
-              Auralis passt sich an, was du erreichen willst.
+              Halo passt sich an, was du erreichen willst.
             </p>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
@@ -122,7 +122,7 @@ export default async function Home() {
               { initials: "FC", color: "#4F6EF7", role: "Founder & CEO", desc: "Sichtbarkeit als CEO einer Marke aufbauen. Pipeline durch Thought Leadership füllen." },
               { initials: "CM", color: "#10b981", role: "CMO", desc: "Verstehen, ob deine Brand-Botschaften in KI-Antworten ankommen. Strategien data-driven steuern." },
               { initials: "BR", color: "#8b5cf6", role: "Berater · Coach", desc: "Sichtbar werden für Themen, die deine Kunden suchen. Authority-Marketing messbar machen." },
-              { initials: "PB", color: "#f59e0b", role: "Personal Brand", desc: "Wo stehst du im KI-Diskurs? Wer wird statt dir genannt? Mit Auralis weisst du es." },
+              { initials: "PB", color: "#f59e0b", role: "Personal Brand", desc: "Wo stehst du im KI-Diskurs? Wer wird statt dir genannt? Mit Halo weisst du es." },
             ].map(r => (
               <div key={r.role} className="rounded-2xl border border-gray-100 bg-[#f8f9fb] p-5">
                 <div
@@ -163,7 +163,7 @@ export default async function Home() {
                 <span className="text-red-700 text-base">✕</span>
               </div>
               <div>
-                <p className="text-base font-bold text-[#0f172a]">Ohne Auralis</p>
+                <p className="text-base font-bold text-[#0f172a]">Ohne Halo</p>
                 <p className="text-xs text-red-700/80">Du fragst dich blind durch ChatGPT.</p>
               </div>
             </div>
@@ -189,13 +189,13 @@ export default async function Home() {
                 <span className="text-green-700 text-base">✓</span>
               </div>
               <div>
-                <p className="text-base font-bold text-[#0f172a]">Mit Auralis</p>
+                <p className="text-base font-bold text-[#0f172a]">Mit Halo</p>
                 <p className="text-xs text-green-700/80">Du hast eine Zahl. Und einen Plan.</p>
               </div>
             </div>
             <ul className="space-y-2.5">
               {[
-                "Aura Score™: ein Wert, der deine KI-Sichtbarkeit zusammenfasst",
+                "Halo Score™: ein Wert, der deine KI-Sichtbarkeit zusammenfasst",
                 "Wettbewerber-Benchmark mit harten Zahlen",
                 "Trend-Analyse pro Thema über 30 Tage",
                 "Konkrete Empfehlungen, von Claude generiert",
@@ -214,11 +214,11 @@ export default async function Home() {
       {/* ─── Funktionen Anker ─── */}
       <div id="funktionen" />
 
-      {/* ─── Feature Deep-Dive: Aura Score ─── */}
+      {/* ─── Feature Deep-Dive: Halo Score ─── */}
       <FeatureSection
         chip="Master-Metrik"
         title={<>Eine Zahl, die deine KI-Sichtbarkeit zusammenfasst.</>}
-        body="Der Aura Score™ kombiniert vier Dimensionen — GEO (Generative Engine Optimization), Thought Leadership, Digitale Autorität und Erwähnungs-Häufigkeit — zu einem Master-Wert von 0 bis 100. So weißt du auf einen Blick, wo du stehst."
+        body="Der Halo Score™ kombiniert vier Dimensionen — GEO (Generative Engine Optimization), Thought Leadership, Digitale Autorität und Erwähnungs-Häufigkeit — zu einem Master-Wert von 0 bis 100. So weißt du auf einen Blick, wo du stehst."
         bullets={[
           { h: "Ein Score, statt 10 Metriken", b: "Statt dich durch Daten zu wühlen, weißt du sofort: wo stehe ich?" },
           { h: "Vier transparente Sub-Dimensionen", b: "Klick auf jede Karte zeigt dir die zugrundeliegende Gewichtung." },
@@ -243,9 +243,9 @@ export default async function Home() {
       <FeatureSection
         chip="Wettbewerber"
         title={<>Wer steht statt dir in der KI-Antwort?</>}
-        body="Füge Wettbewerber hinzu und triggere Analysen auf ihren Namen. Auralis nutzt den gleichen Pipeline-Ansatz wie für dein Profil — du bekommst harte Vergleichszahlen, kein Bauchgefühl."
+        body="Füge Wettbewerber hinzu und triggere Analysen auf ihren Namen. Halo nutzt den gleichen Pipeline-Ansatz wie für dein Profil — du bekommst harte Vergleichszahlen, kein Bauchgefühl."
         bullets={[
-          { h: "Ranking nach Aura Score", b: "Du siehst auf einen Blick, wo du im Pulk stehst." },
+          { h: "Ranking nach Halo Score", b: "Du siehst auf einen Blick, wo du im Pulk stehst." },
           { h: "Per-Wettbewerber Sprache", b: "Globale Figuren auf Englisch, deutsche Wettbewerber auf Deutsch." },
         ]}
         mockup={<CompetitorsMockup />}
@@ -255,7 +255,7 @@ export default async function Home() {
       <FeatureSection
         chip="KI-Empfehlungen"
         title={<>Konkrete Schritte. Von Claude geschrieben.</>}
-        body="Auf Basis deines aktuellen Scores und deiner Themen generiert Auralis 5 personalisierte Empfehlungen — von Content-Ideen über SEO-Hebel bis zu Narrativ-Verschärfungen. Alle nach Wirkung priorisiert."
+        body="Auf Basis deines aktuellen Scores und deiner Themen generiert Halo 5 personalisierte Empfehlungen — von Content-Ideen über SEO-Hebel bis zu Narrativ-Verschärfungen. Alle nach Wirkung priorisiert."
         bullets={[
           { h: "Vier Kategorien", b: "Inhalt, Plattform, SEO, Narrativ — du siehst, wo der Hebel sitzt." },
           { h: "Impact-Indikator", b: "High / Medium / Low Wirkung sofort sichtbar." },
@@ -268,7 +268,7 @@ export default async function Home() {
       <FeatureSection
         chip="Public API"
         title={<>Scores per HTTP in dein eigenes Stack.</>}
-        body="Hol dir Aura Score, Sub-Scores und Wettbewerber-Daten direkt in dein CRM, deine BI-Tools oder dein eigenes Dashboard. Bearer-Auth, REST, JSON. Verfügbar ab Tarif Pro."
+        body="Hol dir Halo Score, Sub-Scores und Wettbewerber-Daten direkt in dein CRM, deine BI-Tools oder dein eigenes Dashboard. Bearer-Auth, REST, JSON. Verfügbar ab Tarif Pro."
         bullets={[
           { h: "4 GET-Endpoints", b: "/me · /scores/latest · /scores/history · /competitors" },
           { h: "Dokumentation öffentlich", b: "Mit curl-, JavaScript- und Python-Beispielen." },
@@ -293,7 +293,7 @@ export default async function Home() {
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { icon: "✦", title: "Aura Score™", desc: "Eine Master-Metrik kombiniert alle Sub-Scores zu einem Wert von 0–100." },
+              { icon: "✦", title: "Halo Score™", desc: "Eine Master-Metrik kombiniert alle Sub-Scores zu einem Wert von 0–100." },
               { icon: "📡", title: "GEO Score", desc: "Generative Engine Optimization — wie oft und wo wirst du in KI-Antworten erwähnt." },
               { icon: "🏆", title: "Thought Leadership", desc: "Expertenwahrnehmung über Themenführerschaft, Narrativqualität und Zitierfrequenz." },
               { icon: "🌐", title: "Digitale Autorität", desc: "Owned Content, Earned Media und Authoritative Links als Authority-Signal." },
@@ -343,14 +343,14 @@ export default async function Home() {
               In 5 Minuten einsatzbereit.
             </h2>
             <p className="text-[#64748b] text-base mt-3 max-w-xl mx-auto">
-              Kein technisches Onboarding. Du tippst, was du tracken willst — Auralis kümmert sich um den Rest.
+              Kein technisches Onboarding. Du tippst, was du tracken willst — Halo kümmert sich um den Rest.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-5">
             {[
               { n: "1", t: "1 Min", title: "Account anlegen", body: "Mit E-Mail registrieren. Keine Kreditkarte. Sofort startklar." },
               { n: "2", t: "2 Min", title: "Themen definieren", body: "Welche Begriffe sollen KI-Systeme mit dir verbinden? z.B. „AI-Strategie“, „Digitalisierung“." },
-              { n: "3", t: "2 Min", title: "Analyse starten", body: "Auralis fragt Claude in deinem Namen, extrahiert Signale und liefert deinen ersten Aura Score." },
+              { n: "3", t: "2 Min", title: "Analyse starten", body: "Halo fragt Claude in deinem Namen, extrahiert Signale und liefert deinen ersten Halo Score." },
             ].map(s => (
               <div key={s.n} className="rounded-2xl border border-gray-100 bg-[#f8f9fb] p-6">
                 <div className="flex items-center gap-3 mb-4">
@@ -452,7 +452,7 @@ export default async function Home() {
               price: "0",
               period: "/Monat",
               tagline: "Zum Reinschnuppern",
-              features: ["1 manuelle Analyse / Monat", "1 Thema", "Aura Score + alle Sub-Scores", "Claude Sonnet 4.5"],
+              features: ["1 manuelle Analyse / Monat", "1 Thema", "Halo Score + alle Sub-Scores", "Claude Sonnet 4.5"],
               cta: "Kostenlos starten",
               highlight: false,
             },
@@ -537,19 +537,19 @@ export default async function Home() {
           <div className="space-y-3">
             {[
               {
-                q: "Was ist Auralis?",
-                a: "Auralis ist ein KI-Sichtbarkeits-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern dir Score, Trends und konkrete Optimierungs-Tipps.",
+                q: "Was ist Halo?",
+                a: "Halo ist ein KI-Sichtbarkeits-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern dir Score, Trends und konkrete Optimierungs-Tipps.",
               },
               {
-                q: "Wie unterscheidet sich Auralis von klassischem SEO?",
-                a: "Klassisches SEO misst, wo du in Google-Suchergebnissen rankst. Auralis misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren — also genau dann, wenn der User gar nicht mehr scrollt. Zwei verschiedene Disziplinen, beide wichtig.",
+                q: "Wie unterscheidet sich Halo von klassischem SEO?",
+                a: "Klassisches SEO misst, wo du in Google-Suchergebnissen rankst. Halo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren — also genau dann, wenn der User gar nicht mehr scrollt. Zwei verschiedene Disziplinen, beide wichtig.",
               },
               {
                 q: "Wie funktioniert die Messung technisch?",
-                a: "Wir generieren 7 typische User-Anfragen zu deinen Themen (z.B. „Wer sind die führenden Experten für AI im DACH-Raum?“), schicken sie an die KI-Modelle und extrahieren strukturierte Signale aus den Antworten: Wurdest du erwähnt? An welcher Position? Mit welcher Tonalität? Daraus berechnen wir den Aura Score™.",
+                a: "Wir generieren 7 typische User-Anfragen zu deinen Themen (z.B. „Wer sind die führenden Experten für AI im DACH-Raum?“), schicken sie an die KI-Modelle und extrahieren strukturierte Signale aus den Antworten: Wurdest du erwähnt? An welcher Position? Mit welcher Tonalität? Daraus berechnen wir den Halo Score™.",
               },
               {
-                q: "Was kostet Auralis?",
+                q: "Was kostet Halo?",
                 a: "Free 0€/Monat (1 Analyse), Starter 79€/Monat (täglich + Multi-Modell), Pro 299€/Monat (alle Modelle + API). Enterprise mit individuellem Angebot. Alle Preise zzgl. MwSt.",
               },
               {
@@ -561,7 +561,7 @@ export default async function Home() {
                 a: "Nein. Wir senden lediglich die generierten User-Anfragen (ohne deine Identität als Anbieter offenzulegen) an die KI-APIs. Deine Account-Daten verlassen Europa nicht. Wir verkaufen, vermieten oder teilen niemals Nutzerdaten.",
               },
               {
-                q: "Kann ich Auralis in eigene Tools integrieren?",
+                q: "Kann ich Halo in eigene Tools integrieren?",
                 a: "Ja, ab Tarif Pro. Wir bieten eine REST-API mit Bearer-Token-Auth. Die volle Dokumentation findest du unter /docs/api.",
               },
               {
@@ -569,8 +569,8 @@ export default async function Home() {
                 a: "Bleiben unbegrenzt erhalten, solange dein Account aktiv ist. Bei Account-Löschung werden alle Daten innerhalb von 30 Tagen gelöscht (DSGVO Art. 17).",
               },
               {
-                q: "Wer steht hinter Auralis?",
-                a: "Auralis ist ein Produkt von Entrenous — entwickelt von Michael Schreck. Sitz Deutschland, gehostet in der EU (Frankfurt).",
+                q: "Wer steht hinter Halo?",
+                a: "Halo ist ein Produkt von Entrenous — entwickelt von Michael Schreck. Sitz Deutschland, gehostet in der EU (Frankfurt).",
               },
             ].map((item, i) => (
               <details
@@ -615,9 +615,9 @@ export default async function Home() {
             <div className="lg:col-span-2">
               <div className="flex items-center gap-2.5 mb-4">
                 <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
-                  <span className="text-white text-xs font-bold">A</span>
+                  <span className="text-white text-xs font-bold">H</span>
                 </div>
-                <span className="font-semibold text-white tracking-tight">Auralis</span>
+                <span className="font-semibold text-white tracking-tight">Halo</span>
               </div>
               <p className="text-xs text-gray-400 leading-relaxed max-w-xs">
                 KI-Sichtbarkeits-Monitor für Personal Brands. Misst, wie sichtbar du in
@@ -654,7 +654,7 @@ export default async function Home() {
             />
           </div>
           <div className="pt-6 border-t border-white/10 flex items-center justify-between flex-wrap gap-3 text-xs text-gray-500">
-            <p>© {new Date().getFullYear()} Auralis · Operated by Entrenous</p>
+            <p>© {new Date().getFullYear()} Halo · Operated by Entrenous</p>
             <p>Made with Claude Sonnet 4.5</p>
           </div>
         </div>
@@ -749,14 +749,14 @@ function HeroCockpit({ compact = false }: { compact?: boolean }) {
         <div className="w-2.5 h-2.5 rounded-full bg-red-300" />
         <div className="w-2.5 h-2.5 rounded-full bg-yellow-300" />
         <div className="w-2.5 h-2.5 rounded-full bg-green-300" />
-        <span className="text-[10px] text-[#94a3b8] ml-2">auralis-plum.vercel.app/dashboard</span>
+        <span className="text-[10px] text-[#94a3b8] ml-2">digital-halo.de/dashboard</span>
       </div>
       <div className="p-5">
         <p className="text-base font-semibold text-[#0f172a] mb-1">Hallo, Vorname 👋</p>
         <p className="text-xs text-[#64748b] mb-5">Dein KI-Sichtbarkeits-Cockpit.</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           {[
-            { l: "Aura Score™", v: 75, c: "#4F6EF7", b: "Starke Sichtbarkeit" },
+            { l: "Halo Score™", v: 75, c: "#4F6EF7", b: "Starke Sichtbarkeit" },
             { l: "GEO Score",   v: 72, c: "#378ADD", b: "Etabliert" },
             { l: "Thought L.",  v: 41, c: "#7F77DD", b: "Bekannt" },
             { l: "Dig. Auto.",  v: 63, c: "#1D9E75", b: "Wachsend" },
@@ -864,7 +864,7 @@ function CompetitorsMockup() {
       </div>
       <div className="p-5">
         <p className="text-[9px] uppercase tracking-wider text-[#94a3b8] font-semibold mb-3">
-          Ranking nach Aura Score
+          Ranking nach Halo Score
         </p>
         {[
           { rank: 1, name: "Andrew Ng",         tags: "AI · Machine Learning",  score: 84, band: "DOMINANT",    bg: "#E1F5EE", color: "#0F6E56", isSelf: false },
@@ -951,7 +951,7 @@ function ApiMockup() {
         <span className="text-[10px] text-gray-400 ml-2 font-mono">terminal</span>
       </div>
       <pre className="text-[11px] text-gray-100 px-5 py-4 leading-relaxed font-mono overflow-x-auto">
-{`$ curl https://auralis-plum.vercel.app/api/v1/scores/latest \\
+{`$ curl https://digital-halo.de/api/v1/scores/latest \\
     -H "Authorization: Bearer aur_sk_…"
 
 {

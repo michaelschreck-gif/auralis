@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Impressum – Auralis",
-  description: "Impressum der Auralis-Plattform nach § 5 TMG.",
+  title: "Impressum – Halo",
+  description: "Impressum der Halo-Plattform nach § 5 TMG.",
 }
 
 export default function ImpressumPage() {

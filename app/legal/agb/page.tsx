@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "AGB – Auralis",
-  description: "Allgemeine Geschäftsbedingungen für die Nutzung von Auralis.",
+  title: "AGB – Halo",
+  description: "Allgemeine Geschäftsbedingungen für die Nutzung von Halo.",
 }
 
 export default function AgbPage() {
@@ -12,7 +12,7 @@ export default function AgbPage() {
         <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
         <h1 className="text-2xl font-bold text-[#0f172a]">Allgemeine Geschäftsbedingungen</h1>
         <p className="text-xs text-[#94a3b8] mt-2">
-          Geltend für die Nutzung der Auralis-Plattform. Stand: {new Date().getFullYear()}.
+          Geltend für die Nutzung der Halo-Plattform. Stand: {new Date().getFullYear()}.
         </p>
       </header>
 
@@ -20,8 +20,8 @@ export default function AgbPage() {
         <p>
           Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0f172a]">Entrenous</strong>
           {" "}(nachfolgend „Anbieter“) und dem registrierten Nutzer (nachfolgend „Kunde“) über die Nutzung
-          der unter <a href="https://auralis-plum.vercel.app" className="text-[#4F6EF7] hover:underline">auralis-plum.vercel.app</a>{" "}
-          (sowie etwaigen Folge-Domains) erreichbaren Plattform „Auralis“.
+          der unter <a href="https://digital-halo.de" className="text-[#4F6EF7] hover:underline">digital-halo.de</a>{" "}
+          (sowie etwaigen Folge-Domains) erreichbaren Plattform „Halo“.
         </p>
         <p>
           Abweichende Geschäftsbedingungen des Kunden gelten nur, soweit der Anbieter ihnen ausdrücklich

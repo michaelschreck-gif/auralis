@@ -93,7 +93,7 @@ export async function generateRecommendations(
 
 Person: ${userName}
 Überwachte Themen: ${topics.join(", ") || "—"}
-Aktueller Aura Score: ${score != null ? score : "noch nicht gemessen"}
+Aktueller Halo Score: ${score != null ? score : "noch nicht gemessen"}
 Signal-Details (0–100): Erwähnungsrate ${breakdown.presenceScore}, Position ${breakdown.positionScore}, Tonalität ${breakdown.contextScore}, Themenabdeckung ${breakdown.topicAlignmentScore}
 
 Leite die Empfehlungen aus den schwächsten Signalen ab (niedrigste Werte = größtes Potenzial).

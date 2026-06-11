@@ -22,7 +22,7 @@ const MODELS: ModelInfo[] = [
   {
     providerId: "claude-sonnet",
     name: "Claude Sonnet",
-    description: "Anthropic's Reasoning-Modell — treibt deine Auralis-Analysen an.",
+    description: "Anthropic's Reasoning-Modell — treibt deine Halo-Analysen an.",
     color: "#7F77DD",
     unlocksOn: "free",
   },
@@ -330,10 +330,10 @@ export default async function AiVisibilityPage() {
           return (
             <div className="mt-8 rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/40 p-5">
               <p className="text-xs text-[#7F77DD] uppercase tracking-wider mb-2 font-medium">
-                So entsteht dein Aura Score aus den Modellen
+                So entsteht dein Halo Score aus den Modellen
               </p>
               <p className="text-sm text-[#0f172a] leading-relaxed mb-3">
-                Dein Aura Score ist der <span className="font-medium">Durchschnitt</span> der
+                Dein Halo Score ist der <span className="font-medium">Durchschnitt</span> der
                 Sichtbarkeits-Scores aller aktiven Modelle der letzten Analyse.
               </p>
               <div className="flex flex-wrap items-center gap-2 text-sm">
@@ -361,7 +361,7 @@ export default async function AiVisibilityPage() {
           <p className="text-sm text-[#64748b] leading-relaxed">
             KI-Sichtbarkeit misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.
             Ein höherer Score bedeutet, dass KI-Assistenten dich mit höherer Wahrscheinlichkeit empfehlen, wenn jemand nach deinen Themen fragt.
-            Multi-Modell-Tracking ist ab Tarif Starter freigeschaltet — dein Aura-Score ist dann der Durchschnitt über alle aktiven Modelle.
+            Multi-Modell-Tracking ist ab Tarif Starter freigeschaltet — dein Halo-Score ist dann der Durchschnitt über alle aktiven Modelle.
           </p>
         </div>
       </div>

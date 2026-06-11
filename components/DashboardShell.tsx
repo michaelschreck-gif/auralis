@@ -165,7 +165,7 @@ export default function DashboardShell({
         rel="noopener"
         className="block text-xs text-[#CECBF6] hover:text-white transition-colors"
       >
-        Zur Auralis-Webseite ↗
+        Zur Halo-Webseite ↗
       </a>
       <form action="/auth/signout" method="POST">
         <button
@@ -181,9 +181,9 @@ export default function DashboardShell({
   const brand = (
     <div className="flex items-center gap-2.5">
       <div className="w-7 h-7 rounded-lg bg-[#7F77DD] flex items-center justify-center flex-shrink-0">
-        <span className="text-[#26215C] text-xs font-bold">A</span>
+        <span className="text-[#26215C] text-xs font-bold">H</span>
       </div>
-      <span className="text-white font-semibold text-sm tracking-tight">Auralis</span>
+      <span className="text-white font-semibold text-sm tracking-tight">Halo</span>
     </div>
   )
 
@@ -201,8 +201,8 @@ export default function DashboardShell({
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#26215C] flex items-center justify-center"><span className="text-white text-xs font-bold">A</span></div>
-          <span className="text-[#0f172a] font-semibold text-sm">Auralis</span>
+          <div className="w-7 h-7 rounded-lg bg-[#26215C] flex items-center justify-center"><span className="text-white text-xs font-bold">H</span></div>
+          <span className="text-[#0f172a] font-semibold text-sm">Halo</span>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
           {userName && (

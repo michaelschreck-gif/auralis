@@ -1,8 +1,8 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Datenschutzerklärung – Auralis",
-  description: "Datenschutzerklärung von Auralis nach DSGVO Art. 13 und 14.",
+  title: "Datenschutzerklärung – Halo",
+  description: "Datenschutzerklärung von Halo nach DSGVO Art. 13 und 14.",
 }
 
 export default function DatenschutzPage() {
@@ -33,13 +33,13 @@ export default function DatenschutzPage() {
 
       <Section title="2. Welche Daten werden verarbeitet?">
         <p>
-          Wir verarbeiten ausschließlich die Daten, die für den Betrieb der Auralis-Plattform und
+          Wir verarbeiten ausschließlich die Daten, die für den Betrieb der Halo-Plattform und
           die Erbringung unserer Leistungen erforderlich sind:
         </p>
         <ul className="list-disc pl-6 space-y-1.5">
           <li><strong className="text-[#0f172a]">Account-Daten:</strong> E-Mail-Adresse, Name (optional), Sprache, Passwort (gehashed)</li>
           <li><strong className="text-[#0f172a]">Profildaten:</strong> Die Themen, die du tracken möchtest, deine Wettbewerber, deine Tarifwahl</li>
-          <li><strong className="text-[#0f172a]">Analyse-Daten:</strong> Sichtbarkeits-Reports (Aura Score, Sub-Scores, KI-Antworten als Volltext, Zitate)</li>
+          <li><strong className="text-[#0f172a]">Analyse-Daten:</strong> Sichtbarkeits-Reports (Halo Score, Sub-Scores, KI-Antworten als Volltext, Zitate)</li>
           <li><strong className="text-[#0f172a]">API-Tokens:</strong> SHA-256-Hashes deiner generierten API-Keys (Plaintext wird nie gespeichert)</li>
           <li><strong className="text-[#0f172a]">Technische Daten:</strong> IP-Adresse, User-Agent und Zeitpunkt bei jedem Login / API-Call (in Server-Logs)</li>
         </ul>
@@ -140,7 +140,7 @@ export default function DatenschutzPage() {
 
       <Section title="8. Cookies und Tracking">
         <p>
-          Auralis nutzt ausschließlich technisch notwendige Cookies für die Auth-Session
+          Halo nutzt ausschließlich technisch notwendige Cookies für die Auth-Session
           (Supabase-Session-Cookie). Es findet kein Marketing-Tracking, kein Cross-Site-Tracking
           und keine Werbung statt. Es werden keine Cookies von Drittanbietern für Werbezwecke gesetzt.
         </p>

@@ -2,7 +2,7 @@
  * Sub-Account-Verwaltung (Enterprise-API).
  *
  * Ein Enterprise-Account kann verwaltete Sub-Accounts anlegen — eigene
- * Auralis-Profile (eigene Themen, Scores, Wettbewerber), die über den
+ * Halo-Profile (eigene Themen, Scores, Wettbewerber), die über den
  * Eltern-Account verknüpft sind (profiles.parent_account_id).
  *
  * "Verwaltet, ohne eigenen Login": Es wird ein Auth-User mit einem zufälligen,

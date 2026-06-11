@@ -1,5 +1,5 @@
 /**
- * PDF-Report-Komponente für die Auralis-Sichtbarkeits-Analyse (Sprint 16).
+ * PDF-Report-Komponente für die Halo-Sichtbarkeits-Analyse (Sprint 16).
  *
  * Verwendet @react-pdf/renderer (kein Headless-Browser, läuft in Node-Runtime).
  * Wird vom Route-Handler unter /api/reports/[reportId]/pdf gerendert und als
@@ -254,9 +254,9 @@ export function AuralisReport(props: AuralisReportProps) {
         <View style={styles.headerRow}>
           <View style={styles.brandBlock}>
             <View style={styles.brandSquare}>
-              <Text style={styles.brandSquareText}>A</Text>
+              <Text style={styles.brandSquareText}>H</Text>
             </View>
-            <Text style={styles.brandName}>Auralis</Text>
+            <Text style={styles.brandName}>Halo</Text>
           </View>
           <Text style={styles.headerMeta}>Sichtbarkeits-Report · {dateStr}</Text>
         </View>
@@ -268,7 +268,7 @@ export function AuralisReport(props: AuralisReportProps) {
         {/* KPI row */}
         <View style={styles.kpiRow}>
           {[
-            { l: "Aura Score™",        v: masters.aura.value,               c: COLORS.primary,   b: masters.aura.band.label },
+            { l: "Halo Score™",        v: masters.aura.value,               c: COLORS.primary,   b: masters.aura.band.label },
             { l: "GEO",                v: masters.geo.value,                c: COLORS.geo,       b: masters.geo.band.label },
             { l: "Thought Leadership", v: masters.thoughtLeadership.value,  c: COLORS.thought,   b: masters.thoughtLeadership.band.label },
             { l: "Digitale Autorität", v: masters.digitalAuthority.value,   c: COLORS.authority, b: masters.digitalAuthority.band.label },
@@ -378,7 +378,7 @@ export function AuralisReport(props: AuralisReportProps) {
 
         {/* Footer */}
         <View style={styles.footer} fixed>
-          <Text>Auralis · Operated by Entrenous · auralis-plum.vercel.app</Text>
+          <Text>Halo · Operated by Entrenous · digital-halo.de</Text>
           <Text render={({ pageNumber, totalPages }) => `Seite ${pageNumber} / ${totalPages}`} />
         </View>
       </Page>

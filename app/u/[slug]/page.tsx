@@ -36,15 +36,15 @@ export async function generateMetadata(
   const { slug } = await params
   const data = await loadProfileBySlug(slug)
   if (!data) {
-    return { title: "Profil nicht gefunden – Auralis" }
+    return { title: "Profil nicht gefunden – Halo" }
   }
   const { profile, report } = data
   const score = report?.visibility_score ? Math.round(Number(report.visibility_score)) : null
   const name = profile.full_name ?? slug
   const title = score != null
-    ? `${name} · Aura Score™ ${score}/100 – Auralis`
-    : `${name} – Auralis`
-  const desc = `${name}s KI-Sichtbarkeit in ChatGPT, Claude, Perplexity, Gemini — gemessen von Auralis.`
+    ? `${name} · Halo Score™ ${score}/100 – Halo`
+    : `${name} – Halo`
+  const desc = `${name}s KI-Sichtbarkeit in ChatGPT, Claude, Perplexity, Gemini — gemessen von Halo.`
   return {
     title,
     description: desc,
@@ -89,9 +89,9 @@ export default async function PublicProfilePage(
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">A</span>
+              <span className="text-white text-xs font-bold">H</span>
             </div>
-            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
           </a>
           <a
             href="/login"
@@ -132,7 +132,7 @@ export default async function PublicProfilePage(
               {/* Master Score */}
               <div className="text-center py-6 border-y border-gray-100 mb-6">
                 <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
-                  Aura Score™
+                  Halo Score™
                 </p>
                 <div className="flex items-baseline justify-center gap-2">
                   <span className="text-6xl font-bold text-[#4F6EF7] tabular-nums">{masters.aura.value}</span>
@@ -180,8 +180,8 @@ export default async function PublicProfilePage(
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
           <h2 className="text-base font-semibold text-[#0f172a] mb-3">Was wird gemessen?</h2>
           <p className="text-sm text-[#64748b] leading-relaxed">
-            Der Aura Score™ misst, wie sichtbar diese Person in KI-Antworten auftaucht.
-            Auralis fragt regelmäßig Claude, ChatGPT, Perplexity und Gemini nach
+            Der Halo Score™ misst, wie sichtbar diese Person in KI-Antworten auftaucht.
+            Halo fragt regelmäßig Claude, ChatGPT, Perplexity und Gemini nach
             führenden Köpfen in der jeweiligen Themenwelt und analysiert, ob, an welcher
             Position und in welcher Tonalität die Person erwähnt wird.
           </p>
@@ -193,7 +193,7 @@ export default async function PublicProfilePage(
 
         {/* CTA */}
         <section className="text-center py-8">
-          <p className="text-sm text-[#64748b] mb-4">Willst du deinen eigenen Aura Score™ kennen?</p>
+          <p className="text-sm text-[#64748b] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
           <a
             href="/login"
             className="inline-block px-6 py-3 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
@@ -208,9 +208,9 @@ export default async function PublicProfilePage(
 
       <footer className="bg-[#0f172a] text-gray-400 mt-8">
         <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between text-xs flex-wrap gap-2">
-          <p>© {new Date().getFullYear()} Auralis · Operated by Entrenous</p>
+          <p>© {new Date().getFullYear()} Halo · Operated by Entrenous</p>
           <div className="flex items-center gap-4">
-            <a href="/" className="hover:text-white">Auralis</a>
+            <a href="/" className="hover:text-white">Halo</a>
             <a href="/legal/impressum" className="hover:text-white">Impressum</a>
             <a href="/legal/datenschutz" className="hover:text-white">Datenschutz</a>
           </div>

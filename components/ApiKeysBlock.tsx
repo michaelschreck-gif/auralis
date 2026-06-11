@@ -71,7 +71,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
       <div>
         <h2 className="text-base font-semibold text-[#0f172a]">API-Keys</h2>
         <p className="text-xs text-[#64748b] mt-1">
-          Bearer-Tokens für die Auralis-Public-API (<code className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.{" "}
+          Bearer-Tokens für die Halo-Public-API (<code className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.{" "}
           <a href="/docs/api" target="_blank" rel="noopener" className="text-[#7F77DD] hover:underline font-medium">
             API-Dokumentation öffnen ↗
           </a>
@@ -254,7 +254,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
               Ersetze <code className="text-[10px] bg-white px-1.5 py-0.5 rounded border border-gray-100">$AURALIS_KEY</code> mit deinem neuen Key:
             </p>
             <pre className="text-[11px] bg-[#0f172a] text-gray-100 rounded-md px-3 py-2.5 overflow-x-auto leading-relaxed">
-{`curl https://auralis-plum.vercel.app/api/v1/scores/latest \\
+{`curl https://digital-halo.de/api/v1/scores/latest \\
   -H "Authorization: Bearer $AURALIS_KEY"`}
             </pre>
             <p className="text-[10px] text-[#94a3b8]">

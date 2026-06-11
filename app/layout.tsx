@@ -8,7 +8,7 @@ const inter = Inter({
 })
 
 export const metadata: Metadata = {
-  title: "Auralis — AI Visibility Monitoring",
+  title: "Halo — AI Visibility Monitoring",
   description: "Understand how AI systems perceive your personal brand.",
 }
 

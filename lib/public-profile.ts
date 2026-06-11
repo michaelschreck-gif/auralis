@@ -1,5 +1,5 @@
 /**
- * Helpers für das Public Aura Score Profile (Sprint 15).
+ * Helpers für das Public Halo Score Profile (Sprint 15).
  */
 
 /**

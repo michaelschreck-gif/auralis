@@ -209,7 +209,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
       <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-100">
           <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
-            Ranking nach Aura Score
+            Ranking nach Halo Score
           </p>
         </div>
         <div className="divide-y divide-gray-100">

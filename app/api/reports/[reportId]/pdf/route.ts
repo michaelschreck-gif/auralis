@@ -161,7 +161,7 @@ export async function GET(
       .limit(5),
   ])
 
-  const userName = profileResult.data?.full_name ?? "Auralis-Nutzer"
+  const userName = profileResult.data?.full_name ?? "Halo-Nutzer"
   const topics = (schedulesResult.data ?? [])
     .map(s => s.name || s.query)
     .filter((s): s is string => !!s)
@@ -226,7 +226,7 @@ export async function GET(
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .slice(0, 40)
-  const filename = `auralis-${safeName}-${dateForFilename}.pdf`
+  const filename = `halo-${safeName}-${dateForFilename}.pdf`
 
   return new Response(new Uint8Array(pdfBuffer), {
     status: 200,

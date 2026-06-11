@@ -19,14 +19,14 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
   const [copied, setCopied] = useState(false)
 
   const profileUrl = slug
-    ? `https://auralis-plum.vercel.app/u/${slug}`
+    ? `https://digital-halo.de/u/${slug}`
     : ""
   const badgeUrl = slug
-    ? `https://auralis-plum.vercel.app/badge/${slug}`
+    ? `https://digital-halo.de/badge/${slug}`
     : ""
   const embedCode = slug
     ? `<a href="${profileUrl}" target="_blank" rel="noopener">
-  <img src="${badgeUrl}" alt="Aura Score auf Auralis" width="280" height="100" />
+  <img src="${badgeUrl}" alt="Halo Score auf Halo" width="280" height="100" />
 </a>`
     : ""
 
@@ -77,9 +77,9 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
   return (
     <section id="public-profile" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
       <div>
-        <h2 className="text-base font-semibold text-[#0f172a]">Public Aura Score Profil</h2>
+        <h2 className="text-base font-semibold text-[#0f172a]">Public Halo Score Profil</h2>
         <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
-          Teile deinen Aura Score™ öffentlich unter einer eigenen Auralis-URL und embeddable als
+          Teile deinen Halo Score™ öffentlich unter einer eigenen Halo-URL und embeddable als
           Badge auf deiner Website oder LinkedIn-Profil.
         </p>
       </div>
@@ -126,7 +126,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
             <label className="text-xs text-[#64748b] font-medium uppercase tracking-wider">Slug</label>
             <div className="flex gap-2">
               <span className="flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-xs text-[#94a3b8] whitespace-nowrap">
-                auralis-plum.vercel.app/u/
+                digital-halo.de/u/
               </span>
               <input
                 type="text"
@@ -174,7 +174,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
               <div className="flex justify-center pb-3 mb-3 border-b border-gray-100">
                 <img
                   src={badgeUrl + "?preview=" + Date.now()}
-                  alt="Aura Score Badge"
+                  alt="Halo Score Badge"
                   width={280}
                   height={100}
                   className="rounded-md"

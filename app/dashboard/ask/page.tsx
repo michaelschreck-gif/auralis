@@ -52,8 +52,8 @@ export default async function AskPage() {
             Dein persönlicher KI-Sichtbarkeits-Coach
           </h1>
           <p className="text-sm text-[#64748b] mt-2">
-            Stelle Claude Fragen zu deinem Aura Score, deinen Themen und deinen Wettbewerbern.
-            Claude antwortet auf Basis deiner echten Auralis-Daten.
+            Stelle Claude Fragen zu deinem Halo Score, deinen Themen und deinen Wettbewerbern.
+            Claude antwortet auf Basis deiner echten Halo-Daten.
           </p>
 
           <div className="mt-8 rounded-2xl border border-[#7F77DD]/20 bg-[#EEEDFE]/40 p-6">

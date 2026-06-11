@@ -15,9 +15,9 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">A</span>
+              <span className="text-white text-xs font-bold">H</span>
             </div>
-            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
           </Link>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-[#94a3b8] hidden sm:inline">Rechtliches</span>
@@ -66,7 +66,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
 
           <footer className="pt-6 border-t border-gray-200 text-xs text-[#94a3b8]">
             <p>
-              Auralis · Betrieb durch Entrenous · <Link href="/" className="hover:underline">Startseite</Link>
+              Halo · Betrieb durch Entrenous · <Link href="/" className="hover:underline">Startseite</Link>
             </p>
           </footer>
         </main>

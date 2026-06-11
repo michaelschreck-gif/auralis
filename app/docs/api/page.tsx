@@ -6,11 +6,11 @@
 import type { Metadata } from "next"
 
 export const metadata: Metadata = {
-  title: "Auralis API – Dokumentation",
-  description: "Public REST API für Auralis — KI-Sichtbarkeits-Scores per HTTP abfragen.",
+  title: "Halo API – Dokumentation",
+  description: "Public REST API für Halo — KI-Sichtbarkeits-Scores per HTTP abfragen.",
 }
 
-const BASE_URL = "https://auralis-plum.vercel.app"
+const BASE_URL = "https://digital-halo.de"
 const API_PREFIX = "/api/v1"
 
 const TOC = [
@@ -47,9 +47,9 @@ export default function ApiDocsPage() {
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">A</span>
+              <span className="text-white text-xs font-bold">H</span>
             </div>
-            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
           </a>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-[#94a3b8]">API v1</span>
@@ -93,14 +93,14 @@ export default function ApiDocsPage() {
           {/* Headline */}
           <section>
             <p className="text-xs uppercase tracking-wider font-semibold text-[#4F6EF7] mb-2">
-              Auralis API · v1
+              Halo API · v1
             </p>
             <h1 className="text-3xl font-semibold text-[#0f172a]">
               Public API Dokumentation
             </h1>
             <p className="text-base text-[#64748b] mt-3 leading-relaxed">
-              Über die Auralis Public-API kannst du die KI-Sichtbarkeits-Scores einer Person
-              programmatisch abfragen — z.B. um Aura-Score, GEO-Score, Thought Leadership
+              Über die Halo Public-API kannst du die KI-Sichtbarkeits-Scores einer Person
+              programmatisch abfragen — z.B. um Halo-Score, GEO-Score, Thought Leadership
               oder Wettbewerber-Vergleiche in eigene Dashboards, CRMs oder Reports
               einzubinden.
             </p>
@@ -116,7 +116,7 @@ export default function ApiDocsPage() {
           <Section id="introduction" title="Einführung">
             <p>
               Die API gibt programmatischen Zugriff auf die Sichtbarkeits-Daten eines
-              Auralis-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen,
+              Halo-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen,
               Wettbewerber) und verwaltend (Wettbewerber anlegen/löschen, Analysen auslösen,
               Sub-Accounts anlegen). Sie ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
               <strong>Enterprise</strong>; Free- und Starter-Accounts können sich nicht
@@ -156,7 +156,7 @@ export default function ApiDocsPage() {
 
             <h3 className="text-base font-semibold text-[#0f172a] mt-6">Key erstellen</h3>
             <ol className="list-decimal pl-6 space-y-1.5 text-sm">
-              <li>Einloggen in <a href="/settings" className="text-[#4F6EF7] hover:underline">Auralis Einstellungen</a></li>
+              <li>Einloggen in <a href="/settings" className="text-[#4F6EF7] hover:underline">Halo Einstellungen</a></li>
               <li>Zum Block <em>„API-Keys"</em> scrollen</li>
               <li><em>„+ Neuen API-Key generieren"</em> klicken</li>
               <li>Name vergeben (z.B. „Production CRM") und Submit</li>
@@ -232,7 +232,7 @@ export default function ApiDocsPage() {
                 Für produktive Integrationen mit hohem Volumen bieten wir Enterprise-Lizenzen{" "}
                 <strong>ohne Abfragelimit</strong> an, inklusive priorisiertem Support. Schreib uns
                 für ein Angebot an{" "}
-                <a href="mailto:michael.schreck@entrenous.de?subject=Auralis%20Enterprise-API-Lizenz" className="text-[#7F77DD] hover:underline font-medium">
+                <a href="mailto:michael.schreck@entrenous.de?subject=Halo%20Enterprise-API-Lizenz" className="text-[#7F77DD] hover:underline font-medium">
                   michael.schreck@entrenous.de
                 </a>{" "}
                 oder sieh dir die{" "}
@@ -312,7 +312,7 @@ export default function ApiDocsPage() {
             id="ep-latest"
             method="GET"
             path="/scores/latest"
-            description="Aktuelle Werte für die 4 Master-Scores (Aura, GEO, Thought Leadership, Digitale Autorität) aus dem jüngsten Report — inkl. Score-Herleitung pro Dimension (Messwert × Gewicht = Beitrag) und Per-Modell-Aufschlüsselung. Antwortet 404, wenn noch keine Analyse durchgeführt wurde."
+            description="Aktuelle Werte für die 4 Master-Scores (Halo, GEO, Thought Leadership, Digitale Autorität) aus dem jüngsten Report — inkl. Score-Herleitung pro Dimension (Messwert × Gewicht = Beitrag) und Per-Modell-Aufschlüsselung. Antwortet 404, wenn noch keine Analyse durchgeführt wurde."
             example={`curl ${BASE_URL}${API_PREFIX}/scores/latest \\
   -H "Authorization: Bearer aur_sk_xxxxx"`}
             response={`{
@@ -628,7 +628,7 @@ export default function ApiDocsPage() {
             id="ep-subaccounts-list"
             method="GET"
             path="/sub-accounts"
-            description="Listet alle Sub-Accounts, die unter diesem Account angelegt wurden. Verwaltete Sub-Accounts sind eigene Auralis-Profile (eigene Themen & Scores), die über den Eltern-Account verknüpft sind."
+            description="Listet alle Sub-Accounts, die unter diesem Account angelegt wurden. Verwaltete Sub-Accounts sind eigene Halo-Profile (eigene Themen & Scores), die über den Eltern-Account verknüpft sind."
             example={`curl ${BASE_URL}${API_PREFIX}/sub-accounts \\
   -H "Authorization: Bearer aur_sk_xxxxx"`}
             response={`{
@@ -741,7 +741,7 @@ print(get_latest_scores())`}</CodeBlock>
           {/* Support */}
           <Section id="support" title="Support">
             <p>
-              Bei Fragen, Bug-Reports oder Feature-Requests zur API erreichst du das Auralis-Team unter{" "}
+              Bei Fragen, Bug-Reports oder Feature-Requests zur API erreichst du das Halo-Team unter{" "}
               <a href="mailto:support@entrenous.de" className="text-[#4F6EF7] hover:underline font-medium">
                 support@entrenous.de
               </a>.
@@ -756,7 +756,7 @@ print(get_latest_scores())`}</CodeBlock>
           {/* Footer */}
           <footer className="pt-8 border-t border-gray-200 text-xs text-[#94a3b8]">
             <p>
-              Auralis — AI Visibility Monitoring · Operated by Entrenous ·{" "}
+              Halo — AI Visibility Monitoring · Operated by Entrenous ·{" "}
               <a href="/" className="hover:underline">Zurück zur Hauptseite</a>
             </p>
           </footer>

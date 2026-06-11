@@ -1,5 +1,5 @@
 // app/api/visibility-check/route.ts
-// Main API route for the Auralis AI Visibility Check.
+// Main API route for the Halo AI Visibility Check.
 //
 // Flow:
 // 1. Receive { name, topics, region, language } from client
@@ -95,7 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(report)
 
   } catch (error) {
-    console.error("Auralis visibility check error:", error)
+    console.error("Halo visibility check error:", error)
 
     if (error instanceof Anthropic.APIError) {
       return NextResponse.json(

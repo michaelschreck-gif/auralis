@@ -24,7 +24,7 @@ export type RecRow = {
 type Props = {
   open: RecRow[]
   done: RecRow[]
-  /** Aktueller Aura-Score (jüngster Report), für Wirkungs-Delta. */
+  /** Aktueller Halo-Score (jüngster Report), für Wirkungs-Delta. */
   currentScore: number | null
   hasReport: boolean
 }
@@ -201,7 +201,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                             ? "bg-red-50 text-red-700 border-red-100"
                             : "bg-gray-50 text-[#64748b] border-gray-200"
                         }`}
-                        title="Veränderung deines Aura Scores seit Umsetzung"
+                        title="Veränderung deines Halo Scores seit Umsetzung"
                       >
                         {delta > 0 ? `+${delta}` : delta} Punkte
                       </span>
@@ -221,7 +221,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
             )
           })}
           <p className="text-xs text-[#94a3b8] pt-1">
-            Die Punktzahl zeigt die Veränderung deines Aura Scores seit Umsetzung der Empfehlung. Sie ist ein Indikator, kein kausaler Beweis — viele Faktoren beeinflussen den Score gleichzeitig.
+            Die Punktzahl zeigt die Veränderung deines Halo Scores seit Umsetzung der Empfehlung. Sie ist ein Indikator, kein kausaler Beweis — viele Faktoren beeinflussen den Score gleichzeitig.
           </p>
         </div>
       )}

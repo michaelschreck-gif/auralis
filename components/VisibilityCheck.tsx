@@ -182,7 +182,7 @@ function ReportView({ report }: { report: VisibilityReport }) {
   return (
     <div className="space-y-6 pb-8">
       <div className="grid grid-cols-3 gap-4">
-        <MetricCard label="Aura Score" value={String(report.overallScore)} unit="/ 100"
+        <MetricCard label="Halo Score" value={String(report.overallScore)} unit="/ 100"
           color={hue(report.overallScore)} sub={scoreLabel(report.overallScore)}/>
         <MetricCard label="Mention Rate" value={`${report.mentionRate}%`} unit="of queries" color="#10b981"/>
         <MetricCard label="Avg Position"

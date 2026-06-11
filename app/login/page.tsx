@@ -136,9 +136,9 @@ export default function LoginPage() {
           <div className="text-center space-y-1">
             <div className="flex items-center justify-center gap-2.5 mb-3">
               <div className="w-8 h-8 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
-                <span className="text-white text-sm font-bold">A</span>
+                <span className="text-white text-sm font-bold">H</span>
               </div>
-              <span className="text-[#0f172a] font-semibold text-lg tracking-tight">Auralis</span>
+              <span className="text-[#0f172a] font-semibold text-lg tracking-tight">Halo</span>
             </div>
             <p className="text-[#64748b] text-sm">AI Visibility Monitoring for Personal Brands</p>
           </div>

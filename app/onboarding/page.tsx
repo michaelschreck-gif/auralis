@@ -79,9 +79,9 @@ export default function OnboardingPage() {
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-2.5">
               <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
-                <span className="text-white text-xs font-bold">A</span>
+                <span className="text-white text-xs font-bold">H</span>
               </div>
-              <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Auralis</span>
+              <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
             </div>
             {/* Progress steps */}
             <div className="flex items-center justify-center gap-2">

@@ -5,7 +5,7 @@
  * Fragen zu seiner KI-Sichtbarkeit beantwortet. Claude bekommt:
  *
  *   - User-Profil-Basics (Name, Plan)
- *   - Aktueller Aura Score + Sub-Scores
+ *   - Aktueller Halo Score + Sub-Scores
  *   - Liste der überwachten Themen
  *   - Letzte Score-Verläufe (bis zu 10)
  *   - Wettbewerber-Snapshot
@@ -145,7 +145,7 @@ export async function POST(req: Request) {
   const latestReport = latestReportResult.data?.raw_data as unknown as VisibilityReport | null
   const masters = latestReport ? computeMasterScores(latestReport) : null
 
-  const userName = profile?.full_name ?? "Auralis-Nutzer"
+  const userName = profile?.full_name ?? "Halo-Nutzer"
 
   // Kontext-Block für Claude (zur Laufzeit, nicht als System-Prompt – damit
   // wir die Fakten zur Person im selben Span wie die Frage haben).
@@ -159,7 +159,7 @@ export async function POST(req: Request) {
       ? new Date(latestReport.queriedAt).toLocaleDateString("de-DE")
       : "—"
     lines.push(`# Aktuelle Sichtbarkeits-Scores (letzte Analyse: ${lastDate})`)
-    lines.push(`- Aura Score: ${masters.aura.value}/100 — ${masters.aura.band.label}`)
+    lines.push(`- Halo Score: ${masters.aura.value}/100 — ${masters.aura.band.label}`)
     lines.push(`- GEO: ${masters.geo.value}/100 — ${masters.geo.band.label}`)
     lines.push(`- Thought Leadership: ${masters.thoughtLeadership.value}/100 — ${masters.thoughtLeadership.band.label}`)
     lines.push(`- Digitale Autorität: ${masters.digitalAuthority.value}/100 — ${masters.digitalAuthority.band.label}`)
@@ -218,8 +218,8 @@ export async function POST(req: Request) {
 
   const contextBlock = lines.join("\n").trim()
 
-  // System-Prompt — Claude als Auralis-Coach
-  const system = `Du bist „Frag dein Profil" — der persönliche KI-Sichtbarkeits-Coach in Auralis. Du analysierst die Daten der eingeloggten Person und gibst konkrete, umsetzbare Antworten auf Deutsch.
+  // System-Prompt — Claude als Halo-Coach
+  const system = `Du bist „Frag dein Profil" — der persönliche KI-Sichtbarkeits-Coach in Halo. Du analysierst die Daten der eingeloggten Person und gibst konkrete, umsetzbare Antworten auf Deutsch.
 
 Regeln:
 - Antworte immer auf Deutsch, höflich und direkt.
@@ -228,7 +228,7 @@ Regeln:
 - Wenn der User nach Daten fragt, die nicht in der Kontextbox stehen, sag ehrlich, dass du sie nicht hast, und empfiehl, wo er sie im Tool findet (z.B. /dashboard/sources, /dashboard/competitors).
 - Halte Antworten kompakt: meist 2–6 Absätze, gerne Listen für Handlungsempfehlungen.
 
-Kontext zur Person (aktuelle Daten aus Auralis):
+Kontext zur Person (aktuelle Daten aus Halo):
 ${contextBlock}`
 
   // Anthropic streamen

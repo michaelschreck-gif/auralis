@@ -181,7 +181,7 @@ export function extractMentionSignal(
 
 /**
  * Aggregates multiple query results into a single VisibilityReport
- * with a composite Aura Score.
+ * with a composite Halo Score.
  */
 export function buildVisibilityReport(
   personName: string,
@@ -228,7 +228,7 @@ export function buildVisibilityReport(
   )
   const topicAlignmentScore = Math.min(100, Math.round((alignedTopics.length / Math.max(topics.length, 1)) * 80 + (mentionRate * 20)))
 
-  // COMPOSITE AURA SCORE
+  // COMPOSITE HALO SCORE
   const overallScore = Math.round(
     presenceScore * 0.35 +
     positionScore * 0.25 +
