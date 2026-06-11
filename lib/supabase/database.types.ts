@@ -301,6 +301,41 @@ export type Database = {
           },
         ]
       }
+      recommendation_reports: {
+        Row: {
+          created_at: string
+          id: string
+          model: string | null
+          overall_probability: number | null
+          profile_id: string
+          roles: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          overall_probability?: number | null
+          profile_id: string
+          roles?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          model?: string | null
+          overall_probability?: number | null
+          profile_id?: string
+          roles?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendation_reports_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null

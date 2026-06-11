@@ -29,6 +29,7 @@ const TOC = [
   { id: "ep-gaps",       label: "  GET /competitors/{id}/gaps", indent: true },
   { id: "ep-responses",  label: "  GET /responses", indent: true },
   { id: "ep-monopoly",   label: "  GET /monopoly", indent: true },
+  { id: "ep-recprob",    label: "  GET /recommendation-probability", indent: true },
   { id: "ep-recommendations", label: "  GET /recommendations", indent: true },
   { id: "ep-topics-list", label: "  GET /topics", indent: true },
   { id: "ep-topics",     label: "  POST /topics", indent: true },
@@ -124,7 +125,7 @@ export default function ApiDocsPage() {
               authentifizieren.
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>17 Endpoints: 10× GET (lesen), 5× POST (anlegen/auslösen), 2× DELETE</li>
+              <li>18 Endpoints: 11× GET (lesen), 5× POST (anlegen/auslösen), 2× DELETE</li>
               <li>Tageslimit je Tarif — Pro 1.000/Tag, <strong>Enterprise unbegrenzt</strong> (siehe Limits &amp; Tarife)</li>
               <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
               <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
@@ -533,6 +534,30 @@ export default function ApiDocsPage() {
       "rivals_mentioned": 4,
       "analyzed_at": "2026-06-11T06:19:12Z"
     }
+  ]
+}`}
+          />
+
+          <Endpoint
+            id="ep-recprob"
+            method="GET"
+            path="/recommendation-probability"
+            description="Letzte Messung der Empfehlungs-Wahrscheinlichkeit: wie oft die Person genannt wird, wenn KI nach einem Keynote-Speaker, Berater, Trainer oder Podcast-Gast für ihre Themen gefragt wird. Pro Rolle: Wahrscheinlichkeit (Trefferquote), Treffer/Abfragen und beste Position. 404, falls noch keine Messung lief. Die Messung selbst wird im Dashboard ausgelöst (Pro-Feature)."
+            example={`curl ${BASE_URL}${API_PREFIX}/recommendation-probability \\
+  -H "Authorization: Bearer aur_sk_xxxxx"`}
+            response={`{
+  "overall": 58,
+  "measured_at": "2026-06-11T06:19:12Z",
+  "roles": [
+    {
+      "role": "keynote",
+      "label": "Keynote-Speaker",
+      "probability": 75,
+      "mentions": 3,
+      "samples": 4,
+      "best_position": 1
+    }
+    // … consultant, trainer, podcast
   ]
 }`}
           />

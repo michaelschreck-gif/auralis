@@ -18,6 +18,7 @@ const NAV = [
   { href: "/dashboard/responses",          label: "KI-Antworten",       icon: "responses" },
   { href: "/dashboard/competitors",        label: "Wettbewerber",       icon: "competitors" },
   { href: "/dashboard/recommendations",    label: "Empfehlungen",       icon: "recommendations" },
+  { href: "/dashboard/recommended",        label: "Wirst du empfohlen?", icon: "recommended" },
   { href: "/dashboard/ask",                label: "Frag dein Profil",   icon: "ask" },
   { href: "/settings",                     label: "Einstellungen",      icon: "settings" },
 ] as const
@@ -49,6 +50,11 @@ const Icons: Record<IconKey, ReactNode> = {
   monopoly: (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <path d="M2 4.5l2.5 2L7.5 2l3 4.5L13 4.5l-1 7.5H3l-1-7.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+    </svg>
+  ),
+  recommended: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M4.5 6.5v6M4.5 6.5L7 1.5c1 0 1.6.8 1.4 1.8L8 5.5h3.6c.8 0 1.4.7 1.2 1.5l-1 4.5c-.1.6-.7 1-1.3 1H4.5" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round" strokeLinecap="round"/>
     </svg>
   ),
   analyze: (
