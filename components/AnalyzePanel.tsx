@@ -71,8 +71,11 @@ export default function AnalyzePanel({
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-[#0E1916]">Analyse</h1>
-        <p className="text-sm text-[#64748b] mt-1">
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Analyse</span>
+        <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+          Eine neue Analyse starten.
+        </h1>
+        <p className="text-sm text-[#6B625A] mt-2.5 max-w-xl leading-relaxed">
           Starte eine neue Reputations-Analyse für eines deiner Themen.
           Die KI stellt 7 typische Suchfragen und prüft, wie prominent du in den Antworten erwähnt wirst. Eine Analyse dauert ca. 20 Sekunden.
         </p>
@@ -81,9 +84,9 @@ export default function AnalyzePanel({
       {/* Free-Limit-Banner */}
       {isFree && remaining !== null && (
         <div
-          className={`rounded-xl border p-4 ${
+          className={`rounded-2xl border p-4 ${
             limitReached
-              ? "bg-amber-50 border-amber-100"
+              ? "bg-[#F6ECD9] border-[#E7CFA3]"
               : "bg-[#FDE7E0] border-[#FBCBB8]"
           }`}
         >
@@ -95,7 +98,7 @@ export default function AnalyzePanel({
                 } pro 30 Tage verfügbar.`}
           </p>
           {limitReached && resetAt && (
-            <p className="text-xs text-[#64748b] mt-1">
+            <p className="text-xs text-[#6B625A] mt-1">
               Nächstes Slot frei am{" "}
               <span className="text-[#0E1916] font-medium">
                 {new Date(resetAt).toLocaleDateString("de-DE", {
@@ -117,18 +120,18 @@ export default function AnalyzePanel({
       )}
 
       {error && (
-        <div className="rounded-xl bg-red-50 border border-red-100 p-4">
+        <div className="rounded-2xl bg-red-50 border border-red-100 p-4">
           <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
       {/* Topics */}
-      <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
+      <section className="bg-white rounded-3xl border border-[#E9E1D3] p-6">
+        <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-4">
           Aktive Themen
         </p>
         {schedules.length === 0 ? (
-          <p className="text-sm text-[#64748b]">
+          <p className="text-sm text-[#6B625A]">
             Noch keine Themen.{" "}
             <a
               href="/settings"
@@ -138,7 +141,7 @@ export default function AnalyzePanel({
             </a>
           </p>
         ) : (
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#F0EAE0]">
             {schedules.map(s => {
               const isRunning = runningId === s.id
               const wasSuccess = successId === s.id
@@ -152,7 +155,7 @@ export default function AnalyzePanel({
                     <p className="text-sm font-medium text-[#0E1916] truncate">
                       {s.query}
                     </p>
-                    <p className="text-xs text-[#94a3b8] mt-0.5">
+                    <p className="text-xs text-[#9A9089] mt-0.5">
                       {frequencyLabel(s.frequency)}
                       {s.last_run_at && (
                         <>
@@ -165,15 +168,15 @@ export default function AnalyzePanel({
                     type="button"
                     onClick={() => trigger(s.id)}
                     disabled={disabled}
-                    className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
+                    className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-colors ${
                       wasSuccess
-                        ? "bg-green-100 text-green-700 border border-green-200"
+                        ? "bg-[#E9F0F0] text-[#1C2A2A] border border-[#C7D9D9]"
                         : "bg-[#FA5935] hover:bg-[#C8431F] text-white disabled:opacity-40 disabled:cursor-not-allowed"
                     }`}
                   >
                     {isRunning ? (
                       <span className="flex items-center gap-2">
-                        <span className="w-3 h-3 border border-blue-200 border-t-white rounded-full animate-spin" />
+                        <span className="w-3 h-3 border border-[#FBCBB8] border-t-white rounded-full animate-spin" />
                         Läuft…
                       </span>
                     ) : wasSuccess ? (
@@ -190,14 +193,14 @@ export default function AnalyzePanel({
       </section>
 
       {/* History Chart */}
-      <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
+      <section className="bg-white rounded-3xl border border-[#E9E1D3] p-6">
+        <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-4">
           Score-Verlauf (30 Tage)
         </p>
         {history.length > 1 ? (
           <HistoryChart points={history} />
         ) : (
-          <p className="text-sm text-[#64748b]">
+          <p className="text-sm text-[#6B625A]">
             Sobald mindestens zwei Analysen vorliegen, zeigt sich hier dein Score-Verlauf der letzten 30 Tage. Starte oben eine weitere Analyse, um den Trend sichtbar zu machen.
           </p>
         )}
@@ -248,7 +251,7 @@ function HistoryChart({ points }: { points: ScoreHistoryPoint[] }) {
               x2={W - PADDING}
               y1={yFor(v)}
               y2={yFor(v)}
-              stroke="#f1f5f9"
+              stroke="#F0EAE0"
               strokeWidth={1}
             />
             <text
@@ -256,7 +259,7 @@ function HistoryChart({ points }: { points: ScoreHistoryPoint[] }) {
               y={yFor(v) + 4}
               fontSize="10"
               textAnchor="end"
-              fill="#94a3b8"
+              fill="#9A9089"
             >
               {v}
             </text>
@@ -277,7 +280,7 @@ function HistoryChart({ points }: { points: ScoreHistoryPoint[] }) {
           />
         ))}
         {/* X-Axis: first + last date */}
-        <text x={PADDING} y={H - 8} fontSize="10" fill="#94a3b8">
+        <text x={PADDING} y={H - 8} fontSize="10" fill="#9A9089">
           {new Date(sorted[0].date).toLocaleDateString("de-DE", {
             day: "2-digit",
             month: "short",
@@ -287,7 +290,7 @@ function HistoryChart({ points }: { points: ScoreHistoryPoint[] }) {
           x={W - PADDING}
           y={H - 8}
           fontSize="10"
-          fill="#94a3b8"
+          fill="#9A9089"
           textAnchor="end"
         >
           {new Date(sorted[sorted.length - 1].date).toLocaleDateString("de-DE", {
