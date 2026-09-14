@@ -25,6 +25,8 @@ export const AURA_THEME = {
   accent: "#FA5935",
   accentText: "#0E1916",
   light: "#FBCBB8",
+  /** Ringfarbe im Cockpit-Hero — exakt wie ScoreRing auf der Landingpage. */
+  ring: "#F7B49B",
 }
 
 /**
@@ -34,20 +36,24 @@ export const AURA_THEME = {
  * deshalb als Standalone-Theme statt im DIMENSION_THEME-Record.
  */
 export const SEO_THEME: DimensionTheme = {
-  bg: "#FBF0DE", track: "#F6D79B", accent: "#E08A1E", text: "#5C3A06", label: "#8A5A0E",
+  bg: "#F6ECD9", track: "#E7CFA3", accent: "#C98A3E", text: "#6B4A1E", label: "#8A5A0E",
 }
 
+/**
+ * Exakt dieselbe Palette wie DimCard auf der Landingpage (Vier-Dimensionen-Sektion),
+ * damit Tool und Website als ein System wirken.
+ */
 export const DIMENSION_THEME: Record<ScoreKey, DimensionTheme> = {
   "aura": {
     bg: "#FDE7E0", track: "#FBCBB8", accent: "#FA5935", text: "#0E1916", label: "#C8431F",
   },
   "geo": {
-    bg: "#E6F1FB", track: "#B5D4F4", accent: "#378ADD", text: "#0C447C", label: "#185FA5",
+    bg: "#FDE7E0", track: "#F7B49B", accent: "#FA5935", text: "#7A2A12", label: "#C8431F",
   },
   "thought-leadership": {
     bg: "#E9F0F0", track: "#C7D9D9", accent: "#6D8C8D", text: "#1C2A2A", label: "#4C6667",
   },
   "digital-authority": {
-    bg: "#E1F5EE", track: "#9FE1CB", accent: "#1D9E75", text: "#04342C", label: "#0F6E56",
+    bg: "#E7E3DC", track: "#CFCABF", accent: "#3A4442", text: "#3A4442", label: "#5A5248",
   },
 }

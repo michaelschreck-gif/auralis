@@ -4,28 +4,54 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState, type ReactNode } from "react"
 
-const NAV = [
-  { href: "/dashboard",                    label: "Übersicht",          icon: "overview" },
-  { href: "/dashboard/persona",            label: "KI-Persona",         icon: "persona" },
-  { href: "/dashboard/analyze",            label: "Analyse",            icon: "analyze" },
-  { href: "/dashboard/ai-visibility",      label: "KI-Reputation",    icon: "visibility" },
-  { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
-  { href: "/dashboard/seo",                label: "SEO Score",          icon: "seo" },
-  { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
-  { href: "/dashboard/topics",             label: "Themen",             icon: "topics" },
-  { href: "/dashboard/monopoly",           label: "Themen-Monopol",     icon: "monopoly" },
-  { href: "/dashboard/sources",            label: "Quellen",            icon: "sources" },
-  { href: "/dashboard/responses",          label: "KI-Antworten",       icon: "responses" },
-  { href: "/dashboard/competitors",        label: "Wettbewerber",       icon: "competitors" },
-  { href: "/dashboard/recommendations",    label: "Empfehlungen",       icon: "recommendations" },
-  { href: "/dashboard/recommended",        label: "Wirst du empfohlen?", icon: "recommended" },
-  { href: "/dashboard/ask",                label: "Frag dein Profil",   icon: "ask" },
-  { href: "/settings",                     label: "Einstellungen",      icon: "settings" },
+// ─── Navigation, gruppiert nach Themenblöcken (statt einer langen Flachliste) ───
+const NAV_GROUPS = [
+  {
+    label: "Übersicht",
+    items: [
+      { href: "/dashboard",         label: "Übersicht",  icon: "overview" },
+      { href: "/dashboard/persona", label: "KI-Persona", icon: "persona" },
+      { href: "/dashboard/analyze", label: "Analyse",    icon: "analyze" },
+    ],
+  },
+  {
+    label: "Scores",
+    items: [
+      { href: "/dashboard/ai-visibility",      label: "KI-Reputation",      icon: "visibility" },
+      { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
+      { href: "/dashboard/seo",                label: "SEO Score",          icon: "seo" },
+      { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
+    ],
+  },
+  {
+    label: "Insights",
+    items: [
+      { href: "/dashboard/topics",      label: "Themen",         icon: "topics" },
+      { href: "/dashboard/monopoly",    label: "Themen-Monopol", icon: "monopoly" },
+      { href: "/dashboard/sources",     label: "Quellen",        icon: "sources" },
+      { href: "/dashboard/responses",   label: "KI-Antworten",   icon: "responses" },
+      { href: "/dashboard/competitors", label: "Wettbewerber",   icon: "competitors" },
+    ],
+  },
+  {
+    label: "Aktionen",
+    items: [
+      { href: "/dashboard/recommendations", label: "Empfehlungen",         icon: "recommendations" },
+      { href: "/dashboard/recommended",     label: "Wirst du empfohlen?",  icon: "recommended" },
+      { href: "/dashboard/ask",             label: "Frag dein Profil",     icon: "ask" },
+    ],
+  },
+  {
+    label: "Account",
+    items: [
+      { href: "/settings", label: "Einstellungen", icon: "settings" },
+    ],
+  },
 ] as const
 
-type IconKey = typeof NAV[number]["icon"]
+type IconKey = typeof NAV_GROUPS[number]["items"][number]["icon"]
 
-const Icons: Record<IconKey, ReactNode> = {
+export const Icons: Record<IconKey, ReactNode> = {
   overview: (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <rect x="1" y="1" width="5.5" height="5.5" rx="1" stroke="currentColor" strokeWidth="1.2"/>
@@ -162,27 +188,34 @@ export default function DashboardShell({
   const planLabel = PLAN_LABELS[plan] ?? "Free"
 
   const navList = (
-    <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-      {NAV.map(item => {
-        const active = pathname === item.href
-        return (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={() => setMobileOpen(false)}
-            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
-              active
-                ? "bg-[#FDE7E0] text-[#C8431F] font-medium"
-                : "text-[#6B625A] hover:text-[#0E1916] hover:bg-[#F4F2FE]"
-            }`}
-          >
-            <span className="w-4 flex-shrink-0 flex items-center justify-center">
-              {Icons[item.icon]}
-            </span>
-            {item.label}
-          </Link>
-        )
-      })}
+    <nav className="flex-1 px-3 py-3.5 overflow-y-auto">
+      {NAV_GROUPS.map(group => (
+        <div key={group.label} className="mb-0.5">
+          <div className="text-[10.5px] font-semibold uppercase tracking-wide text-[#9A9089] px-3 pt-3.5 pb-1.5">
+            {group.label}
+          </div>
+          {group.items.map(item => {
+            const active = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setMobileOpen(false)}
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-[13.5px] transition-colors mb-0.5 ${
+                  active
+                    ? "bg-[#FDE7E0] text-[#C8431F] font-medium"
+                    : "text-[#6B625A] hover:text-[#0E1916] hover:bg-[#F3EFE6]"
+                }`}
+              >
+                <span className="w-4 flex-shrink-0 flex items-center justify-center">
+                  {Icons[item.icon]}
+                </span>
+                {item.label}
+              </Link>
+            )
+          })}
+        </div>
+      ))}
     </nav>
   )
 
