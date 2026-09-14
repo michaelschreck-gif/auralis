@@ -6,14 +6,14 @@ import type { Metadata } from "next"
 export const dynamic = "force-dynamic"
 
 export const metadata: Metadata = {
-  title: "Halo — KI-Reputations-Monitoring für Personal Brands",
+  title: "DigitalHalo — KI-Reputations-Monitoring für Personal Brands",
   description:
-    "Halo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
+    "DigitalHalo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
 }
 
-// ─── Markenfarben (Halo) ───
-// primär #FA5935 · tief #C8431F · dunkel #0E1916 · hell #F4F2FE / #FDE7E0
-// Akzent Bernstein #EF9F27 · Flächen weiß / #FEFCFA
+// ─── Markenfarben (Digital_Halo_Brandkit V1.0) ───
+// Coral #FA5935 · tief #C8431F · Teal #6D8C8D · Schwarz #0E1916 · Beige #EAE2D5
+// Flächen: Weiß / #FAF8F3 (Beige-Tint)
 
 export default async function Home() {
   let isLoggedIn = false
@@ -28,13 +28,13 @@ export default async function Home() {
 
   return (
     <div id="top" className="min-h-screen bg-white text-[#0E1916]">
-      {/* ─── Hero (vollflaechig, Nav auf dem Gradient) ─── */}
+      {/* ─── Hero (vollflaechig, Nav auf dem Gradient, Text linksbuendig) ─── */}
       <div className="halo-gradient">
         <div className="halo-gradient-content">
           <nav>
-            <div className="max-w-6xl mx-auto px-6 h-[64px] flex items-center justify-between">
+            <div className="max-w-6xl mx-auto px-6 h-[76px] flex items-center justify-between">
               <a href="#top" className="flex items-center gap-2.5">
-                <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-6 w-auto" />
+                <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-5 w-auto" />
               </a>
               <div className="hidden md:flex items-center gap-7 text-sm">
                 <a href="#funktionen" className="text-white/80 hover:text-white transition-colors">Funktionen</a>
@@ -53,38 +53,38 @@ export default async function Home() {
             </div>
           </nav>
 
-          <section className="px-6 pt-10 sm:pt-16 pb-16 sm:pb-24 text-center">
-            <h1 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl lg:text-[56px] leading-[1.08] tracking-tight text-white max-w-3xl mx-auto text-wrap-balance">
-              Endlich siehst du, wie KI-Systeme dich sehen.
-            </h1>
-            <p className="text-base sm:text-lg text-white/85 leading-relaxed mt-6 max-w-xl mx-auto">
-              DigitalHalo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
-              — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
-              <Link href="/login" className="w-full sm:w-auto text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
-                Kostenlos starten →
-              </Link>
-              <a href="#ablauf" className="w-full sm:w-auto text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors">
-                So funktioniert&apos;s →
-              </a>
+          <div className="max-w-6xl mx-auto px-6 pt-6 pb-24 sm:pb-28">
+            <div className="max-w-xl">
+              <h1 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl lg:text-[60px] leading-[1.06] tracking-tight text-white text-wrap-balance">
+                Endlich siehst du, wie KI-Systeme dich sehen.
+              </h1>
+              <p className="text-base sm:text-lg text-white/85 leading-relaxed mt-6 max-w-lg">
+                DigitalHalo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
+                — mit <span className="text-white font-semibold">Halo Score™</span>, Wettbewerber-Vergleich und konkreten Empfehlungen.
+              </p>
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-8">
+                <Link href="/login" className="text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors text-center">
+                  Kostenlos starten →
+                </Link>
+                <a href="#ablauf" className="text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors text-center">
+                  So funktioniert&apos;s →
+                </a>
+              </div>
+              <p className="text-xs text-white/70 mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
             </div>
-            <p className="text-xs text-white/70 mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
 
-            {/* Hero-Visual: Halo-Ring-Cockpit */}
-            <div className="mt-12 max-w-3xl mx-auto">
+            <div className="mt-14 max-w-[760px]">
               <HeroCockpit />
             </div>
-          </section>
+          </div>
         </div>
       </div>
 
       {/* ─── Problem / Lösung ─── */}
-      <section className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+      <section className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+        <div className="max-w-xl mb-11">
           <Eyebrow>Das Problem</Eyebrow>
-          <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
+          <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916] leading-tight">
             KI-Antworten ersetzen Google. Tauchst du dort auf?
           </h2>
           <p className="text-[#6B625A] mt-4 leading-relaxed">
@@ -93,19 +93,19 @@ export default async function Home() {
           </p>
         </div>
         <div className="grid md:grid-cols-2 gap-5">
-          <div className="rounded-3xl border border-[#F4C0D1] bg-[#FBEAF0]/50 p-7">
-            <div className="text-[#993556] font-semibold mb-4">Ohne Halo</div>
-            <ul className="space-y-3 text-sm text-[#72243E]">
-              {["Einmal in ChatGPT testen — und dann?", "Keine Ahnung, wer statt dir genannt wird", "Kein Trend: sichtbarer oder unsichtbarer?", "Nur Vermutungen statt Schritte"].map(t => (
-                <li key={t} className="flex gap-2.5"><span className="text-[#D4537E]">✕</span>{t}</li>
+          <div className="rounded-3xl border border-[#E9E1D3] bg-white p-7 sm:p-8">
+            <div className="text-[#6B625A] font-semibold mb-4">Ohne DigitalHalo</div>
+            <ul className="space-y-3 text-sm text-[#4A453F]">
+              {["Einmal in ChatGPT getestet — und dann?", "Keine Ahnung, wer statt dir genannt wird", "Kein Trend: sichtbarer oder unsichtbarer?", "Nur Vermutungen statt Schritte"].map(t => (
+                <li key={t} className="flex gap-2.5"><span className="text-[#9A9089] font-bold">✕</span>{t}</li>
               ))}
             </ul>
           </div>
-          <div className="rounded-3xl border border-[#9FE1CB] bg-[#E1F5EE]/60 p-7">
-            <div className="text-[#0F6E56] font-semibold mb-4">Mit Halo</div>
-            <ul className="space-y-3 text-sm text-[#04342C]">
+          <div className="rounded-3xl border border-[#FBCBB8] bg-gradient-to-br from-[#FDE7E0] to-[#F3EFE6] p-7 sm:p-8">
+            <div className="text-[#C8431F] font-semibold mb-4">Mit DigitalHalo</div>
+            <ul className="space-y-3 text-sm text-[#5C2A12]">
               {["Halo Score™: eine Zahl für deine KI-Reputation", "Wettbewerber-Benchmark mit harten Zahlen", "Trend pro Thema über 30 Tage", "Konkrete Empfehlungen, von Claude generiert"].map(t => (
-                <li key={t} className="flex gap-2.5"><span className="text-[#1D9E75]">✓</span>{t}</li>
+                <li key={t} className="flex gap-2.5"><span className="text-[#FA5935] font-bold">✓</span>{t}</li>
               ))}
             </ul>
           </div>
@@ -113,46 +113,43 @@ export default async function Home() {
       </section>
 
       {/* ─── So funktioniert's (3 Schritte) ─── */}
-      <section id="ablauf" className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
-        <div className="text-center max-w-2xl mx-auto mb-14">
-          <Eyebrow>So funktioniert&apos;s</Eyebrow>
-          <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
-            In 3 Schritten zu deinem Halo Score.
-          </h2>
-        </div>
-        <div className="grid md:grid-cols-3 gap-6 relative">
-          {[
-            { n: "1", t: "Thema definieren", d: "Sag, mit welchen Begriffen KI dich verbinden soll — z. B. AI-Strategie oder Personal Branding." },
-            { n: "2", t: "Analyse starten", d: "Halo stellt 7 typische Suchfragen an die KI-Modelle und wertet aus, wie prominent du genannt wirst." },
-            { n: "3", t: "Score & Empfehlungen", d: "Du bekommst deinen Halo Score, Wettbewerber-Vergleich und konkrete nächste Schritte." },
-          ].map((s, i) => (
-            <div key={s.n} className="relative rounded-3xl border border-[#FDE7E0] bg-[#FEFCFA] p-7">
-              <div className="w-11 h-11 rounded-2xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center text-lg font-bold mb-4">{s.n}</div>
-              <div className="font-semibold text-[#0E1916] mb-1.5">{s.t}</div>
-              <p className="text-sm text-[#6B625A] leading-relaxed">{s.d}</p>
-              {i < 2 && (
-                <div className="hidden md:block absolute top-1/2 -right-4 z-10 text-[#FBCBB8]">
-                  <DoodleArrow />
-                </div>
-              )}
-            </div>
-          ))}
+      <section id="ablauf" className="bg-[#FAF8F3]">
+        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+          <div className="max-w-xl mb-14">
+            <Eyebrow>So funktioniert&apos;s</Eyebrow>
+            <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
+              In 3 Schritten zu deinem Halo Score.
+            </h2>
+          </div>
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              { n: "1", t: "Thema definieren", d: "Sag, mit welchen Begriffen KI dich verbinden soll — z. B. AI-Strategie oder Personal Branding." },
+              { n: "2", t: "Analyse starten", d: "DigitalHalo stellt 7 typische Suchfragen an die KI-Modelle und wertet aus, wie prominent du genannt wirst." },
+              { n: "3", t: "Score & Empfehlungen", d: "Du bekommst deinen Halo Score, Wettbewerber-Vergleich und konkrete nächste Schritte." },
+            ].map(s => (
+              <div key={s.n} className="rounded-3xl border border-[#E9E1D3] bg-white p-7">
+                <div className="w-11 h-11 rounded-2xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center text-lg font-bold mb-4">{s.n}</div>
+                <div className="font-semibold text-[#0E1916] mb-1.5">{s.t}</div>
+                <p className="text-sm text-[#6B625A] leading-relaxed">{s.d}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ─── Master-Metrik ─── */}
-      <section className="px-4 sm:px-6 py-8">
-        <div className="max-w-6xl mx-auto rounded-[32px] bg-[#0E1916] text-white px-6 sm:px-12 py-14 grid lg:grid-cols-2 gap-10 items-center overflow-hidden">
+      {/* ─── Master-Metrik (vollflaechig, dunkel) ─── */}
+      <section className="bg-[#0E1916] text-white">
+        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 grid lg:grid-cols-2 gap-14 items-center">
           <div>
             <Eyebrow dark>Master-Metrik</Eyebrow>
             <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 leading-tight">
               Eine Zahl, die deine KI-Reputation zusammenfasst.
             </h2>
-            <p className="text-[#FBCBB8] mt-4 leading-relaxed">
+            <p className="text-[#FBCBB8] mt-4 leading-relaxed max-w-md">
               Der Halo Score™ kombiniert vier Dimensionen — GEO, SEO, Thought Leadership und Digitale
-              Autorität — zu einem Wert von 0 bis 100. Klick auf jede Dimension zeigt die Gewichtung.
+              Autorität — zu einem Wert von 0 bis 100.
             </p>
-            <Link href="/login" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-[#FA5935] hover:bg-[#F7B49B] text-white font-semibold transition-colors">
+            <Link href="/login" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors">
               Eigenen Score messen →
             </Link>
           </div>
@@ -162,75 +159,77 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ─── Sub-Scores ─── */}
-      <section className="max-w-6xl mx-auto px-6 py-16 sm:py-20">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+      {/* ─── Vier Dimensionen (neu an das Brandkit angepasst) ─── */}
+      <section className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+        <div className="max-w-xl mb-11">
           <Eyebrow>Vier Dimensionen</Eyebrow>
           <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
             GEO, SEO, Thought Leadership &amp; Autorität.
           </h2>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <DimCard tint="#E6F1FB" label="#185FA5" text="#0C447C" bar="#378ADD" track="#B5D4F4" name="GEO Score" val={72} desc="Wie oft KI-Systeme dich in Antworten nennen." />
-          <DimCard tint="#FBF0DE" label="#8A5A0E" text="#5C3A06" bar="#E08A1E" track="#F6D79B" name="SEO Score" val={64} desc="Deine Reputation in der klassischen Google-Suche." />
-          <DimCard tint="#E9F0F0" label="#4C6667" text="#1C2A2A" bar="#6D8C8D" track="#C7D9D9" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
-          <DimCard tint="#E1F5EE" label="#0F6E56" text="#04342C" bar="#1D9E75" track="#9FE1CB" name="Digitale Autorität" val={63} desc="Die Stärke deiner Online-Spur." />
+          <DimCard tint="#FDE7E0" text="#7A2A12" track="#F7B49B" bar="#FA5935" name="GEO Score" val={72} desc="Wie oft KI-Systeme dich in Antworten nennen." />
+          <DimCard tint="#F6ECD9" text="#6B4A1E" track="#E7CFA3" bar="#C98A3E" name="SEO Score" val={64} desc="Deine Reputation in der klassischen Google-Suche." />
+          <DimCard tint="#E9F0F0" text="#1C2A2A" track="#C7D9D9" bar="#6D8C8D" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
+          <DimCard tint="#E7E3DC" text="#3A4442" track="#CFCABF" bar="#3A4442" name="Digitale Autorität" val={63} desc="Die Stärke deiner Online-Spur." />
         </div>
       </section>
 
       {/* ─── Wettbewerber ─── */}
-      <section className="max-w-6xl mx-auto px-6 py-16 sm:py-20 grid lg:grid-cols-2 gap-12 items-center">
-        <div>
-          <Eyebrow>Wettbewerber</Eyebrow>
-          <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916] leading-tight">
-            Wer steht statt dir in der KI-Antwort?
-          </h2>
-          <p className="text-[#6B625A] mt-4 leading-relaxed">
-            Füge Wettbewerber hinzu und analysiere sie mit derselben Pipeline. Du bekommst harte
-            Vergleichszahlen und eine Lückenanalyse — kein Bauchgefühl.
-          </p>
-        </div>
-        <div className="rounded-3xl border border-[#FDE7E0] bg-white shadow-[0_8px_40px_-12px_rgba(38,33,92,0.15)] p-5">
-          <div className="text-[11px] uppercase tracking-wider text-[#9A9089] font-semibold mb-3">Ranking nach Halo Score</div>
-          {[
-            { r: "1", n: "Andrew Ng", topic: "AI · Machine Learning", s: 84, band: "Dominant", me: false },
-            { r: "2", n: "Du", topic: "Deine Themen", s: 72, band: "Etabliert", me: true },
-            { r: "3", n: "Mark Zuckerberg", topic: "Social Media · Metaverse", s: 48, band: "Aufbauend", me: false },
-          ].map(c => (
-            <div key={c.r} className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 mb-2 ${c.me ? "bg-[#FDE7E0]" : "bg-[#FEFCFA]"}`}>
-              <span className="w-5 text-sm text-[#9A9089] font-semibold tabular-nums">{c.r}</span>
-              <div className="min-w-0 flex-1">
-                <div className={`text-sm font-medium truncate ${c.me ? "text-[#0E1916]" : "text-[#0E1916]"}`}>{c.n}{c.me && <span className="ml-2 text-[10px] bg-[#FA5935] text-white rounded-full px-2 py-0.5 align-middle">Du</span>}</div>
-                <div className="text-xs text-[#9A9089] truncate">{c.topic}</div>
+      <section className="bg-[#FAF8F3]">
+        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 grid lg:grid-cols-2 gap-14 items-center">
+          <div>
+            <Eyebrow>Wettbewerber</Eyebrow>
+            <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916] leading-tight">
+              Wer steht statt dir in der KI-Antwort?
+            </h2>
+            <p className="text-[#6B625A] mt-4 leading-relaxed">
+              Füge Wettbewerber hinzu und analysiere sie mit derselben Pipeline. Du bekommst harte
+              Vergleichszahlen und eine Lückenanalyse — kein Bauchgefühl.
+            </p>
+          </div>
+          <div className="rounded-3xl border border-[#E9E1D3] bg-white shadow-[0_14px_50px_-18px_rgba(14,25,22,0.14)] p-5">
+            <div className="text-[11px] uppercase tracking-wider text-[#9A9089] font-semibold mb-3">Ranking nach Halo Score</div>
+            {[
+              { r: "1", n: "Andrew Ng", topic: "AI · Machine Learning", s: 84, band: "Dominant", me: false },
+              { r: "2", n: "Du", topic: "Deine Themen", s: 72, band: "Etabliert", me: true },
+              { r: "3", n: "Mark Zuckerberg", topic: "Social Media · Metaverse", s: 48, band: "Aufbauend", me: false },
+            ].map(c => (
+              <div key={c.r} className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 mb-2 ${c.me ? "bg-[#FDE7E0]" : "bg-[#FAF8F3]"}`}>
+                <span className="w-5 text-sm text-[#9A9089] font-semibold tabular-nums">{c.r}</span>
+                <div className="min-w-0 flex-1">
+                  <div className="text-sm font-medium truncate text-[#0E1916]">{c.n}{c.me && <span className="ml-2 text-[10px] bg-[#FA5935] text-white rounded-full px-2 py-0.5 align-middle">Du</span>}</div>
+                  <div className="text-xs text-[#9A9089] truncate">{c.topic}</div>
+                </div>
+                <div className="text-right">
+                  <div className="text-lg font-bold text-[#0E1916] leading-none tabular-nums">{c.s}</div>
+                  <div className="text-[10px] text-[#9A9089] uppercase tracking-wide">{c.band}</div>
+                </div>
               </div>
-              <div className="text-right">
-                <div className="text-lg font-bold text-[#0E1916] leading-none tabular-nums">{c.s}</div>
-                <div className="text-[10px] text-[#9A9089] uppercase tracking-wide">{c.band}</div>
-              </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ─── Public API ─── */}
-      <section className="px-4 sm:px-6 py-8">
-        <div className="max-w-6xl mx-auto rounded-[32px] bg-[#F4F2FE] border border-[#FDE7E0] px-6 sm:px-12 py-14 grid lg:grid-cols-2 gap-10 items-center">
+      {/* ─── Public API (vollflaechig, Teal-Tint) ─── */}
+      <section className="bg-[#E9F0F0]">
+        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <Eyebrow>Public API</Eyebrow>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#3D6A6B]">Public API</span>
             <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916] leading-tight">
               Scores per HTTP in dein eigenes Stack.
             </h2>
-            <p className="text-[#6B625A] mt-4 leading-relaxed">
+            <p className="text-[#3D5252] mt-4 leading-relaxed">
               Hol dir Halo Score, Sub-Scores und Wettbewerber-Daten in dein CRM oder BI-Tool.
               Bearer-Auth, REST, JSON. Enterprise-Tarif: unbegrenzte Abfragen &amp; Sub-Accounts.
             </p>
-            <a href="/docs/api" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-white border border-[#FBCBB8] text-[#C8431F] font-medium hover:bg-white/60 transition-colors">
+            <a href="/docs/api" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-white border border-[#FBCBB8] text-[#C8431F] font-medium hover:bg-[#FDE7E0] transition-colors">
               API-Doku öffnen ↗
             </a>
           </div>
           <div className="rounded-2xl bg-[#0E1916] p-5 font-mono text-[12.5px] leading-relaxed overflow-x-auto">
             <div className="text-[#F7B49B]">$ curl https://digital-halo.de/api/v1/scores/latest \</div>
-            <div className="text-[#F7B49B] pl-4">-H &quot;Authorization: Bearer aur_sk_…&quot;</div>
+            <div className="text-[#F7B49B] pl-4">-H &quot;Authorization: Bearer dh_sk_…&quot;</div>
             <div className="text-[#6B625A] mt-3">{"{"}</div>
             <div className="text-[#FBCBB8] pl-3">&quot;halo&quot;: {"{"} &quot;value&quot;: 75, &quot;band&quot;: &quot;Stark&quot; {"}"},</div>
             <div className="text-[#FBCBB8] pl-3">&quot;geo&quot;: {"{"} &quot;value&quot;: 72 {"}"},</div>
@@ -241,8 +240,8 @@ export default async function Home() {
       </section>
 
       {/* ─── Funktionen ─── */}
-      <section id="funktionen" className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+      <section id="funktionen" className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+        <div className="max-w-xl mb-11">
           <Eyebrow>Funktionen</Eyebrow>
           <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
             Alles für deine KI-Reputation.
@@ -259,7 +258,7 @@ export default async function Home() {
             { i: "✨", t: "KI-Empfehlungen", d: "Konkrete Schritte von Claude." },
             { i: "🔗", t: "Public API", d: "REST-Zugang für Integrationen." },
           ].map(f => (
-            <div key={f.t} className="rounded-3xl border border-[#FDE7E0] bg-[#FEFCFA] p-6 hover:border-[#FBCBB8] transition-colors">
+            <div key={f.t} className="rounded-3xl border border-[#E9E1D3] bg-white p-6 hover:border-[#FBCBB8] transition-colors">
               <div className="w-10 h-10 rounded-2xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center mb-4 text-lg">{f.i}</div>
               <div className="font-semibold text-[#0E1916] mb-1">{f.t}</div>
               <p className="text-sm text-[#6B625A] leading-relaxed">{f.d}</p>
@@ -269,32 +268,34 @@ export default async function Home() {
       </section>
 
       {/* ─── Modelle ─── */}
-      <section className="max-w-6xl mx-auto px-6 py-12">
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <Eyebrow>Multi-Modell-Tracking</Eyebrow>
-          <h2 className="text-2xl sm:text-3xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
-            Über mehrere KI-Modelle hinweg.
-          </h2>
-        </div>
-        <div className="flex flex-wrap justify-center gap-3">
-          {[
-            { n: "Claude Sonnet", t: "Alle Tarife" },
-            { n: "GPT-4o", t: "Ab Starter" },
-            { n: "Perplexity", t: "Ab Starter" },
-            { n: "Gemini", t: "Ab Pro" },
-            { n: "Google AI Overview", t: "Ab Pro" },
-          ].map(m => (
-            <div key={m.n} className="rounded-2xl border border-[#FDE7E0] bg-white px-4 py-3 text-center min-w-[140px]">
-              <div className="text-sm font-medium text-[#0E1916]">{m.n}</div>
-              <div className="text-xs text-[#9A9089] mt-0.5">{m.t}</div>
-            </div>
-          ))}
+      <section className="bg-[#FAF8F3] py-16">
+        <div className="max-w-6xl mx-auto px-6">
+          <div className="max-w-xl mb-8">
+            <Eyebrow>Multi-Modell-Tracking</Eyebrow>
+            <h2 className="text-2xl sm:text-3xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
+              Über mehrere KI-Modelle hinweg.
+            </h2>
+          </div>
+          <div className="flex flex-wrap gap-3">
+            {[
+              { n: "Claude Sonnet", t: "Alle Tarife" },
+              { n: "GPT-4o", t: "Ab Starter" },
+              { n: "Perplexity", t: "Ab Starter" },
+              { n: "Gemini", t: "Ab Pro" },
+              { n: "Google AI Overview", t: "Ab Pro" },
+            ].map(m => (
+              <div key={m.n} className="rounded-2xl border border-[#E9E1D3] bg-white px-4 py-3.5 min-w-[150px]">
+                <div className="text-sm font-medium text-[#0E1916]">{m.n}</div>
+                <div className="text-xs text-[#9A9089] mt-0.5">{m.t}</div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
       {/* ─── Preise ─── */}
-      <section id="preise" className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
-        <div className="text-center max-w-2xl mx-auto mb-12">
+      <section id="preise" className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+        <div className="max-w-xl mb-11">
           <Eyebrow>Preise</Eyebrow>
           <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
             Einfach. Transparent. Fair.
@@ -305,62 +306,65 @@ export default async function Home() {
           <PriceCard name="Starter" price="€79" sub="Für aktive Personal Brands" feats={["Tägliche Analysen", "Unbegrenzte manuelle Analysen", "Bis zu 5 Themen", "GPT-4o + Perplexity", "Wettbewerber-Analysen"]} />
           <PriceCard name="Pro" price="€299" sub="Für Vielnutzer & Agenturen" featured feats={["Alle Starter-Funktionen", "Gemini + AI Overview", "Public-API-Zugang", "Unbegrenzte Wettbewerber", "Priorisierter Support"]} />
         </div>
-        <p className="text-center text-sm text-[#6B625A] mt-6">
+        <p className="text-sm text-[#6B625A] mt-6">
           Enterprise mit unbegrenzter API, Sub-Accounts, SSO &amp; Onboarding —{" "}
           <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] font-medium hover:underline">auf Anfrage</a>.
         </p>
       </section>
 
       {/* ─── FAQ ─── */}
-      <section id="faq" className="max-w-3xl mx-auto px-6 py-16">
-        <div className="text-center mb-10">
-          <Eyebrow>FAQ</Eyebrow>
-          <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">Häufige Fragen.</h2>
-        </div>
-        <div className="space-y-3">
-          {[
-            { q: "Was ist Halo?", a: "Halo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
-            { q: "Wie unterscheidet sich Halo von klassischem SEO?", a: "Klassisches SEO misst dein Google-Ranking. Halo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren. Mit dem SEO Score deckt Halo beides ab." },
-            { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
-            { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Free-Account erstellen, 1 Analyse starten, alle Cockpit-Funktionen sehen. Upgrade ist optional." },
-            { q: "Werden meine Daten an die KI-Anbieter verkauft?", a: "Nein. Wir senden nur die generierten Suchfragen an die KI-APIs. Deine Account-Daten bleiben in der EU. Wir verkaufen niemals Nutzerdaten." },
-            { q: "Kann ich Halo in eigene Tools integrieren?", a: "Ja, ab Tarif Pro über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
-          ].map(f => (
-            <details key={f.q} className="group rounded-2xl border border-[#FDE7E0] bg-[#FEFCFA] px-5 py-4">
-              <summary className="flex items-center justify-between cursor-pointer list-none font-medium text-[#0E1916]">
-                {f.q}
-                <span className="text-[#FA5935] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
-              </summary>
-              <p className="text-sm text-[#6B625A] leading-relaxed mt-3">{f.a}</p>
-            </details>
-          ))}
+      <section id="faq" className="bg-[#FAF8F3]">
+        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+          <div className="max-w-xl mb-11">
+            <Eyebrow>FAQ</Eyebrow>
+            <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">Häufige Fragen.</h2>
+          </div>
+          <div className="max-w-3xl space-y-3">
+            {[
+              { q: "Was ist DigitalHalo?", a: "DigitalHalo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
+              { q: "Wie unterscheidet sich DigitalHalo von klassischem SEO?", a: "Klassisches SEO misst dein Google-Ranking. DigitalHalo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren. Mit dem SEO Score deckt DigitalHalo beides ab." },
+              { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
+              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Free-Account erstellen, 1 Analyse starten, alle Cockpit-Funktionen sehen. Upgrade ist optional." },
+              { q: "Werden meine Daten an die KI-Anbieter verkauft?", a: "Nein. Wir senden nur die generierten Suchfragen an die KI-APIs. Deine Account-Daten bleiben in der EU. Wir verkaufen niemals Nutzerdaten." },
+              { q: "Kann ich DigitalHalo in eigene Tools integrieren?", a: "Ja, ab Tarif Pro über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
+            ].map(f => (
+              <details key={f.q} className="group rounded-2xl border border-[#E9E1D3] bg-white px-5 py-4">
+                <summary className="flex items-center justify-between cursor-pointer list-none font-medium text-[#0E1916]">
+                  {f.q}
+                  <span className="text-[#FA5935] group-open:rotate-45 transition-transform text-xl leading-none">+</span>
+                </summary>
+                <p className="text-sm text-[#6B625A] leading-relaxed mt-3">{f.a}</p>
+              </details>
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ─── Final CTA ─── */}
-      <section className="px-4 sm:px-6 py-10">
-        <div className="max-w-5xl mx-auto rounded-[32px] bg-gradient-to-b from-[#FDE7E0] to-[#F4F2FE] border border-[#FBCBB8] px-6 py-16 text-center">
-          <div className="flex justify-center mb-6"><Ring size={48} stroke={6} /></div>
-          <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight text-[#0E1916]">
-            Mehr Reputation. Weniger Rätselraten.
-          </h2>
-          <p className="text-[#6B625A] mt-4 max-w-md mx-auto leading-relaxed">
-            Sieh in 60 Sekunden, wo du in der KI-Suche stehst. Kostenlos, keine Kreditkarte.
-          </p>
-          <Link href="/login" className="inline-block mt-8 text-sm px-8 py-3.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors">
-            Kostenlos starten →
-          </Link>
+      {/* ─── Final CTA (2. vollflaechiger Halo-Gradient, linksbuendig) ─── */}
+      <div className="halo-gradient">
+        <div className="halo-gradient-content">
+          <div className="max-w-6xl mx-auto px-6 py-24 sm:py-28">
+            <h2 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl leading-[1.1] tracking-tight text-white max-w-xl">
+              Mehr Reputation. Weniger Rätselraten.
+            </h2>
+            <p className="text-white/85 mt-5 max-w-md leading-relaxed">
+              Sieh in 60 Sekunden, wo du in der KI-Suche stehst. Kostenlos, keine Kreditkarte.
+            </p>
+            <Link href="/login" className="inline-block mt-9 text-sm px-8 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
+              Kostenlos starten →
+            </Link>
+          </div>
         </div>
-      </section>
+      </div>
 
       {/* ─── Footer ─── */}
-      <footer className="border-t border-[#FDE7E0] mt-10">
-        <div className="max-w-6xl mx-auto px-6 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
+      <footer className="bg-[#0E1916] text-[#EAE2D5] pt-16">
+        <div className="max-w-6xl mx-auto px-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 text-sm">
           <div>
-            <div className="mb-3">
-              <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
+            <div className="mb-3.5">
+              <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-5 w-auto" />
             </div>
-            <p className="text-[#9A9089] leading-relaxed text-[13px]">
+            <p className="text-[#9DAEA9] leading-relaxed text-[13px] max-w-[220px]">
               KI-Reputations-Monitor für Personal Brands. Gehostet in der EU.
             </p>
           </div>
@@ -368,8 +372,8 @@ export default async function Home() {
           <FooterCol title="Unternehmen" links={[["Kontakt", "/kontakt"]]} />
           <FooterCol title="Rechtliches" links={[["Impressum", "/legal/impressum"], ["Datenschutz", "/legal/datenschutz"], ["AGB", "/legal/agb"]]} />
         </div>
-        <div className="border-t border-[#FDE7E0] py-5 text-center text-xs text-[#9A9089]">
-          © 2026 Halo · Operated by Halo UG (haftungsbeschränkt) i. G.
+        <div className="border-t border-white/10 py-5 text-center text-xs text-[#6D8078]">
+          © 2026 DigitalHalo · Operated by DigitalHalo UG (haftungsbeschränkt) i. G.
         </div>
       </footer>
     </div>
@@ -378,30 +382,11 @@ export default async function Home() {
 
 /* ─────────────── Helper-Komponenten ─────────────── */
 
-function Ring({ size = 28, stroke = 4 }: { size?: number; stroke?: number }) {
-  return (
-    <span
-      className="inline-block rounded-full flex-shrink-0"
-      style={{ width: size, height: size, border: `${stroke}px solid #FA5935`, boxShadow: "0 0 0 3px #FDE7E0" }}
-      aria-hidden
-    />
-  )
-}
-
 function Eyebrow({ children, dark = false }: { children: React.ReactNode; dark?: boolean }) {
   return (
     <span className={`text-xs font-semibold uppercase tracking-wider ${dark ? "text-[#F7B49B]" : "text-[#FA5935]"}`}>
       {children}
     </span>
-  )
-}
-
-function DoodleArrow() {
-  return (
-    <svg width="40" height="24" viewBox="0 0 40 24" fill="none" aria-hidden>
-      <path d="M2 12c8-6 18 6 26 0" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeDasharray="1 5" />
-      <path d="M30 6l8 6-8 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
   )
 }
 
@@ -445,10 +430,10 @@ function HeroCockpit() {
       </div>
       <div className="grid grid-cols-4 gap-2.5 mt-3">
         {[
-          { l: "GEO", v: 72, tint: "#E6F1FB", tx: "#0C447C" },
-          { l: "SEO", v: 64, tint: "#FBF0DE", tx: "#5C3A06" },
+          { l: "GEO", v: 72, tint: "#FDE7E0", tx: "#7A2A12" },
+          { l: "SEO", v: 64, tint: "#F6ECD9", tx: "#6B4A1E" },
           { l: "T. L.", v: 41, tint: "#E9F0F0", tx: "#1C2A2A" },
-          { l: "Aut.", v: 63, tint: "#E1F5EE", tx: "#04342C" },
+          { l: "Aut.", v: 63, tint: "#E7E3DC", tx: "#3A4442" },
         ].map(d => (
           <div key={d.l} className="rounded-xl p-2.5" style={{ background: d.tint }}>
             <div className="text-[11px]" style={{ color: d.tx }}>{d.l}</div>
@@ -460,17 +445,17 @@ function HeroCockpit() {
   )
 }
 
-function DimCard({ tint, label, text, bar, track, name, val, desc }: {
-  tint: string; label: string; text: string; bar: string; track: string; name: string; val: number; desc: string
+function DimCard({ tint, text, track, bar, name, val, desc }: {
+  tint: string; text: string; track: string; bar: string; name: string; val: number; desc: string
 }) {
   return (
     <div className="rounded-3xl p-6" style={{ background: tint }}>
-      <div className="text-sm font-medium" style={{ color: label }}>{name}</div>
+      <div className="text-sm font-medium" style={{ color: text }}>{name}</div>
       <div className="text-3xl font-bold mt-1 tabular-nums" style={{ color: text }}>{val}</div>
       <div className="h-1.5 rounded-full mt-3" style={{ background: track }}>
         <div className="h-1.5 rounded-full" style={{ width: `${val}%`, background: bar }} />
       </div>
-      <p className="text-xs mt-3 leading-relaxed" style={{ color: label }}>{desc}</p>
+      <p className="text-xs mt-3 leading-relaxed" style={{ color: text }}>{desc}</p>
     </div>
   )
 }
@@ -479,7 +464,7 @@ function PriceCard({ name, price, sub, feats, featured = false }: {
   name: string; price: string; sub: string; feats: string[]; featured?: boolean
 }) {
   return (
-    <div className={`rounded-3xl p-7 ${featured ? "border-2 border-[#FA5935] bg-[#F4F2FE] relative" : "border border-[#FDE7E0] bg-white"}`}>
+    <div className={`rounded-3xl p-7 relative ${featured ? "border-2 border-[#FA5935] bg-gradient-to-br from-white to-[#FDE7E0]" : "border border-[#E9E1D3] bg-white"}`}>
       {featured && (
         <span className="absolute -top-3 left-7 text-[11px] font-semibold bg-[#FA5935] text-white rounded-full px-3 py-1">Empfohlen</span>
       )}
@@ -491,10 +476,10 @@ function PriceCard({ name, price, sub, feats, featured = false }: {
       </div>
       <ul className="space-y-2.5 mb-6">
         {feats.map(f => (
-          <li key={f} className="flex gap-2.5 text-sm text-[#475569]"><span className="text-[#1D9E75]">✓</span>{f}</li>
+          <li key={f} className="flex gap-2.5 text-sm text-[#3D3A35]"><span className="text-[#6D8C8D] font-bold">✓</span>{f}</li>
         ))}
       </ul>
-      <Link href="/login" className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#F4F2FE]"}`}>
+      <Link href="/login" className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#FDE7E0]"}`}>
         {name === "Free" ? "Kostenlos starten" : `${name} wählen`}
       </Link>
     </div>
@@ -504,11 +489,11 @@ function PriceCard({ name, price, sub, feats, featured = false }: {
 function FooterCol({ title, links }: { title: string; links: [string, string][] }) {
   return (
     <div>
-      <div className="font-medium text-[#0E1916] mb-3">{title}</div>
-      <ul className="space-y-2">
+      <div className="font-semibold text-white mb-3.5 text-[13.5px]">{title}</div>
+      <ul className="space-y-2.5">
         {links.map(([label, href]) => (
           <li key={label}>
-            <a href={href} className="text-[#9A9089] hover:text-[#C8431F] transition-colors text-[13px]">{label}</a>
+            <a href={href} className="text-[#9DAEA9] hover:text-white transition-colors text-[13px]">{label}</a>
           </li>
         ))}
       </ul>
