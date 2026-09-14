@@ -55,28 +55,23 @@ export default async function Home() {
       <section className="px-4 sm:px-6 pt-10 pb-6">
         <div className="max-w-6xl mx-auto rounded-[32px] halo-gradient px-6 sm:px-10 pt-14 pb-12 text-center">
         <div className="halo-gradient-content">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-sm border border-white/60 text-[#C8431F] text-xs font-medium mb-7">
-            <span className="text-[#EF9F27]">★★★★★</span>
-            <span className="text-[#6B625A]">1.200+ Personal Brands vertrauen Halo</span>
-          </div>
-
-          <h1 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl lg:text-[56px] leading-[1.08] tracking-tight text-[#0E1916] max-w-3xl mx-auto text-wrap-balance">
-            Endlich siehst du, wie<br className="hidden sm:inline" /> <span className="italic text-[#C8431F]">KI-Systeme dich sehen.</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl lg:text-[56px] leading-[1.08] tracking-tight text-white max-w-3xl mx-auto text-wrap-balance">
+            Endlich siehst du, wie KI-Systeme dich sehen.
           </h1>
-          <p className="text-base sm:text-lg text-[#2a3532] leading-relaxed mt-6 max-w-xl mx-auto">
-            Halo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
+          <p className="text-base sm:text-lg text-white/85 leading-relaxed mt-6 max-w-xl mx-auto">
+            DigitalHalo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
             — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
-            <Link href="/login" className="w-full sm:w-auto text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors shadow-sm">
+            <Link href="/login" className="w-full sm:w-auto text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
               Kostenlos starten →
             </Link>
-            <a href="#ablauf" className="w-full sm:w-auto text-sm px-6 py-3.5 rounded-full border border-[#0E1916]/15 text-[#0E1916] font-medium hover:border-[#0E1916]/35 transition-colors">
-              So funktioniert&apos;s
+            <a href="#ablauf" className="w-full sm:w-auto text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors">
+              So funktioniert&apos;s →
             </a>
           </div>
-          <p className="text-xs text-[#5b6b67] mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
+          <p className="text-xs text-white/70 mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
 
           {/* Hero-Visual: Halo-Ring-Cockpit */}
           <div className="mt-12 max-w-3xl mx-auto">
