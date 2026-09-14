@@ -48,17 +48,6 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
 
         {/* Main */}
         <main className="flex-1 min-w-0 space-y-6">
-          {/* Draft warning */}
-          <div className="rounded-xl bg-[#F6ECD9] border border-[#E7CFA3] px-4 py-3 text-xs text-[#0E1916] leading-relaxed">
-            <p className="font-semibold mb-1">⚠ Vorlage — anwaltlich prüfen lassen</p>
-            <p className="text-[#6B625A]">
-              Dieser Text ist eine technische Vorlage, generiert auf Basis typischer SaaS-Geschäfts­modelle.
-              <strong className="text-[#0E1916]"> Vor Veröffentlichung bitte juristisch prüfen lassen </strong>
-              und insbesondere Adresse, Vertretungsberechtigte, USt-IdNr., Handelsregister-Daten,
-              tatsächliche Datenverarbeitungs-Vorgänge sowie konkrete Tarife einsetzen oder anpassen.
-            </p>
-          </div>
-
           {children}
 
           <footer className="pt-6 border-t border-[#E9E1D3] text-xs text-[#9A9089]">
