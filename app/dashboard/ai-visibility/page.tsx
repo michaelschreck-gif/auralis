@@ -13,9 +13,18 @@ type ModelInfo = {
   providerId: string
   name: string
   description: string
+  /** Brandkit-Ton nach Freischalt-Tarif — dieselbe Logik wie im Modelle-Abschnitt der Landingpage. */
   color: string
   /** Tarif ab dem dieses Modell freigeschaltet ist. */
   unlocksOn: "free" | "starter" | "pro"
+}
+
+// Brandkit-Farbe nach Tarif (statt einer bunten Rainbow-Palette pro Anbieter) —
+// dieselbe Logik wie im Multi-Modell-Tracking-Abschnitt der Landingpage.
+const TIER_COLOR: Record<ModelInfo["unlocksOn"], string> = {
+  free: "#FA5935",
+  starter: "#6D8C8D",
+  pro: "#3A4442",
 }
 
 const MODELS: ModelInfo[] = [
@@ -23,28 +32,28 @@ const MODELS: ModelInfo[] = [
     providerId: "claude-sonnet",
     name: "Claude Sonnet",
     description: "Anthropic's Reasoning-Modell — treibt deine Halo-Analysen an.",
-    color: "#FA5935",
+    color: TIER_COLOR.free,
     unlocksOn: "free",
   },
   {
     providerId: "gpt-4o",
     name: "GPT-4o",
     description: "OpenAIs Flaggschiff-Modell, weit verbreitet in Enterprise-Suchen.",
-    color: "#10b981",
+    color: TIER_COLOR.starter,
     unlocksOn: "starter",
   },
   {
     providerId: "perplexity-sonar",
     name: "Perplexity",
     description: "Web-vernetzte KI in Echtzeit für Brand Discovery.",
-    color: "#8b5cf6",
+    color: TIER_COLOR.starter,
     unlocksOn: "starter",
   },
   {
     providerId: "gemini-flash",
     name: "Gemini",
     description: "Googles multimodales Modell, treibt AI Overviews in der Suche.",
-    color: "#ef4444",
+    color: TIER_COLOR.starter,
     unlocksOn: "starter",
   },
 ]
@@ -75,10 +84,10 @@ function ModelCard({
   const active = state.kind !== "locked"
 
   return (
-    <div className={`rounded-xl border p-6 transition-all ${
+    <div className={`rounded-3xl border p-6 transition-colors ${
       active
-        ? "border-gray-100 bg-white shadow-sm"
-        : "border-gray-100 bg-[#FAF8F3] opacity-70"
+        ? "border-[#E9E1D3] bg-white"
+        : "border-[#E9E1D3] bg-[#FAF8F3] opacity-70"
     }`}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -90,44 +99,44 @@ function ModelCard({
           </div>
           <div>
             <p className="text-sm text-[#0E1916] font-medium">{model.name}</p>
-            <p className="text-xs text-[#64748b] mt-0.5">{model.description}</p>
+            <p className="text-xs text-[#6B625A] mt-0.5">{model.description}</p>
           </div>
         </div>
         {state.kind === "score" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-green-50 text-green-600 border border-green-100 font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[#E9F0F0] text-[#1C2A2A] border border-[#C7D9D9] font-medium">
             Aktiv
           </span>
         )}
         {state.kind === "error" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#64748b]">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[#F3EFE6] text-[#6B625A]">
             Zurzeit nicht verfügbar
           </span>
         )}
         {state.kind === "providerMissing" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#64748b]">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[#F3EFE6] text-[#6B625A]">
             Nicht aktiv
           </span>
         )}
         {state.kind === "noReport" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-[#FDE7E0] text-[#FA5935] border border-[#FBCBB8] font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[#FDE7E0] text-[#C8431F] border border-[#FBCBB8] font-medium">
             Bereit
           </span>
         )}
         {state.kind === "locked" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-gray-100 text-[#94a3b8]">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[#F3EFE6] text-[#9A9089]">
             🔒 Starter
           </span>
         )}
       </div>
 
-      <div className="space-y-3 mt-5 pt-5 border-t border-gray-100">
+      <div className="space-y-3 mt-5 pt-5 border-t border-[#F0EAE0]">
         {state.kind === "score" && (
           <>
             <div className="flex items-center justify-between text-xs">
-              <span className="text-[#64748b]">Reputations-Score</span>
+              <span className="text-[#6B625A]">Reputations-Score</span>
               <span className="font-semibold" style={{ color: model.color }}>{state.breakdown.overallScore} / 100</span>
             </div>
-            <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1.5 bg-[#F3EFE6] rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{ width: `${state.breakdown.overallScore}%`, background: model.color }}
@@ -157,20 +166,20 @@ function ModelCard({
         )}
 
         {state.kind === "error" && (
-          <p className="text-xs text-[#64748b]">
+          <p className="text-xs text-[#6B625A]">
             Dieses Modell konnte bei der letzten Analyse nicht abgefragt werden und wird beim nächsten Lauf automatisch erneut versucht.
           </p>
         )}
 
         {state.kind === "providerMissing" && (
-          <p className="text-xs text-[#64748b]">
+          <p className="text-xs text-[#6B625A]">
             Dieser Provider ist auf dem Server noch nicht konfiguriert. Sobald der API-Key gesetzt ist,
             wird er ab der nächsten Analyse automatisch mitgemessen.
           </p>
         )}
 
         {state.kind === "noReport" && (
-          <p className="text-xs text-[#94a3b8]">
+          <p className="text-xs text-[#9A9089]">
             Starte eine Analyse auf der{" "}
             <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline font-medium">
               Analyse-Seite
@@ -180,7 +189,7 @@ function ModelCard({
         )}
 
         {state.kind === "locked" && (
-          <p className="text-xs text-[#94a3b8]">
+          <p className="text-xs text-[#9A9089]">
             Verfügbar in den Tarifen Starter, Pro &amp; Enterprise.{" "}
             <a href="/#preise" className="text-[#FA5935] hover:underline font-medium">
               Upgrade →
@@ -194,8 +203,8 @@ function ModelCard({
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md bg-[#FAF8F3] border border-gray-100 px-2 py-1.5">
-      <p className="text-[10px] text-[#94a3b8] uppercase tracking-wider font-semibold">{label}</p>
+    <div className="rounded-lg bg-[#FAF8F3] border border-[#E9E1D3] px-2.5 py-1.5">
+      <p className="text-[10px] text-[#9A9089] uppercase tracking-wider font-semibold">{label}</p>
       <p className="text-xs text-[#0E1916] font-medium mt-0.5">{value}</p>
     </div>
   )
@@ -274,7 +283,7 @@ export default async function AiVisibilityPage() {
         const active = isUnlocked(m.unlocksOn, plan)
         return (
           <div key={m.providerId}
-            className="px-4 py-3 border-b border-gray-100 flex items-center gap-3 hover:bg-gray-50 transition-colors">
+            className="px-4 py-3 border-b border-[#F0EAE0] flex items-center gap-3 hover:bg-[#FAF8F3] transition-colors">
             <div
               className="w-6 h-6 rounded-md flex items-center justify-center text-xs font-semibold"
               style={{ background: `${m.color}18`, color: m.color }}
@@ -285,8 +294,8 @@ export default async function AiVisibilityPage() {
               <p className="text-xs text-[#0E1916] truncate font-medium">{m.name}</p>
             </div>
             {active
-              ? <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"/>
-              : <span className="text-xs text-[#94a3b8]">🔒</span>
+              ? <span className="w-1.5 h-1.5 rounded-full bg-[#FA5935] flex-shrink-0"/>
+              : <span className="text-xs text-[#9A9089]">🔒</span>
             }
           </div>
         )
@@ -303,11 +312,14 @@ export default async function AiVisibilityPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0E1916]">KI-Reputation pro Modell</h1>
-          <p className="text-[#64748b] text-sm mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">KI-Reputation</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Wie jedes Modell dich sieht.
+          </h1>
+          <p className="text-[#6B625A] text-sm mt-2.5 max-w-xl leading-relaxed">
             Wie jedes KI-System deine Personal Brand wahrnimmt.{" "}
             {plan === "free" && (
-              <span className="text-[#94a3b8]">
+              <span className="text-[#9A9089]">
                 Free-Tarif misst nur Claude — <a href="/#preise" className="text-[#FA5935] hover:underline">Starter wechselt auf Multi-Modell</a>.
               </span>
             )}
@@ -329,26 +341,26 @@ export default async function AiVisibilityPage() {
           if (ok.length < 1) return null
           const mean = Math.round(ok.reduce((a, b) => a + b.overallScore, 0) / ok.length)
           return (
-            <div className="mt-8 rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-5">
-              <p className="text-xs text-[#FA5935] uppercase tracking-wider mb-2 font-medium">
+            <div className="mt-6 rounded-3xl border border-[#FBCBB8] bg-gradient-to-br from-[#FDE7E0] to-[#F3EFE6] p-6">
+              <p className="text-xs text-[#C8431F] uppercase tracking-wider mb-2.5 font-semibold">
                 So entsteht dein Halo Score aus den Modellen
               </p>
-              <p className="text-sm text-[#0E1916] leading-relaxed mb-3">
+              <p className="text-sm text-[#0E1916] leading-relaxed mb-3.5">
                 Dein Halo Score ist der <span className="font-medium">Durchschnitt</span> der
                 Reputations-Scores aller aktiven Modelle der letzten Analyse.
               </p>
               <div className="flex flex-wrap items-center gap-2 text-sm">
                 {ok.map((b, i) => (
                   <span key={b.provider} className="inline-flex items-center gap-1.5">
-                    {i > 0 && <span className="text-[#94a3b8]">+</span>}
-                    <span className="px-2 py-1 rounded-md bg-white border border-gray-100 tabular-nums">
-                      <span className="text-[#64748b]">{b.label}:</span>{" "}
+                    {i > 0 && <span className="text-[#9A9089]">+</span>}
+                    <span className="px-2 py-1 rounded-md bg-white border border-[#E9E1D3] tabular-nums">
+                      <span className="text-[#6B625A]">{b.label}:</span>{" "}
                       <span className="font-semibold text-[#0E1916]">{b.overallScore}</span>
                     </span>
                   </span>
                 ))}
-                <span className="text-[#94a3b8]">÷ {ok.length}</span>
-                <span className="text-[#94a3b8]">=</span>
+                <span className="text-[#9A9089]">÷ {ok.length}</span>
+                <span className="text-[#9A9089]">=</span>
                 <span className="px-2.5 py-1 rounded-md bg-[#FA5935] text-white font-semibold tabular-nums">
                   {mean}
                 </span>
@@ -357,9 +369,9 @@ export default async function AiVisibilityPage() {
           )
         })()}
 
-        <div className="mt-4 rounded-xl border border-gray-100 bg-[#FAF8F3] p-5">
-          <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2 font-medium">Was das bedeutet</p>
-          <p className="text-sm text-[#64748b] leading-relaxed">
+        <div className="mt-4 rounded-3xl border border-[#E9E1D3] bg-[#FAF8F3] p-6">
+          <p className="text-xs text-[#9A9089] uppercase tracking-wider mb-2.5 font-semibold">Was das bedeutet</p>
+          <p className="text-sm text-[#6B625A] leading-relaxed">
             KI-Reputation misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.
             Ein höherer Score bedeutet, dass KI-Assistenten dich mit höherer Wahrscheinlichkeit empfehlen, wenn jemand nach deinen Themen fragt.
             Multi-Modell-Tracking ist ab Tarif Starter freigeschaltet — dein Halo-Score ist dann der Durchschnitt über alle aktiven Modelle.

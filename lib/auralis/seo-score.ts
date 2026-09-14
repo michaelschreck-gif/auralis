@@ -53,10 +53,12 @@ export const SEO_BANDS: Band[] = [
   { label: "Top-Ranking", min: 76, max: 100 },
 ]
 
-const COLOR_AMBER = "#E08A1E"
-const COLOR_BLUE  = "#378ADD"
-const COLOR_TEAL  = "#1D9E75"
-const COLOR_CORAL = "#D85A30"
+// Brandkit-Palette (dieselben Töne wie DimCard auf der Landingpage) statt
+// der früheren Blau/Grün-Mischung, die nicht zum Brandkit passte.
+const COLOR_AMBER = "#C98A3E"
+const COLOR_DARK  = "#3A4442"
+const COLOR_TEAL  = "#6D8C8D"
+const COLOR_CORAL = "#FA5935"
 
 export const SEO_FACTOR_META: Record<
   SeoFactorKey,
@@ -71,7 +73,7 @@ export const SEO_FACTOR_META: Record<
   },
   serpPosition: {
     label: "Ø-Position",
-    color: COLOR_BLUE,
+    color: COLOR_DARK,
     weight: 0.25,
     description:
       "Wie weit oben du in den Google-Ergebnissen stehst. Platz 1 = 100, jeder weitere Rang zieht Punkte ab.",
@@ -92,7 +94,7 @@ export const SEO_FACTOR_META: Record<
   },
   gscPosition: {
     label: "Eigene Domain – Position",
-    color: COLOR_BLUE,
+    color: COLOR_DARK,
     weight: 0.12,
     description:
       "Durchschnittliche Google-Position deiner eigenen Website für ihre Suchbegriffe (Search Console).",

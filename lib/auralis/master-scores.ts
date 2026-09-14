@@ -94,11 +94,13 @@ function pickBand(bands: Band[], value: number): { band: Band; index: number } {
 
 export type RawFactorKey = "presence" | "position" | "context" | "topic" | "mention"
 
-const COLOR_BLUE   = "#378ADD"
-const COLOR_TEAL   = "#1D9E75"
-const COLOR_AMBER  = "#EF9F27"
-const COLOR_CORAL  = "#D85A30"
-const COLOR_PURPLE = "#FA5935"
+// Brandkit-Palette (dieselben Töne wie DimCard auf der Landingpage) statt
+// der früheren Blau/Grün/Lila-Mischung, die nicht zum Brandkit passte.
+const COLOR_CORAL      = "#FA5935"
+const COLOR_TEAL       = "#6D8C8D"
+const COLOR_AMBER      = "#C98A3E"
+const COLOR_DARK       = "#3A4442"
+const COLOR_CORAL_DEEP = "#C8431F"
 
 export const RAW_FACTOR_META: Record<
   RawFactorKey,
@@ -106,7 +108,7 @@ export const RAW_FACTOR_META: Record<
 > = {
   presence: {
     label: "Erwähnungsrate",
-    color: COLOR_BLUE,
+    color: COLOR_CORAL,
     description:
       "Anteil der KI-Abfragen (gewichtet), in denen du überhaupt namentlich genannt wirst. Pro Analyse laufen 7 Abfragen mit unterschiedlicher Gewichtung.",
   },
@@ -124,13 +126,13 @@ export const RAW_FACTOR_META: Record<
   },
   topic: {
     label: "Themenabdeckung",
-    color: COLOR_CORAL,
+    color: COLOR_DARK,
     description:
       "Wie gut die Themen, mit denen die KI dich verknüpft, zu deinen überwachten Zielthemen passen.",
   },
   mention: {
     label: "Erwähnungs-Häufigkeit",
-    color: COLOR_PURPLE,
+    color: COLOR_CORAL_DEEP,
     description:
       "Prozentsatz der Abfragen, in denen du genannt wirst (ungewichtet) — ein Maß für deine schiere Präsenz.",
   },

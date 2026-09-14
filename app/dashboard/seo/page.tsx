@@ -14,9 +14,10 @@ import SeoRunButton from "@/components/SeoRunButton"
 
 export const dynamic = "force-dynamic"
 
-const BAND_FILL = ["#FCEBEB", "#FBF0DE", "#E6F1FB", "#E1F5EE"]
-const BAND_BORDER = ["#F09595", "#F6D79B", "#B5D4F4", "#9FE1CB"]
-const BAND_TEXT = ["#791F1F", "#8A5A0E", "#0C447C", "#0F6E56"]
+// Vier Stufen, Brandkit-konform: neutral → aufbauend → etabliert → Marke (Koralle).
+const BAND_FILL   = ["#F1EEE7", "#F6ECD9", "#E9F0F0", "#FDE7E0"]
+const BAND_BORDER = ["#D8D0C0", "#E7CFA3", "#C7D9D9", "#FBCBB8"]
+const BAND_TEXT   = ["#5A5248", "#6B4A1E", "#1C2A2A", "#7A2A12"]
 
 export default async function SeoScorePage() {
   let supabase
@@ -59,16 +60,16 @@ export default async function SeoScorePage() {
 
   return (
     <DashboardShell userName={userName} plan={plan}>
-      <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
-        <nav className="text-sm text-[#64748b]">
+      <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-5">
+        <nav className="text-sm text-[#9A9089]">
           <a href="/dashboard" className="hover:text-[#0E1916] transition-colors">Cockpit</a>
-          <span className="mx-1.5 text-[#cbd5e1]">›</span>
+          <span className="mx-1.5 text-[#D8CFC4]">›</span>
           <span className="text-[#0E1916] font-medium">{SEO_DEFINITION.title}</span>
         </nav>
 
         {/* Hero — Radial-Ring in SEO-Farbe */}
         <div
-          className="rounded-2xl p-5 md:p-6 flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-7"
+          className="rounded-3xl p-6 md:p-7 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-8"
           style={{ background: t.bg }}
         >
           <svg
@@ -82,19 +83,17 @@ export default async function SeoScorePage() {
               strokeDasharray={`${((score?.value ?? 0) / 100) * 276.5} 276.5`}
               transform="rotate(-90 56 56)"
             />
-            <text x="56" y="54" textAnchor="middle" fill={t.text} fontSize="30" fontWeight="600" fontFamily="sans-serif">{score ? score.value : "—"}</text>
+            <text x="56" y="54" textAnchor="middle" fill={t.text} fontSize="30" fontWeight="700" fontFamily="sans-serif">{score ? score.value : "—"}</text>
             <text x="56" y="72" textAnchor="middle" fill={t.label} fontSize="11" fontFamily="sans-serif">/ 100</text>
           </svg>
           <div className="flex-1 min-w-0">
-            <p className="text-[11px] uppercase tracking-wider font-medium" style={{ color: t.label }}>
+            <p className="text-xs uppercase tracking-wider font-semibold" style={{ color: t.label }}>
               Dein {SEO_DEFINITION.title}
             </p>
-            <div className="mt-1">
-              <span className="text-2xl font-semibold" style={{ color: t.text }}>
-                {score ? score.band.label : "Noch nicht aktiv"}
-              </span>
-            </div>
-            <p className="text-sm mt-2 leading-relaxed max-w-2xl" style={{ color: t.text }}>
+            <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight mt-1.5" style={{ color: t.text }}>
+              {score ? score.band.label : "Noch nicht aktiv"}.
+            </h1>
+            <p className="text-sm mt-2.5 leading-relaxed max-w-2xl" style={{ color: t.text }}>
               {SEO_DEFINITION.what}
             </p>
             <div className="mt-4">
@@ -105,23 +104,23 @@ export default async function SeoScorePage() {
 
         {/* Setup-Hinweis wenn noch keine Daten */}
         {!score && (
-          <section className="rounded-2xl border p-5 md:p-6" style={{ borderColor: t.track, background: "#fff" }}>
+          <section className="rounded-3xl border border-[#E9E1D3] bg-white p-6 md:p-7">
             <p className="text-base font-medium text-[#0E1916]">So wird dein SEO Score aktiv</p>
-            <p className="text-sm text-[#64748b] mt-1.5 leading-relaxed max-w-2xl">
+            <p className="text-sm text-[#6B625A] mt-1.5 leading-relaxed max-w-2xl">
               Der SEO Score nutzt dieselben Themen wie deine KI-Analysen, misst aber die klassische
               Google-Suche. Dafür werden zwei Datenquellen angebunden:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-              <div className="rounded-xl border border-gray-100 p-4">
+              <div className="rounded-2xl border border-[#E9E1D3] p-4">
                 <p className="text-sm font-semibold text-[#0E1916]">Google-Ranking (off-site)</p>
-                <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
+                <p className="text-xs text-[#6B625A] mt-1 leading-relaxed">
                   Taucht du bei Google für deine Themen in den Top-Treffern auf? Inklusive Knowledge
                   Panel und AI Overview. Funktioniert für jede Person — sobald die SERP-API verbunden ist.
                 </p>
               </div>
-              <div className="rounded-xl border border-gray-100 p-4">
+              <div className="rounded-2xl border border-[#E9E1D3] p-4">
                 <p className="text-sm font-semibold text-[#0E1916]">Eigene Website (on-site)</p>
-                <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
+                <p className="text-xs text-[#6B625A] mt-1 leading-relaxed">
                   Echte Positionen, Klicks und Impressionen deiner eigenen Domain über die Google
                   Search Console.
                   {websiteUrl
@@ -130,7 +129,7 @@ export default async function SeoScorePage() {
                 </p>
               </div>
             </div>
-            <p className="text-xs text-[#94a3b8] mt-4">
+            <p className="text-xs text-[#9A9089] mt-4">
               {configured
                 ? "Die Google-Suche (SERP) ist verbunden. Starte oben eine SEO-Analyse, um deine echten Werte zu sehen."
                 : "Status: Gerüst steht. Sobald die Datenquellen serverseitig konfiguriert sind, erscheinen hier echte Werte — die Themen und die Anzeige sind bereits vorbereitet."}
@@ -139,8 +138,8 @@ export default async function SeoScorePage() {
         )}
 
         {/* Score-Stufen */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
+        <section className="bg-white rounded-3xl border border-[#E9E1D3] p-6 md:p-7">
+          <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-4">
             Score-Stufen
           </p>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -149,7 +148,7 @@ export default async function SeoScorePage() {
               return (
                 <div
                   key={b.label}
-                  className="rounded-xl p-4 border-2 transition-all"
+                  className="rounded-2xl p-4 border-2 transition-colors"
                   style={{
                     background: BAND_FILL[i],
                     borderColor: active ? BAND_BORDER[i] : "transparent",
@@ -171,8 +170,8 @@ export default async function SeoScorePage() {
         </section>
 
         {/* Gewichtung der Signale */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-4">
+        <section className="bg-white rounded-3xl border border-[#E9E1D3] p-6 md:p-7">
+          <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-4">
             Gewichtung der Signale
           </p>
           <div className="space-y-2.5">
@@ -180,21 +179,21 @@ export default async function SeoScorePage() {
               <div key={w.label} className="flex items-center gap-3">
                 <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: w.color }} />
                 <span className="flex-1 text-sm text-[#0E1916]">{w.label}</span>
-                <div className="w-32 h-1.5 rounded-full bg-gray-100 overflow-hidden hidden sm:block">
+                <div className="w-32 h-1.5 rounded-full bg-[#F3EFE6] overflow-hidden hidden sm:block">
                   <div className="h-full rounded-full" style={{ width: `${w.value}%`, background: w.color }} />
                 </div>
-                <span className="text-sm text-[#64748b] tabular-nums w-10 text-right">{w.value}%</span>
+                <span className="text-sm text-[#6B625A] tabular-nums w-10 text-right">{w.value}%</span>
               </div>
             ))}
           </div>
         </section>
 
         {/* Tipps */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 md:p-6">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-3">
+        <section className="bg-white rounded-3xl border border-[#E9E1D3] p-6 md:p-7">
+          <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-3">
             So verbesserst du diesen Score
           </p>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#F0EAE0]">
             {SEO_DEFINITION.tips.map((tip, i) => (
               <div key={i} className="flex items-start gap-3 py-2.5 text-sm leading-snug">
                 <div
