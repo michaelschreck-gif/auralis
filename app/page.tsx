@@ -28,58 +28,57 @@ export default async function Home() {
 
   return (
     <div id="top" className="min-h-screen bg-white text-[#0E1916]">
-      {/* ─── Nav ─── */}
-      <nav className="bg-white/90 backdrop-blur border-b border-[#FDE7E0] sticky top-0 z-50">
-        <div className="max-w-6xl mx-auto px-6 h-[64px] flex items-center justify-between">
-          <a href="#top" className="flex items-center gap-2.5">
-            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
-          </a>
-          <div className="hidden md:flex items-center gap-7 text-sm">
-            <a href="#funktionen" className="text-[#6B625A] hover:text-[#0E1916] transition-colors">Funktionen</a>
-            <a href="#ablauf" className="text-[#6B625A] hover:text-[#0E1916] transition-colors">So funktioniert&apos;s</a>
-            <a href="#preise" className="text-[#6B625A] hover:text-[#0E1916] transition-colors">Preise</a>
-            <a href="#faq" className="text-[#6B625A] hover:text-[#0E1916] transition-colors">FAQ</a>
-          </div>
-          <div className="flex items-center gap-2.5">
-            <Link href="/login" className="text-sm px-3.5 py-2 rounded-full text-[#C8431F] hover:bg-[#F4F2FE] transition-colors font-medium">
-              Anmelden
-            </Link>
-            <Link href="/login" className="text-sm px-4 py-2 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors font-semibold">
-              Kostenlos starten
-            </Link>
-          </div>
-        </div>
-      </nav>
-
-      {/* ─── Hero ─── */}
-      <section className="px-4 sm:px-6 pt-10 pb-6">
-        <div className="max-w-6xl mx-auto rounded-[32px] halo-gradient px-6 sm:px-10 pt-14 pb-12 text-center">
+      {/* ─── Hero (vollflaechig, Nav auf dem Gradient) ─── */}
+      <div className="halo-gradient">
         <div className="halo-gradient-content">
-          <h1 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl lg:text-[56px] leading-[1.08] tracking-tight text-white max-w-3xl mx-auto text-wrap-balance">
-            Endlich siehst du, wie KI-Systeme dich sehen.
-          </h1>
-          <p className="text-base sm:text-lg text-white/85 leading-relaxed mt-6 max-w-xl mx-auto">
-            DigitalHalo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
-            — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.
-          </p>
+          <nav>
+            <div className="max-w-6xl mx-auto px-6 h-[64px] flex items-center justify-between">
+              <a href="#top" className="flex items-center gap-2.5">
+                <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-6 w-auto" />
+              </a>
+              <div className="hidden md:flex items-center gap-7 text-sm">
+                <a href="#funktionen" className="text-white/80 hover:text-white transition-colors">Funktionen</a>
+                <a href="#ablauf" className="text-white/80 hover:text-white transition-colors">So funktioniert&apos;s</a>
+                <a href="#preise" className="text-white/80 hover:text-white transition-colors">Preise</a>
+                <a href="#faq" className="text-white/80 hover:text-white transition-colors">FAQ</a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Link href="/login" className="text-sm px-3.5 py-2 rounded-full text-white hover:bg-white/10 transition-colors font-medium">
+                  Anmelden
+                </Link>
+                <Link href="/login" className="text-sm px-4 py-2 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] transition-colors font-semibold">
+                  Kostenlos starten
+                </Link>
+              </div>
+            </div>
+          </nav>
 
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
-            <Link href="/login" className="w-full sm:w-auto text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
-              Kostenlos starten →
-            </Link>
-            <a href="#ablauf" className="w-full sm:w-auto text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors">
-              So funktioniert&apos;s →
-            </a>
-          </div>
-          <p className="text-xs text-white/70 mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
+          <section className="px-6 pt-10 sm:pt-16 pb-16 sm:pb-24 text-center">
+            <h1 className="font-[family-name:var(--font-display)] font-normal text-4xl sm:text-5xl lg:text-[56px] leading-[1.08] tracking-tight text-white max-w-3xl mx-auto text-wrap-balance">
+              Endlich siehst du, wie KI-Systeme dich sehen.
+            </h1>
+            <p className="text-base sm:text-lg text-white/85 leading-relaxed mt-6 max-w-xl mx-auto">
+              DigitalHalo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
+              — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.
+            </p>
 
-          {/* Hero-Visual: Halo-Ring-Cockpit */}
-          <div className="mt-12 max-w-3xl mx-auto">
-            <HeroCockpit />
-          </div>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 mt-8">
+              <Link href="/login" className="w-full sm:w-auto text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
+                Kostenlos starten →
+              </Link>
+              <a href="#ablauf" className="w-full sm:w-auto text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors">
+                So funktioniert&apos;s →
+              </a>
+            </div>
+            <p className="text-xs text-white/70 mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
+
+            {/* Hero-Visual: Halo-Ring-Cockpit */}
+            <div className="mt-12 max-w-3xl mx-auto">
+              <HeroCockpit />
+            </div>
+          </section>
         </div>
-        </div>
-      </section>
+      </div>
 
       {/* ─── Problem / Lösung ─── */}
       <section className="max-w-6xl mx-auto px-6 py-16 sm:py-24">
