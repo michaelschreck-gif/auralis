@@ -48,7 +48,7 @@ export default async function AskPage() {
               Frag dein Profil
             </span>
           </div>
-          <h1 className="text-2xl font-semibold text-[#0f172a]">
+          <h1 className="text-2xl font-semibold text-[#0E1916]">
             Dein persönlicher KI-Reputations-Coach
           </h1>
           <p className="text-sm text-[#64748b] mt-2">
@@ -56,11 +56,11 @@ export default async function AskPage() {
             Claude antwortet auf Basis deiner echten Halo-Daten.
           </p>
 
-          <div className="mt-8 rounded-2xl border border-[#7F77DD]/20 bg-[#EEEDFE]/40 p-6">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#7F77DD]">
+          <div className="mt-8 rounded-2xl border border-[#FA5935]/20 bg-[#FDE7E0]/40 p-6">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#FA5935]">
               Pro-Feature
             </p>
-            <h2 className="text-lg font-semibold text-[#0f172a] mt-2">
+            <h2 className="text-lg font-semibold text-[#0E1916] mt-2">
               Mit Pro freischalten
             </h2>
             <p className="text-sm text-[#64748b] mt-2 leading-relaxed">
@@ -70,7 +70,7 @@ export default async function AskPage() {
             </p>
             <a
               href="/#pricing"
-              className="inline-block mt-4 px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors"
+              className="inline-block mt-4 px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors"
             >
               Tarife ansehen →
             </a>

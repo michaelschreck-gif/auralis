@@ -1,8 +1,13 @@
 @import "tailwindcss";
 
 :root {
-  --background: #f8f9fb;
-  --foreground: #0f172a;
+  --background: #FAF8F3;
+  --foreground: #0E1916;
+
+  /* DigitalHalo brand set (Visual Identity Guidelines v1.0) */
+  --color-beige: #eae2d5;
+  --color-coral: #fa5935;
+  --color-teal: #8caaab;
 }
 
 html {
@@ -13,10 +18,46 @@ html {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+}
+
+/* ─── Halo gradient — the brand's blurred organic light field, recreated in CSS
+   (03_Gradients in the brandkit: coral / teal / beige / black blobs, soft-blurred,
+   grainy). Used behind hero/marketing sections instead of the ~80MB source PNGs. ─── */
+.halo-gradient {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background-color: var(--color-beige);
+}
+.halo-gradient::before {
+  content: "";
+  position: absolute;
+  inset: -15%;
+  z-index: 0;
+  background-image:
+    radial-gradient(ellipse 55% 50% at 82% 18%, color-mix(in srgb, var(--color-coral) 90%, transparent), transparent 70%),
+    radial-gradient(ellipse 50% 55% at 12% 28%, color-mix(in srgb, var(--color-teal) 80%, transparent), transparent 72%),
+    radial-gradient(ellipse 45% 40% at 55% 88%, color-mix(in srgb, var(--color-coral) 70%, transparent), transparent 75%),
+    radial-gradient(ellipse 60% 55% at -5% 95%, color-mix(in srgb, var(--foreground) 60%, transparent), transparent 70%);
+  filter: blur(70px) saturate(1.05);
+}
+.halo-gradient::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  opacity: 0.045;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+.halo-gradient-content {
+  position: relative;
+  z-index: 2;
 }

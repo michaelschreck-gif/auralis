@@ -10,13 +10,13 @@ export default function ImpressumPage() {
     <article className="bg-white rounded-2xl border border-gray-100 p-8 space-y-6 text-sm leading-relaxed text-[#475569]">
       <header>
         <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
-        <h1 className="text-2xl font-bold text-[#0f172a]">Impressum</h1>
+        <h1 className="text-2xl font-bold text-[#0E1916]">Impressum</h1>
         <p className="text-xs text-[#94a3b8] mt-2">Angaben gemäß § 5 DDG.</p>
       </header>
 
       <Section title="Anbieter">
         <p>
-          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
+          <strong className="text-[#0E1916]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
           Deutschland
@@ -40,8 +40,8 @@ export default function ImpressumPage() {
 
       <Section title="Kontakt">
         <p>
-          Telefon: <a href="tel:+4915563664275" className="text-[#534AB7] hover:underline">0155-63664275</a><br />
-          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] hover:underline">michael@linkedinconsulting.digital</a>
+          Telefon: <a href="tel:+4915563664275" className="text-[#C8431F] hover:underline">0155-63664275</a><br />
+          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">michael@linkedinconsulting.digital</a>
         </p>
       </Section>
 
@@ -107,7 +107,7 @@ export default function ImpressumPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-2">
-      <h2 className="text-base font-semibold text-[#0f172a]">{title}</h2>
+      <h2 className="text-base font-semibold text-[#0E1916]">{title}</h2>
       <div className="space-y-2">{children}</div>
     </section>
   )

@@ -98,7 +98,7 @@ const COLOR_BLUE   = "#378ADD"
 const COLOR_TEAL   = "#1D9E75"
 const COLOR_AMBER  = "#EF9F27"
 const COLOR_CORAL  = "#D85A30"
-const COLOR_PURPLE = "#7F77DD"
+const COLOR_PURPLE = "#FA5935"
 
 export const RAW_FACTOR_META: Record<
   RawFactorKey,

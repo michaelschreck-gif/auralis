@@ -207,10 +207,10 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
     : "Tippe auf das Mikrofon und frag mich z. B. „Als was werde ich wahrgenommen?“"
 
   return (
-    <section className="bg-white rounded-2xl border border-[#EEEDFE] overflow-hidden">
-      <div className="px-5 py-4 border-b border-[#EEEDFE]">
-        <div className="text-sm font-semibold text-[#1B1830]">Sprich mit deinem KI-Ich</div>
-        <div className="text-xs text-[#9A95BE]">Nur Sprache — keine Kamera, kein Text.</div>
+    <section className="bg-white rounded-2xl border border-[#FDE7E0] overflow-hidden">
+      <div className="px-5 py-4 border-b border-[#FDE7E0]">
+        <div className="text-sm font-semibold text-[#0E1916]">Sprich mit deinem KI-Ich</div>
+        <div className="text-xs text-[#9A9089]">Nur Sprache — keine Kamera, kein Text.</div>
       </div>
 
       <div className="p-6 flex flex-col items-center">
@@ -218,9 +218,9 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
 
         <div className="mt-4 min-h-[2.5rem] w-full max-w-md text-center">
           {partial ? (
-            <p className="text-sm text-[#6B6790] italic">„{partial}…"</p>
+            <p className="text-sm text-[#6B625A] italic">„{partial}…"</p>
           ) : (
-            <p className="text-sm text-[#9A95BE]">{statusText}</p>
+            <p className="text-sm text-[#9A9089]">{statusText}</p>
           )}
         </div>
 
@@ -231,7 +231,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
               onClick={listening ? stopListening : startListening}
               disabled={thinking}
               className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-colors disabled:opacity-50 ${
-                listening ? "bg-[#D1495B] text-white hover:bg-[#b83b4c]" : "bg-[#7F77DD] text-white hover:bg-[#534AB7]"
+                listening ? "bg-[#D1495B] text-white hover:bg-[#b83b4c]" : "bg-[#FA5935] text-white hover:bg-[#C8431F]"
               }`}
             >
               <MicIcon />
@@ -243,7 +243,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
                 setMuted(m => !m)
                 if (!muted) { stopAudio(); setPhase("idle") }
               }}
-              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[#EEEDFE] text-[#6B6790] hover:bg-[#F4F2FE] transition-colors"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[#FDE7E0] text-[#6B625A] hover:bg-[#F4F2FE] transition-colors"
               title={muted ? "Sprachausgabe an" : "Sprachausgabe aus"}
               aria-label={muted ? "Sprachausgabe einschalten" : "Sprachausgabe ausschalten"}
             >
@@ -259,12 +259,12 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
               value={textInput}
               onChange={e => setTextInput(e.target.value)}
               placeholder="Spracherkennung nur in Chrome — hier tippen…"
-              className="flex-1 rounded-xl border border-[#EEEDFE] px-3.5 py-2.5 text-sm text-[#1B1830] placeholder-[#9A95BE] focus:outline-none focus:border-[#CECBF6]"
+              className="flex-1 rounded-xl border border-[#FDE7E0] px-3.5 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8]"
             />
             <button
               type="submit"
               disabled={thinking || !textInput.trim()}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#7F77DD] hover:bg-[#534AB7] transition-colors disabled:opacity-40"
+              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors disabled:opacity-40"
             >
               Fragen
             </button>
@@ -274,7 +274,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
         {error && <p className="mt-3 text-xs text-red-600 text-center">{error}</p>}
       </div>
 
-      <p className="px-5 pb-4 text-[11px] text-[#9A95BE] text-center leading-relaxed">
+      <p className="px-5 pb-4 text-[11px] text-[#9A9089] text-center leading-relaxed">
         Es wird ausschließlich dein Mikrofon genutzt — kein Video, keine Gesichtsanalyse.
         Antworten spiegeln die KI-Wahrnehmung wider, keine geprüften Fakten.
       </p>
@@ -290,7 +290,7 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
     return () => clearInterval(id)
   }, [speaking])
 
-  const ringColor = listening ? "#D1495B" : thinking ? "#EF9F27" : "#7F77DD"
+  const ringColor = listening ? "#D1495B" : thinking ? "#EF9F27" : "#FA5935"
 
   return (
     <div className="relative" style={{ width: 180, height: 190 }}>
@@ -300,34 +300,34 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
             <animate attributeName="opacity" values="1;0.45;1" dur="1.4s" repeatCount="indefinite" />
           )}
         </ellipse>
-        <circle cx="90" cy="100" r="58" fill="#EEEDFE" stroke="#CECBF6" strokeWidth="2" />
+        <circle cx="90" cy="100" r="58" fill="#FDE7E0" stroke="#FBCBB8" strokeWidth="2" />
         <circle cx="62" cy="112" r="9" fill="#F7C6D9" opacity="0.7" />
         <circle cx="118" cy="112" r="9" fill="#F7C6D9" opacity="0.7" />
         {thinking ? (
           <>
-            <circle cx="72" cy="92" r="7" fill="#1B1830" />
-            <circle cx="108" cy="92" r="7" fill="#1B1830" />
+            <circle cx="72" cy="92" r="7" fill="#0E1916" />
+            <circle cx="108" cy="92" r="7" fill="#0E1916" />
             <circle cx="74" cy="90" r="2" fill="#fff" />
             <circle cx="110" cy="90" r="2" fill="#fff" />
           </>
         ) : (
           <>
-            <circle cx="72" cy="92" r="8" fill="#1B1830" />
-            <circle cx="108" cy="92" r="8" fill="#1B1830" />
+            <circle cx="72" cy="92" r="8" fill="#0E1916" />
+            <circle cx="108" cy="92" r="8" fill="#0E1916" />
             <circle cx="74" cy="89" r="2.5" fill="#fff" />
             <circle cx="110" cy="89" r="2.5" fill="#fff" />
           </>
         )}
         {speaking ? (
           mouthOpen ? (
-            <ellipse cx="90" cy="124" rx="14" ry="11" fill="#534AB7" />
+            <ellipse cx="90" cy="124" rx="14" ry="11" fill="#C8431F" />
           ) : (
-            <path d="M76 124 q14 8 28 0" fill="none" stroke="#534AB7" strokeWidth="4" strokeLinecap="round" />
+            <path d="M76 124 q14 8 28 0" fill="none" stroke="#C8431F" strokeWidth="4" strokeLinecap="round" />
           )
         ) : listening ? (
-          <circle cx="90" cy="124" r="6" fill="none" stroke="#534AB7" strokeWidth="4" />
+          <circle cx="90" cy="124" r="6" fill="none" stroke="#C8431F" strokeWidth="4" />
         ) : (
-          <path d="M74 122 q16 12 32 0" fill="none" stroke="#534AB7" strokeWidth="4" strokeLinecap="round" />
+          <path d="M74 122 q16 12 32 0" fill="none" stroke="#C8431F" strokeWidth="4" strokeLinecap="round" />
         )}
       </svg>
 

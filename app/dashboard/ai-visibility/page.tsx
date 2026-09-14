@@ -23,7 +23,7 @@ const MODELS: ModelInfo[] = [
     providerId: "claude-sonnet",
     name: "Claude Sonnet",
     description: "Anthropic's Reasoning-Modell — treibt deine Halo-Analysen an.",
-    color: "#7F77DD",
+    color: "#FA5935",
     unlocksOn: "free",
   },
   {
@@ -78,7 +78,7 @@ function ModelCard({
     <div className={`rounded-xl border p-6 transition-all ${
       active
         ? "border-gray-100 bg-white shadow-sm"
-        : "border-gray-100 bg-[#f8f9fb] opacity-70"
+        : "border-gray-100 bg-[#FAF8F3] opacity-70"
     }`}>
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-3">
@@ -89,7 +89,7 @@ function ModelCard({
             {initial}
           </div>
           <div>
-            <p className="text-sm text-[#0f172a] font-medium">{model.name}</p>
+            <p className="text-sm text-[#0E1916] font-medium">{model.name}</p>
             <p className="text-xs text-[#64748b] mt-0.5">{model.description}</p>
           </div>
         </div>
@@ -109,7 +109,7 @@ function ModelCard({
           </span>
         )}
         {state.kind === "noReport" && (
-          <span className="text-xs px-2 py-1 rounded-full bg-[#EEEDFE] text-[#7F77DD] border border-[#CECBF6] font-medium">
+          <span className="text-xs px-2 py-1 rounded-full bg-[#FDE7E0] text-[#FA5935] border border-[#FBCBB8] font-medium">
             Bereit
           </span>
         )}
@@ -138,7 +138,7 @@ function ModelCard({
               <Mini label="Position" value={state.breakdown.averagePosition !== null ? `Ø ${state.breakdown.averagePosition.toFixed(1)}` : "—"} />
             </div>
             <details className="group mt-1">
-              <summary className="text-xs text-[#7F77DD] hover:underline cursor-pointer list-none flex items-center gap-1">
+              <summary className="text-xs text-[#FA5935] hover:underline cursor-pointer list-none flex items-center gap-1">
                 <span aria-hidden className="transition-transform group-open:rotate-90">›</span>
                 So kommt dieser Score zustande
               </summary>
@@ -172,7 +172,7 @@ function ModelCard({
         {state.kind === "noReport" && (
           <p className="text-xs text-[#94a3b8]">
             Starte eine Analyse auf der{" "}
-            <a href="/dashboard/analyze" className="text-[#7F77DD] hover:underline font-medium">
+            <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline font-medium">
               Analyse-Seite
             </a>
             , um deinen Score hier zu sehen.
@@ -182,7 +182,7 @@ function ModelCard({
         {state.kind === "locked" && (
           <p className="text-xs text-[#94a3b8]">
             Verfügbar in den Tarifen Starter, Pro &amp; Enterprise.{" "}
-            <a href="/#preise" className="text-[#7F77DD] hover:underline font-medium">
+            <a href="/#preise" className="text-[#FA5935] hover:underline font-medium">
               Upgrade →
             </a>
           </p>
@@ -194,9 +194,9 @@ function ModelCard({
 
 function Mini({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-md bg-[#f8f9fb] border border-gray-100 px-2 py-1.5">
+    <div className="rounded-md bg-[#FAF8F3] border border-gray-100 px-2 py-1.5">
       <p className="text-[10px] text-[#94a3b8] uppercase tracking-wider font-semibold">{label}</p>
-      <p className="text-xs text-[#0f172a] font-medium mt-0.5">{value}</p>
+      <p className="text-xs text-[#0E1916] font-medium mt-0.5">{value}</p>
     </div>
   )
 }
@@ -282,7 +282,7 @@ export default async function AiVisibilityPage() {
               {m.name[0]}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-xs text-[#0f172a] truncate font-medium">{m.name}</p>
+              <p className="text-xs text-[#0E1916] truncate font-medium">{m.name}</p>
             </div>
             {active
               ? <span className="w-1.5 h-1.5 rounded-full bg-green-500 flex-shrink-0"/>
@@ -303,12 +303,12 @@ export default async function AiVisibilityPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0f172a]">KI-Reputation pro Modell</h1>
+          <h1 className="text-xl font-semibold text-[#0E1916]">KI-Reputation pro Modell</h1>
           <p className="text-[#64748b] text-sm mt-1">
             Wie jedes KI-System deine Personal Brand wahrnimmt.{" "}
             {plan === "free" && (
               <span className="text-[#94a3b8]">
-                Free-Tarif misst nur Claude — <a href="/#preise" className="text-[#7F77DD] hover:underline">Starter wechselt auf Multi-Modell</a>.
+                Free-Tarif misst nur Claude — <a href="/#preise" className="text-[#FA5935] hover:underline">Starter wechselt auf Multi-Modell</a>.
               </span>
             )}
           </p>
@@ -329,11 +329,11 @@ export default async function AiVisibilityPage() {
           if (ok.length < 1) return null
           const mean = Math.round(ok.reduce((a, b) => a + b.overallScore, 0) / ok.length)
           return (
-            <div className="mt-8 rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/40 p-5">
-              <p className="text-xs text-[#7F77DD] uppercase tracking-wider mb-2 font-medium">
+            <div className="mt-8 rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-5">
+              <p className="text-xs text-[#FA5935] uppercase tracking-wider mb-2 font-medium">
                 So entsteht dein Halo Score aus den Modellen
               </p>
-              <p className="text-sm text-[#0f172a] leading-relaxed mb-3">
+              <p className="text-sm text-[#0E1916] leading-relaxed mb-3">
                 Dein Halo Score ist der <span className="font-medium">Durchschnitt</span> der
                 Reputations-Scores aller aktiven Modelle der letzten Analyse.
               </p>
@@ -343,13 +343,13 @@ export default async function AiVisibilityPage() {
                     {i > 0 && <span className="text-[#94a3b8]">+</span>}
                     <span className="px-2 py-1 rounded-md bg-white border border-gray-100 tabular-nums">
                       <span className="text-[#64748b]">{b.label}:</span>{" "}
-                      <span className="font-semibold text-[#0f172a]">{b.overallScore}</span>
+                      <span className="font-semibold text-[#0E1916]">{b.overallScore}</span>
                     </span>
                   </span>
                 ))}
                 <span className="text-[#94a3b8]">÷ {ok.length}</span>
                 <span className="text-[#94a3b8]">=</span>
-                <span className="px-2.5 py-1 rounded-md bg-[#7F77DD] text-white font-semibold tabular-nums">
+                <span className="px-2.5 py-1 rounded-md bg-[#FA5935] text-white font-semibold tabular-nums">
                   {mean}
                 </span>
               </div>
@@ -357,7 +357,7 @@ export default async function AiVisibilityPage() {
           )
         })()}
 
-        <div className="mt-4 rounded-xl border border-gray-100 bg-[#f8f9fb] p-5">
+        <div className="mt-4 rounded-xl border border-gray-100 bg-[#FAF8F3] p-5">
           <p className="text-xs text-[#64748b] uppercase tracking-wider mb-2 font-medium">Was das bedeutet</p>
           <p className="text-sm text-[#64748b] leading-relaxed">
             KI-Reputation misst, wie prominent dein Name und deine Expertise in Antworten von KI-Systemen erscheinen.

@@ -2,7 +2,7 @@
 // Zentrale Farbwelt für das Bold-&-farbig-Redesign. Jede Score-Dimension hat
 // eine feste Farbfamilie, die sich konsistent durch ALLE Seiten zieht
 // (Cockpit, Detailseiten, KI-Sichtbarkeit …). So entsteht Wiedererkennung:
-// GEO ist immer blau, Thought Leadership immer lila, Digitale Autorität grün.
+// GEO ist immer blau, Thought Leadership immer Petrol/Teal, Digitale Autorität grün.
 
 import type { ScoreKey } from "./master-scores"
 
@@ -19,12 +19,12 @@ export type DimensionTheme = {
   label: string
 }
 
-/** Master-Aura: dunkles Lila als Markenfarbe (Hero). */
+/** Master-Aura: DigitalHalo-Coral als Markenfarbe (Hero). */
 export const AURA_THEME = {
-  bg: "#26215C",
-  accent: "#7F77DD",
-  accentText: "#26215C",
-  light: "#CECBF6",
+  bg: "#0E1916",
+  accent: "#FA5935",
+  accentText: "#0E1916",
+  light: "#FBCBB8",
 }
 
 /**
@@ -39,13 +39,13 @@ export const SEO_THEME: DimensionTheme = {
 
 export const DIMENSION_THEME: Record<ScoreKey, DimensionTheme> = {
   "aura": {
-    bg: "#EEEDFE", track: "#CECBF6", accent: "#7F77DD", text: "#26215C", label: "#534AB7",
+    bg: "#FDE7E0", track: "#FBCBB8", accent: "#FA5935", text: "#0E1916", label: "#C8431F",
   },
   "geo": {
     bg: "#E6F1FB", track: "#B5D4F4", accent: "#378ADD", text: "#0C447C", label: "#185FA5",
   },
   "thought-leadership": {
-    bg: "#EEEDFE", track: "#CECBF6", accent: "#7F77DD", text: "#26215C", label: "#534AB7",
+    bg: "#E9F0F0", track: "#C7D9D9", accent: "#6D8C8D", text: "#1C2A2A", label: "#4C6667",
   },
   "digital-authority": {
     bg: "#E1F5EE", track: "#9FE1CB", accent: "#1D9E75", text: "#04342C", label: "#0F6E56",

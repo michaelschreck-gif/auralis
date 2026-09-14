@@ -71,7 +71,7 @@ export default function AnalyzePanel({
   return (
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <header>
-        <h1 className="text-2xl font-semibold text-[#0f172a]">Analyse</h1>
+        <h1 className="text-2xl font-semibold text-[#0E1916]">Analyse</h1>
         <p className="text-sm text-[#64748b] mt-1">
           Starte eine neue Reputations-Analyse für eines deiner Themen.
           Die KI stellt 7 typische Suchfragen und prüft, wie prominent du in den Antworten erwähnt wirst. Eine Analyse dauert ca. 20 Sekunden.
@@ -84,10 +84,10 @@ export default function AnalyzePanel({
           className={`rounded-xl border p-4 ${
             limitReached
               ? "bg-amber-50 border-amber-100"
-              : "bg-[#EEEDFE] border-[#CECBF6]"
+              : "bg-[#FDE7E0] border-[#FBCBB8]"
           }`}
         >
-          <p className="text-sm font-medium text-[#0f172a]">
+          <p className="text-sm font-medium text-[#0E1916]">
             {limitReached
               ? `🔒 Free-Tarif: Limit erreicht.`
               : `Free-Tarif: ${remaining} ${
@@ -97,7 +97,7 @@ export default function AnalyzePanel({
           {limitReached && resetAt && (
             <p className="text-xs text-[#64748b] mt-1">
               Nächstes Slot frei am{" "}
-              <span className="text-[#0f172a] font-medium">
+              <span className="text-[#0E1916] font-medium">
                 {new Date(resetAt).toLocaleDateString("de-DE", {
                   day: "2-digit",
                   month: "long",
@@ -107,7 +107,7 @@ export default function AnalyzePanel({
               .{" "}
               <a
                 href="/settings"
-                className="text-[#7F77DD] hover:underline font-medium"
+                className="text-[#FA5935] hover:underline font-medium"
               >
                 Upgrade →
               </a>
@@ -132,7 +132,7 @@ export default function AnalyzePanel({
             Noch keine Themen.{" "}
             <a
               href="/settings"
-              className="text-[#7F77DD] hover:underline font-medium"
+              className="text-[#FA5935] hover:underline font-medium"
             >
               In Einstellungen hinzufügen →
             </a>
@@ -149,7 +149,7 @@ export default function AnalyzePanel({
                   className="py-4 flex items-center justify-between gap-4"
                 >
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#0f172a] truncate">
+                    <p className="text-sm font-medium text-[#0E1916] truncate">
                       {s.query}
                     </p>
                     <p className="text-xs text-[#94a3b8] mt-0.5">
@@ -168,7 +168,7 @@ export default function AnalyzePanel({
                     className={`flex-shrink-0 px-4 py-2 rounded-lg text-xs font-medium transition-colors ${
                       wasSuccess
                         ? "bg-green-100 text-green-700 border border-green-200"
-                        : "bg-[#7F77DD] hover:bg-[#534AB7] text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                        : "bg-[#FA5935] hover:bg-[#C8431F] text-white disabled:opacity-40 disabled:cursor-not-allowed"
                     }`}
                   >
                     {isRunning ? (
@@ -238,7 +238,7 @@ function HistoryChart({ points }: { points: ScoreHistoryPoint[] }) {
         width="100%"
         viewBox={`0 0 ${W} ${H}`}
         preserveAspectRatio="xMidYMid meet"
-        className="text-[#7F77DD]"
+        className="text-[#FA5935]"
       >
         {/* Y-Axis ticks */}
         {[0, 25, 50, 75, 100].map(v => (

@@ -71,31 +71,31 @@ export default function PersonaChat({ name }: { name: string }) {
   }
 
   return (
-    <section className="bg-white rounded-2xl border border-[#EEEDFE] overflow-hidden">
-      <div className="px-5 py-4 border-b border-[#EEEDFE] flex items-center gap-3">
+    <section className="bg-white rounded-2xl border border-[#FDE7E0] overflow-hidden">
+      <div className="px-5 py-4 border-b border-[#FDE7E0] flex items-center gap-3">
         <span
           className="inline-flex items-center justify-center rounded-full flex-shrink-0 text-xs font-semibold"
-          style={{ width: 34, height: 34, border: "3px solid #7F77DD", color: "#534AB7", background: "#F4F2FE" }}
+          style={{ width: 34, height: 34, border: "3px solid #FA5935", color: "#C8431F", background: "#F4F2FE" }}
         >
           {initials}
         </span>
         <div>
-          <div className="text-sm font-semibold text-[#1B1830]">Sprich mit deinem KI-Ich</div>
-          <div className="text-xs text-[#9A95BE]">Antwortet so, wie KI dich wahrnimmt — nicht wie du wirklich bist.</div>
+          <div className="text-sm font-semibold text-[#0E1916]">Sprich mit deinem KI-Ich</div>
+          <div className="text-xs text-[#9A9089]">Antwortet so, wie KI dich wahrnimmt — nicht wie du wirklich bist.</div>
         </div>
       </div>
 
       <div ref={scrollRef} className="max-h-[420px] overflow-y-auto px-5 py-4 space-y-4">
         {messages.length === 0 && (
           <div className="space-y-3">
-            <p className="text-sm text-[#6B6790]">Frag dein KI-Spiegelbild zum Beispiel:</p>
+            <p className="text-sm text-[#6B625A]">Frag dein KI-Spiegelbild zum Beispiel:</p>
             <div className="flex flex-wrap gap-2">
               {SUGGESTIONS.map(s => (
                 <button
                   key={s}
                   type="button"
                   onClick={() => send(s)}
-                  className="text-xs text-[#534AB7] bg-[#F4F2FE] hover:bg-[#EEEDFE] rounded-full px-3 py-1.5 transition-colors"
+                  className="text-xs text-[#C8431F] bg-[#F4F2FE] hover:bg-[#FDE7E0] rounded-full px-3 py-1.5 transition-colors"
                 >
                   {s}
                 </button>
@@ -109,7 +109,7 @@ export default function PersonaChat({ name }: { name: string }) {
             {m.role === "assistant" && (
               <span
                 className="inline-flex items-center justify-center rounded-full flex-shrink-0 text-[10px] font-semibold mt-0.5"
-                style={{ width: 26, height: 26, border: "2px solid #7F77DD", color: "#534AB7", background: "#F4F2FE" }}
+                style={{ width: 26, height: 26, border: "2px solid #FA5935", color: "#C8431F", background: "#F4F2FE" }}
               >
                 {initials}
               </span>
@@ -117,8 +117,8 @@ export default function PersonaChat({ name }: { name: string }) {
             <div
               className={`max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed whitespace-pre-wrap ${
                 m.role === "user"
-                  ? "bg-[#7F77DD] text-white"
-                  : "bg-[#F4F2FE] text-[#1B1830]"
+                  ? "bg-[#FA5935] text-white"
+                  : "bg-[#F4F2FE] text-[#0E1916]"
               }`}
             >
               {m.content || (streaming && i === messages.length - 1 ? "…" : "")}
@@ -131,7 +131,7 @@ export default function PersonaChat({ name }: { name: string }) {
 
       <form
         onSubmit={e => { e.preventDefault(); send(input) }}
-        className="border-t border-[#EEEDFE] p-3 flex items-end gap-2"
+        className="border-t border-[#FDE7E0] p-3 flex items-end gap-2"
       >
         <textarea
           value={input}
@@ -141,17 +141,17 @@ export default function PersonaChat({ name }: { name: string }) {
           }}
           rows={1}
           placeholder="Schreib deinem KI-Ich…"
-          className="flex-1 resize-none rounded-xl border border-[#EEEDFE] px-3.5 py-2.5 text-sm text-[#1B1830] placeholder-[#9A95BE] focus:outline-none focus:border-[#CECBF6] max-h-32"
+          className="flex-1 resize-none rounded-xl border border-[#FDE7E0] px-3.5 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8] max-h-32"
         />
         <button
           type="submit"
           disabled={streaming || !input.trim()}
-          className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#7F77DD] hover:bg-[#534AB7] transition-colors disabled:opacity-40"
+          className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors disabled:opacity-40"
         >
           {streaming ? "…" : "Senden"}
         </button>
       </form>
-      <p className="px-5 pb-3 text-[11px] text-[#9A95BE]">
+      <p className="px-5 pb-3 text-[11px] text-[#9A9089]">
         Antworten können ungenau sein — sie spiegeln nur die KI-Wahrnehmung, keine geprüften Fakten.
       </p>
     </section>

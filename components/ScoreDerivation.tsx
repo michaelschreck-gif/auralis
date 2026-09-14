@@ -22,7 +22,7 @@ export default function ScoreDerivationTable({
       {/* Formel-Kopfzeile */}
       <p className="text-xs text-[#64748b] mb-3 leading-relaxed">
         Jeder Score ist die Summe aus{" "}
-        <span className="font-medium text-[#0f172a]">Messwert × Gewichtung</span>{" "}
+        <span className="font-medium text-[#0E1916]">Messwert × Gewichtung</span>{" "}
         über alle Signale. Die Messwerte stammen aus deiner letzten Analyse. Die
         Beiträge sind gerundet — die Gesamtsumme kann daher um 1 Punkt von der
         Addition der angezeigten Werte abweichen.
@@ -30,7 +30,7 @@ export default function ScoreDerivationTable({
 
       <div className="overflow-hidden rounded-xl border border-gray-100">
         {/* Header-Zeile */}
-        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-3 py-2 bg-[#f8f9fb] text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-3 py-2 bg-[#FAF8F3] text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
           <span>Signal</span>
           <span className="text-right w-14">Messwert</span>
           <span className="text-right w-12">Gewicht</span>
@@ -46,15 +46,15 @@ export default function ScoreDerivationTable({
                     className="w-2.5 h-2.5 rounded-sm flex-shrink-0"
                     style={{ background: f.color }}
                   />
-                  <span className="text-[#0f172a] truncate">{f.label}</span>
+                  <span className="text-[#0E1916] truncate">{f.label}</span>
                 </span>
-                <span className="text-right w-14 tabular-nums text-[#0f172a] font-medium">
+                <span className="text-right w-14 tabular-nums text-[#0E1916] font-medium">
                   {f.rawValue}
                 </span>
                 <span className="text-right w-12 tabular-nums text-[#64748b]">
                   ×{f.weight.toFixed(2)}
                 </span>
-                <span className="text-right w-14 tabular-nums font-semibold text-[#0f172a]">
+                <span className="text-right w-14 tabular-nums font-semibold text-[#0E1916]">
                   {f.contribution}
                 </span>
               </div>
@@ -68,11 +68,11 @@ export default function ScoreDerivationTable({
         </div>
 
         {/* Summen-Zeile */}
-        <div className="grid grid-cols-[1fr_auto] gap-2 px-3 py-2.5 bg-[#f8f9fb] border-t border-gray-100 items-baseline">
-          <span className="text-xs font-semibold text-[#0f172a]">
+        <div className="grid grid-cols-[1fr_auto] gap-2 px-3 py-2.5 bg-[#FAF8F3] border-t border-gray-100 items-baseline">
+          <span className="text-xs font-semibold text-[#0E1916]">
             = Score (gerundet)
           </span>
-          <span className="text-right tabular-nums text-base font-semibold text-[#0f172a]">
+          <span className="text-right tabular-nums text-base font-semibold text-[#0E1916]">
             {total}<span className="text-xs text-[#94a3b8] font-normal">/100</span>
           </span>
         </div>

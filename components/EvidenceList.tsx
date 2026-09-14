@@ -46,7 +46,7 @@ function highlight(text: string, name: string): React.ReactNode {
   const segments = text.split(re)
   return segments.map((seg, i) =>
     re.test(seg) ? (
-      <mark key={i} className="bg-yellow-100 text-[#0f172a] rounded px-0.5">{seg}</mark>
+      <mark key={i} className="bg-yellow-100 text-[#0E1916] rounded px-0.5">{seg}</mark>
     ) : (
       <span key={i}>{seg}</span>
     ),
@@ -64,11 +64,11 @@ export default function EvidenceList({
     <div className="space-y-4">
       {groups.map((g, gi) => (
         <div key={gi} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 bg-[#f8f9fb]">
+          <div className="px-6 py-4 border-b border-gray-100 bg-[#FAF8F3]">
             <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-1">
               Gestellte Frage an die KI
             </p>
-            <p className="text-sm text-[#0f172a] leading-snug">{g.prompt}</p>
+            <p className="text-sm text-[#0E1916] leading-snug">{g.prompt}</p>
           </div>
           <div className="divide-y divide-gray-100">
             {g.items.map(item => (
@@ -89,7 +89,7 @@ function EvidenceRow({ item, personName }: { item: EvidenceItem; personName: str
     <div className="px-6 py-4">
       <div className="flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2.5">
-          <span className="text-sm font-medium text-[#0f172a]">{modelLabel(item.model)}</span>
+          <span className="text-sm font-medium text-[#0E1916]">{modelLabel(item.model)}</span>
           {item.mentioned ? (
             <span className="text-xs px-2 py-0.5 rounded-full border bg-green-50 text-green-700 border-green-100 font-medium">
               ✓ erwähnt{item.position !== null ? ` · Platz ${item.position}` : ""}
@@ -108,7 +108,7 @@ function EvidenceRow({ item, personName }: { item: EvidenceItem; personName: str
         <button
           type="button"
           onClick={() => setOpen(o => !o)}
-          className="text-xs text-[#7F77DD] hover:underline font-medium flex items-center gap-1"
+          className="text-xs text-[#FA5935] hover:underline font-medium flex items-center gap-1"
           aria-expanded={open}
         >
           {open ? "Antwort verbergen" : "Antwort anzeigen"}
@@ -116,7 +116,7 @@ function EvidenceRow({ item, personName }: { item: EvidenceItem; personName: str
         </button>
       </div>
       {open && (
-        <div className="mt-3 rounded-xl bg-[#f8f9fb] border border-gray-100 p-4 text-sm text-[#334155] leading-relaxed whitespace-pre-wrap max-h-96 overflow-y-auto">
+        <div className="mt-3 rounded-xl bg-[#FAF8F3] border border-gray-100 p-4 text-sm text-[#334155] leading-relaxed whitespace-pre-wrap max-h-96 overflow-y-auto">
           {highlight(item.response, personName)}
         </div>
       )}

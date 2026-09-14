@@ -76,7 +76,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
             type="button"
             onClick={() => run(generateAndSaveRecommendations)}
             disabled={pending}
-            className="text-sm px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white font-medium transition-colors disabled:opacity-40"
+            className="text-sm px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white font-medium transition-colors disabled:opacity-40"
           >
             {pending && !busyId
               ? "Generiere…"
@@ -91,7 +91,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
         <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
           <p className="text-sm text-[#64748b]">
             Noch keine Analyse vorhanden.{" "}
-            <a href="/dashboard/analyze" className="text-[#7F77DD] hover:underline">
+            <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline">
               Erste Analyse starten →
             </a>
           </p>
@@ -99,8 +99,8 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
       )}
 
       {hasReport && open.length === 0 && done.length === 0 && (
-        <div className="rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/40 p-8 text-center">
-          <p className="text-base font-medium text-[#0f172a]">
+        <div className="rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-8 text-center">
+          <p className="text-base font-medium text-[#0E1916]">
             Lass dir konkrete Maßnahmen vorschlagen
           </p>
           <p className="text-sm text-[#64748b] mt-2 mb-5 max-w-md mx-auto leading-relaxed">
@@ -110,7 +110,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
             type="button"
             onClick={() => run(generateAndSaveRecommendations)}
             disabled={pending}
-            className="inline-block px-5 py-2.5 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors disabled:opacity-40"
+            className="inline-block px-5 py-2.5 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors disabled:opacity-40"
           >
             {pending ? "Generiere…" : "Empfehlungen erstellen →"}
           </button>
@@ -124,11 +124,11 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
             <div key={rec.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-[#EEEDFE] text-[#7F77DD] flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                  <div className="w-8 h-8 rounded-lg bg-[#FDE7E0] text-[#FA5935] flex items-center justify-center text-sm font-semibold flex-shrink-0">
                     {i + 1}
                   </div>
                   <div className="min-w-0">
-                    <h3 className="text-base font-semibold text-[#0f172a]">{rec.title}</h3>
+                    <h3 className="text-base font-semibold text-[#0E1916]">{rec.title}</h3>
                     <p className="text-sm text-[#64748b] mt-1 leading-relaxed">{rec.description}</p>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                 </span>
               </div>
               <div className="mt-4 flex items-center justify-between gap-2">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] bg-[#f8f9fb] border border-gray-100 px-2 py-0.5 rounded">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] bg-[#FAF8F3] border border-gray-100 px-2 py-0.5 rounded">
                   {rec.category}
                 </span>
                 <div className="flex items-center gap-2">
@@ -181,7 +181,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                       ✓
                     </div>
                     <div className="min-w-0">
-                      <h3 className="text-sm font-medium text-[#0f172a] line-through decoration-gray-300">
+                      <h3 className="text-sm font-medium text-[#0E1916] line-through decoration-gray-300">
                         {rec.title}
                       </h3>
                       <p className="text-xs text-[#94a3b8] mt-1">
@@ -210,7 +210,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                       type="button"
                       onClick={() => run(() => reopenRecommendation(rec.id), rec.id)}
                       disabled={pending}
-                      className="text-xs text-[#94a3b8] hover:text-[#7F77DD] transition-colors disabled:opacity-40"
+                      className="text-xs text-[#94a3b8] hover:text-[#FA5935] transition-colors disabled:opacity-40"
                       title="Wieder öffnen"
                     >
                       ↺

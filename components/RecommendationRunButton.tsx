@@ -34,7 +34,7 @@ export default function RecommendationRunButton({
 
   if (!hasTopics) {
     return (
-      <p className="text-sm text-[#CECBF6]">
+      <p className="text-sm text-[#FBCBB8]">
         Lege zuerst ein Thema an, dann kann Halo deine Empfehlungs-Quote messen.
       </p>
     )
@@ -46,12 +46,12 @@ export default function RecommendationRunButton({
         type="button"
         onClick={run}
         disabled={loading}
-        className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#26215C] bg-white hover:bg-[#F4F2FE] transition-colors disabled:opacity-50"
+        className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#0E1916] bg-white hover:bg-[#F4F2FE] transition-colors disabled:opacity-50"
       >
         {loading ? "Frage KI…" : label}
       </button>
       {loading && (
-        <p className="text-[11px] text-[#AFA9EC] mt-2">
+        <p className="text-[11px] text-[#F7B49B] mt-2">
           Das dauert ~20–40 Sekunden (mehrere KI-Abfragen pro Rolle).
         </p>
       )}

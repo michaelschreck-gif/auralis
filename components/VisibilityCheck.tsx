@@ -22,7 +22,7 @@ export interface VisibilityCheckProps {
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
 function hue(s: number) {
-  return s >= 70 ? "#10b981" : s >= 45 ? "#4F6EF7" : "#ef4444"
+  return s >= 70 ? "#10b981" : s >= 45 ? "#FA5935" : "#ef4444"
 }
 
 function scoreLabel(s: number) {
@@ -95,7 +95,7 @@ function ResultCard({ result }: { result: QueryResult }) {
               {result.queryType.replace("_", " ")}
             </span>
             {signal.mentioned && signal.position && (
-              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-[#4F6EF7] font-medium">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-blue-50 text-[#FA5935] font-medium">
                 #{signal.position}
               </span>
             )}
@@ -121,11 +121,11 @@ function ResultCard({ result }: { result: QueryResult }) {
             <div className="mt-3 space-y-3">
               <div>
                 <p className="text-xs text-[#94a3b8] uppercase tracking-wider mb-1">Query sent to AI</p>
-                <p className="text-xs text-[#64748b] bg-[#f8f9fb] rounded-lg p-3 leading-relaxed">{result.prompt}</p>
+                <p className="text-xs text-[#64748b] bg-[#FAF8F3] rounded-lg p-3 leading-relaxed">{result.prompt}</p>
               </div>
               <div>
                 <p className="text-xs text-[#94a3b8] uppercase tracking-wider mb-1">AI response</p>
-                <p className="text-xs text-[#64748b] bg-[#f8f9fb] rounded-lg p-3 leading-relaxed whitespace-pre-wrap">{result.rawResponse}</p>
+                <p className="text-xs text-[#64748b] bg-[#FAF8F3] rounded-lg p-3 leading-relaxed whitespace-pre-wrap">{result.rawResponse}</p>
               </div>
             </div>
           )}
@@ -142,7 +142,7 @@ function MetricCard({ label, value, unit, color, sub }: {
     <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-5">
       <p className="text-xs text-[#64748b] uppercase tracking-wider mb-3">{label}</p>
       <div className="flex items-end gap-2">
-        <span className="text-3xl font-semibold text-[#0f172a] leading-none">{value}</span>
+        <span className="text-3xl font-semibold text-[#0E1916] leading-none">{value}</span>
         <span className="text-xs text-[#94a3b8] mb-0.5">{unit}</span>
       </div>
       {sub && <p className="text-xs mt-1.5 font-medium" style={{ color }}>{sub}</p>}
@@ -187,15 +187,15 @@ function ReportView({ report }: { report: VisibilityReport }) {
         <MetricCard label="Mention Rate" value={`${report.mentionRate}%`} unit="of queries" color="#10b981"/>
         <MetricCard label="Avg Position"
           value={report.averagePosition ? `#${report.averagePosition}` : "—"}
-          unit="in lists" color="#4F6EF7"/>
+          unit="in lists" color="#FA5935"/>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-[#f8f9fb] p-6">
+      <div className="rounded-xl border border-gray-100 bg-[#FAF8F3] p-6">
         <p className="text-xs text-[#64748b] uppercase tracking-wider mb-5">Score Breakdown</p>
         <div className="grid grid-cols-2 gap-5">
           {[
             { label: "Presence",        value: report.scoreBreakdown.presenceScore,       color: "#10b981" },
-            { label: "Position",        value: report.scoreBreakdown.positionScore,       color: "#4F6EF7" },
+            { label: "Position",        value: report.scoreBreakdown.positionScore,       color: "#FA5935" },
             { label: "Context Quality", value: report.scoreBreakdown.contextScore,        color: "#f59e0b" },
             { label: "Topic Alignment", value: report.scoreBreakdown.topicAlignmentScore, color: "#10b981" },
           ].map(({ label, value, color }) => (
@@ -210,7 +210,7 @@ function ReportView({ report }: { report: VisibilityReport }) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-[#f8f9fb] p-6">
+      <div className="rounded-xl border border-gray-100 bg-[#FAF8F3] p-6">
         <p className="text-xs text-[#64748b] uppercase tracking-wider mb-4">AI Model Breakdown</p>
         <div className="space-y-4">
           <AiModelRow name="Claude Sonnet" score={report.overallScore} locked={false}/>
@@ -298,9 +298,9 @@ function TopicsPanel({
             className={`w-full text-left px-4 py-4 border-b border-gray-100 transition-all ${
               active ? "bg-blue-50" : "hover:bg-gray-50"
             }`}
-            style={{ borderLeft: `2px solid ${active ? "#4F6EF7" : "transparent"}` }}>
+            style={{ borderLeft: `2px solid ${active ? "#FA5935" : "transparent"}` }}>
             <div className="flex items-center justify-between mb-1.5">
-              <span className={`text-sm truncate pr-2 leading-tight font-medium ${active ? "text-[#4F6EF7]" : "text-[#0f172a]"}`}>
+              <span className={`text-sm truncate pr-2 leading-tight font-medium ${active ? "text-[#FA5935]" : "text-[#0E1916]"}`}>
                 {s.query}
               </span>
               {score != null && (
@@ -327,8 +327,8 @@ function TopicsPanel({
         <button onClick={onToggleCustom}
           className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs transition-colors font-medium ${
             showCustom
-              ? "bg-blue-50 text-[#4F6EF7]"
-              : "text-[#64748b] hover:text-[#0f172a] hover:bg-gray-100"
+              ? "bg-blue-50 text-[#FA5935]"
+              : "text-[#64748b] hover:text-[#0E1916] hover:bg-gray-100"
           }`}>
           {PlusIcon}
           Custom check
@@ -390,7 +390,7 @@ export default function VisibilityCheck({
     callApi(customName, customTopic, customLang, "__custom")
   }
 
-  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20 transition-colors"
+  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-[#0E1916] placeholder-[#94a3b8] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
 
   const panel = (
     <TopicsPanel
@@ -413,7 +413,7 @@ export default function VisibilityCheck({
       {/* Custom check */}
       {showCustom && (
         <div className="p-8 max-w-xl">
-          <h2 className="text-lg font-semibold text-[#0f172a] mb-1">Custom Check</h2>
+          <h2 className="text-lg font-semibold text-[#0E1916] mb-1">Custom Check</h2>
           <p className="text-[#64748b] text-sm mb-6">
             One-time analysis — not saved as a tracked topic.
           </p>
@@ -435,9 +435,9 @@ export default function VisibilityCheck({
                 <button key={lang} type="button" onClick={() => setCustomLang(lang)}
                   className="px-4 py-2 rounded-lg text-sm border transition-colors font-medium"
                   style={{
-                    borderColor: customLang === lang ? "#4F6EF7" : "#e2e8f0",
+                    borderColor: customLang === lang ? "#FA5935" : "#e2e8f0",
                     background: customLang === lang ? "#eff2ff" : "white",
-                    color: customLang === lang ? "#4F6EF7" : "#64748b",
+                    color: customLang === lang ? "#FA5935" : "#64748b",
                   }}>
                   {lang === "de" ? "🇩🇪 DE" : "🇬🇧 EN"}
                 </button>
@@ -445,7 +445,7 @@ export default function VisibilityCheck({
             </div>
             <button type="submit"
               disabled={loading || !customName.trim() || !customTopic.trim()}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed">
               {loading ? (
                 <>
                   <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin"/>
@@ -464,12 +464,12 @@ export default function VisibilityCheck({
         <div className="p-8">
           <div className="flex items-start justify-between mb-8">
             <div>
-              <h2 className="text-xl font-semibold text-[#0f172a]">{selected.query}</h2>
+              <h2 className="text-xl font-semibold text-[#0E1916]">{selected.query}</h2>
               <p className="text-[#64748b] text-sm mt-0.5">{selected.name}</p>
             </div>
             <button onClick={runScheduleCheck}
               disabled={loading || !userName}
-              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 ml-4">
+              className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0 ml-4">
               {loading ? (
                 <>
                   <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin"/>
@@ -488,11 +488,11 @@ export default function VisibilityCheck({
               </div>
               <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
                 Hit{" "}
-                <span className="text-[#4F6EF7] font-medium">Run Visibility Check</span>{" "}
+                <span className="text-[#FA5935] font-medium">Run Visibility Check</span>{" "}
                 to see how AI systems perceive{" "}
-                <strong className="text-[#0f172a]">{userName || "you"}</strong>{" "}
+                <strong className="text-[#0E1916]">{userName || "you"}</strong>{" "}
                 for{" "}
-                <strong className="text-[#0f172a]">{selected.query}</strong>.
+                <strong className="text-[#0E1916]">{selected.query}</strong>.
               </p>
             </div>
           )}

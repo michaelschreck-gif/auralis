@@ -10,7 +10,7 @@ export default function AgbPage() {
     <article className="bg-white rounded-2xl border border-gray-100 p-8 space-y-6 text-sm leading-relaxed text-[#475569]">
       <header>
         <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
-        <h1 className="text-2xl font-bold text-[#0f172a]">Allgemeine Geschäftsbedingungen</h1>
+        <h1 className="text-2xl font-bold text-[#0E1916]">Allgemeine Geschäftsbedingungen</h1>
         <p className="text-xs text-[#94a3b8] mt-2">
           Geltend für die Nutzung der Halo-Plattform. Stand: {new Date().getFullYear()}.
         </p>
@@ -18,9 +18,9 @@ export default function AgbPage() {
 
       <Section title="§ 1 Geltungsbereich">
         <p>
-          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt) i. G.</strong>
+          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0E1916]">Halo UG (haftungsbeschränkt) i. G.</strong>
           {" "}(nachfolgend „Anbieter“) und dem registrierten Nutzer (nachfolgend „Kunde“) über die Nutzung
-          der unter <a href="https://digital-halo.de" className="text-[#534AB7] hover:underline">digital-halo.de</a>{" "}
+          der unter <a href="https://digital-halo.de" className="text-[#C8431F] hover:underline">digital-halo.de</a>{" "}
           (sowie etwaigen Folge-Domains) erreichbaren Plattform „Halo“.
         </p>
         <p>
@@ -49,7 +49,7 @@ export default function AgbPage() {
         </p>
         <p>
           Konkrete Leistungsmerkmale je Tarif (Free, Starter, Pro, Enterprise) ergeben sich aus der
-          aktuellen <a href="/#preise" className="text-[#534AB7] hover:underline">Preisseite</a>.
+          aktuellen <a href="/#preise" className="text-[#C8431F] hover:underline">Preisseite</a>.
           Der Anbieter ist berechtigt, den Leistungsumfang weiterzuentwickeln. Wesentliche Reduktionen
           werden mit angemessener Frist angekündigt.
         </p>
@@ -78,7 +78,7 @@ export default function AgbPage() {
         </p>
         <p>
           Die Kündigung erfolgt direkt im Tool unter „Einstellungen“ oder formlos per E-Mail an{" "}
-          <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] hover:underline">
+          <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">
             michael@linkedinconsulting.digital
           </a>.
         </p>
@@ -113,7 +113,7 @@ export default function AgbPage() {
         <p>
           Der Anbieter verarbeitet personenbezogene Daten ausschließlich im Einklang mit der DSGVO
           und der separaten{" "}
-          <a href="/legal/datenschutz" className="text-[#534AB7] hover:underline">
+          <a href="/legal/datenschutz" className="text-[#C8431F] hover:underline">
             Datenschutzerklärung
           </a>.
         </p>
@@ -168,7 +168,7 @@ export default function AgbPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-2.5">
-      <h2 className="text-base font-semibold text-[#0f172a]">{title}</h2>
+      <h2 className="text-base font-semibold text-[#0E1916]">{title}</h2>
       <div className="space-y-2">{children}</div>
     </section>
   )

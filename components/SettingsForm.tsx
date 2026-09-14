@@ -80,7 +80,7 @@ export default function SettingsForm({
     router.push("/")
   }
 
-  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20 transition-colors"
+  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0E1916] placeholder-[#94a3b8] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
   const labelCls = "text-xs text-[#64748b] font-medium uppercase tracking-wider"
 
   return (
@@ -89,7 +89,7 @@ export default function SettingsForm({
       {/* Profile */}
       <section id="profile" className="space-y-5">
         <div>
-          <h2 className="text-base font-semibold text-[#0f172a]">Profil</h2>
+          <h2 className="text-base font-semibold text-[#0E1916]">Profil</h2>
           <p className="text-xs text-[#64748b] mt-0.5">So sehen dich KI-Systeme in den Reputations-Analysen.</p>
         </div>
 
@@ -118,9 +118,9 @@ export default function SettingsForm({
                   onClick={() => setLanguage(lang)}
                   className="px-4 py-2.5 rounded-lg text-sm border font-medium transition-colors"
                   style={{
-                    borderColor: language === lang ? "#7F77DD" : "#e2e8f0",
+                    borderColor: language === lang ? "#FA5935" : "#e2e8f0",
                     background: language === lang ? "#eff2ff" : "white",
-                    color: language === lang ? "#7F77DD" : "#64748b",
+                    color: language === lang ? "#FA5935" : "#64748b",
                   }}
                 >
                   {lang === "de" ? "🇩🇪 Deutsch" : "🇬🇧 English"}
@@ -135,7 +135,7 @@ export default function SettingsForm({
         <button
           onClick={saveProfile}
           disabled={saving}
-          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#7F77DD] hover:bg-[#534AB7] text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {saving ? (
             <>
@@ -149,7 +149,7 @@ export default function SettingsForm({
       {/* Monitoring Topics */}
       <section id="topics" className="space-y-5">
         <div>
-          <h2 className="text-base font-semibold text-[#0f172a]">Überwachte Themen</h2>
+          <h2 className="text-base font-semibold text-[#0E1916]">Überwachte Themen</h2>
           <p className="text-xs text-[#64748b] mt-0.5">Themen, die automatisch per geplanter KI-Reputations-Analyse verfolgt werden.</p>
         </div>
 
@@ -161,12 +161,12 @@ export default function SettingsForm({
           {schedules.map(s => (
             <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center gap-4">
               <div className="flex-1 min-w-0">
-                <p className="text-sm text-[#0f172a] font-medium truncate">{s.query}</p>
+                <p className="text-sm text-[#0E1916] font-medium truncate">{s.query}</p>
               </div>
               <select
                 value={s.frequency}
                 onChange={e => updateScheduleFrequency(s.id, e.target.value)}
-                className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-[#64748b] focus:outline-none focus:border-[#7F77DD] transition-colors"
+                className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-[#64748b] focus:outline-none focus:border-[#FA5935] transition-colors"
               >
                 <option value="daily">Täglich</option>
                 <option value="weekly">Wöchentlich</option>
@@ -187,18 +187,18 @@ export default function SettingsForm({
       {/* Plan */}
       <section id="plan" className="space-y-4">
         <div>
-          <h2 className="text-base font-semibold text-[#0f172a]">Tarif</h2>
+          <h2 className="text-base font-semibold text-[#0E1916]">Tarif</h2>
           <p className="text-xs text-[#64748b] mt-0.5">Dein aktuelles Abonnement.</p>
         </div>
         <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center justify-between">
           <div>
-            <p className="text-sm text-[#0f172a] font-medium capitalize">{plan}</p>
+            <p className="text-sm text-[#0E1916] font-medium capitalize">{plan}</p>
             <p className="text-xs text-[#64748b] mt-0.5">
               {plan === "free" ? "1 Analyse pro Monat" : "Unbegrenzte Analysen"}
             </p>
           </div>
           {plan === "free" && (
-            <span className="text-xs px-3 py-1.5 rounded-full bg-[#EEEDFE] text-[#7F77DD] border border-[#CECBF6] font-medium cursor-pointer hover:bg-blue-100 transition-colors">
+            <span className="text-xs px-3 py-1.5 rounded-full bg-[#FDE7E0] text-[#FA5935] border border-[#FBCBB8] font-medium cursor-pointer hover:bg-blue-100 transition-colors">
               Upgrade →
             </span>
           )}
@@ -233,7 +233,7 @@ export default function SettingsForm({
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 rounded-lg text-sm text-[#64748b] hover:text-[#0f172a] transition-colors"
+                className="px-4 py-2 rounded-lg text-sm text-[#64748b] hover:text-[#0E1916] transition-colors"
               >
                 Abbrechen
               </button>

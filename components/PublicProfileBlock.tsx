@@ -77,7 +77,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
   return (
     <section id="public-profile" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
       <div>
-        <h2 className="text-base font-semibold text-[#0f172a]">Public Halo Score Profil</h2>
+        <h2 className="text-base font-semibold text-[#0E1916]">Public Halo Score Profil</h2>
         <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
           Teile deinen Halo Score™ öffentlich unter einer eigenen Halo-URL und embeddable als
           Badge auf deiner Website oder LinkedIn-Profil.
@@ -85,9 +85,9 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
       </div>
 
       {/* Toggle */}
-      <div className="flex items-center justify-between rounded-xl bg-[#f8f9fb] border border-gray-100 p-4">
+      <div className="flex items-center justify-between rounded-xl bg-[#FAF8F3] border border-gray-100 p-4">
         <div className="min-w-0 flex-1 pr-4">
-          <p className="text-sm font-medium text-[#0f172a]">
+          <p className="text-sm font-medium text-[#0E1916]">
             {enabled ? "Public Profile ist aktiv" : "Public Profile ist deaktiviert"}
           </p>
           <p className="text-xs text-[#64748b] mt-0.5">
@@ -101,7 +101,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
           onClick={() => handleToggle(!enabled)}
           disabled={pending}
           className={`relative inline-flex h-7 w-12 flex-shrink-0 rounded-full transition-colors ${
-            enabled ? "bg-[#7F77DD]" : "bg-gray-300"
+            enabled ? "bg-[#FA5935]" : "bg-gray-300"
           } disabled:opacity-50`}
         >
           <span
@@ -132,14 +132,14 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                 type="text"
                 value={slug}
                 onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                className="flex-1 bg-white border border-gray-200 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20 font-mono"
+                className="flex-1 bg-white border border-gray-200 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 font-mono"
                 placeholder="elon-musk"
               />
               <button
                 type="button"
                 onClick={handleSaveSlug}
                 disabled={pending}
-                className="px-4 py-2 rounded-lg bg-[#0f172a] hover:bg-gray-800 text-white text-sm font-medium transition-colors disabled:opacity-40"
+                className="px-4 py-2 rounded-lg bg-[#0E1916] hover:bg-gray-800 text-white text-sm font-medium transition-colors disabled:opacity-40"
               >
                 Speichern
               </button>
@@ -150,15 +150,15 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
           </div>
 
           {/* Public URL */}
-          <div className="rounded-xl bg-[#EEEDFE]/40 border border-[#CECBF6] p-4 space-y-2">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#7F77DD]">
+          <div className="rounded-xl bg-[#FDE7E0]/40 border border-[#FBCBB8] p-4 space-y-2">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#FA5935]">
               Deine öffentliche URL
             </p>
             <a
               href={profileUrl}
               target="_blank"
               rel="noopener"
-              className="block text-sm text-[#0f172a] font-mono hover:underline break-all"
+              className="block text-sm text-[#0E1916] font-mono hover:underline break-all"
             >
               {profileUrl} ↗
             </a>
@@ -169,7 +169,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
             <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
               Embeddable Badge
             </p>
-            <div className="rounded-xl bg-[#f8f9fb] border border-gray-100 p-4">
+            <div className="rounded-xl bg-[#FAF8F3] border border-gray-100 p-4">
               {/* Live preview */}
               <div className="flex justify-center pb-3 mb-3 border-b border-gray-100">
                 <img
@@ -181,13 +181,13 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                 />
               </div>
               <p className="text-xs text-[#64748b] mb-2">HTML-Snippet zum Einbetten:</p>
-              <pre className="text-[11px] bg-[#0f172a] text-gray-100 rounded-md p-3 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap break-all">
+              <pre className="text-[11px] bg-[#0E1916] text-gray-100 rounded-md p-3 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap break-all">
 {embedCode}
               </pre>
               <button
                 type="button"
                 onClick={copyEmbed}
-                className="mt-2 px-3 py-1.5 rounded-md bg-[#7F77DD] hover:bg-[#534AB7] text-white text-xs font-medium transition-colors"
+                className="mt-2 px-3 py-1.5 rounded-md bg-[#FA5935] hover:bg-[#C8431F] text-white text-xs font-medium transition-colors"
               >
                 {copied ? "✓ Kopiert" : "HTML kopieren"}
               </button>

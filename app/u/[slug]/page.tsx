@@ -83,19 +83,19 @@ export default async function PublicProfilePage(
   const lastAnalyzedDate = report?.created_at ? new Date(report.created_at) : null
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] text-[#0f172a]">
+    <div className="min-h-screen bg-[#FAF8F3] text-[#0E1916]">
       {/* Header */}
       <header className="bg-white border-b border-gray-100">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
               <span className="text-white text-xs font-bold">H</span>
             </div>
-            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
+            <span className="text-[#0E1916] font-semibold text-sm tracking-tight">Halo</span>
           </a>
           <a
             href="/login"
-            className="text-sm px-4 py-2 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors font-semibold"
+            className="text-sm px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-blue-700 text-white transition-colors font-semibold"
           >
             Eigenen Score messen →
           </a>
@@ -107,13 +107,13 @@ export default async function PublicProfilePage(
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-6">
           <div className="flex items-center gap-5 mb-6">
             <div className="w-16 h-16 rounded-full bg-blue-50 border-2 border-blue-100 flex items-center justify-center flex-shrink-0">
-              <span className="text-xl font-bold text-[#4F6EF7]">{initials}</span>
+              <span className="text-xl font-bold text-[#FA5935]">{initials}</span>
             </div>
             <div className="min-w-0 flex-1">
               <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
                 KI-Reputations-Profil
               </p>
-              <h1 className="text-2xl font-bold text-[#0f172a] mt-1">{name}</h1>
+              <h1 className="text-2xl font-bold text-[#0E1916] mt-1">{name}</h1>
               {lastAnalyzedDate && (
                 <p className="text-xs text-[#94a3b8] mt-1">
                   Letzte Messung:{" "}
@@ -135,17 +135,17 @@ export default async function PublicProfilePage(
                   Halo Score™
                 </p>
                 <div className="flex items-baseline justify-center gap-2">
-                  <span className="text-6xl font-bold text-[#4F6EF7] tabular-nums">{masters.aura.value}</span>
+                  <span className="text-6xl font-bold text-[#FA5935] tabular-nums">{masters.aura.value}</span>
                   <span className="text-lg text-[#94a3b8]">/100</span>
                 </div>
-                <p className="text-sm font-medium text-[#0f172a] mt-2">{masters.aura.band.label}</p>
+                <p className="text-sm font-medium text-[#0E1916] mt-2">{masters.aura.band.label}</p>
               </div>
 
               {/* Sub-Scores */}
               <div className="grid grid-cols-3 gap-3">
                 {[
                   { label: "GEO",                  data: masters.geo,               color: "#378ADD" },
-                  { label: "Thought Leadership",   data: masters.thoughtLeadership, color: "#7F77DD" },
+                  { label: "Thought Leadership",   data: masters.thoughtLeadership, color: "#FA5935" },
                   { label: "Digitale Autorität",   data: masters.digitalAuthority,  color: "#1D9E75" },
                 ].map(s => (
                   <div key={s.label} className="rounded-xl border border-gray-100 p-3">
@@ -178,7 +178,7 @@ export default async function PublicProfilePage(
 
         {/* Methodology */}
         <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
-          <h2 className="text-base font-semibold text-[#0f172a] mb-3">Was wird gemessen?</h2>
+          <h2 className="text-base font-semibold text-[#0E1916] mb-3">Was wird gemessen?</h2>
           <p className="text-sm text-[#64748b] leading-relaxed">
             Der Halo Score™ misst, wie sichtbar diese Person in KI-Antworten auftaucht.
             Halo fragt regelmäßig Claude, ChatGPT, Perplexity und Gemini nach
@@ -196,7 +196,7 @@ export default async function PublicProfilePage(
           <p className="text-sm text-[#64748b] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
           <a
             href="/login"
-            className="inline-block px-6 py-3 rounded-lg bg-[#4F6EF7] hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
+            className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
           >
             Kostenlos messen lassen →
           </a>
@@ -206,7 +206,7 @@ export default async function PublicProfilePage(
         </section>
       </main>
 
-      <footer className="bg-[#0f172a] text-gray-400 mt-8">
+      <footer className="bg-[#0E1916] text-gray-400 mt-8">
         <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between text-xs flex-wrap gap-2">
           <p>© {new Date().getFullYear()} Halo · Operated by Halo UG (haftungsbeschränkt) i. G.</p>
           <div className="flex items-center gap-4">

@@ -92,7 +92,7 @@ export default function AskChat({ userName, suggestions }: Props) {
         <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
           Frag dein Profil
         </span>
-        <h1 className="text-2xl font-semibold text-[#0f172a] mt-1">
+        <h1 className="text-2xl font-semibold text-[#0E1916] mt-1">
           {firstName ? `Hallo ${firstName}` : "Hallo"} 👋
         </h1>
         <p className="text-sm text-[#64748b] mt-1">
@@ -114,7 +114,7 @@ export default function AskChat({ userName, suggestions }: Props) {
                   type="button"
                   onClick={() => send(q)}
                   disabled={pending}
-                  className="text-left text-sm text-[#475569] rounded-lg border border-gray-100 bg-white px-4 py-3 hover:border-[#7F77DD]/40 hover:bg-[#EEEDFE]/40 hover:text-[#0f172a] transition-colors disabled:opacity-50"
+                  className="text-left text-sm text-[#475569] rounded-lg border border-gray-100 bg-white px-4 py-3 hover:border-[#FA5935]/40 hover:bg-[#FDE7E0]/40 hover:text-[#0E1916] transition-colors disabled:opacity-50"
                 >
                   „{q}"
                 </button>
@@ -137,7 +137,7 @@ export default function AskChat({ userName, suggestions }: Props) {
 
       {/* Input */}
       <form onSubmit={handleSubmit} className="p-6 pt-3 flex-shrink-0">
-        <div className="flex gap-2 items-end rounded-xl border border-gray-200 bg-white px-3 py-2.5 focus-within:border-[#7F77DD] focus-within:ring-1 focus-within:ring-[#7F77DD]/20 transition-colors">
+        <div className="flex gap-2 items-end rounded-xl border border-gray-200 bg-white px-3 py-2.5 focus-within:border-[#FA5935] focus-within:ring-1 focus-within:ring-[#FA5935]/20 transition-colors">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -150,12 +150,12 @@ export default function AskChat({ userName, suggestions }: Props) {
             placeholder={'Frag mich z.B. „Wie steigere ich meinen GEO Score?“'}
             rows={1}
             disabled={pending}
-            className="flex-1 resize-none bg-transparent text-sm text-[#0f172a] placeholder:text-[#94a3b8] focus:outline-none disabled:opacity-50 min-h-[1.5rem] max-h-32"
+            className="flex-1 resize-none bg-transparent text-sm text-[#0E1916] placeholder:text-[#94a3b8] focus:outline-none disabled:opacity-50 min-h-[1.5rem] max-h-32"
           />
           <button
             type="submit"
             disabled={pending || !input.trim()}
-            className="px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
+            className="px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors disabled:opacity-40 disabled:cursor-not-allowed flex-shrink-0"
           >
             {pending ? "..." : "Fragen"}
           </button>
@@ -180,7 +180,7 @@ function MessageBubble({
   if (role === "user") {
     return (
       <div className="flex justify-end">
-        <div className="max-w-[80%] rounded-2xl rounded-br-md bg-[#7F77DD] text-white px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed">
+        <div className="max-w-[80%] rounded-2xl rounded-br-md bg-[#FA5935] text-white px-4 py-2.5 text-sm whitespace-pre-wrap leading-relaxed">
           {content}
         </div>
       </div>
@@ -188,12 +188,12 @@ function MessageBubble({
   }
   return (
     <div className="flex gap-3 items-start">
-      <div className="w-7 h-7 rounded-lg bg-[#7F77DD] flex items-center justify-center flex-shrink-0 mt-0.5">
+      <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center flex-shrink-0 mt-0.5">
         <span className="text-white text-xs font-bold">H</span>
       </div>
-      <div className="flex-1 text-sm text-[#0f172a] whitespace-pre-wrap leading-relaxed">
+      <div className="flex-1 text-sm text-[#0E1916] whitespace-pre-wrap leading-relaxed">
         {content || (pending && <TypingDots />)}
-        {content && pending && <span className="inline-block w-1.5 h-3 bg-[#7F77DD] ml-0.5 align-middle animate-pulse" />}
+        {content && pending && <span className="inline-block w-1.5 h-3 bg-[#FA5935] ml-0.5 align-middle animate-pulse" />}
       </div>
     </div>
   )

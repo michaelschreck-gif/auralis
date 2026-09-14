@@ -39,16 +39,16 @@ export default function Cockpit({
       {!masters && (
         <>
           <header className="mb-6">
-            <h1 className="text-2xl font-semibold text-[#0f172a]">Hallo, {firstName} 👋</h1>
+            <h1 className="text-2xl font-semibold text-[#0E1916]">Hallo, {firstName} 👋</h1>
           </header>
-          <div className="rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/60 p-8 text-center">
-            <p className="text-base font-medium text-[#26215C]">Noch keine Analyse vorhanden.</p>
-            <p className="text-sm text-[#534AB7] mt-2 mb-5">
+          <div className="rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/60 p-8 text-center">
+            <p className="text-base font-medium text-[#0E1916]">Noch keine Analyse vorhanden.</p>
+            <p className="text-sm text-[#C8431F] mt-2 mb-5">
               Starte deine erste Reputationsanalyse, um deinen Halo Score und die drei Dimensionen zu sehen.
             </p>
             <Link
               href="/dashboard/analyze"
-              className="inline-block px-5 py-2.5 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors"
+              className="inline-block px-5 py-2.5 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors"
             >
               Neue Analyse starten →
             </Link>
@@ -255,7 +255,7 @@ function HighlightCard({
       style={{ borderLeft: `4px solid ${accent}` }}
     >
       <div className="text-[11px] uppercase tracking-wider text-[#94a3b8]">{eyebrow}</div>
-      <div className="text-[15px] font-medium text-[#0f172a] mt-0.5">{title}</div>
+      <div className="text-[15px] font-medium text-[#0E1916] mt-0.5">{title}</div>
       <div className="text-[13px] text-[#64748b]">{detail}</div>
     </div>
   )

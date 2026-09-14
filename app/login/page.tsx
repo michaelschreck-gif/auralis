@@ -101,21 +101,21 @@ export default function LoginPage() {
 
   if (sent) {
     return (
-      <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-6">
+      <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
         <div className="max-w-sm w-full text-center space-y-5">
           <div className="w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto text-2xl">
             ✉
           </div>
           <div>
-            <h2 className="text-[#0f172a] text-xl font-semibold">Check your email</h2>
+            <h2 className="text-[#0E1916] text-xl font-semibold">Check your email</h2>
             <p className="text-[#64748b] text-sm mt-2 leading-relaxed">
               We sent a magic link to{" "}
-              <span className="text-[#0f172a] font-medium">{email}</span>
+              <span className="text-[#0E1916] font-medium">{email}</span>
             </p>
           </div>
           <button
             onClick={() => setSent(false)}
-            className="text-xs text-[#64748b] hover:text-[#0f172a] transition-colors"
+            className="text-xs text-[#64748b] hover:text-[#0E1916] transition-colors"
           >
             ← Use a different email
           </button>
@@ -125,20 +125,20 @@ export default function LoginPage() {
   }
 
   const inputCls =
-    "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0f172a] placeholder-[#94a3b8] focus:outline-none focus:border-[#4F6EF7] focus:ring-1 focus:ring-[#4F6EF7]/20 transition-colors"
+    "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0E1916] placeholder-[#94a3b8] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
 
   return (
-    <div className="min-h-screen bg-[#f8f9fb] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
       <div className="max-w-sm w-full">
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
 
           {/* Branding */}
           <div className="text-center space-y-1">
             <div className="flex items-center justify-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
+              <div className="w-8 h-8 rounded-lg bg-[#FA5935] flex items-center justify-center">
                 <span className="text-white text-sm font-bold">H</span>
               </div>
-              <span className="text-[#0f172a] font-semibold text-lg tracking-tight">Halo</span>
+              <span className="text-[#0E1916] font-semibold text-lg tracking-tight">Halo</span>
             </div>
             <p className="text-[#64748b] text-sm">AI Visibility Monitoring for Personal Brands</p>
           </div>
@@ -151,8 +151,8 @@ export default function LoginPage() {
                 onClick={() => switchTab(t)}
                 className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                   tab === t
-                    ? "bg-white text-[#0f172a] shadow-sm"
-                    : "text-[#64748b] hover:text-[#0f172a]"
+                    ? "bg-white text-[#0E1916] shadow-sm"
+                    : "text-[#64748b] hover:text-[#0E1916]"
                 }`}
               >
                 {t === "signin" ? "Anmelden" : "Registrieren"}
@@ -164,7 +164,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogle}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-[#0f172a] font-medium hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-[#0E1916] font-medium hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
           >
             <GoogleIcon />
             Mit Google fortfahren
@@ -213,7 +213,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim() || !password.trim()}
-                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
@@ -280,7 +280,7 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim() || !password.trim() || !confirmPassword.trim()}
-                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#4F6EF7] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">

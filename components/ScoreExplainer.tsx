@@ -49,7 +49,7 @@ export default function ScoreExplainer({
         {/* Header */}
         <div className="flex items-start gap-3">
           <div className="flex-1 min-w-0">
-            <h2 id="score-explainer-title" className="text-lg font-semibold text-[#0f172a]">
+            <h2 id="score-explainer-title" className="text-lg font-semibold text-[#0E1916]">
               {definition.title}{" "}
               <span className="font-normal text-sm text-[#64748b]">· {score.value}/100</span>
             </h2>
@@ -59,14 +59,14 @@ export default function ScoreExplainer({
             type="button"
             onClick={onClose}
             aria-label="Schließen"
-            className="w-7 h-7 rounded-md border border-gray-200 text-[#94a3b8] hover:text-[#0f172a] hover:bg-gray-50 transition-colors flex items-center justify-center text-base leading-none"
+            className="w-7 h-7 rounded-md border border-gray-200 text-[#94a3b8] hover:text-[#0E1916] hover:bg-gray-50 transition-colors flex items-center justify-center text-base leading-none"
           >
             ✕
           </button>
         </div>
 
         {/* What it measures */}
-        <div className="bg-[#f8f9fb] border border-gray-100 rounded-xl p-3 text-sm text-[#0f172a] leading-relaxed">
+        <div className="bg-[#FAF8F3] border border-gray-100 rounded-xl p-3 text-sm text-[#0E1916] leading-relaxed">
           {definition.what}
         </div>
 
@@ -79,7 +79,7 @@ export default function ScoreExplainer({
               aria-expanded={showMath}
               className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-gray-50 transition-colors"
             >
-              <span className="text-sm font-medium text-[#0f172a]">
+              <span className="text-sm font-medium text-[#0E1916]">
                 So wird dieser Score gerechnet
               </span>
               <span className="text-xs text-[#64748b] flex items-center gap-1.5">
@@ -108,7 +108,7 @@ export default function ScoreExplainer({
               {definition.weights.map(w => (
                 <div key={w.label} className="flex items-center gap-2 my-1.5 text-xs">
                   <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: w.color }} />
-                  <span className="flex-1 text-[#0f172a]">{w.label}</span>
+                  <span className="flex-1 text-[#0E1916]">{w.label}</span>
                   <span className="text-[#64748b] tabular-nums">{w.value}%</span>
                 </div>
               ))}
@@ -123,7 +123,7 @@ export default function ScoreExplainer({
           </p>
           <BandTrack bands={definition.bands.map(b => b.label)} activeIndex={score.bandIndex} value={score.value} />
           <p className="text-xs text-[#64748b] mt-2">
-            → <strong className="font-medium text-[#0f172a]">{score.band.label}</strong>{" "}
+            → <strong className="font-medium text-[#0E1916]">{score.band.label}</strong>{" "}
             <span className="text-[#94a3b8]">· Score {score.value}/100</span>
           </p>
         </div>
@@ -136,10 +136,10 @@ export default function ScoreExplainer({
           <div className="divide-y divide-gray-100">
             {definition.tips.map((t, i) => (
               <div key={i} className="flex items-start gap-3 py-2.5 text-sm leading-snug">
-                <div className="w-5 h-5 rounded-full bg-[#EEEDFE] text-[#7F77DD] text-[11px] font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-5 h-5 rounded-full bg-[#FDE7E0] text-[#FA5935] text-[11px] font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
                   {i + 1}
                 </div>
-                <span className="text-[#0f172a]">{t}</span>
+                <span className="text-[#0E1916]">{t}</span>
               </div>
             ))}
           </div>
@@ -150,7 +150,7 @@ export default function ScoreExplainer({
           <button
             type="button"
             onClick={onClose}
-            className="text-sm px-4 py-2 rounded-lg bg-[#0f172a] text-white font-medium hover:bg-gray-800 transition-colors"
+            className="text-sm px-4 py-2 rounded-lg bg-[#0E1916] text-white font-medium hover:bg-gray-800 transition-colors"
           >
             Verstanden
           </button>
@@ -191,7 +191,7 @@ function DonutChart({ weights }: { weights: { label: string; value: number; colo
         offset += len
         return seg
       })}
-      <text x={cx} y={cy + 4} textAnchor="middle" fontSize={16} fontWeight={500} fill="#0f172a">
+      <text x={cx} y={cy + 4} textAnchor="middle" fontSize={16} fontWeight={500} fill="#0E1916">
         {total}%
       </text>
     </svg>
@@ -229,10 +229,10 @@ function BandTrack({
       </div>
       <div
         aria-hidden="true"
-        className="absolute -top-1 w-0.5 h-8 bg-[#0f172a]"
+        className="absolute -top-1 w-0.5 h-8 bg-[#0E1916]"
         style={{ left: `calc(${finalPct}% - 1px)` }}
       >
-        <div className="absolute -top-1 -left-1.5 w-3 h-3 rounded-full bg-[#0f172a]" />
+        <div className="absolute -top-1 -left-1.5 w-3 h-3 rounded-full bg-[#0E1916]" />
       </div>
     </div>
   )

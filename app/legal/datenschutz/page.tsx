@@ -10,7 +10,7 @@ export default function DatenschutzPage() {
     <article className="bg-white rounded-2xl border border-gray-100 p-8 space-y-6 text-sm leading-relaxed text-[#475569]">
       <header>
         <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
-        <h1 className="text-2xl font-bold text-[#0f172a]">Datenschutzerklärung</h1>
+        <h1 className="text-2xl font-bold text-[#0E1916]">Datenschutzerklärung</h1>
         <p className="text-xs text-[#94a3b8] mt-2">
           Informationen zur Verarbeitung personenbezogener Daten gemäß Art. 13 und 14 DSGVO.
           Stand: {new Date().getFullYear()}.
@@ -25,17 +25,17 @@ export default function DatenschutzPage() {
           Informationen entnehmen Sie der nachfolgenden Datenschutzerklärung.
         </p>
         <p>
-          <strong className="text-[#0f172a]">Wer ist verantwortlich?</strong> Die Datenverarbeitung erfolgt
+          <strong className="text-[#0E1916]">Wer ist verantwortlich?</strong> Die Datenverarbeitung erfolgt
           durch den Websitebetreiber (siehe Abschnitt „Hinweis zur verantwortlichen Stelle").
         </p>
         <p>
-          <strong className="text-[#0f172a]">Wie erfassen wir Ihre Daten?</strong> Zum einen, indem Sie sie
+          <strong className="text-[#0E1916]">Wie erfassen wir Ihre Daten?</strong> Zum einen, indem Sie sie
           uns mitteilen (z. B. bei Registrierung, im Profil oder durch Eingabe Ihrer Themen). Zum anderen
           erfassen unsere IT-Systeme beim Besuch automatisch technische Daten (z. B. Browser, Betriebssystem,
           Zugriffszeit).
         </p>
         <p>
-          <strong className="text-[#0f172a]">Wofür nutzen wir Ihre Daten?</strong> Zur Bereitstellung des
+          <strong className="text-[#0E1916]">Wofür nutzen wir Ihre Daten?</strong> Zur Bereitstellung des
           Dienstes (KI-Reputations-Analyse für Ihre Person/Marke), zur Vertragsabwicklung und zur
           Sicherstellung eines fehlerfreien Betriebs.
         </p>
@@ -46,12 +46,12 @@ export default function DatenschutzPage() {
           Verantwortliche Stelle für die Datenverarbeitung auf dieser Website und in der Anwendung ist:
         </p>
         <p>
-          <strong className="text-[#0f172a]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
+          <strong className="text-[#0E1916]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
           Vertreten durch die Geschäftsführer Maud Schock und Michael Schreck<br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
-          Telefon: <a href="tel:+4915563664275" className="text-[#534AB7] hover:underline">+49 155 63664275</a><br />
-          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#534AB7] hover:underline">michael@linkedinconsulting.digital</a>
+          Telefon: <a href="tel:+4915563664275" className="text-[#C8431F] hover:underline">+49 155 63664275</a><br />
+          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">michael@linkedinconsulting.digital</a>
         </p>
         <p>
           Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit
@@ -62,10 +62,10 @@ export default function DatenschutzPage() {
       <Section title="3. Welche Daten wir verarbeiten">
         <p>Im Rahmen der Nutzung von Halo verarbeiten wir insbesondere:</p>
         <ul className="list-disc pl-5 space-y-1">
-          <li><strong className="text-[#0f172a]">Konto- und Profildaten:</strong> Name, E-Mail-Adresse, gewählte Sprache, Tarif.</li>
-          <li><strong className="text-[#0f172a]">Inhaltsdaten:</strong> die von Ihnen angelegten Themen, Wettbewerber sowie die daraus erzeugten Analyse-Ergebnisse (Scores, KI-Antworten, Empfehlungen).</li>
-          <li><strong className="text-[#0f172a]">Nutzungs- und Metadaten:</strong> technische Zugriffsdaten (IP-Adresse, Browser, Zeitpunkt) zur sicheren Bereitstellung.</li>
-          <li><strong className="text-[#0f172a]">Sprachdaten (optional):</strong> wenn Sie den Sprach-Avatar nutzen, werden Mikrofon-Eingaben zur Spracherkennung sowie Antworttexte zur Sprachausgabe verarbeitet (siehe Abschnitt 6).</li>
+          <li><strong className="text-[#0E1916]">Konto- und Profildaten:</strong> Name, E-Mail-Adresse, gewählte Sprache, Tarif.</li>
+          <li><strong className="text-[#0E1916]">Inhaltsdaten:</strong> die von Ihnen angelegten Themen, Wettbewerber sowie die daraus erzeugten Analyse-Ergebnisse (Scores, KI-Antworten, Empfehlungen).</li>
+          <li><strong className="text-[#0E1916]">Nutzungs- und Metadaten:</strong> technische Zugriffsdaten (IP-Adresse, Browser, Zeitpunkt) zur sicheren Bereitstellung.</li>
+          <li><strong className="text-[#0E1916]">Sprachdaten (optional):</strong> wenn Sie den Sprach-Avatar nutzen, werden Mikrofon-Eingaben zur Spracherkennung sowie Antworttexte zur Sprachausgabe verarbeitet (siehe Abschnitt 6).</li>
         </ul>
       </Section>
 
@@ -77,13 +77,13 @@ export default function DatenschutzPage() {
         </p>
         <ul className="list-disc pl-5 space-y-2">
           <li>
-            <strong className="text-[#0f172a]">Vercel Inc.</strong> (340 S Lemon Ave #4133, Walnut, CA 91789,
+            <strong className="text-[#0E1916]">Vercel Inc.</strong> (340 S Lemon Ave #4133, Walnut, CA 91789,
             USA) — Hosting und Auslieferung der Web-Anwendung. Dabei werden technische Zugriffsdaten
             (z. B. IP-Adresse) verarbeitet. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO (sichere, effiziente
             Bereitstellung). Datenübertragung in die USA gestützt auf die EU-Standardvertragsklauseln (SCC).
           </li>
           <li>
-            <strong className="text-[#0f172a]">Supabase</strong> (Datenbank & Authentifizierung) — Speicherung
+            <strong className="text-[#0E1916]">Supabase</strong> (Datenbank & Authentifizierung) — Speicherung
             der Konto-, Profil- und Analysedaten. Die Datenbank wird in einer EU-Region (Frankfurt/EU)
             betrieben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und f DSGVO. Zur Sitzungsverwaltung werden
             technisch notwendige Cookies gesetzt.
@@ -98,9 +98,9 @@ export default function DatenschutzPage() {
           übermittelt und die Antworten ausgewertet. Eingesetzt werden – je nach Tarif und Konfiguration:
         </p>
         <ul className="list-disc pl-5 space-y-1">
-          <li><strong className="text-[#0f172a]">Anthropic (Claude)</strong> — Standard-Analyse-Modell, alle Tarife.</li>
-          <li><strong className="text-[#0f172a]">OpenAI (GPT-4o)</strong>, <strong className="text-[#0f172a]">Perplexity</strong>, <strong className="text-[#0f172a]">Google (Gemini)</strong> — zusätzliche Modelle ab kostenpflichtigen Tarifen.</li>
-          <li><strong className="text-[#0f172a]">DataForSEO</strong> — Auswertung der Google-Suchergebnisse (SEO-Score), sofern aktiviert.</li>
+          <li><strong className="text-[#0E1916]">Anthropic (Claude)</strong> — Standard-Analyse-Modell, alle Tarife.</li>
+          <li><strong className="text-[#0E1916]">OpenAI (GPT-4o)</strong>, <strong className="text-[#0E1916]">Perplexity</strong>, <strong className="text-[#0E1916]">Google (Gemini)</strong> — zusätzliche Modelle ab kostenpflichtigen Tarifen.</li>
+          <li><strong className="text-[#0E1916]">DataForSEO</strong> — Auswertung der Google-Suchergebnisse (SEO-Score), sofern aktiviert.</li>
         </ul>
         <p>
           Übermittelt werden dabei in der Regel Ihr Name und Ihre Themen (Suchanfragen). Eine Übermittlung
@@ -117,8 +117,8 @@ export default function DatenschutzPage() {
           Wenn Sie den Sprach-Avatar („Sprich mit deinem KI-Ich") aktiv nutzen, wird Ihre gesprochene Eingabe
           über die Spracherkennung Ihres Browsers in Text umgewandelt; je nach Browser kann dabei eine
           Übermittlung an den jeweiligen Browser-Anbieter erfolgen. Der erzeugte Antworttext wird zur
-          Sprachausgabe an <strong className="text-[#0f172a]">ElevenLabs, Inc.</strong> (USA) übermittelt und
-          als Audiodatei zurückgegeben. Es wird <strong className="text-[#0f172a]">keine Kamera</strong>
+          Sprachausgabe an <strong className="text-[#0E1916]">ElevenLabs, Inc.</strong> (USA) übermittelt und
+          als Audiodatei zurückgegeben. Es wird <strong className="text-[#0E1916]">keine Kamera</strong>
           genutzt und kein Video verarbeitet. Rechtsgrundlage ist Ihre Nutzungshandlung im Rahmen der
           Vertragserfüllung (Art. 6 Abs. 1 lit. b DSGVO); die Übermittlung in die USA wird auf die
           EU-Standardvertragsklauseln gestützt. Die Funktion ist optional — ohne Nutzung werden keine
@@ -186,7 +186,7 @@ export default function DatenschutzPage() {
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="space-y-2">
-      <h2 className="text-base font-semibold text-[#0f172a]">{title}</h2>
+      <h2 className="text-base font-semibold text-[#0E1916]">{title}</h2>
       <div className="space-y-2">{children}</div>
     </section>
   )

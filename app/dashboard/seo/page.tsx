@@ -61,9 +61,9 @@ export default async function SeoScorePage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
         <nav className="text-sm text-[#64748b]">
-          <a href="/dashboard" className="hover:text-[#0f172a] transition-colors">Cockpit</a>
+          <a href="/dashboard" className="hover:text-[#0E1916] transition-colors">Cockpit</a>
           <span className="mx-1.5 text-[#cbd5e1]">›</span>
-          <span className="text-[#0f172a] font-medium">{SEO_DEFINITION.title}</span>
+          <span className="text-[#0E1916] font-medium">{SEO_DEFINITION.title}</span>
         </nav>
 
         {/* Hero — Radial-Ring in SEO-Farbe */}
@@ -106,26 +106,26 @@ export default async function SeoScorePage() {
         {/* Setup-Hinweis wenn noch keine Daten */}
         {!score && (
           <section className="rounded-2xl border p-5 md:p-6" style={{ borderColor: t.track, background: "#fff" }}>
-            <p className="text-base font-medium text-[#0f172a]">So wird dein SEO Score aktiv</p>
+            <p className="text-base font-medium text-[#0E1916]">So wird dein SEO Score aktiv</p>
             <p className="text-sm text-[#64748b] mt-1.5 leading-relaxed max-w-2xl">
               Der SEO Score nutzt dieselben Themen wie deine KI-Analysen, misst aber die klassische
               Google-Suche. Dafür werden zwei Datenquellen angebunden:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
               <div className="rounded-xl border border-gray-100 p-4">
-                <p className="text-sm font-semibold text-[#0f172a]">Google-Ranking (off-site)</p>
+                <p className="text-sm font-semibold text-[#0E1916]">Google-Ranking (off-site)</p>
                 <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
                   Taucht du bei Google für deine Themen in den Top-Treffern auf? Inklusive Knowledge
                   Panel und AI Overview. Funktioniert für jede Person — sobald die SERP-API verbunden ist.
                 </p>
               </div>
               <div className="rounded-xl border border-gray-100 p-4">
-                <p className="text-sm font-semibold text-[#0f172a]">Eigene Website (on-site)</p>
+                <p className="text-sm font-semibold text-[#0E1916]">Eigene Website (on-site)</p>
                 <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
                   Echte Positionen, Klicks und Impressionen deiner eigenen Domain über die Google
                   Search Console.
                   {websiteUrl
-                    ? <> Hinterlegt: <span className="font-medium text-[#0f172a]">{websiteUrl}</span>.</>
+                    ? <> Hinterlegt: <span className="font-medium text-[#0E1916]">{websiteUrl}</span>.</>
                     : <> Noch keine Domain in den Einstellungen hinterlegt.</>}
                 </p>
               </div>
@@ -179,7 +179,7 @@ export default async function SeoScorePage() {
             {SEO_DEFINITION.weights.map(w => (
               <div key={w.label} className="flex items-center gap-3">
                 <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: w.color }} />
-                <span className="flex-1 text-sm text-[#0f172a]">{w.label}</span>
+                <span className="flex-1 text-sm text-[#0E1916]">{w.label}</span>
                 <div className="w-32 h-1.5 rounded-full bg-gray-100 overflow-hidden hidden sm:block">
                   <div className="h-full rounded-full" style={{ width: `${w.value}%`, background: w.color }} />
                 </div>
@@ -203,7 +203,7 @@ export default async function SeoScorePage() {
                 >
                   {i + 1}
                 </div>
-                <span className="text-[#0f172a]">{tip}</span>
+                <span className="text-[#0E1916]">{tip}</span>
               </div>
             ))}
           </div>

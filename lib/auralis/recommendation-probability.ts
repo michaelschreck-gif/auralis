@@ -123,7 +123,7 @@ export type ProbabilityBand = { label: string; min: number; color: string }
 
 export const PROBABILITY_BANDS: ProbabilityBand[] = [
   { label: "Erste Wahl", min: 75, color: "#22A06B" },
-  { label: "Im Kandidatenkreis", min: 45, color: "#7F77DD" },
+  { label: "Im Kandidatenkreis", min: 45, color: "#FA5935" },
   { label: "Selten empfohlen", min: 20, color: "#EF9F27" },
   { label: "Nicht auf dem Schirm", min: 0, color: "#D1495B" },
 ]

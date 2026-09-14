@@ -120,7 +120,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-[#0f172a]">Wettbewerber</h1>
+          <h1 className="text-2xl font-semibold text-[#0E1916]">Wettbewerber</h1>
           <p className="text-sm text-[#64748b] mt-1">
             Vergleiche deine KI-Reputation mit deinen Wettbewerbern.
           </p>
@@ -131,7 +131,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
             setShowAdd(s => !s)
             setError(null)
           }}
-          className="flex-shrink-0 px-4 py-2 rounded-lg bg-[#7F77DD] hover:bg-[#534AB7] text-white text-sm font-medium transition-colors"
+          className="flex-shrink-0 px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors"
         >
           {showAdd ? "Abbrechen" : "+ Hinzufügen"}
         </button>
@@ -141,7 +141,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
       {showAdd && (
         <form
           action={handleAdd}
-          className="bg-white rounded-2xl border border-[#CECBF6] shadow-sm p-6 space-y-4"
+          className="bg-white rounded-2xl border border-[#FBCBB8] shadow-sm p-6 space-y-4"
         >
           <div className="space-y-1.5">
             <label className="text-xs text-[#64748b] font-medium">Name</label>
@@ -152,7 +152,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
               maxLength={100}
               autoFocus
               placeholder="z.B. Mark Zuckerberg"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20"
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
             />
           </div>
           <div className="space-y-1.5">
@@ -164,7 +164,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
               name="topics"
               maxLength={300}
               placeholder="z.B. AI, Social Media, Metaverse"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20"
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
             />
             <p className="text-[10px] text-[#94a3b8] leading-snug">
               💡 <span className="font-medium">Reihenfolge zählt:</span> Das erste Thema ist das Primärthema und bestimmt die Richtung der KI-Abfragen.
@@ -175,7 +175,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
             <select
               name="language"
               defaultValue="en"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#7F77DD] focus:ring-1 focus:ring-[#7F77DD]/20"
+              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
             >
               <option value="en">🇬🇧 Englisch (Empfohlen für globale Figuren)</option>
               <option value="de">🇩🇪 Deutsch (für DACH-Region-spezifische Wettbewerber)</option>
@@ -192,7 +192,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
           <button
             type="submit"
             disabled={pending}
-            className="px-4 py-2 rounded-lg bg-[#0f172a] hover:bg-gray-800 text-white text-sm font-medium transition-colors disabled:opacity-40"
+            className="px-4 py-2 rounded-lg bg-[#0E1916] hover:bg-gray-800 text-white text-sm font-medium transition-colors disabled:opacity-40"
           >
             {pending ? "Speichere…" : "Wettbewerber speichern"}
           </button>
@@ -216,16 +216,16 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
           {rows.map((r, i) => {
             const deriv = derivations[r.key]
             return (
-            <div key={r.key} className={r.isSelf ? "bg-[#EEEDFE]/40" : ""}>
+            <div key={r.key} className={r.isSelf ? "bg-[#FDE7E0]/40" : ""}>
             <div className="px-6 py-4 flex items-center gap-4">
               <div className="w-6 text-sm text-[#94a3b8] font-medium tabular-nums">
                 {i + 1}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-medium text-[#0f172a] flex items-center gap-2">
+                <p className="text-sm font-medium text-[#0E1916] flex items-center gap-2">
                   {r.name}
                   {r.isSelf && (
-                    <span className="text-[10px] uppercase tracking-wider font-semibold text-[#7F77DD] bg-white border border-[#CECBF6] px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] uppercase tracking-wider font-semibold text-[#FA5935] bg-white border border-[#FBCBB8] px-2 py-0.5 rounded-full">
                       Du
                     </span>
                   )}
@@ -269,7 +269,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                         successId === r.competitorId
                           ? "bg-green-100 text-green-700 border border-green-200"
                           : canAnalyze
-                          ? "bg-[#7F77DD] hover:bg-[#534AB7] text-white disabled:opacity-40 disabled:cursor-not-allowed"
+                          ? "bg-[#FA5935] hover:bg-[#C8431F] text-white disabled:opacity-40 disabled:cursor-not-allowed"
                           : "bg-gray-100 text-[#94a3b8] cursor-not-allowed border border-gray-200"
                       }`}
                     >
@@ -302,7 +302,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
             {deriv && (
               <div className="px-6 pb-4 -mt-1">
                 <details className="group">
-                  <summary className="text-xs text-[#7F77DD] hover:underline cursor-pointer list-none flex items-center gap-1">
+                  <summary className="text-xs text-[#FA5935] hover:underline cursor-pointer list-none flex items-center gap-1">
                     <span aria-hidden className="transition-transform group-open:rotate-90">›</span>
                     So kommt {r.isSelf ? "dein" : "dieser"} Score zustande
                   </summary>
@@ -322,7 +322,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                 <button
                   type="button"
                   onClick={() => setShowAdd(true)}
-                  className="text-[#7F77DD] hover:underline font-medium"
+                  className="text-[#FA5935] hover:underline font-medium"
                 >
                   Ersten hinzufügen →
                 </button>
@@ -338,8 +338,8 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
           Klicke „Analysieren" um eine neue Analyse für einen Wettbewerber zu starten.</>
         ) : (
           <>Hinweis: Wettbewerber kannst du auf jedem Tarif hinzufügen. Das Triggern einer
-          Wettbewerber-Analyse ist ab Tarif <span className="text-[#0f172a] font-medium">Starter</span> verfügbar.{" "}
-          <a href="/settings" className="text-[#7F77DD] hover:underline font-medium">Upgrade →</a></>
+          Wettbewerber-Analyse ist ab Tarif <span className="text-[#0E1916] font-medium">Starter</span> verfügbar.{" "}
+          <a href="/settings" className="text-[#FA5935] hover:underline font-medium">Upgrade →</a></>
         )}{" "}
         <span className="opacity-60">(Aktueller Tarif: {plan.charAt(0).toUpperCase() + plan.slice(1)})</span>
       </p>

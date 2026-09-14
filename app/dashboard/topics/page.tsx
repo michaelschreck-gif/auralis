@@ -3,7 +3,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 
 function hue(s: number) {
-  return s >= 70 ? "#10b981" : s >= 45 ? "#7F77DD" : "#ef4444"
+  return s >= 70 ? "#10b981" : s >= 45 ? "#FA5935" : "#ef4444"
 }
 
 function scoreLabel(s: number) {
@@ -118,7 +118,7 @@ export default async function TopicsPage() {
         return (
           <div key={s.id} className="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
             <div className="flex items-center justify-between mb-1">
-              <span className="text-xs text-[#0f172a] truncate pr-2 font-medium">{s.query}</span>
+              <span className="text-xs text-[#0E1916] truncate pr-2 font-medium">{s.query}</span>
               {score != null && score > 0 && (
                 <span className="text-xs font-semibold flex-shrink-0" style={{ color: hue(score) }}>
                   {score}
@@ -150,7 +150,7 @@ export default async function TopicsPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0f172a]">Themenführerschaft</h1>
+          <h1 className="text-xl font-semibold text-[#0E1916]">Themenführerschaft</h1>
           <p className="text-[#64748b] text-sm mt-1">
             Wie stark KI dich mit jedem überwachten Thema verbindet.
           </p>
@@ -160,9 +160,9 @@ export default async function TopicsPage() {
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
               Noch keine Themen verfolgt. Schließe das{" "}
-              <a href="/onboarding" className="text-[#7F77DD] hover:underline font-medium">Onboarding</a>{" "}
+              <a href="/onboarding" className="text-[#FA5935] hover:underline font-medium">Onboarding</a>{" "}
               ab oder starte eine Analyse auf der{" "}
-              <a href="/dashboard/analyze" className="text-[#7F77DD] hover:underline font-medium">Analyse-Seite</a>.
+              <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline font-medium">Analyse-Seite</a>.
             </p>
           </div>
         ) : (
@@ -177,7 +177,7 @@ export default async function TopicsPage() {
                 <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
-                      <h3 className="text-base font-semibold text-[#0f172a]">{s.query}</h3>
+                      <h3 className="text-base font-semibold text-[#0E1916]">{s.query}</h3>
                       <p className="text-xs text-[#94a3b8] mt-0.5">
                         {frequencyLabel(s.frequency)}
                       </p>
@@ -210,7 +210,7 @@ export default async function TopicsPage() {
                   ) : (
                     <p className="text-xs text-[#94a3b8]">
                       Noch keine Daten.{" "}
-                      <a href="/dashboard/analyze" className="text-[#7F77DD] hover:underline font-medium">
+                      <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline font-medium">
                         Analyse starten →
                       </a>
                     </p>

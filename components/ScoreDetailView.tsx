@@ -22,11 +22,11 @@ export default function ScoreDetailView({
     <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
       {/* Breadcrumb */}
       <nav className="text-sm text-[#64748b]">
-        <Link href="/dashboard" className="hover:text-[#0f172a] transition-colors">
+        <Link href="/dashboard" className="hover:text-[#0E1916] transition-colors">
           Cockpit
         </Link>
         <span className="mx-1.5 text-[#cbd5e1]">›</span>
-        <span className="text-[#0f172a] font-medium">{definition.title}</span>
+        <span className="text-[#0E1916] font-medium">{definition.title}</span>
       </nav>
 
       {/* Hero — Radial-Ring in der Dimensionsfarbe */}
@@ -106,7 +106,7 @@ export default function ScoreDetailView({
           {definition.weights.map(w => (
             <div key={w.label} className="flex items-center gap-3 text-sm">
               <span className="w-3 h-3 rounded-sm flex-shrink-0" style={{ background: w.color }} />
-              <span className="flex-1 text-[#0f172a]">{w.label}</span>
+              <span className="flex-1 text-[#0E1916]">{w.label}</span>
               <div className="w-32 h-2 bg-gray-100 rounded-full overflow-hidden">
                 <div className="h-full rounded-full" style={{ width: `${w.value}%`, background: w.color }} />
               </div>
@@ -137,10 +137,10 @@ export default function ScoreDetailView({
         <div className="divide-y divide-gray-100">
           {definition.tips.map((t, i) => (
             <div key={i} className="flex items-start gap-3 py-3 text-sm leading-snug">
-              <div className="w-6 h-6 rounded-full bg-[#EEEDFE] text-[#7F77DD] text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
+              <div className="w-6 h-6 rounded-full bg-[#FDE7E0] text-[#FA5935] text-xs font-semibold flex items-center justify-center flex-shrink-0 mt-0.5">
                 {i + 1}
               </div>
-              <span className="text-[#0f172a]">{t}</span>
+              <span className="text-[#0E1916]">{t}</span>
             </div>
           ))}
         </div>
@@ -148,7 +148,7 @@ export default function ScoreDetailView({
 
       <Link
         href="/dashboard"
-        className="inline-block text-sm text-[#7F77DD] hover:underline"
+        className="inline-block text-sm text-[#FA5935] hover:underline"
       >
         ← Zurück zum Cockpit
       </Link>

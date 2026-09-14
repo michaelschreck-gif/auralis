@@ -97,7 +97,7 @@ export default async function SourcesPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0f172a]">Quellen</h1>
+          <h1 className="text-2xl font-semibold text-[#0E1916]">Quellen</h1>
           <p className="text-sm text-[#64748b] mt-1">
             Welche Webseiten KI-Systeme nennen, wenn sie über dich sprechen.
           </p>
@@ -105,33 +105,33 @@ export default async function SourcesPage() {
 
         {reportCount === 0 ? (
           <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
-            <p className="text-base font-medium text-[#0f172a]">
+            <p className="text-base font-medium text-[#0E1916]">
               Noch keine Analysen vorhanden.
             </p>
             <p className="text-sm text-[#64748b] mt-2">
               Sobald die KI deine Reputation analysiert, erscheinen hier genannte Quellen.{" "}
               <a
                 href="/dashboard/analyze"
-                className="text-[#7F77DD] hover:underline font-medium"
+                className="text-[#FA5935] hover:underline font-medium"
               >
                 Erste Analyse starten →
               </a>
             </p>
           </section>
         ) : sources.length === 0 ? (
-          <section className="bg-white rounded-2xl border border-[#CECBF6] bg-[#EEEDFE]/40 shadow-sm p-8">
-            <p className="text-base font-medium text-[#0f172a]">
+          <section className="bg-white rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/40 shadow-sm p-8">
+            <p className="text-base font-medium text-[#0E1916]">
               Quellen erscheinen nur bei web-vernetzten KI-Modellen
             </p>
             <div className="text-sm text-[#475569] mt-3 space-y-3 leading-relaxed max-w-xl">
               <p>
-                Deine Analysen laufen aktuell mit <span className="font-medium text-[#0f172a]">Claude</span>.
+                Deine Analysen laufen aktuell mit <span className="font-medium text-[#0E1916]">Claude</span>.
                 Claude antwortet aus seinem Trainingswissen und gibt dabei – wie die meisten
                 KI-Assistenten – normalerweise keine konkreten Webadressen an. Deshalb gibt es hier
                 nichts auszuwerten, obwohl deine Analysen einwandfrei funktionieren.
               </p>
               <p>
-                Echte Quell-Links liefern vor allem <span className="font-medium text-[#0f172a]">web-vernetzte
+                Echte Quell-Links liefern vor allem <span className="font-medium text-[#0E1916]">web-vernetzte
                 Modelle wie Perplexity</span>, die live im Internet suchen. Sobald ein solches Modell für
                 dein Konto aktiv ist, werden die genannten Webseiten hier automatisch gesammelt und nach
                 Häufigkeit sortiert.
@@ -139,7 +139,7 @@ export default async function SourcesPage() {
             </div>
             <p className="text-xs text-[#94a3b8] mt-4">
               Tipp: Die tatsächlichen KI-Antworten hinter deinen Scores findest du unter{" "}
-              <a href="/dashboard/responses" className="text-[#7F77DD] hover:underline font-medium">
+              <a href="/dashboard/responses" className="text-[#FA5935] hover:underline font-medium">
                 KI-Antworten
               </a>.
             </p>
@@ -161,7 +161,7 @@ export default async function SourcesPage() {
                     {i + 1}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#0f172a]">
+                    <p className="text-sm font-medium text-[#0E1916]">
                       {s.domain}
                     </p>
                     {s.examples.length > 0 && (
@@ -174,7 +174,7 @@ export default async function SourcesPage() {
                       </div>
                     )}
                   </div>
-                  <div className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-[#EEEDFE] text-[#7F77DD] text-xs font-semibold tabular-nums">
+                  <div className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-[#FDE7E0] text-[#FA5935] text-xs font-semibold tabular-nums">
                     {s.count}× zitiert
                   </div>
                 </div>

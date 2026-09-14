@@ -35,16 +35,16 @@ export type AuralisReportProps = {
 }
 
 const COLORS = {
-  ink:       "#0f172a",
+  ink:       "#0E1916",
   body:      "#475569",
   muted:     "#94a3b8",
-  primary:   "#4F6EF7",
+  primary:   "#FA5935",
   geo:       "#378ADD",
-  thought:   "#7F77DD",
+  thought:   "#FA5935",
   authority: "#1D9E75",
   positive:  "#10b981",
   warning:   "#f59e0b",
-  bgLight:   "#f8f9fb",
+  bgLight:   "#FAF8F3",
   border:    "#e5e7eb",
 }
 

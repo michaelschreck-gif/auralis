@@ -45,18 +45,18 @@ function renderBadge(opts: {
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${BADGE_W}" height="${BADGE_H}" viewBox="0 0 ${BADGE_W} ${BADGE_H}" role="img" aria-label="Halo Score for ${safeName}">
   <style>
     .label { font: 600 9px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase; fill: #94a3b8; }
-    .name  { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; fill: #0f172a; }
+    .name  { font: 700 14px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; fill: #0E1916; }
     .score { font: 800 32px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; fill: ${scoreColor}; }
     .out   { font: 500 11px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; fill: #94a3b8; }
     .band  { font: 600 10px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; fill: #475569; }
-    .brand { font: 700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase; fill: #4F6EF7; }
+    .brand { font: 700 9px -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif; letter-spacing: 0.05em; text-transform: uppercase; fill: #FA5935; }
   </style>
 
   <!-- Card -->
   <rect x="0.5" y="0.5" width="${BADGE_W - 1}" height="${BADGE_H - 1}" rx="12" fill="#ffffff" stroke="#e5e7eb"/>
 
   <!-- Brand block (left) -->
-  <rect x="12" y="14" width="36" height="36" rx="8" fill="#4F6EF7"/>
+  <rect x="12" y="14" width="36" height="36" rx="8" fill="#FA5935"/>
   <text x="30" y="38" text-anchor="middle" fill="white" font-family="-apple-system, system-ui, sans-serif" font-weight="800" font-size="18">H</text>
 
   <!-- Labels -->

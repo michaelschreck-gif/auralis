@@ -21,7 +21,7 @@ export type MonopolyBand = {
 /** 5 Bänder von „Unsichtbar" bis „Monopol". */
 export const MONOPOLY_BANDS: MonopolyBand[] = [
   { label: "Monopol", min: 80, color: "#22A06B" },
-  { label: "Dominant", min: 60, color: "#7F77DD" },
+  { label: "Dominant", min: 60, color: "#FA5935" },
   { label: "Umkämpft", min: 40, color: "#EF9F27" },
   { label: "Randständig", min: 20, color: "#E8833A" },
   { label: "Unsichtbar", min: 0, color: "#D1495B" },

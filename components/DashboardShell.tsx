@@ -172,8 +172,8 @@ export default function DashboardShell({
             onClick={() => setMobileOpen(false)}
             className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-colors ${
               active
-                ? "bg-[#EEEDFE] text-[#534AB7] font-medium"
-                : "text-[#6B6790] hover:text-[#26215C] hover:bg-[#F4F2FE]"
+                ? "bg-[#FDE7E0] text-[#C8431F] font-medium"
+                : "text-[#6B625A] hover:text-[#0E1916] hover:bg-[#F4F2FE]"
             }`}
           >
             <span className="w-4 flex-shrink-0 flex items-center justify-center">
@@ -187,23 +187,23 @@ export default function DashboardShell({
   )
 
   const sidebarFooter = (
-    <div className="px-4 py-4 border-t border-[#EEEDFE] space-y-3">
-      <div className="rounded-xl bg-[#26215C] px-3.5 py-3">
-        <div className="text-[11px] text-[#CECBF6]">Dein Plan</div>
+    <div className="px-4 py-4 border-t border-[#FDE7E0] space-y-3">
+      <div className="rounded-xl bg-[#0E1916] px-3.5 py-3">
+        <div className="text-[11px] text-[#FBCBB8]">Dein Plan</div>
         <div className="text-[13px] text-white font-medium mt-0.5">{planLabel}</div>
       </div>
       <a
         href="/"
         target="_blank"
         rel="noopener"
-        className="block text-xs text-[#6B6790] hover:text-[#534AB7] transition-colors"
+        className="block text-xs text-[#6B625A] hover:text-[#C8431F] transition-colors"
       >
         Zur Halo-Webseite ↗
       </a>
       <form action="/auth/signout" method="POST">
         <button
           type="submit"
-          className="text-xs text-[#6B6790] hover:text-[#534AB7] transition-colors"
+          className="text-xs text-[#6B625A] hover:text-[#C8431F] transition-colors"
         >
           Abmelden →
         </button>
@@ -212,18 +212,11 @@ export default function DashboardShell({
   )
 
   const brand = (
-    <div className="flex items-center gap-2.5">
-      <span
-        className="inline-block rounded-full flex-shrink-0"
-        style={{ width: 24, height: 24, border: "4px solid #7F77DD", boxShadow: "0 0 0 3px #EEEDFE" }}
-        aria-hidden
-      />
-      <span className="text-[#26215C] font-semibold text-sm tracking-tight">Halo</span>
-    </div>
+    <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
   )
 
   return (
-    <div className="flex flex-col h-screen bg-[#FCFCFE] overflow-hidden">
+    <div className="flex flex-col h-screen bg-[#FEFCFA] overflow-hidden">
 
       {/* ─── Topbar (nur mobil: Hamburger + Brand + Avatar) ─── */}
       <header className="md:hidden h-[56px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 gap-3 z-20">
@@ -236,13 +229,13 @@ export default function DashboardShell({
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
         </button>
         <div className="flex items-center gap-2">
-          <div className="w-7 h-7 rounded-lg bg-[#26215C] flex items-center justify-center"><span className="text-white text-xs font-bold">H</span></div>
-          <span className="text-[#0f172a] font-semibold text-sm">Halo</span>
+          <div className="w-7 h-7 rounded-lg bg-[#0E1916] flex items-center justify-center"><span className="text-white text-xs font-bold">H</span></div>
+          <span className="text-[#0E1916] font-semibold text-sm">Halo</span>
         </div>
         <div className="flex items-center gap-3 flex-shrink-0 ml-auto">
           {userName && (
-            <div className="w-8 h-8 rounded-full bg-[#EEEDFE] border border-[#CECBF6] flex items-center justify-center flex-shrink-0">
-              <span className="text-xs font-semibold text-[#534AB7]">{initials}</span>
+            <div className="w-8 h-8 rounded-full bg-[#FDE7E0] border border-[#FBCBB8] flex items-center justify-center flex-shrink-0">
+              <span className="text-xs font-semibold text-[#C8431F]">{initials}</span>
             </div>
           )}
         </div>
@@ -252,7 +245,7 @@ export default function DashboardShell({
       <div className="flex flex-1 overflow-hidden">
 
         {/* ─── Sidebar (desktop) ─── */}
-        <aside className="hidden md:flex w-[230px] flex-shrink-0 bg-white border-r border-[#EEEDFE] flex-col">
+        <aside className="hidden md:flex w-[230px] flex-shrink-0 bg-white border-r border-[#FDE7E0] flex-col">
           <div className="px-5 pt-4 pb-2">{brand}</div>
           {navList}
           {sidebarFooter}
@@ -273,7 +266,7 @@ export default function DashboardShell({
                   type="button"
                   onClick={() => setMobileOpen(false)}
                   aria-label="Menü schließen"
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B6790] hover:bg-[#F4F2FE]"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B625A] hover:bg-[#F4F2FE]"
                 >
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
                 </button>
@@ -286,11 +279,11 @@ export default function DashboardShell({
 
         {/* ─── Panel column (desktop only) ─── */}
         {panelContent !== undefined && (
-          <div className="hidden lg:flex w-[300px] flex-shrink-0 bg-[#FCFCFE] border-r border-[#EEEDFE] flex-col overflow-hidden">
-            <div className="px-4 py-3.5 border-b border-[#EEEDFE] flex items-center justify-between bg-white">
-              <span className="text-sm font-semibold text-[#26215C]">{panelHeader}</span>
+          <div className="hidden lg:flex w-[300px] flex-shrink-0 bg-[#FEFCFA] border-r border-[#FDE7E0] flex-col overflow-hidden">
+            <div className="px-4 py-3.5 border-b border-[#FDE7E0] flex items-center justify-between bg-white">
+              <span className="text-sm font-semibold text-[#0E1916]">{panelHeader}</span>
               {panelCount && (
-                <span className="text-xs text-[#534AB7] bg-[#EEEDFE] px-2 py-0.5 rounded-full">
+                <span className="text-xs text-[#C8431F] bg-[#FDE7E0] px-2 py-0.5 rounded-full">
                   {panelCount}
                 </span>
               )}
@@ -299,13 +292,13 @@ export default function DashboardShell({
               {panelContent}
             </div>
             {panelFooter && (
-              <div className="border-t border-[#EEEDFE]">{panelFooter}</div>
+              <div className="border-t border-[#FDE7E0]">{panelFooter}</div>
             )}
           </div>
         )}
 
         {/* ─── Main content ─── */}
-        <main className="flex-1 overflow-y-auto bg-[#FCFCFE]">
+        <main className="flex-1 overflow-y-auto bg-[#FEFCFA]">
           {children}
         </main>
       </div>

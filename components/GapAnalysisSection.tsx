@@ -11,7 +11,7 @@ export default function GapAnalysisSection({ analyses }: { analyses: GapAnalysis
   return (
     <section className="space-y-4">
       <div>
-        <h2 className="text-lg font-semibold text-[#0f172a]">Lückenanalyse</h2>
+        <h2 className="text-lg font-semibold text-[#0E1916]">Lückenanalyse</h2>
         <p className="text-sm text-[#64748b] mt-1">
           Bei welchen Arten von KI-Fragen ein Wettbewerber genannt wird — und du nicht. Das zeigt konkret, wo du inhaltlich aufholen kannst.
         </p>
@@ -20,8 +20,8 @@ export default function GapAnalysisSection({ analyses }: { analyses: GapAnalysis
       {analyses.map(a => (
         <div key={a.competitorName} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
           <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between gap-3 flex-wrap">
-            <p className="text-sm font-medium text-[#0f172a]">
-              Du vs. <span className="text-[#7F77DD]">{a.competitorName}</span>
+            <p className="text-sm font-medium text-[#0E1916]">
+              Du vs. <span className="text-[#FA5935]">{a.competitorName}</span>
             </p>
             <div className="flex items-center gap-2 text-xs">
               {a.gapCount > 0 && (
@@ -46,7 +46,7 @@ export default function GapAnalysisSection({ analyses }: { analyses: GapAnalysis
             {a.comparisons.map(c => (
               <div key={c.type} className="px-6 py-3 flex items-center gap-4">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-[#0f172a]">{c.label}</p>
+                  <p className="text-sm text-[#0E1916]">{c.label}</p>
                   {c.hint && <p className="text-xs text-[#94a3b8] mt-0.5 truncate">{c.hint}</p>}
                 </div>
                 <div className="flex items-center gap-3 flex-shrink-0 text-xs">

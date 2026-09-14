@@ -43,21 +43,21 @@ const TOC = [
 
 export default function ApiDocsPage() {
   return (
-    <div className="min-h-screen bg-[#f8f9fb]">
+    <div className="min-h-screen bg-[#FAF8F3]">
       {/* Top bar */}
       <header className="bg-white border-b border-gray-100">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#4F6EF7] flex items-center justify-center">
+            <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
               <span className="text-white text-xs font-bold">H</span>
             </div>
-            <span className="text-[#0f172a] font-semibold text-sm tracking-tight">Halo</span>
+            <span className="text-[#0E1916] font-semibold text-sm tracking-tight">Halo</span>
           </a>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-[#94a3b8]">API v1</span>
             <a
               href="/settings"
-              className="text-[#4F6EF7] hover:underline font-medium"
+              className="text-[#FA5935] hover:underline font-medium"
             >
               Mein API-Key →
             </a>
@@ -77,7 +77,7 @@ export default function ApiDocsPage() {
                 <a
                   key={item.id}
                   href={`#${item.id}`}
-                  className={`block text-sm hover:text-[#4F6EF7] transition-colors ${
+                  className={`block text-sm hover:text-[#FA5935] transition-colors ${
                     "indent" in item && item.indent
                       ? "text-[#94a3b8] pl-3 py-1"
                       : "text-[#64748b] py-1.5 font-medium"
@@ -94,10 +94,10 @@ export default function ApiDocsPage() {
         <main className="flex-1 min-w-0 space-y-12">
           {/* Headline */}
           <section>
-            <p className="text-xs uppercase tracking-wider font-semibold text-[#4F6EF7] mb-2">
+            <p className="text-xs uppercase tracking-wider font-semibold text-[#FA5935] mb-2">
               Halo API · v1
             </p>
-            <h1 className="text-3xl font-semibold text-[#0f172a]">
+            <h1 className="text-3xl font-semibold text-[#0E1916]">
               Public API Dokumentation
             </h1>
             <p className="text-base text-[#64748b] mt-3 leading-relaxed">
@@ -110,7 +110,7 @@ export default function ApiDocsPage() {
               <p className="text-xs text-[#94a3b8] uppercase tracking-wider font-semibold mb-1">
                 Base URL
               </p>
-              <code className="text-sm font-mono text-[#0f172a]">{BASE_URL + API_PREFIX}</code>
+              <code className="text-sm font-mono text-[#0E1916]">{BASE_URL + API_PREFIX}</code>
             </div>
           </section>
 
@@ -130,8 +130,8 @@ export default function ApiDocsPage() {
               <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
               <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
             </ul>
-            <div className="rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/50 p-5 mt-2">
-              <p className="text-sm font-semibold text-[#0f172a]">
+            <div className="rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/50 p-5 mt-2">
+              <p className="text-sm font-semibold text-[#0E1916]">
                 Lebenszyklus eines (Sub-)Accounts
               </p>
               <ol className="list-decimal pl-5 mt-1.5 space-y-1 text-sm text-[#475569]">
@@ -156,9 +156,9 @@ export default function ApiDocsPage() {
             </p>
             <CodeBlock language="http">{`Authorization: Bearer aur_sk_<dein-key>`}</CodeBlock>
 
-            <h3 className="text-base font-semibold text-[#0f172a] mt-6">Key erstellen</h3>
+            <h3 className="text-base font-semibold text-[#0E1916] mt-6">Key erstellen</h3>
             <ol className="list-decimal pl-6 space-y-1.5 text-sm">
-              <li>Einloggen in <a href="/settings" className="text-[#4F6EF7] hover:underline">Halo Einstellungen</a></li>
+              <li>Einloggen in <a href="/settings" className="text-[#FA5935] hover:underline">Halo Einstellungen</a></li>
               <li>Zum Block <em>„API-Keys"</em> scrollen</li>
               <li><em>„+ Neuen API-Key generieren"</em> klicken</li>
               <li>Name vergeben (z.B. „Production CRM") und Submit</li>
@@ -166,7 +166,7 @@ export default function ApiDocsPage() {
             </ol>
 
             <div className="rounded-lg bg-amber-50 border border-amber-100 p-4 mt-5">
-              <p className="text-sm font-medium text-[#0f172a]">⚠ Schlüssel-Sicherheit</p>
+              <p className="text-sm font-medium text-[#0E1916]">⚠ Schlüssel-Sicherheit</p>
               <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed">
                 API-Keys gewähren <strong>vollen Lesezugriff</strong> auf alle deine
                 Reputations-Daten. Behandle sie wie Passwörter: niemals in Frontend-Code
@@ -195,19 +195,19 @@ export default function ApiDocsPage() {
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   <tr>
-                    <td className="py-2.5 px-3 text-sm text-[#0f172a]">Free / Starter</td>
+                    <td className="py-2.5 px-3 text-sm text-[#0E1916]">Free / Starter</td>
                     <td className="py-2.5 px-3 text-sm text-[#64748b]">—</td>
                     <td className="py-2.5 px-3 text-sm text-[#64748b]">Kein API-Zugang</td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 px-3 text-sm text-[#0f172a]">Pro</td>
+                    <td className="py-2.5 px-3 text-sm text-[#0E1916]">Pro</td>
                     <td className="py-2.5 px-3 text-sm text-[#64748b]">✓</td>
                     <td className="py-2.5 px-3 text-sm text-[#64748b] tabular-nums">1.000</td>
                   </tr>
                   <tr>
-                    <td className="py-2.5 px-3 text-sm text-[#0f172a] font-medium">Enterprise</td>
+                    <td className="py-2.5 px-3 text-sm text-[#0E1916] font-medium">Enterprise</td>
                     <td className="py-2.5 px-3 text-sm text-[#64748b]">✓</td>
-                    <td className="py-2.5 px-3 text-sm font-medium text-[#0f172a]">Unbegrenzt</td>
+                    <td className="py-2.5 px-3 text-sm font-medium text-[#0E1916]">Unbegrenzt</td>
                   </tr>
                 </tbody>
               </table>
@@ -226,19 +226,19 @@ export default function ApiDocsPage() {
   "reset": "2026-06-09T00:00:00.000Z",
   "plan": "pro"
 }`}</CodeBlock>
-            <div className="mt-5 rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/50 p-5">
-              <p className="text-sm font-semibold text-[#0f172a]">
+            <div className="mt-5 rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/50 p-5">
+              <p className="text-sm font-semibold text-[#0E1916]">
                 Enterprise-Lizenz — unbegrenzte Abfragen
               </p>
               <p className="text-sm text-[#475569] mt-1.5 leading-relaxed">
                 Für produktive Integrationen mit hohem Volumen bieten wir Enterprise-Lizenzen{" "}
                 <strong>ohne Abfragelimit</strong> an, inklusive priorisiertem Support. Schreib uns
                 für ein Angebot an{" "}
-                <a href="mailto:michael.schreck@entrenous.de?subject=Halo%20Enterprise-API-Lizenz" className="text-[#7F77DD] hover:underline font-medium">
+                <a href="mailto:michael.schreck@entrenous.de?subject=Halo%20Enterprise-API-Lizenz" className="text-[#FA5935] hover:underline font-medium">
                   michael.schreck@entrenous.de
                 </a>{" "}
                 oder sieh dir die{" "}
-                <a href="/#preise" className="text-[#7F77DD] hover:underline font-medium">
+                <a href="/#preise" className="text-[#FA5935] hover:underline font-medium">
                   Tarifübersicht
                 </a>{" "}
                 an.
@@ -721,8 +721,8 @@ export default function ApiDocsPage() {
 }`}
           />
 
-          <div className="rounded-xl border border-[#CECBF6] bg-[#EEEDFE]/50 p-5">
-            <p className="text-sm font-semibold text-[#0f172a]">
+          <div className="rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/50 p-5">
+            <p className="text-sm font-semibold text-[#0E1916]">
               Im Namen eines Sub-Accounts handeln
             </p>
             <p className="text-sm text-[#475569] mt-1.5 leading-relaxed">
@@ -745,7 +745,7 @@ export default function ApiDocsPage() {
 
           {/* Examples */}
           <Section id="examples" title="Code-Beispiele">
-            <h3 className="text-base font-semibold text-[#0f172a]">cURL</h3>
+            <h3 className="text-base font-semibold text-[#0E1916]">cURL</h3>
             <CodeBlock language="bash">{`# Profile abrufen
 curl ${BASE_URL}${API_PREFIX}/me \\
   -H "Authorization: Bearer $AURALIS_API_KEY"
@@ -754,7 +754,7 @@ curl ${BASE_URL}${API_PREFIX}/me \\
 curl ${BASE_URL}${API_PREFIX}/scores/latest \\
   -H "Authorization: Bearer $AURALIS_API_KEY"`}</CodeBlock>
 
-            <h3 className="text-base font-semibold text-[#0f172a] mt-6">JavaScript (Node.js / Browser)</h3>
+            <h3 className="text-base font-semibold text-[#0E1916] mt-6">JavaScript (Node.js / Browser)</h3>
             <CodeBlock language="javascript">{`const API_KEY = process.env.AURALIS_API_KEY
 const headers = { Authorization: \`Bearer \${API_KEY}\` }
 
@@ -772,7 +772,7 @@ async function getLatestScores() {
 
 getLatestScores().then(console.log)`}</CodeBlock>
 
-            <h3 className="text-base font-semibold text-[#0f172a] mt-6">Python (requests)</h3>
+            <h3 className="text-base font-semibold text-[#0E1916] mt-6">Python (requests)</h3>
             <CodeBlock language="python">{`import os
 import requests
 
@@ -792,7 +792,7 @@ print(get_latest_scores())`}</CodeBlock>
           <Section id="support" title="Support">
             <p>
               Bei Fragen, Bug-Reports oder Feature-Requests zur API erreichst du das Halo-Team unter{" "}
-              <a href="mailto:support@entrenous.de" className="text-[#4F6EF7] hover:underline font-medium">
+              <a href="mailto:support@entrenous.de" className="text-[#FA5935] hover:underline font-medium">
                 support@entrenous.de
               </a>.
             </p>
@@ -829,7 +829,7 @@ function Section({
 }) {
   return (
     <section id={id} className="scroll-mt-6">
-      <h2 className="text-xl font-semibold text-[#0f172a] mb-3">{title}</h2>
+      <h2 className="text-xl font-semibold text-[#0E1916] mb-3">{title}</h2>
       <div className="space-y-3 text-sm text-[#475569] leading-relaxed">
         {children}
       </div>
@@ -839,7 +839,7 @@ function Section({
 
 function CodeBlock({ language, children }: { language?: string; children: string }) {
   return (
-    <div className="relative rounded-lg bg-[#0f172a] overflow-hidden">
+    <div className="relative rounded-lg bg-[#0E1916] overflow-hidden">
       {language && (
         <div className="absolute top-2 right-3 text-[10px] uppercase tracking-wider font-semibold text-[#64748b]">
           {language}
@@ -855,7 +855,7 @@ function CodeBlock({ language, children }: { language?: string; children: string
 function ErrorRow({ http, code, meaning }: { http: string; code: string; meaning: string }) {
   return (
     <tr>
-      <td className="py-2.5 px-3 text-sm font-mono text-[#0f172a] tabular-nums">{http}</td>
+      <td className="py-2.5 px-3 text-sm font-mono text-[#0E1916] tabular-nums">{http}</td>
       <td className="py-2.5 px-3">
         <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">{code}</code>
       </td>
@@ -891,7 +891,7 @@ function Endpoint({
         }`}>
           {method}
         </span>
-        <code className="text-base font-mono font-semibold text-[#0f172a]">{API_PREFIX}{path}</code>
+        <code className="text-base font-mono font-semibold text-[#0E1916]">{API_PREFIX}{path}</code>
       </div>
       <p className="text-sm text-[#475569] leading-relaxed">{description}</p>
 
@@ -905,7 +905,7 @@ function Endpoint({
               {params.map(p => (
                 <tr key={p.name}>
                   <td className="py-2 pr-3 align-top">
-                    <code className="font-mono font-semibold text-[#0f172a]">{p.name}</code>
+                    <code className="font-mono font-semibold text-[#0E1916]">{p.name}</code>
                     <span className="ml-2 text-[#94a3b8]">{p.type}</span>
                   </td>
                   <td className="py-2 text-[#64748b]">{p.desc}</td>

@@ -35,9 +35,9 @@ export default function PersonaRunButton({
 
   if (!hasReport) {
     return (
-      <p className="text-sm text-[#6B6790]">
+      <p className="text-sm text-[#6B625A]">
         Starte zuerst eine{" "}
-        <a href="/dashboard/analyze" className="text-[#534AB7] hover:underline font-medium">
+        <a href="/dashboard/analyze" className="text-[#C8431F] hover:underline font-medium">
           Reputations-Analyse
         </a>
         , dann kann Halo deine KI-Persona aus den Antworten destillieren.
@@ -51,7 +51,7 @@ export default function PersonaRunButton({
         type="button"
         onClick={run}
         disabled={running}
-        className="px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#7F77DD] hover:bg-[#534AB7] transition-colors disabled:opacity-50"
+        className="px-5 py-2.5 rounded-full text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors disabled:opacity-50"
       >
         {running ? "Analysiere Antworten…" : label}
       </button>
