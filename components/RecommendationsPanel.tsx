@@ -29,10 +29,11 @@ type Props = {
   hasReport: boolean
 }
 
+// Brandkit-konform: Koralle = hohe Wirkung, Amber = mittel, Teal = gering.
 const impactStyles: Record<string, string> = {
-  high: "bg-red-50 text-red-700 border-red-100",
-  medium: "bg-amber-50 text-amber-700 border-amber-100",
-  low: "bg-green-50 text-green-700 border-green-100",
+  high: "bg-[#FDE7E0] text-[#C8431F] border-[#FBCBB8]",
+  medium: "bg-[#F6ECD9] text-[#6B4A1E] border-[#E7CFA3]",
+  low: "bg-[#E9F0F0] text-[#1C2A2A] border-[#C7D9D9]",
 }
 const impactLabels: Record<string, string> = {
   high: "Hohe Wirkung",
@@ -58,14 +59,14 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
   return (
     <div className="space-y-6">
       {error && (
-        <div className="rounded-xl bg-red-50 border border-red-100 p-4">
+        <div className="rounded-2xl bg-red-50 border border-red-100 p-4">
           <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
       {/* Aktion: generieren / neu generieren */}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-[#94a3b8]">
+        <p className="text-xs text-[#9A9089]">
           {open.length > 0
             ? `${open.length} offene Empfehlung${open.length === 1 ? "" : "en"}`
             : "Keine offenen Empfehlungen"}
@@ -76,7 +77,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
             type="button"
             onClick={() => run(generateAndSaveRecommendations)}
             disabled={pending}
-            className="text-sm px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white font-medium transition-colors disabled:opacity-40"
+            className="text-sm px-4 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-medium transition-colors disabled:opacity-40"
           >
             {pending && !busyId
               ? "Generiere…"
@@ -88,8 +89,8 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
       </div>
 
       {!hasReport && (
-        <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
-          <p className="text-sm text-[#64748b]">
+        <div className="rounded-3xl border border-[#E9E1D3] bg-white p-8 text-center">
+          <p className="text-sm text-[#6B625A]">
             Noch keine Analyse vorhanden.{" "}
             <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline">
               Erste Analyse starten →
@@ -99,18 +100,18 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
       )}
 
       {hasReport && open.length === 0 && done.length === 0 && (
-        <div className="rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-8 text-center">
+        <div className="rounded-3xl border border-[#FBCBB8] bg-gradient-to-br from-[#FDE7E0] to-[#F3EFE6] p-8 text-center">
           <p className="text-base font-medium text-[#0E1916]">
             Lass dir konkrete Maßnahmen vorschlagen
           </p>
-          <p className="text-sm text-[#64748b] mt-2 mb-5 max-w-md mx-auto leading-relaxed">
+          <p className="text-sm text-[#6B625A] mt-2 mb-5 max-w-md mx-auto leading-relaxed">
             Claude analysiert deine schwächsten Signale aus der letzten Reputations-Analyse und leitet daraus 5 konkrete Schritte ab, mit denen du deinen Score verbesserst.
           </p>
           <button
             type="button"
             onClick={() => run(generateAndSaveRecommendations)}
             disabled={pending}
-            className="inline-block px-5 py-2.5 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors disabled:opacity-40"
+            className="inline-block px-5 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors disabled:opacity-40"
           >
             {pending ? "Generiere…" : "Empfehlungen erstellen →"}
           </button>
@@ -121,15 +122,15 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
       {open.length > 0 && (
         <div className="space-y-4">
           {open.map((rec, i) => (
-            <div key={rec.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6">
+            <div key={rec.id} className="bg-white rounded-3xl border border-[#E9E1D3] p-6">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-lg bg-[#FDE7E0] text-[#FA5935] flex items-center justify-center text-sm font-semibold flex-shrink-0">
+                  <div className="w-8 h-8 rounded-xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center text-sm font-semibold flex-shrink-0">
                     {i + 1}
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-base font-semibold text-[#0E1916]">{rec.title}</h3>
-                    <p className="text-sm text-[#64748b] mt-1 leading-relaxed">{rec.description}</p>
+                    <p className="text-sm text-[#6B625A] mt-1 leading-relaxed">{rec.description}</p>
                   </div>
                 </div>
                 <span className={`text-xs px-2.5 py-1 rounded-full border flex-shrink-0 ${impactStyles[rec.impact] ?? impactStyles.medium}`}>
@@ -137,7 +138,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                 </span>
               </div>
               <div className="mt-4 flex items-center justify-between gap-2">
-                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] bg-[#FAF8F3] border border-gray-100 px-2 py-0.5 rounded">
+                <span className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] bg-[#FAF8F3] border border-[#E9E1D3] px-2 py-0.5 rounded-full">
                   {rec.category}
                 </span>
                 <div className="flex items-center gap-2">
@@ -145,7 +146,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                     type="button"
                     onClick={() => run(() => markRecommendationDone(rec.id), rec.id)}
                     disabled={pending}
-                    className="text-xs px-3 py-1.5 rounded-md bg-green-600 hover:bg-green-700 text-white font-medium transition-colors disabled:opacity-40"
+                    className="text-xs px-3 py-1.5 rounded-full bg-[#6D8C8D] hover:bg-[#5A7576] text-white font-medium transition-colors disabled:opacity-40"
                   >
                     {busyId === rec.id ? "…" : "✓ Erledigt"}
                   </button>
@@ -153,7 +154,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                     type="button"
                     onClick={() => run(() => dismissRecommendation(rec.id), rec.id)}
                     disabled={pending}
-                    className="text-xs px-3 py-1.5 rounded-md text-[#94a3b8] hover:text-red-600 transition-colors disabled:opacity-40"
+                    className="text-xs px-3 py-1.5 rounded-full text-[#9A9089] hover:text-red-600 transition-colors disabled:opacity-40"
                   >
                     Verwerfen
                   </button>
@@ -167,24 +168,24 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
       {/* Umgesetzte Empfehlungen mit Wirkung */}
       {done.length > 0 && (
         <div className="space-y-3">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] pt-2">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] pt-2">
             Umgesetzt
           </p>
           {done.map(rec => {
             const base = rec.score_at_done ?? rec.score_at_creation
             const delta = base !== null && currentScore !== null ? currentScore - base : null
             return (
-              <div key={rec.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+              <div key={rec.id} className="bg-white rounded-3xl border border-[#E9E1D3] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-7 h-7 rounded-lg bg-green-50 text-green-600 flex items-center justify-center text-sm flex-shrink-0">
+                    <div className="w-7 h-7 rounded-xl bg-[#E9F0F0] text-[#1C2A2A] flex items-center justify-center text-sm flex-shrink-0">
                       ✓
                     </div>
                     <div className="min-w-0">
-                      <h3 className="text-sm font-medium text-[#0E1916] line-through decoration-gray-300">
+                      <h3 className="text-sm font-medium text-[#0E1916] line-through decoration-[#D8CFC4]">
                         {rec.title}
                       </h3>
-                      <p className="text-xs text-[#94a3b8] mt-1">
+                      <p className="text-xs text-[#9A9089] mt-1">
                         {rec.done_at &&
                           `erledigt am ${new Date(rec.done_at).toLocaleDateString("de-DE", { day: "2-digit", month: "long" })}`}
                         {rec.score_at_creation !== null && ` · Score bei Erstellung: ${rec.score_at_creation}`}
@@ -196,10 +197,10 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                       <span
                         className={`text-xs px-2.5 py-1 rounded-full border font-medium tabular-nums ${
                           delta > 0
-                            ? "bg-green-50 text-green-700 border-green-100"
+                            ? "bg-[#FDE7E0] text-[#C8431F] border-[#FBCBB8]"
                             : delta < 0
-                            ? "bg-red-50 text-red-700 border-red-100"
-                            : "bg-gray-50 text-[#64748b] border-gray-200"
+                            ? "bg-[#F6ECD9] text-[#6B4A1E] border-[#E7CFA3]"
+                            : "bg-[#F3EFE6] text-[#6B625A] border-[#E9E1D3]"
                         }`}
                         title="Veränderung deines Halo Scores seit Umsetzung"
                       >
@@ -210,7 +211,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                       type="button"
                       onClick={() => run(() => reopenRecommendation(rec.id), rec.id)}
                       disabled={pending}
-                      className="text-xs text-[#94a3b8] hover:text-[#FA5935] transition-colors disabled:opacity-40"
+                      className="text-xs text-[#9A9089] hover:text-[#FA5935] transition-colors disabled:opacity-40"
                       title="Wieder öffnen"
                     >
                       ↺
@@ -220,7 +221,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
               </div>
             )
           })}
-          <p className="text-xs text-[#94a3b8] pt-1">
+          <p className="text-xs text-[#9A9089] pt-1">
             Die Punktzahl zeigt die Veränderung deines Halo Scores seit Umsetzung der Empfehlung. Sie ist ein Indikator, kein kausaler Beweis — viele Faktoren beeinflussen den Score gleichzeitig.
           </p>
         </div>

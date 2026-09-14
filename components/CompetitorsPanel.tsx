@@ -29,11 +29,12 @@ type Props = {
   derivations?: Record<string, ScoreDerivation>
 }
 
+// Brandkit-konform: neutral → aufbauend → etabliert → Marke (Koralle) für "Dominant".
 function scoreBand(s: number): { color: string; bg: string; label: string } {
-  if (s >= 76) return { color: "#0F6E56", bg: "#E1F5EE", label: "Dominant" }
-  if (s >= 51) return { color: "#0C447C", bg: "#E6F1FB", label: "Etabliert" }
-  if (s >= 26) return { color: "#854F0B", bg: "#FAEEDA", label: "Aufbauend" }
-  return { color: "#791F1F", bg: "#FCEBEB", label: "Nicht sichtbar" }
+  if (s >= 76) return { color: "#7A2A12", bg: "#FDE7E0", label: "Dominant" }
+  if (s >= 51) return { color: "#1C2A2A", bg: "#E9F0F0", label: "Etabliert" }
+  if (s >= 26) return { color: "#6B4A1E", bg: "#F6ECD9", label: "Aufbauend" }
+  return { color: "#5A5248", bg: "#F1EEE7", label: "Nicht sichtbar" }
 }
 
 export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, derivations = {} }: Props) {
@@ -120,8 +121,11 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
     <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
       <header className="flex items-start justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">Wettbewerber</h1>
-          <p className="text-sm text-[#64748b] mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Wettbewerber</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Wer steht statt dir in der Antwort?
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5">
             Vergleiche deine KI-Reputation mit deinen Wettbewerbern.
           </p>
         </div>
@@ -131,7 +135,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
             setShowAdd(s => !s)
             setError(null)
           }}
-          className="flex-shrink-0 px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors"
+          className="flex-shrink-0 px-4 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors"
         >
           {showAdd ? "Abbrechen" : "+ Hinzufügen"}
         </button>
@@ -141,10 +145,10 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
       {showAdd && (
         <form
           action={handleAdd}
-          className="bg-white rounded-2xl border border-[#FBCBB8] shadow-sm p-6 space-y-4"
+          className="bg-white rounded-3xl border border-[#FBCBB8] p-6 space-y-4"
         >
           <div className="space-y-1.5">
-            <label className="text-xs text-[#64748b] font-medium">Name</label>
+            <label className="text-xs text-[#6B625A] font-medium">Name</label>
             <input
               type="text"
               name="name"
@@ -152,47 +156,47 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
               maxLength={100}
               autoFocus
               placeholder="z.B. Mark Zuckerberg"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
+              className="w-full bg-white border border-[#E9E1D3] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
             />
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-[#64748b] font-medium">
-              Themen <span className="text-[#94a3b8]">(optional, kommagetrennt)</span>
+            <label className="text-xs text-[#6B625A] font-medium">
+              Themen <span className="text-[#9A9089]">(optional, kommagetrennt)</span>
             </label>
             <input
               type="text"
               name="topics"
               maxLength={300}
               placeholder="z.B. AI, Social Media, Metaverse"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
+              className="w-full bg-white border border-[#E9E1D3] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
             />
-            <p className="text-[10px] text-[#94a3b8] leading-snug">
+            <p className="text-[10px] text-[#9A9089] leading-snug">
               💡 <span className="font-medium">Reihenfolge zählt:</span> Das erste Thema ist das Primärthema und bestimmt die Richtung der KI-Abfragen.
             </p>
           </div>
           <div className="space-y-1.5">
-            <label className="text-xs text-[#64748b] font-medium">Sprache der KI-Abfragen</label>
+            <label className="text-xs text-[#6B625A] font-medium">Sprache der KI-Abfragen</label>
             <select
               name="language"
               defaultValue="en"
-              className="w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
+              className="w-full bg-white border border-[#E9E1D3] rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
             >
               <option value="en">🇬🇧 Englisch (Empfohlen für globale Figuren)</option>
               <option value="de">🇩🇪 Deutsch (für DACH-Region-spezifische Wettbewerber)</option>
             </select>
-            <p className="text-[10px] text-[#94a3b8] leading-snug">
+            <p className="text-[10px] text-[#9A9089] leading-snug">
               Englische Templates sind region-neutral und besser für globale Marken (Musk, Zuckerberg). Deutsch ist nur sinnvoll, wenn dein Wettbewerber im deutschsprachigen Raum aktiv ist.
             </p>
           </div>
           {error && (
-            <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-2">
+            <div className="rounded-xl bg-red-50 border border-red-100 px-4 py-2">
               <p className="text-xs text-red-600">{error}</p>
             </div>
           )}
           <button
             type="submit"
             disabled={pending}
-            className="px-4 py-2 rounded-lg bg-[#0E1916] hover:bg-gray-800 text-white text-sm font-medium transition-colors disabled:opacity-40"
+            className="px-4 py-2.5 rounded-full bg-[#0E1916] hover:bg-[#1C2E29] text-white text-sm font-medium transition-colors disabled:opacity-40"
           >
             {pending ? "Speichere…" : "Wettbewerber speichern"}
           </button>
@@ -200,25 +204,25 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
       )}
 
       {!showAdd && error && (
-        <div className="rounded-xl bg-red-50 border border-red-100 p-4">
+        <div className="rounded-2xl bg-red-50 border border-red-100 p-4">
           <p className="text-sm text-red-700">{error}</p>
         </div>
       )}
 
-      {/* Ranking */}
-      <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-gray-100">
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+      {/* Ranking — exakt die Wettbewerber-Karte der Landingpage */}
+      <section className="bg-white rounded-3xl border border-[#E9E1D3] shadow-[0_14px_50px_-18px_rgba(14,25,22,0.14)] overflow-hidden">
+        <div className="px-6 py-4 border-b border-[#F0EAE0]">
+          <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089]">
             Ranking nach Halo Score
           </p>
         </div>
-        <div className="divide-y divide-gray-100">
+        <div className="divide-y divide-[#F0EAE0]">
           {rows.map((r, i) => {
             const deriv = derivations[r.key]
             return (
             <div key={r.key} className={r.isSelf ? "bg-[#FDE7E0]/40" : ""}>
             <div className="px-6 py-4 flex items-center gap-4">
-              <div className="w-6 text-sm text-[#94a3b8] font-medium tabular-nums">
+              <div className="w-6 text-sm text-[#9A9089] font-medium tabular-nums">
                 {i + 1}
               </div>
               <div className="min-w-0 flex-1">
@@ -231,12 +235,12 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                   )}
                 </p>
                 {r.topics && r.topics.length > 0 && (
-                  <p className="text-xs text-[#94a3b8] mt-0.5 truncate">
+                  <p className="text-xs text-[#9A9089] mt-0.5 truncate">
                     {r.topics.join(" · ")}
                   </p>
                 )}
                 {!r.isSelf && r.lastAnalyzedAt && (
-                  <p className="text-xs text-[#94a3b8] mt-0.5">
+                  <p className="text-xs text-[#9A9089] mt-0.5">
                     letzte Analyse:{" "}
                     {new Date(r.lastAnalyzedAt).toLocaleDateString("de-DE", {
                       day: "2-digit",
@@ -250,7 +254,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                 {r.score !== null ? (
                   <ScoreBadge score={r.score} />
                 ) : (
-                  <span className="text-xs text-[#94a3b8] italic">
+                  <span className="text-xs text-[#9A9089] italic">
                     noch nicht analysiert
                   </span>
                 )}
@@ -265,17 +269,17 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                           ? "Wettbewerber-Analyse starten"
                           : "Ab Tarif Starter verfügbar"
                       }
-                      className={`text-xs px-3 py-1.5 rounded-md font-medium transition-colors ${
+                      className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${
                         successId === r.competitorId
-                          ? "bg-green-100 text-green-700 border border-green-200"
+                          ? "bg-[#E9F0F0] text-[#1C2A2A] border border-[#C7D9D9]"
                           : canAnalyze
                           ? "bg-[#FA5935] hover:bg-[#C8431F] text-white disabled:opacity-40 disabled:cursor-not-allowed"
-                          : "bg-gray-100 text-[#94a3b8] cursor-not-allowed border border-gray-200"
+                          : "bg-[#F3EFE6] text-[#9A9089] cursor-not-allowed border border-[#E9E1D3]"
                       }`}
                     >
                       {analyzingId === r.competitorId ? (
                         <span className="flex items-center gap-1.5">
-                          <span className="w-2.5 h-2.5 border border-blue-200 border-t-white rounded-full animate-spin" />
+                          <span className="w-2.5 h-2.5 border border-[#FBCBB8] border-t-white rounded-full animate-spin" />
                           Läuft…
                         </span>
                       ) : successId === r.competitorId ? (
@@ -290,7 +294,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                       type="button"
                       onClick={() => handleRemove(r.competitorId!)}
                       disabled={pending}
-                      className="text-xs text-[#94a3b8] hover:text-red-600 transition-colors disabled:opacity-40"
+                      className="text-xs text-[#9A9089] hover:text-red-600 transition-colors disabled:opacity-40"
                       title="Entfernen"
                     >
                       ✕
@@ -317,7 +321,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
           })}
           {competitors.length === 0 && (
             <div className="px-6 py-8 text-center">
-              <p className="text-sm text-[#64748b]">
+              <p className="text-sm text-[#6B625A]">
                 Noch keine Wettbewerber.{" "}
                 <button
                   type="button"
@@ -332,7 +336,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
         </div>
       </section>
 
-      <p className="text-xs text-[#94a3b8]">
+      <p className="text-xs text-[#9A9089]">
         {canAnalyze ? (
           <>Hinweis: Wettbewerber-Scores werden separat von deinen Analysen berechnet.
           Klicke „Analysieren" um eine neue Analyse für einen Wettbewerber zu starten.</>

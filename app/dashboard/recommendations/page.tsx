@@ -66,8 +66,11 @@ export default async function RecommendationsPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">Empfehlungen</h1>
-          <p className="text-sm text-[#64748b] mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Empfehlungen</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Konkrete nächste Schritte.
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5 max-w-xl leading-relaxed">
             Personalisierte Maßnahmen zur Verbesserung deiner KI-Reputation — generiert von Claude. Hake erledigte Maßnahmen ab und verfolge ihre Wirkung auf deinen Score.
           </p>
         </header>

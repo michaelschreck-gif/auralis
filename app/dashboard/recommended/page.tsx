@@ -88,8 +88,11 @@ export default async function RecommendedPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">Wirst du empfohlen?</h1>
-          <p className="text-sm text-[#6B625A] mt-1 max-w-2xl leading-relaxed">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Empfehlungs-Quote</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Wirst du empfohlen?
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5 max-w-2xl leading-relaxed">
             Wenn jemand KI fragt „Wen würdest du als Keynote-Speaker / Berater / Trainer / Podcast-Gast
             für mein Thema empfehlen?" — wie oft fällt dein Name? Genau diese Frage entscheidet über
             Aufträge, Bühnen und Gagen.
@@ -98,7 +101,7 @@ export default async function RecommendedPage() {
 
         {!isPro ? (
           // Paywall-Vorschau für Free/Starter
-          <section className="rounded-2xl border border-[#FDE7E0] bg-white p-6 md:p-8">
+          <section className="rounded-3xl border border-[#FDE7E0] bg-white p-6 md:p-8">
             <span className="inline-block text-[11px] font-semibold text-[#C8431F] bg-[#FDE7E0] rounded-full px-2.5 py-1">
               🔒 Pro-Feature
             </span>
@@ -111,7 +114,7 @@ export default async function RecommendedPage() {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-5">
               {ROLE_DEFINITIONS.map(r => (
-                <div key={r.id} className="rounded-xl bg-[#F4F2FE] border border-[#FDE7E0] p-3">
+                <div key={r.id} className="rounded-2xl bg-[#FAF8F3] border border-[#E9E1D3] p-3">
                   <div className="text-sm font-medium text-[#0E1916]">{r.label}</div>
                   <div className="text-[11px] text-[#9A9089] mt-1 leading-tight">{r.hint}</div>
                 </div>
@@ -119,7 +122,7 @@ export default async function RecommendedPage() {
             </div>
             <a
               href="/#preise"
-              className="inline-block mt-6 px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors"
+              className="inline-block mt-6 px-4 py-2.5 rounded-full text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors"
             >
               Auf Pro upgraden →
             </a>
@@ -127,7 +130,7 @@ export default async function RecommendedPage() {
         ) : (
           <>
             {/* Hero mit Gesamt-Wahrscheinlichkeit + Run-Button */}
-            <section className="rounded-2xl bg-[#0E1916] text-white p-6 md:p-7">
+            <section className="rounded-3xl bg-[#0E1916] text-white p-6 md:p-7">
               <div className="flex items-center gap-5">
                 {hasData ? (
                   <Ring value={overall} color={band.color} />
@@ -137,13 +140,13 @@ export default async function RecommendedPage() {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <div className="text-[11px] uppercase tracking-wider text-[#FBCBB8]">
+                  <div className="text-xs uppercase tracking-wider font-semibold text-[#F7B49B]">
                     Gesamt-Empfehlungs-Quote
                   </div>
                   {hasData ? (
                     <>
-                      <div className="text-lg font-semibold mt-0.5">{band.label}</div>
-                      <p className="text-sm text-[#FBCBB8] mt-1 leading-relaxed">
+                      <div className="font-[family-name:var(--font-display)] font-normal text-xl mt-1">{band.label}</div>
+                      <p className="text-sm text-[#D8CFC4] mt-1.5 leading-relaxed">
                         Über vier Rollen gemittelt. Stärkste Rolle:{" "}
                         <span className="text-white font-medium">
                           {[...roles].sort((a, b) => b.probability - a.probability)[0]?.label}
@@ -151,7 +154,7 @@ export default async function RecommendedPage() {
                       </p>
                     </>
                   ) : (
-                    <p className="text-sm text-[#FBCBB8] mt-1 leading-relaxed max-w-md">
+                    <p className="text-sm text-[#D8CFC4] mt-1.5 leading-relaxed max-w-md">
                       Noch keine Messung. Starte die Analyse — Halo fragt KI für jede Rolle und jedes
                       Thema und misst deine Trefferquote.
                     </p>
@@ -178,20 +181,20 @@ export default async function RecommendedPage() {
                 {roles.map(r => {
                   const b = probabilityBand(r.probability)
                   return (
-                    <section key={r.roleId} className="bg-white rounded-2xl border border-[#FDE7E0] p-5">
+                    <section key={r.roleId} className="bg-white rounded-3xl border border-[#E9E1D3] p-5">
                       <div className="flex items-start justify-between gap-3">
                         <div>
                           <h3 className="text-base font-semibold text-[#0E1916]">{r.label}</h3>
                           <p className="text-[11px] text-[#9A9089] mt-0.5">{r.hint}</p>
                         </div>
                         <div className="text-right flex-shrink-0">
-                          <div className="text-2xl font-semibold tabular-nums" style={{ color: b.color }}>
+                          <div className="text-2xl font-bold tabular-nums" style={{ color: b.color }}>
                             {r.probability}%
                           </div>
                         </div>
                       </div>
-                      <div className="h-2 rounded-full bg-[#FDE7E0] overflow-hidden mt-3">
-                        <div className="h-2 rounded-full" style={{ width: `${r.probability}%`, background: b.color }} />
+                      <div className="h-1.5 rounded-full bg-[#F3EFE6] overflow-hidden mt-3">
+                        <div className="h-1.5 rounded-full" style={{ width: `${r.probability}%`, background: b.color }} />
                       </div>
                       <div className="flex items-center justify-between mt-2.5 text-[11px] text-[#6B625A]">
                         <span style={{ color: b.color }} className="font-medium">{b.label}</span>

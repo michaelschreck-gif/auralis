@@ -122,10 +122,11 @@ export function computeRoleProbability(
 export type ProbabilityBand = { label: string; min: number; color: string }
 
 export const PROBABILITY_BANDS: ProbabilityBand[] = [
-  { label: "Erste Wahl", min: 75, color: "#22A06B" },
-  { label: "Im Kandidatenkreis", min: 45, color: "#FA5935" },
-  { label: "Selten empfohlen", min: 20, color: "#EF9F27" },
-  { label: "Nicht auf dem Schirm", min: 0, color: "#D1495B" },
+  // Brandkit-konform statt Grün/Rot-Ampel.
+  { label: "Erste Wahl", min: 75, color: "#FA5935" },
+  { label: "Im Kandidatenkreis", min: 45, color: "#6D8C8D" },
+  { label: "Selten empfohlen", min: 20, color: "#C98A3E" },
+  { label: "Nicht auf dem Schirm", min: 0, color: "#3A4442" },
 ]
 
 export function probabilityBand(p: number): ProbabilityBand {
