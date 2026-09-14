@@ -2,8 +2,9 @@ import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 
+// Brandkit-konform statt Grün/Rot-Ampel: Koralle = stark, Teal = mittel, Stein = niedrig.
 function hue(s: number) {
-  return s >= 70 ? "#10b981" : s >= 45 ? "#FA5935" : "#ef4444"
+  return s >= 70 ? "#FA5935" : s >= 45 ? "#6D8C8D" : "#5A5248"
 }
 
 function scoreLabel(s: number) {
@@ -21,7 +22,7 @@ function Sparkline({ scores }: { scores: number[] }) {
   if (scores.length < 2) {
     return (
       <div className="h-8 flex items-center">
-        <span className="text-xs text-[#94a3b8]">Verlauf ab der 2. Analyse</span>
+        <span className="text-xs text-[#9A9089]">Verlauf ab der 2. Analyse</span>
       </div>
     )
   }
@@ -36,14 +37,14 @@ function Sparkline({ scores }: { scores: number[] }) {
   const last = scores[scores.length - 1] ?? 0
   const prev = scores[scores.length - 2] ?? last
   const trend = last > prev ? "↑" : last < prev ? "↓" : "→"
-  const trendColor = last > prev ? "#10b981" : last < prev ? "#ef4444" : "#94a3b8"
+  const trendColor = last > prev ? "#FA5935" : last < prev ? "#C98A3E" : "#9A9089"
   return (
     <div className="flex items-center gap-2">
       <svg width={w} height={h} viewBox={`0 0 ${w} ${h}`}>
         <polyline
           points={pts.join(" ")}
           fill="none"
-          stroke="rgba(127,119,221,0.6)"
+          stroke="rgba(250,89,53,0.5)"
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -110,13 +111,13 @@ export default async function TopicsPage() {
   const panel = (
     <div className="py-2">
       {(schedules ?? []).length === 0 && (
-        <p className="text-xs text-[#94a3b8] text-center mt-8 px-4">Noch keine Themen.</p>
+        <p className="text-xs text-[#9A9089] text-center mt-8 px-4">Noch keine Themen.</p>
       )}
       {(schedules ?? []).map(s => {
         const data = reportsBySchedule[s.id]
         const score = data?.score ?? null
         return (
-          <div key={s.id} className="px-4 py-3 border-b border-gray-100 hover:bg-gray-50 transition-colors">
+          <div key={s.id} className="px-4 py-3 border-b border-[#F0EAE0] hover:bg-[#FAF8F3] transition-colors">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-[#0E1916] truncate pr-2 font-medium">{s.query}</span>
               {score != null && score > 0 && (
@@ -125,7 +126,7 @@ export default async function TopicsPage() {
                 </span>
               )}
             </div>
-            <div className="h-1 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-1 bg-[#F3EFE6] rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-700"
                 style={{
@@ -150,15 +151,18 @@ export default async function TopicsPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[#0E1916]">Themenführerschaft</h1>
-          <p className="text-[#64748b] text-sm mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Themen</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Themenführerschaft.
+          </h1>
+          <p className="text-[#6B625A] text-sm mt-2.5 max-w-xl leading-relaxed">
             Wie stark KI dich mit jedem überwachten Thema verbindet.
           </p>
         </div>
 
         {(schedules ?? []).length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
+            <p className="text-[#6B625A] text-sm max-w-xs leading-relaxed">
               Noch keine Themen verfolgt. Schließe das{" "}
               <a href="/onboarding" className="text-[#FA5935] hover:underline font-medium">Onboarding</a>{" "}
               ab oder starte eine Analyse auf der{" "}
@@ -174,17 +178,17 @@ export default async function TopicsPage() {
               const hasData = score > 0
 
               return (
-                <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-6">
+                <div key={s.id} className="rounded-3xl border border-[#E9E1D3] bg-white p-6">
                   <div className="flex items-start justify-between mb-4">
                     <div>
                       <h3 className="text-base font-semibold text-[#0E1916]">{s.query}</h3>
-                      <p className="text-xs text-[#94a3b8] mt-0.5">
+                      <p className="text-xs text-[#9A9089] mt-0.5">
                         {frequencyLabel(s.frequency)}
                       </p>
                     </div>
                     {hasData && (
                       <div className="text-right flex-shrink-0 ml-4">
-                        <p className="text-2xl font-semibold" style={{ color: hue(score) }}>{score}</p>
+                        <p className="text-2xl font-bold tabular-nums" style={{ color: hue(score) }}>{score}</p>
                         <p className="text-xs mt-0.5 font-medium" style={{ color: hue(score) }}>
                           {scoreLabel(score)}
                         </p>
@@ -194,7 +198,7 @@ export default async function TopicsPage() {
 
                   {hasData ? (
                     <div className="space-y-3">
-                      <div className="h-1.5 bg-gray-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-[#F3EFE6] rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full transition-all duration-700"
                           style={{ width: `${score}%`, background: hue(score) }}
@@ -202,13 +206,13 @@ export default async function TopicsPage() {
                       </div>
                       <div className="flex items-center justify-between">
                         <Sparkline scores={history}/>
-                        <span className="text-xs text-[#94a3b8]">
+                        <span className="text-xs text-[#9A9089]">
                           {history.length} {history.length === 1 ? "Analyse" : "Analysen"}
                         </span>
                       </div>
                     </div>
                   ) : (
-                    <p className="text-xs text-[#94a3b8]">
+                    <p className="text-xs text-[#9A9089]">
                       Noch keine Daten.{" "}
                       <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline font-medium">
                         Analyse starten →

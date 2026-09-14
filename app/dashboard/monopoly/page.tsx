@@ -107,17 +107,19 @@ export default async function MonopolyPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">Themen-Monopol</h1>
-          <p className="text-sm text-[#6B625A] mt-1 max-w-2xl leading-relaxed">
-            Wie sehr „besitzt" du ein Thema in den KI-Systemen? Der Monopoly-Score misst, wie
-            konsequent KI dich auf die vordersten Plätze setzt, wenn sie offen nach den führenden
-            Köpfen eines Themas gefragt wird — die Frage, die über Speaker-Gagen, Mandate und
-            Reputation entscheidet.
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Themen-Monopol</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Wie sehr „besitzt" du ein Thema?
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5 max-w-2xl leading-relaxed">
+            Der Monopoly-Score misst, wie konsequent KI dich auf die vordersten Plätze setzt, wenn sie
+            offen nach den führenden Köpfen eines Themas gefragt wird — die Frage, die über
+            Speaker-Gagen, Mandate und Reputation entscheidet.
           </p>
         </header>
 
         {!hasData ? (
-          <div className="bg-white rounded-2xl border border-[#FDE7E0] p-10 text-center">
+          <div className="bg-white rounded-3xl border border-[#E9E1D3] p-10 text-center">
             <p className="text-sm text-[#6B625A] max-w-sm mx-auto leading-relaxed">
               Noch keine auswertbaren Analysen. Starte eine{" "}
               <a href="/dashboard/analyze" className="text-[#C8431F] hover:underline font-medium">Analyse</a>{" "}
@@ -127,10 +129,10 @@ export default async function MonopolyPage() {
         ) : (
           <>
             {/* Zusammenfassung */}
-            <section className="rounded-2xl bg-[#0E1916] text-white p-6 md:p-7 flex items-center gap-5">
-              <Ring value={avg} color="#A78BFA" />
+            <section className="rounded-3xl bg-[#0E1916] text-white p-6 md:p-7 flex items-center gap-5">
+              <Ring value={avg} color="#FA5935" />
               <div>
-                <div className="text-[11px] uppercase tracking-wider text-[#FBCBB8]">
+                <div className="text-[11px] uppercase tracking-wider text-[#F7B49B]">
                   Durchschnittliches Monopol
                 </div>
                 <div className="text-lg font-semibold mt-0.5">
@@ -148,7 +150,7 @@ export default async function MonopolyPage() {
               {topics.map(t => {
                 const m = t.monopoly
                 return (
-                  <section key={t.scheduleId} className="bg-white rounded-2xl border border-[#FDE7E0] p-5 md:p-6">
+                  <section key={t.scheduleId} className="bg-white rounded-3xl border border-[#E9E1D3] p-5 md:p-6">
                     <div className="flex items-center gap-5">
                       <Ring value={m.score} color={m.band.color} />
                       <div className="min-w-0 flex-1">
@@ -172,7 +174,7 @@ export default async function MonopolyPage() {
                     </div>
 
                     {/* Archetyp-Aufschlüsselung */}
-                    <div className="mt-5 pt-4 border-t border-[#F4F2FE] space-y-2">
+                    <div className="mt-5 pt-4 border-t border-[#E9E1D3] space-y-2">
                       <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
                         Wie KI dich pro Fragetyp platziert
                       </p>
@@ -181,7 +183,7 @@ export default async function MonopolyPage() {
                           <span className="text-xs text-[#6B625A] w-40 flex-shrink-0 truncate">
                             {QUERY_TYPE_LABELS[a.type] ?? a.type}
                           </span>
-                          <div className="flex-1 h-2 rounded-full bg-[#FDE7E0] overflow-hidden">
+                          <div className="flex-1 h-2 rounded-full bg-[#F1EEE7] overflow-hidden">
                             <div className="h-2 rounded-full" style={{ width: `${a.dominance}%`, background: m.band.color }} />
                           </div>
                           <span className="text-xs text-[#6B625A] tabular-nums w-16 text-right">
@@ -209,7 +211,7 @@ export default async function MonopolyPage() {
 
 function Stat({ label, value, hint }: { label: string; value: string; hint: string }) {
   return (
-    <div className="rounded-xl bg-[#FAFAFE] border border-[#F4F2FE] px-3 py-2.5">
+    <div className="rounded-xl bg-[#FAF8F3] border border-[#E9E1D3] px-3 py-2.5">
       <div className="text-lg font-semibold text-[#0E1916] tabular-nums">{value}</div>
       <div className="text-[11px] text-[#6B625A] leading-tight mt-0.5">{label}</div>
       <div className="text-[10px] text-[#9A9089] leading-tight">{hint}</div>

@@ -299,7 +299,7 @@ export default function DashboardShell({
                   type="button"
                   onClick={() => setMobileOpen(false)}
                   aria-label="Menü schließen"
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B625A] hover:bg-[#F4F2FE]"
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[#6B625A] hover:bg-[#F3EFE6]"
                 >
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
                 </button>

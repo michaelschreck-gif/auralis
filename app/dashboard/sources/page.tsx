@@ -97,18 +97,21 @@ export default async function SourcesPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">Quellen</h1>
-          <p className="text-sm text-[#64748b] mt-1">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Quellen</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Woher KI ihr Wissen über dich bezieht.
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5">
             Welche Webseiten KI-Systeme nennen, wenn sie über dich sprechen.
           </p>
         </header>
 
         {reportCount === 0 ? (
-          <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-12 text-center">
+          <section className="bg-white rounded-3xl border border-[#E9E1D3] p-12 text-center">
             <p className="text-base font-medium text-[#0E1916]">
               Noch keine Analysen vorhanden.
             </p>
-            <p className="text-sm text-[#64748b] mt-2">
+            <p className="text-sm text-[#6B625A] mt-2">
               Sobald die KI deine Reputation analysiert, erscheinen hier genannte Quellen.{" "}
               <a
                 href="/dashboard/analyze"
@@ -119,11 +122,11 @@ export default async function SourcesPage() {
             </p>
           </section>
         ) : sources.length === 0 ? (
-          <section className="bg-white rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/40 shadow-sm p-8">
+          <section className="rounded-3xl border border-[#FBCBB8] bg-gradient-to-br from-[#FDE7E0] to-[#F3EFE6] p-8">
             <p className="text-base font-medium text-[#0E1916]">
               Quellen erscheinen nur bei web-vernetzten KI-Modellen
             </p>
-            <div className="text-sm text-[#475569] mt-3 space-y-3 leading-relaxed max-w-xl">
+            <div className="text-sm text-[#5C2A12] mt-3 space-y-3 leading-relaxed max-w-xl">
               <p>
                 Deine Analysen laufen aktuell mit <span className="font-medium text-[#0E1916]">Claude</span>.
                 Claude antwortet aus seinem Trainingswissen und gibt dabei – wie die meisten
@@ -137,7 +140,7 @@ export default async function SourcesPage() {
                 Häufigkeit sortiert.
               </p>
             </div>
-            <p className="text-xs text-[#94a3b8] mt-4">
+            <p className="text-xs text-[#8A5A0E] mt-4">
               Tipp: Die tatsächlichen KI-Antworten hinter deinen Scores findest du unter{" "}
               <a href="/dashboard/responses" className="text-[#FA5935] hover:underline font-medium">
                 KI-Antworten
@@ -145,19 +148,19 @@ export default async function SourcesPage() {
             </p>
           </section>
         ) : (
-          <section className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-            <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
-              <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+          <section className="bg-white rounded-3xl border border-[#E9E1D3] overflow-hidden">
+            <div className="px-6 py-4 border-b border-[#F0EAE0] flex items-center justify-between">
+              <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089]">
                 Quellen-Häufigkeit
               </p>
-              <span className="text-xs text-[#94a3b8]">
+              <span className="text-xs text-[#9A9089]">
                 aus {reportCount} {reportCount === 1 ? "Analyse" : "Analysen"}
               </span>
             </div>
-            <div className="divide-y divide-gray-100">
+            <div className="divide-y divide-[#F0EAE0]">
               {sources.map((s, i) => (
                 <div key={s.domain} className="px-6 py-4 flex items-start gap-4">
-                  <div className="w-6 text-sm text-[#94a3b8] font-medium tabular-nums flex-shrink-0">
+                  <div className="w-6 text-sm text-[#9A9089] font-medium tabular-nums flex-shrink-0">
                     {i + 1}
                   </div>
                   <div className="min-w-0 flex-1">
@@ -167,14 +170,14 @@ export default async function SourcesPage() {
                     {s.examples.length > 0 && (
                       <div className="mt-1.5 space-y-0.5">
                         {s.examples.map(ex => (
-                          <p key={ex} className="text-xs text-[#94a3b8] truncate">
+                          <p key={ex} className="text-xs text-[#9A9089] truncate">
                             {ex}
                           </p>
                         ))}
                       </div>
                     )}
                   </div>
-                  <div className="flex-shrink-0 px-3 py-1.5 rounded-lg bg-[#FDE7E0] text-[#FA5935] text-xs font-semibold tabular-nums">
+                  <div className="flex-shrink-0 px-3 py-1.5 rounded-full bg-[#FDE7E0] text-[#C8431F] text-xs font-semibold tabular-nums">
                     {s.count}× zitiert
                   </div>
                 </div>
@@ -184,7 +187,7 @@ export default async function SourcesPage() {
         )}
 
         {sources.length > 0 && (
-          <p className="text-xs text-[#94a3b8]">
+          <p className="text-xs text-[#9A9089]">
             Hinweis: Diese Liste zeigt Webadressen, die KI-Modelle in den Antworten der letzten{" "}
             {reportCount} Analyse{reportCount === 1 ? "" : "n"} genannt haben. Web-vernetzte Modelle
             (z.&nbsp;B. Perplexity) liefern hier deutlich mehr als reine Wissensmodelle wie Claude.

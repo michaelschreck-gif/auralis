@@ -31,10 +31,11 @@ function modelLabel(model: string): string {
   return MODEL_LABELS[model] ?? model
 }
 
+// Brandkit-konform statt Rot/Grün-Ampel.
 const SENTIMENT_META: Record<string, { label: string; cls: string }> = {
-  positive: { label: "positiv", cls: "bg-green-50 text-green-700 border-green-100" },
-  neutral:  { label: "neutral", cls: "bg-gray-50 text-[#64748b] border-gray-200" },
-  negative: { label: "negativ", cls: "bg-red-50 text-red-700 border-red-100" },
+  positive: { label: "positiv", cls: "bg-[#FDE7E0] text-[#C8431F] border-[#FBCBB8]" },
+  neutral:  { label: "neutral", cls: "bg-[#F3EFE6] text-[#6B625A] border-[#E9E1D3]" },
+  negative: { label: "negativ", cls: "bg-[#F6ECD9] text-[#6B4A1E] border-[#E7CFA3]" },
 }
 
 /** Hebt alle Vorkommen des Namens (und Nachnamens) im Text hervor. */
@@ -46,7 +47,7 @@ function highlight(text: string, name: string): React.ReactNode {
   const segments = text.split(re)
   return segments.map((seg, i) =>
     re.test(seg) ? (
-      <mark key={i} className="bg-yellow-100 text-[#0E1916] rounded px-0.5">{seg}</mark>
+      <mark key={i} className="bg-[#FDE7E0] text-[#C8431F] rounded px-0.5">{seg}</mark>
     ) : (
       <span key={i}>{seg}</span>
     ),
@@ -63,14 +64,14 @@ export default function EvidenceList({
   return (
     <div className="space-y-4">
       {groups.map((g, gi) => (
-        <div key={gi} className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-100 bg-[#FAF8F3]">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-1">
+        <div key={gi} className="bg-white rounded-3xl border border-[#E9E1D3] overflow-hidden">
+          <div className="px-6 py-4 border-b border-[#F0EAE0] bg-[#FAF8F3]">
+            <p className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-1">
               Gestellte Frage an die KI
             </p>
             <p className="text-sm text-[#0E1916] leading-snug">{g.prompt}</p>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#F0EAE0]">
             {g.items.map(item => (
               <EvidenceRow key={item.id} item={item} personName={personName} />
             ))}
@@ -91,11 +92,11 @@ function EvidenceRow({ item, personName }: { item: EvidenceItem; personName: str
         <div className="flex items-center gap-2.5">
           <span className="text-sm font-medium text-[#0E1916]">{modelLabel(item.model)}</span>
           {item.mentioned ? (
-            <span className="text-xs px-2 py-0.5 rounded-full border bg-green-50 text-green-700 border-green-100 font-medium">
+            <span className="text-xs px-2 py-0.5 rounded-full border bg-[#FDE7E0] text-[#C8431F] border-[#FBCBB8] font-medium">
               ✓ erwähnt{item.position !== null ? ` · Platz ${item.position}` : ""}
             </span>
           ) : (
-            <span className="text-xs px-2 py-0.5 rounded-full border bg-gray-50 text-[#94a3b8] border-gray-200">
+            <span className="text-xs px-2 py-0.5 rounded-full border bg-[#F3EFE6] text-[#9A9089] border-[#E9E1D3]">
               nicht erwähnt
             </span>
           )}
@@ -116,7 +117,7 @@ function EvidenceRow({ item, personName }: { item: EvidenceItem; personName: str
         </button>
       </div>
       {open && (
-        <div className="mt-3 rounded-xl bg-[#FAF8F3] border border-gray-100 p-4 text-sm text-[#334155] leading-relaxed whitespace-pre-wrap max-h-96 overflow-y-auto">
+        <div className="mt-3 rounded-2xl bg-[#FAF8F3] border border-[#E9E1D3] p-4 text-sm text-[#3D3A35] leading-relaxed whitespace-pre-wrap max-h-96 overflow-y-auto">
           {highlight(item.response, personName)}
         </div>
       )}

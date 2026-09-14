@@ -82,15 +82,18 @@ export default async function ResponsesPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">KI-Antworten</h1>
-          <p className="text-sm text-[#64748b] mt-1">
-            Die tatsächlichen Antworten der KI-Systeme aus deiner letzten Analyse — die Rohdaten hinter deinen Scores. Dass du nicht in jeder Antwort genannt wirst, ist völlig normal; jede Nennung verbessert deinen Score.
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">KI-Antworten</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Die Rohdaten hinter deinen Scores.
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5 max-w-2xl leading-relaxed">
+            Die tatsächlichen Antworten der KI-Systeme aus deiner letzten Analyse. Dass du nicht in jeder Antwort genannt wirst, ist völlig normal; jede Nennung verbessert deinen Score.
           </p>
         </header>
 
         {groups.length === 0 ? (
-          <div className="rounded-2xl border border-gray-100 bg-white p-8 text-center">
-            <p className="text-sm text-[#64748b]">
+          <div className="rounded-3xl border border-[#E9E1D3] bg-white p-8 text-center">
+            <p className="text-sm text-[#6B625A]">
               Noch keine gespeicherten KI-Antworten.{" "}
               <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline">
                 Erste Analyse starten →
@@ -99,13 +102,13 @@ export default async function ResponsesPage() {
           </div>
         ) : (
           <>
-            <div className="rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+            <div className="rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
               <span className="text-[#0E1916]">
                 <span className="font-semibold">{mentionedAnswers}</span> von{" "}
                 <span className="font-semibold">{totalAnswers}</span> Antworten nennen dich
               </span>
               {analyzedAt && (
-                <span className="text-[#94a3b8]">
+                <span className="text-[#9A9089]">
                   Analyse vom{" "}
                   {new Date(analyzedAt).toLocaleDateString("de-DE", {
                     day: "2-digit",

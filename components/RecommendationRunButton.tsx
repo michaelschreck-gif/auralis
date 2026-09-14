@@ -46,7 +46,7 @@ export default function RecommendationRunButton({
         type="button"
         onClick={run}
         disabled={loading}
-        className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#0E1916] bg-white hover:bg-[#F4F2FE] transition-colors disabled:opacity-50"
+        className="px-4 py-2.5 rounded-xl text-sm font-semibold text-[#0E1916] bg-white hover:bg-[#F3EFE6] transition-colors disabled:opacity-50"
       >
         {loading ? "Frage KI…" : label}
       </button>
