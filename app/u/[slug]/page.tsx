@@ -9,6 +9,12 @@ export const dynamic = "force-dynamic"
 
 type Params = { slug: string }
 
+const SUB_THEME = {
+  geo: { bg: "#FDE7E0", track: "#F7B49B", accent: "#FA5935", text: "#7A2A12", label: "#C8431F" },
+  thoughtLeadership: { bg: "#E9F0F0", track: "#C7D9D9", accent: "#6D8C8D", text: "#1C2A2A", label: "#4C6667" },
+  digitalAuthority: { bg: "#E7E3DC", track: "#CFCABF", accent: "#3A4442", text: "#3A4442", label: "#5A5248" },
+} as const
+
 async function loadProfileBySlug(slug: string) {
   const supabase = createSupabaseServiceClient()
   const { data: profile } = await supabase
@@ -88,10 +94,7 @@ export default async function PublicProfilePage(
       <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">H</span>
-            </div>
-            <span className="text-[#0E1916] font-semibold text-sm tracking-tight">Halo</span>
+            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-4 w-auto" />
           </a>
           <a
             href="/login"
@@ -103,81 +106,72 @@ export default async function PublicProfilePage(
       </header>
 
       <main className="max-w-3xl mx-auto px-6 py-12">
-        {/* Profile hero */}
-        <section className="bg-white rounded-2xl border border-[#E9E1D3] p-8 mb-6">
-          <div className="flex items-center gap-5 mb-6">
-            <div className="w-16 h-16 rounded-full bg-[#FDE7E0] border-2 border-[#FBCBB8] flex items-center justify-center flex-shrink-0">
-              <span className="text-xl font-bold text-[#FA5935]">{initials}</span>
-            </div>
-            <div className="min-w-0 flex-1">
-              <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
-                KI-Reputations-Profil
-              </p>
-              <h1 className="text-2xl font-bold text-[#0E1916] mt-1">{name}</h1>
-              {lastAnalyzedDate && (
-                <p className="text-xs text-[#9A9089] mt-1">
-                  Letzte Messung:{" "}
-                  {lastAnalyzedDate.toLocaleDateString("de-DE", {
-                    day: "2-digit",
-                    month: "long",
-                    year: "numeric",
-                  })}
-                </p>
-              )}
-            </div>
+        {/* Dark hero: Identität + Halo Score */}
+        <section className="rounded-3xl bg-[#0E1916] text-white p-8 sm:p-10 text-center">
+          <div className="w-16 h-16 rounded-full bg-white/10 border-2 border-[#F7B49B] flex items-center justify-center mx-auto mb-5">
+            <span className="text-lg font-bold text-white">{initials}</span>
           </div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#F7B49B]">
+            KI-Reputations-Profil
+          </span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-3xl mt-3">{name}</h1>
 
           {masters ? (
             <>
-              {/* Master Score */}
-              <div className="text-center py-6 border-y border-[#E9E1D3] mb-6">
-                <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
-                  Halo Score™
-                </p>
-                <div className="flex items-baseline justify-center gap-2">
-                  <span className="text-6xl font-bold text-[#FA5935] tabular-nums">{masters.aura.value}</span>
-                  <span className="text-lg text-[#9A9089]">/100</span>
-                </div>
-                <p className="text-sm font-medium text-[#0E1916] mt-2">{masters.aura.band.label}</p>
+              <div className="flex items-baseline justify-center gap-1.5 mt-7">
+                <span className="text-6xl font-bold tabular-nums">{masters.aura.value}</span>
+                <span className="text-lg text-[#FBCBB8]">/100</span>
               </div>
-
-              {/* Sub-Scores */}
-              <div className="grid grid-cols-3 gap-3">
-                {[
-                  { label: "GEO",                  data: masters.geo,               color: "#378ADD" },
-                  { label: "Thought Leadership",   data: masters.thoughtLeadership, color: "#FA5935" },
-                  { label: "Digitale Autorität",   data: masters.digitalAuthority,  color: "#1D9E75" },
-                ].map(s => (
-                  <div key={s.label} className="rounded-xl border border-[#E9E1D3] p-3">
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
-                      {s.label}
-                    </p>
-                    <div className="flex items-baseline gap-1 mt-1.5">
-                      <span className="text-2xl font-bold tabular-nums" style={{ color: s.color }}>
-                        {s.data.value}
-                      </span>
-                      <span className="text-[10px] text-[#9A9089]">/100</span>
-                    </div>
-                    <p className="text-[11px] text-[#6B625A] mt-1">{s.data.band.label}</p>
-                    <div className="h-1 bg-gray-100 rounded-full overflow-hidden mt-2">
-                      <div
-                        className="h-full rounded-full"
-                        style={{ width: `${s.data.value}%`, background: s.color }}
-                      />
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <p className="text-sm text-[#FBCBB8] mt-2">
+                {masters.aura.band.label}
+                {lastAnalyzedDate && (
+                  <>
+                    {" · zuletzt gemessen am "}
+                    {lastAnalyzedDate.toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}
+                  </>
+                )}
+              </p>
             </>
           ) : (
-            <div className="text-center py-10 text-sm text-[#6B625A]">
+            <p className="text-sm text-[#FBCBB8] mt-6 max-w-xs mx-auto leading-relaxed">
               Noch keine Reputations-Messung verfügbar.
-            </div>
+            </p>
           )}
         </section>
 
+        {/* Sub-Scores, überlappend wie im Dashboard-Cockpit */}
+        {masters && (
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5 -mt-7 relative px-1 sm:px-0 mb-6">
+            {[
+              { label: "GEO", data: masters.geo, theme: SUB_THEME.geo },
+              { label: "Thought Leadership", data: masters.thoughtLeadership, theme: SUB_THEME.thoughtLeadership },
+              { label: "Digitale Autorität", data: masters.digitalAuthority, theme: SUB_THEME.digitalAuthority },
+            ].map(s => (
+              <div
+                key={s.label}
+                className="rounded-3xl p-5 shadow-[0_14px_50px_-18px_rgba(14,25,22,0.14)]"
+                style={{ background: s.theme.bg }}
+              >
+                <p className="text-[11px] uppercase tracking-wider font-semibold" style={{ color: s.theme.label }}>
+                  {s.label}
+                </p>
+                <div className="flex items-baseline gap-1 mt-1.5">
+                  <span className="text-3xl font-bold tabular-nums" style={{ color: s.theme.text }}>
+                    {s.data.value}
+                  </span>
+                  <span className="text-xs" style={{ color: s.theme.label }}>/100</span>
+                </div>
+                <p className="text-xs mt-1" style={{ color: s.theme.text }}>{s.data.band.label}</p>
+                <div className="h-1.5 rounded-full mt-3" style={{ background: s.theme.track }}>
+                  <div className="h-1.5 rounded-full" style={{ width: `${s.data.value}%`, background: s.theme.accent }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Methodology */}
-        <section className="bg-white rounded-2xl border border-[#E9E1D3] p-6 mb-6">
+        <section className={`bg-white rounded-3xl border border-[#E9E1D3] p-6 ${masters ? "" : "mt-6"}`}>
           <h2 className="text-base font-semibold text-[#0E1916] mb-3">Was wird gemessen?</h2>
           <p className="text-sm text-[#6B625A] leading-relaxed">
             Der Halo Score™ misst, wie sichtbar diese Person in KI-Antworten auftaucht.
@@ -196,7 +190,7 @@ export default async function PublicProfilePage(
           <p className="text-sm text-[#6B625A] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
           <a
             href="/login"
-            className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-semibold transition-colors shadow-sm"
+            className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-semibold transition-colors"
           >
             Kostenlos messen lassen →
           </a>
@@ -206,13 +200,13 @@ export default async function PublicProfilePage(
         </section>
       </main>
 
-      <footer className="bg-[#0E1916] text-gray-400 mt-8">
-        <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between text-xs flex-wrap gap-2">
+      <footer className="bg-[#0E1916] mt-8">
+        <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between text-xs flex-wrap gap-2 text-[#8A8078]">
           <p>© {new Date().getFullYear()} Halo · Operated by Halo UG (haftungsbeschränkt) i. G.</p>
           <div className="flex items-center gap-4">
-            <a href="/" className="hover:text-white">Halo</a>
-            <a href="/legal/impressum" className="hover:text-white">Impressum</a>
-            <a href="/legal/datenschutz" className="hover:text-white">Datenschutz</a>
+            <a href="/" className="hover:text-white transition-colors">Halo</a>
+            <a href="/legal/impressum" className="hover:text-white transition-colors">Impressum</a>
+            <a href="/legal/datenschutz" className="hover:text-white transition-colors">Datenschutz</a>
           </div>
         </div>
       </footer>

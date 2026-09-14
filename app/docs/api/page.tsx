@@ -48,10 +48,7 @@ export default function ApiDocsPage() {
       <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">H</span>
-            </div>
-            <span className="text-[#0E1916] font-semibold text-sm tracking-tight">Halo</span>
+            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-4 w-auto" />
           </a>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-[#9A9089]">API v1</span>
@@ -94,10 +91,10 @@ export default function ApiDocsPage() {
         <main className="flex-1 min-w-0 space-y-12">
           {/* Headline */}
           <section>
-            <p className="text-xs uppercase tracking-wider font-semibold text-[#FA5935] mb-2">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">
               Halo API · v1
-            </p>
-            <h1 className="text-3xl font-semibold text-[#0E1916]">
+            </span>
+            <h1 className="font-[family-name:var(--font-display)] font-normal text-3xl sm:text-4xl tracking-tight text-[#0E1916] mt-2">
               Public API Dokumentation
             </h1>
             <p className="text-base text-[#6B625A] mt-3 leading-relaxed">

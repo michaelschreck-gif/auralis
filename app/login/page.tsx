@@ -129,22 +129,76 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
-      <div className="max-w-sm w-full">
-        <div className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-8 space-y-6">
+      <div className="max-w-4xl w-full rounded-3xl border border-[#E9E1D3] bg-white shadow-[0_24px_70px_-30px_rgba(14,25,22,0.18)] overflow-hidden grid grid-cols-1 md:grid-cols-2">
 
-          {/* Branding */}
-          <div className="text-center space-y-1">
-            <div className="flex items-center justify-center gap-2.5 mb-3">
-              <div className="w-8 h-8 rounded-lg bg-[#FA5935] flex items-center justify-center">
-                <span className="text-white text-sm font-bold">H</span>
+        {/* Left: brand panel */}
+        <div className="hidden md:flex flex-col justify-between bg-[#0E1916] p-11">
+          <img src="/brand/combinationmark-white.svg" alt="Halo" className="h-[18px] w-auto" />
+
+          <div className="mt-10">
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-[#F7B49B]">
+              AI Visibility Monitoring
+            </span>
+            <h3 className="font-[family-name:var(--font-display)] font-normal text-white text-[26px] leading-snug mt-3 max-w-[19rem]">
+              Sieh dich, wie KI dich sieht.
+            </h3>
+            <p className="text-[#FBCBB8] text-sm leading-relaxed mt-3 max-w-[19rem]">
+              Dein Halo Score™ zeigt in Echtzeit, wie ChatGPT, Claude, Perplexity und Gemini
+              über dich sprechen.
+            </p>
+
+            <div className="mt-7 rounded-2xl bg-white/[0.04] border border-white/10 p-4">
+              <div className="flex items-center gap-3.5">
+                <svg width="64" height="64" viewBox="0 0 96 96" className="flex-shrink-0" role="img" aria-label="Halo Score 75">
+                  <circle cx="48" cy="48" r="38" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="10" />
+                  <circle cx="48" cy="48" r="38" fill="none" stroke="#F7B49B" strokeWidth="10" strokeLinecap="round"
+                    strokeDasharray="179 239" transform="rotate(-90 48 48)" />
+                  <text x="48" y="46" textAnchor="middle" fill="#fff" fontSize="26" fontWeight="700" fontFamily="sans-serif">75</text>
+                  <text x="48" y="62" textAnchor="middle" fill="#FBCBB8" fontSize="10" fontFamily="sans-serif">/ 100</text>
+                </svg>
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-[#FBCBB8]">Halo Score™</div>
+                  <div className="text-white font-semibold text-sm mt-0.5">Starke Reputation</div>
+                </div>
               </div>
-              <span className="text-[#0E1916] font-semibold text-lg tracking-tight">Halo</span>
+              <div className="grid grid-cols-3 gap-2 mt-3.5">
+                <div className="rounded-lg p-2" style={{ background: "#FDE7E0" }}>
+                  <div className="text-[10px]" style={{ color: "#7A2A12" }}>GEO</div>
+                  <div className="text-[15px] font-bold tabular-nums" style={{ color: "#7A2A12" }}>72</div>
+                </div>
+                <div className="rounded-lg p-2" style={{ background: "#E9F0F0" }}>
+                  <div className="text-[10px]" style={{ color: "#1C2A2A" }}>T. L.</div>
+                  <div className="text-[15px] font-bold tabular-nums" style={{ color: "#1C2A2A" }}>41</div>
+                </div>
+                <div className="rounded-lg p-2" style={{ background: "#E7E3DC" }}>
+                  <div className="text-[10px]" style={{ color: "#3A4442" }}>Aut.</div>
+                  <div className="text-[15px] font-bold tabular-nums" style={{ color: "#3A4442" }}>63</div>
+                </div>
+              </div>
             </div>
-            <p className="text-[#6B625A] text-sm">AI Visibility Monitoring for Personal Brands</p>
+          </div>
+
+          <p className="text-[#FBCBB8]/70 text-xs">
+            © {new Date().getFullYear()} Halo · Halo UG (haftungsbeschränkt) i. G.
+          </p>
+        </div>
+
+        {/* Right: form */}
+        <div className="p-8 sm:p-11 flex flex-col justify-center">
+          <div className="mb-6">
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">
+              {tab === "signin" ? "Willkommen zurück" : "Neu bei Halo"}
+            </span>
+            <h3 className="font-[family-name:var(--font-display)] font-normal text-2xl text-[#0E1916] mt-2">
+              {tab === "signin" ? "Anmelden" : "Konto erstellen"}
+            </h3>
+            <p className="text-[#6B625A] text-sm mt-1">
+              {tab === "signin" ? "Neu hier? Wechsle oben auf „Registrieren“." : "Schon dabei? Wechsle oben auf „Anmelden“."}
+            </p>
           </div>
 
           {/* Tab Switch */}
-          <div className="flex bg-gray-100 p-1 rounded-lg">
+          <div className="flex bg-[#FAF8F3] border border-[#E9E1D3] p-1 rounded-lg">
             {(["signin", "signup"] as const).map(t => (
               <button
                 key={t}
@@ -164,17 +218,17 @@ export default function LoginPage() {
           <button
             onClick={handleGoogle}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border border-[#E9E1D3] bg-white text-sm text-[#0E1916] font-medium hover:bg-[#FAF8F3] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-2.5 mt-5 rounded-lg border border-[#E9E1D3] bg-white text-sm text-[#0E1916] font-medium hover:bg-[#FAF8F3] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <GoogleIcon />
             Mit Google fortfahren
           </button>
 
           {/* Divider */}
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-gray-100" />
+          <div className="flex items-center gap-3 my-5">
+            <div className="flex-1 h-px bg-[#E9E1D3]" />
             <span className="text-xs text-[#9A9089]">oder</span>
-            <div className="flex-1 h-px bg-gray-100" />
+            <div className="flex-1 h-px bg-[#E9E1D3]" />
           </div>
 
           {/* Sign In Form */}
@@ -272,8 +326,8 @@ export default function LoginPage() {
                 </div>
               )}
               {successMsg && (
-                <div className="rounded-lg bg-green-50 border border-green-100 px-4 py-3">
-                  <p className="text-xs text-green-600 font-medium">{successMsg}</p>
+                <div className="rounded-lg bg-[#E9F0F0] border border-[#C7D9D9] px-4 py-3">
+                  <p className="text-xs text-[#1C2A2A] font-medium">{successMsg}</p>
                 </div>
               )}
 
@@ -293,11 +347,11 @@ export default function LoginPage() {
               </button>
             </form>
           )}
-        </div>
 
-        <p className="text-center text-xs text-[#9A9089] mt-6">
-          Mit der Anmeldung stimmst du unseren Nutzungsbedingungen zu.
-        </p>
+          <p className="text-center text-xs text-[#9A9089] mt-6">
+            Mit der Anmeldung stimmst du unseren Nutzungsbedingungen zu.
+          </p>
+        </div>
       </div>
     </div>
   )

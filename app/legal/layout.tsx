@@ -14,10 +14,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
       <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
-              <span className="text-white text-xs font-bold">H</span>
-            </div>
-            <span className="text-[#0E1916] font-semibold text-sm tracking-tight">Halo</span>
+            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-4 w-auto" />
           </Link>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-[#9A9089] hidden sm:inline">Rechtliches</span>
@@ -52,7 +49,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
         {/* Main */}
         <main className="flex-1 min-w-0 space-y-6">
           {/* Draft warning */}
-          <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-[#0E1916] leading-relaxed">
+          <div className="rounded-xl bg-[#F6ECD9] border border-[#E7CFA3] px-4 py-3 text-xs text-[#0E1916] leading-relaxed">
             <p className="font-semibold mb-1">⚠ Vorlage — anwaltlich prüfen lassen</p>
             <p className="text-[#6B625A]">
               Dieser Text ist eine technische Vorlage, generiert auf Basis typischer SaaS-Geschäfts­modelle.

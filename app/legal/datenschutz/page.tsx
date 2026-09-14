@@ -7,10 +7,10 @@ export const metadata: Metadata = {
 
 export default function DatenschutzPage() {
   return (
-    <article className="bg-white rounded-2xl border border-[#E9E1D3] p-8 space-y-6 text-sm leading-relaxed text-[#5A5248]">
+    <article className="bg-white rounded-3xl border border-[#E9E1D3] p-8 space-y-6 text-sm leading-relaxed text-[#5A5248]">
       <header>
-        <p className="text-xs uppercase tracking-wider font-semibold text-[#9A9089] mb-2">Rechtliches</p>
-        <h1 className="text-2xl font-bold text-[#0E1916]">Datenschutzerklärung</h1>
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Rechtliches</span>
+        <h1 className="font-[family-name:var(--font-display)] font-normal text-3xl tracking-tight text-[#0E1916] mt-2">Datenschutzerklärung</h1>
         <p className="text-xs text-[#9A9089] mt-2">
           Informationen zur Verarbeitung personenbezogener Daten gemäß Art. 13 und 14 DSGVO.
           Stand: {new Date().getFullYear()}.

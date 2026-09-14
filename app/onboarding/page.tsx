@@ -26,17 +26,19 @@ const RUNNING_MESSAGES = [
   "Wir berechnen deinen Halo Score …",
 ]
 
-function Ring({ value, color }: { value: number; color: string }) {
+function Ring({ value, color, dark = false }: { value: number; color: string; dark?: boolean }) {
   const r = 52
   const c = 2 * Math.PI * r
+  const track = dark ? "rgba(255,255,255,0.14)" : "#FDE7E0"
+  const textFill = dark ? "#fff" : "#0E1916"
   return (
     <svg width="140" height="140" viewBox="0 0 140 140">
-      <circle cx="70" cy="70" r={r} fill="none" stroke="#FDE7E0" strokeWidth="11" />
+      <circle cx="70" cy="70" r={r} fill="none" stroke={track} strokeWidth="11" />
       <circle
         cx="70" cy="70" r={r} fill="none" stroke={color} strokeWidth="11" strokeLinecap="round"
         strokeDasharray={`${(value / 100) * c} ${c}`} transform="rotate(-90 70 70)"
       />
-      <text x="70" y="80" textAnchor="middle" fontSize="34" fontWeight="700" fill="#0E1916">{value}</text>
+      <text x="70" y="80" textAnchor="middle" fontSize="34" fontWeight="700" fill={textFill}>{value}</text>
     </svg>
   )
 }
@@ -137,26 +139,40 @@ export default function OnboardingPage() {
   }
 
   const bandColor = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#6D8C8D" : s >= 26 ? "#C98A3E" : "#3A4442")
+  const bandColorOnDark = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#9BB8B8" : s >= 26 ? "#E3B573" : "#D8D0C0")
+
+  const DOT_PHASES: Phase[] = ["name", "topics", "result"]
+  const dotIndex = phase === "running" ? 2 : DOT_PHASES.indexOf(phase)
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
       <div className="max-w-md w-full">
-        {/* Brand */}
-        <div className="flex items-center justify-center gap-2.5 mb-6">
-          <span
-            className="inline-block rounded-full"
-            style={{ width: 22, height: 22, border: "4px solid #FA5935", boxShadow: "0 0 0 3px #FDE7E0" }}
-          />
-          <span className="text-[#0E1916] font-semibold tracking-tight">Halo</span>
+        {/* Brand + Fortschritt */}
+        <div className="flex flex-col items-center gap-4 mb-6">
+          <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
+          <div className="flex items-center gap-2">
+            {DOT_PHASES.map((p, i) => (
+              <span
+                key={p}
+                className="rounded-full transition-all"
+                style={{
+                  width: i === dotIndex ? 20 : 7,
+                  height: 7,
+                  background: i <= dotIndex ? "#FA5935" : "#E9E1D3",
+                }}
+              />
+            ))}
+          </div>
         </div>
 
-        <div className="bg-white rounded-2xl border border-[#FDE7E0] shadow-sm p-8">
+        <div className="bg-white rounded-3xl border border-[#E9E1D3] shadow-[0_24px_70px_-30px_rgba(14,25,22,0.18)] p-8">
           {/* Schritt: Name */}
           {phase === "name" && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-xl font-semibold text-[#0E1916]">Wie heißt du?</h2>
-                <p className="text-[#6B625A] text-sm mt-1">Dein vollständiger Name — so sucht die KI nach dir.</p>
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Schritt 1 von 3</span>
+                <h2 className="font-[family-name:var(--font-display)] font-normal text-2xl text-[#0E1916] mt-2">Wie heißt du?</h2>
+                <p className="text-[#6B625A] text-sm mt-1.5">Dein vollständiger Name — so sucht die KI nach dir.</p>
               </div>
               <input
                 type="text"
@@ -165,7 +181,7 @@ export default function OnboardingPage() {
                 onKeyDown={e => e.key === "Enter" && name.trim() && setPhase("topics")}
                 placeholder="Max Mustermann"
                 autoFocus
-                className="w-full bg-white border border-[#FDE7E0] rounded-xl px-4 py-3 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8]"
+                className="w-full bg-white border border-[#E9E1D3] rounded-xl px-4 py-3 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
               />
               <div className="flex gap-2">
                 {(["de", "en"] as const).map(l => (
@@ -174,7 +190,7 @@ export default function OnboardingPage() {
                     onClick={() => setLanguage(l)}
                     className="flex-1 py-2 rounded-xl text-sm border font-medium transition-colors"
                     style={{
-                      borderColor: language === l ? "#FA5935" : "#FDE7E0",
+                      borderColor: language === l ? "#FA5935" : "#E9E1D3",
                       background: language === l ? "#FDE7E0" : "white",
                       color: language === l ? "#C8431F" : "#6B625A",
                     }}
@@ -197,8 +213,9 @@ export default function OnboardingPage() {
           {phase === "topics" && (
             <div className="space-y-5">
               <div>
-                <h2 className="text-xl font-semibold text-[#0E1916]">Wofür willst du bekannt sein?</h2>
-                <p className="text-[#6B625A] text-sm mt-1">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Schritt 2 von 3</span>
+                <h2 className="font-[family-name:var(--font-display)] font-normal text-2xl text-[#0E1916] mt-2">Wofür willst du bekannt sein?</h2>
+                <p className="text-[#6B625A] text-sm mt-1.5">
                   Tippe ein Thema und drücke Enter. Füge so viele hinzu, wie du willst.
                 </p>
               </div>
@@ -225,7 +242,7 @@ export default function OnboardingPage() {
                 }}
                 placeholder="z. B. Personal Branding"
                 autoFocus
-                className="w-full bg-white border border-[#FDE7E0] rounded-xl px-4 py-3 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8]"
+                className="w-full bg-white border border-[#E9E1D3] rounded-xl px-4 py-3 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20"
               />
 
               {/* Vorschläge */}
@@ -234,7 +251,7 @@ export default function OnboardingPage() {
                   <button
                     key={s}
                     onClick={() => addChip(s)}
-                    className="text-xs text-[#6B625A] border border-[#FDE7E0] hover:border-[#FBCBB8] hover:bg-[#FDE7E0] rounded-full px-3 py-1.5 transition-colors"
+                    className="text-xs text-[#6B625A] border border-[#E9E1D3] hover:border-[#FBCBB8] hover:bg-[#FDE7E0] rounded-full px-3 py-1.5 transition-colors"
                   >
                     + {s}
                   </button>
@@ -246,7 +263,7 @@ export default function OnboardingPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setPhase("name")}
-                  className="px-4 py-3 rounded-xl text-sm text-[#6B625A] border border-[#FDE7E0] hover:bg-[#FDE7E0] transition-colors"
+                  className="px-4 py-3 rounded-xl text-sm text-[#6B625A] border border-[#E9E1D3] hover:bg-[#FAF8F3] transition-colors"
                 >
                   ←
                 </button>
@@ -278,34 +295,39 @@ export default function OnboardingPage() {
 
           {/* Schritt: Ergebnis */}
           {phase === "result" && result && (
-            <div className="py-2 flex flex-col items-center text-center">
-              <p className="text-[11px] uppercase tracking-wider text-[#9A9089]">Dein erster Halo Score</p>
-              <p className="text-sm text-[#6B625A] mt-1 mb-4">für „{result.topic}"</p>
+            <div className="space-y-5">
+              <div className="text-center">
+                <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Dein erster Halo Score</span>
+                <p className="text-sm text-[#6B625A] mt-1.5">für „{result.topic}"</p>
+              </div>
+
               {result.score !== null ? (
                 <>
-                  <Ring value={result.score} color={bandColor(result.score)} />
-                  {result.band && (
-                    <span
-                      className="mt-3 inline-block text-sm font-semibold px-3 py-1 rounded-full"
-                      style={{ background: `${bandColor(result.score)}1A`, color: bandColor(result.score) }}
-                    >
-                      {result.band}
-                    </span>
-                  )}
-                  <p className="text-[#6B625A] text-sm mt-4 max-w-xs leading-relaxed">
+                  <div className="rounded-2xl bg-[#0E1916] py-8 flex flex-col items-center">
+                    <Ring value={result.score} color={bandColorOnDark(result.score)} dark />
+                    {result.band && (
+                      <span
+                        className="mt-3 inline-block text-sm font-semibold px-3 py-1 rounded-full"
+                        style={{ background: "rgba(255,255,255,0.1)", color: "#F7B49B" }}
+                      >
+                        {result.band}
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[#6B625A] text-sm text-center max-w-xs mx-auto leading-relaxed">
                     So sichtbar bist du aktuell in den KI-Systemen. Im Cockpit siehst du die Details
                     und konkrete Empfehlungen.
                   </p>
                 </>
               ) : (
-                <p className="text-[#6B625A] text-sm mt-2 max-w-xs leading-relaxed">
+                <p className="text-[#6B625A] text-sm text-center max-w-xs mx-auto leading-relaxed">
                   Deine Themen sind angelegt. Die erste Analyse läuft gleich im Cockpit —
                   starte sie dort mit einem Klick.
                 </p>
               )}
               <button
                 onClick={() => router.push("/dashboard")}
-                className="mt-6 w-full py-3 rounded-xl text-sm font-semibold bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors"
+                className="w-full py-3 rounded-xl text-sm font-semibold bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors"
               >
                 Zum Cockpit →
               </button>
