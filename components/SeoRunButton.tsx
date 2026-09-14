@@ -33,7 +33,7 @@ export default function SeoRunButton({ configured }: { configured: boolean }) {
 
   if (!configured) {
     return (
-      <p className="text-xs text-[#94a3b8]">
+      <p className="text-xs text-[#9A9089]">
         Sobald die SERP-Datenquelle serverseitig konfiguriert ist (DATAFORSEO_LOGIN/PASSWORD),
         erscheint hier ein Button, um die SEO-Analyse zu starten.
       </p>

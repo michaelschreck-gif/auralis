@@ -80,8 +80,8 @@ export default function SettingsForm({
     router.push("/")
   }
 
-  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0E1916] placeholder-[#94a3b8] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
-  const labelCls = "text-xs text-[#64748b] font-medium uppercase tracking-wider"
+  const inputCls = "w-full bg-white border border-[#E9E1D3] rounded-lg px-4 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
+  const labelCls = "text-xs text-[#6B625A] font-medium uppercase tracking-wider"
 
   return (
     <div className="p-8 max-w-2xl space-y-10">
@@ -90,7 +90,7 @@ export default function SettingsForm({
       <section id="profile" className="space-y-5">
         <div>
           <h2 className="text-base font-semibold text-[#0E1916]">Profil</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">So sehen dich KI-Systeme in den Reputations-Analysen.</p>
+          <p className="text-xs text-[#6B625A] mt-0.5">So sehen dich KI-Systeme in den Reputations-Analysen.</p>
         </div>
 
         <div className="space-y-4">
@@ -105,7 +105,7 @@ export default function SettingsForm({
               type="email"
               value={initialEmail}
               disabled
-              className="w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#94a3b8] cursor-not-allowed"
+              className="w-full bg-[#FAF8F3] border border-[#E9E1D3] rounded-lg px-4 py-2.5 text-sm text-[#9A9089] cursor-not-allowed"
             />
           </div>
 
@@ -120,7 +120,7 @@ export default function SettingsForm({
                   style={{
                     borderColor: language === lang ? "#FA5935" : "#e2e8f0",
                     background: language === lang ? "#eff2ff" : "white",
-                    color: language === lang ? "#FA5935" : "#64748b",
+                    color: language === lang ? "#FA5935" : "#6B625A",
                   }}
                 >
                   {lang === "de" ? "🇩🇪 Deutsch" : "🇬🇧 English"}
@@ -150,23 +150,23 @@ export default function SettingsForm({
       <section id="topics" className="space-y-5">
         <div>
           <h2 className="text-base font-semibold text-[#0E1916]">Überwachte Themen</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Themen, die automatisch per geplanter KI-Reputations-Analyse verfolgt werden.</p>
+          <p className="text-xs text-[#6B625A] mt-0.5">Themen, die automatisch per geplanter KI-Reputations-Analyse verfolgt werden.</p>
         </div>
 
         {schedules.length === 0 && (
-          <p className="text-sm text-[#64748b]">Noch keine aktiven Themen. Füge im Dashboard eines hinzu.</p>
+          <p className="text-sm text-[#6B625A]">Noch keine aktiven Themen. Füge im Dashboard eines hinzu.</p>
         )}
 
         <div className="space-y-3">
           {schedules.map(s => (
-            <div key={s.id} className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center gap-4">
+            <div key={s.id} className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4 flex items-center gap-4">
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#0E1916] font-medium truncate">{s.query}</p>
               </div>
               <select
                 value={s.frequency}
                 onChange={e => updateScheduleFrequency(s.id, e.target.value)}
-                className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-xs text-[#64748b] focus:outline-none focus:border-[#FA5935] transition-colors"
+                className="bg-white border border-[#E9E1D3] rounded-lg px-3 py-1.5 text-xs text-[#6B625A] focus:outline-none focus:border-[#FA5935] transition-colors"
               >
                 <option value="daily">Täglich</option>
                 <option value="weekly">Wöchentlich</option>
@@ -175,7 +175,7 @@ export default function SettingsForm({
               <button
                 onClick={() => deleteSchedule(s.id)}
                 disabled={deletingId === s.id}
-                className="text-xs text-[#94a3b8] hover:text-red-500 transition-colors disabled:opacity-40"
+                className="text-xs text-[#9A9089] hover:text-red-500 transition-colors disabled:opacity-40"
               >
                 {deletingId === s.id ? "…" : "Entfernen"}
               </button>
@@ -188,12 +188,12 @@ export default function SettingsForm({
       <section id="plan" className="space-y-4">
         <div>
           <h2 className="text-base font-semibold text-[#0E1916]">Tarif</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Dein aktuelles Abonnement.</p>
+          <p className="text-xs text-[#6B625A] mt-0.5">Dein aktuelles Abonnement.</p>
         </div>
-        <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4 flex items-center justify-between">
+        <div className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4 flex items-center justify-between">
           <div>
             <p className="text-sm text-[#0E1916] font-medium capitalize">{plan}</p>
-            <p className="text-xs text-[#64748b] mt-0.5">
+            <p className="text-xs text-[#6B625A] mt-0.5">
               {plan === "free" ? "1 Analyse pro Monat" : "Unbegrenzte Analysen"}
             </p>
           </div>
@@ -209,7 +209,7 @@ export default function SettingsForm({
       <section id="danger" className="space-y-4">
         <div>
           <h2 className="text-base font-semibold text-red-500">Gefahrenzone</h2>
-          <p className="text-xs text-[#64748b] mt-0.5">Unwiderrufliche Aktionen.</p>
+          <p className="text-xs text-[#6B625A] mt-0.5">Unwiderrufliche Aktionen.</p>
         </div>
 
         {!showDeleteConfirm ? (
@@ -233,7 +233,7 @@ export default function SettingsForm({
               </button>
               <button
                 onClick={() => setShowDeleteConfirm(false)}
-                className="px-4 py-2 rounded-lg text-sm text-[#64748b] hover:text-[#0E1916] transition-colors"
+                className="px-4 py-2 rounded-lg text-sm text-[#6B625A] hover:text-[#0E1916] transition-colors"
               >
                 Abbrechen
               </button>

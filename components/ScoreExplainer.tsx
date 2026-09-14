@@ -44,45 +44,45 @@ export default function ScoreExplainer({
     >
       <div
         onClick={e => e.stopPropagation()}
-        className="w-full max-w-lg bg-white rounded-2xl border border-gray-100 shadow-xl p-6 my-8 space-y-5"
+        className="w-full max-w-lg bg-white rounded-2xl border border-[#E9E1D3] shadow-xl p-6 my-8 space-y-5"
       >
         {/* Header */}
         <div className="flex items-start gap-3">
           <div className="flex-1 min-w-0">
             <h2 id="score-explainer-title" className="text-lg font-semibold text-[#0E1916]">
               {definition.title}{" "}
-              <span className="font-normal text-sm text-[#64748b]">· {score.value}/100</span>
+              <span className="font-normal text-sm text-[#6B625A]">· {score.value}/100</span>
             </h2>
-            <p className="text-xs text-[#64748b] mt-1">{definition.subtitle}</p>
+            <p className="text-xs text-[#6B625A] mt-1">{definition.subtitle}</p>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Schließen"
-            className="w-7 h-7 rounded-md border border-gray-200 text-[#94a3b8] hover:text-[#0E1916] hover:bg-gray-50 transition-colors flex items-center justify-center text-base leading-none"
+            className="w-7 h-7 rounded-md border border-[#E9E1D3] text-[#9A9089] hover:text-[#0E1916] hover:bg-[#FAF8F3] transition-colors flex items-center justify-center text-base leading-none"
           >
             ✕
           </button>
         </div>
 
         {/* What it measures */}
-        <div className="bg-[#FAF8F3] border border-gray-100 rounded-xl p-3 text-sm text-[#0E1916] leading-relaxed">
+        <div className="bg-[#FAF8F3] border border-[#E9E1D3] rounded-xl p-3 text-sm text-[#0E1916] leading-relaxed">
           {definition.what}
         </div>
 
         {/* So wird gerechnet — ausklappbar (konkrete Messwerte dieses Users) */}
         {derivation && (
-          <div className="border border-gray-100 rounded-xl overflow-hidden">
+          <div className="border border-[#E9E1D3] rounded-xl overflow-hidden">
             <button
               type="button"
               onClick={() => setShowMath(s => !s)}
               aria-expanded={showMath}
-              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-gray-50 transition-colors"
+              className="w-full flex items-center justify-between gap-2 px-3 py-2.5 text-left hover:bg-[#FAF8F3] transition-colors"
             >
               <span className="text-sm font-medium text-[#0E1916]">
                 So wird dieser Score gerechnet
               </span>
-              <span className="text-xs text-[#64748b] flex items-center gap-1.5">
+              <span className="text-xs text-[#6B625A] flex items-center gap-1.5">
                 {showMath ? "verbergen" : "anzeigen"}
                 <span aria-hidden className={`transition-transform ${showMath ? "rotate-180" : ""}`}>⌄</span>
               </span>
@@ -97,7 +97,7 @@ export default function ScoreExplainer({
 
         {/* Donut + Weights */}
         <div>
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-3">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-3">
             Zusammensetzung
           </p>
           <div className="grid grid-cols-[110px_1fr] gap-4 items-center">
@@ -109,7 +109,7 @@ export default function ScoreExplainer({
                 <div key={w.label} className="flex items-center gap-2 my-1.5 text-xs">
                   <span className="w-2.5 h-2.5 rounded-sm flex-shrink-0" style={{ background: w.color }} />
                   <span className="flex-1 text-[#0E1916]">{w.label}</span>
-                  <span className="text-[#64748b] tabular-nums">{w.value}%</span>
+                  <span className="text-[#6B625A] tabular-nums">{w.value}%</span>
                 </div>
               ))}
             </div>
@@ -118,19 +118,19 @@ export default function ScoreExplainer({
 
         {/* Band slider */}
         <div>
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-1.5">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-1.5">
             Wo du stehst
           </p>
           <BandTrack bands={definition.bands.map(b => b.label)} activeIndex={score.bandIndex} value={score.value} />
-          <p className="text-xs text-[#64748b] mt-2">
+          <p className="text-xs text-[#6B625A] mt-2">
             → <strong className="font-medium text-[#0E1916]">{score.band.label}</strong>{" "}
-            <span className="text-[#94a3b8]">· Score {score.value}/100</span>
+            <span className="text-[#9A9089]">· Score {score.value}/100</span>
           </p>
         </div>
 
         {/* Tips */}
         <div>
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-1">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-1">
             So verbesserst du diesen Score
           </p>
           <div className="divide-y divide-gray-100">
@@ -216,7 +216,7 @@ function BandTrack({
 
   return (
     <div className="relative">
-      <div className="flex h-6 rounded-md overflow-hidden border border-gray-100">
+      <div className="flex h-6 rounded-md overflow-hidden border border-[#E9E1D3]">
         {bands.map((label, i) => (
           <div
             key={label}

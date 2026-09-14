@@ -85,7 +85,7 @@ export default async function PublicProfilePage(
   return (
     <div className="min-h-screen bg-[#FAF8F3] text-[#0E1916]">
       {/* Header */}
-      <header className="bg-white border-b border-gray-100">
+      <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
@@ -104,18 +104,18 @@ export default async function PublicProfilePage(
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         {/* Profile hero */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 mb-6">
+        <section className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-8 mb-6">
           <div className="flex items-center gap-5 mb-6">
             <div className="w-16 h-16 rounded-full bg-blue-50 border-2 border-blue-100 flex items-center justify-center flex-shrink-0">
               <span className="text-xl font-bold text-[#FA5935]">{initials}</span>
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+              <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
                 KI-Reputations-Profil
               </p>
               <h1 className="text-2xl font-bold text-[#0E1916] mt-1">{name}</h1>
               {lastAnalyzedDate && (
-                <p className="text-xs text-[#94a3b8] mt-1">
+                <p className="text-xs text-[#9A9089] mt-1">
                   Letzte Messung:{" "}
                   {lastAnalyzedDate.toLocaleDateString("de-DE", {
                     day: "2-digit",
@@ -130,13 +130,13 @@ export default async function PublicProfilePage(
           {masters ? (
             <>
               {/* Master Score */}
-              <div className="text-center py-6 border-y border-gray-100 mb-6">
-                <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+              <div className="text-center py-6 border-y border-[#E9E1D3] mb-6">
+                <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
                   Halo Score™
                 </p>
                 <div className="flex items-baseline justify-center gap-2">
                   <span className="text-6xl font-bold text-[#FA5935] tabular-nums">{masters.aura.value}</span>
-                  <span className="text-lg text-[#94a3b8]">/100</span>
+                  <span className="text-lg text-[#9A9089]">/100</span>
                 </div>
                 <p className="text-sm font-medium text-[#0E1916] mt-2">{masters.aura.band.label}</p>
               </div>
@@ -148,17 +148,17 @@ export default async function PublicProfilePage(
                   { label: "Thought Leadership",   data: masters.thoughtLeadership, color: "#FA5935" },
                   { label: "Digitale Autorität",   data: masters.digitalAuthority,  color: "#1D9E75" },
                 ].map(s => (
-                  <div key={s.label} className="rounded-xl border border-gray-100 p-3">
-                    <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+                  <div key={s.label} className="rounded-xl border border-[#E9E1D3] p-3">
+                    <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
                       {s.label}
                     </p>
                     <div className="flex items-baseline gap-1 mt-1.5">
                       <span className="text-2xl font-bold tabular-nums" style={{ color: s.color }}>
                         {s.data.value}
                       </span>
-                      <span className="text-[10px] text-[#94a3b8]">/100</span>
+                      <span className="text-[10px] text-[#9A9089]">/100</span>
                     </div>
-                    <p className="text-[11px] text-[#64748b] mt-1">{s.data.band.label}</p>
+                    <p className="text-[11px] text-[#6B625A] mt-1">{s.data.band.label}</p>
                     <div className="h-1 bg-gray-100 rounded-full overflow-hidden mt-2">
                       <div
                         className="h-full rounded-full"
@@ -170,22 +170,22 @@ export default async function PublicProfilePage(
               </div>
             </>
           ) : (
-            <div className="text-center py-10 text-sm text-[#64748b]">
+            <div className="text-center py-10 text-sm text-[#6B625A]">
               Noch keine Reputations-Messung verfügbar.
             </div>
           )}
         </section>
 
         {/* Methodology */}
-        <section className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 mb-6">
+        <section className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-6 mb-6">
           <h2 className="text-base font-semibold text-[#0E1916] mb-3">Was wird gemessen?</h2>
-          <p className="text-sm text-[#64748b] leading-relaxed">
+          <p className="text-sm text-[#6B625A] leading-relaxed">
             Der Halo Score™ misst, wie sichtbar diese Person in KI-Antworten auftaucht.
             Halo fragt regelmäßig Claude, ChatGPT, Perplexity und Gemini nach
             führenden Köpfen in der jeweiligen Themenwelt und analysiert, ob, an welcher
             Position und in welcher Tonalität die Person erwähnt wird.
           </p>
-          <p className="text-xs text-[#94a3b8] mt-3">
+          <p className="text-xs text-[#9A9089] mt-3">
             Der Score setzt sich zusammen aus GEO (Erwähnungsrate × Position), Thought Leadership
             (Themenführerschaft + Narrativ-Qualität) und Digitaler Autorität (Online-Spur).
           </p>
@@ -193,14 +193,14 @@ export default async function PublicProfilePage(
 
         {/* CTA */}
         <section className="text-center py-8">
-          <p className="text-sm text-[#64748b] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
+          <p className="text-sm text-[#6B625A] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
           <a
             href="/login"
             className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
           >
             Kostenlos messen lassen →
           </a>
-          <p className="text-xs text-[#94a3b8] mt-3">
+          <p className="text-xs text-[#9A9089] mt-3">
             Keine Kreditkarte · 1 kostenlose Analyse · DSGVO-konform
           </p>
         </section>

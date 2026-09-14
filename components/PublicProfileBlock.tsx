@@ -75,22 +75,22 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
   }
 
   return (
-    <section id="public-profile" className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 space-y-5">
+    <section id="public-profile" className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-6 space-y-5">
       <div>
         <h2 className="text-base font-semibold text-[#0E1916]">Public Halo Score Profil</h2>
-        <p className="text-xs text-[#64748b] mt-1 leading-relaxed">
+        <p className="text-xs text-[#6B625A] mt-1 leading-relaxed">
           Teile deinen Halo Score™ öffentlich unter einer eigenen Halo-URL und embeddable als
           Badge auf deiner Website oder LinkedIn-Profil.
         </p>
       </div>
 
       {/* Toggle */}
-      <div className="flex items-center justify-between rounded-xl bg-[#FAF8F3] border border-gray-100 p-4">
+      <div className="flex items-center justify-between rounded-xl bg-[#FAF8F3] border border-[#E9E1D3] p-4">
         <div className="min-w-0 flex-1 pr-4">
           <p className="text-sm font-medium text-[#0E1916]">
             {enabled ? "Public Profile ist aktiv" : "Public Profile ist deaktiviert"}
           </p>
-          <p className="text-xs text-[#64748b] mt-0.5">
+          <p className="text-xs text-[#6B625A] mt-0.5">
             {enabled
               ? "Dein Score ist öffentlich zugänglich über die unten gezeigte URL."
               : "Niemand außer dir sieht deinen Score. Aktivieren um Profil + Badge zu teilen."}
@@ -123,16 +123,16 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
       {enabled && (
         <>
           <div className="space-y-1.5">
-            <label className="text-xs text-[#64748b] font-medium uppercase tracking-wider">Slug</label>
+            <label className="text-xs text-[#6B625A] font-medium uppercase tracking-wider">Slug</label>
             <div className="flex gap-2">
-              <span className="flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-gray-200 bg-gray-50 text-xs text-[#94a3b8] whitespace-nowrap">
+              <span className="flex items-center px-3 py-2 rounded-l-lg border border-r-0 border-[#E9E1D3] bg-[#FAF8F3] text-xs text-[#9A9089] whitespace-nowrap">
                 digital-halo.de/u/
               </span>
               <input
                 type="text"
                 value={slug}
                 onChange={e => setSlug(e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, ""))}
-                className="flex-1 bg-white border border-gray-200 rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 font-mono"
+                className="flex-1 bg-white border border-[#E9E1D3] rounded-r-lg px-3 py-2 text-sm focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 font-mono"
                 placeholder="elon-musk"
               />
               <button
@@ -144,7 +144,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                 Speichern
               </button>
             </div>
-            <p className="text-[10px] text-[#94a3b8]">
+            <p className="text-[10px] text-[#9A9089]">
               Erlaubt: Kleinbuchstaben, Zahlen, Bindestrich. Min. 3 Zeichen. Muss eindeutig sein.
             </p>
           </div>
@@ -166,12 +166,12 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
 
           {/* Embed badge */}
           <div className="space-y-2">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
               Embeddable Badge
             </p>
-            <div className="rounded-xl bg-[#FAF8F3] border border-gray-100 p-4">
+            <div className="rounded-xl bg-[#FAF8F3] border border-[#E9E1D3] p-4">
               {/* Live preview */}
-              <div className="flex justify-center pb-3 mb-3 border-b border-gray-100">
+              <div className="flex justify-center pb-3 mb-3 border-b border-[#E9E1D3]">
                 <img
                   src={badgeUrl + "?preview=" + Date.now()}
                   alt="Halo Score Badge"
@@ -180,7 +180,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                   className="rounded-md"
                 />
               </div>
-              <p className="text-xs text-[#64748b] mb-2">HTML-Snippet zum Einbetten:</p>
+              <p className="text-xs text-[#6B625A] mb-2">HTML-Snippet zum Einbetten:</p>
               <pre className="text-[11px] bg-[#0E1916] text-gray-100 rounded-md p-3 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap break-all">
 {embedCode}
               </pre>

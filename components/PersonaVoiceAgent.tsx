@@ -207,8 +207,8 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
     : "Tippe auf das Mikrofon und frag mich z. B. „Als was werde ich wahrgenommen?“"
 
   return (
-    <section className="bg-white rounded-2xl border border-[#FDE7E0] overflow-hidden">
-      <div className="px-5 py-4 border-b border-[#FDE7E0]">
+    <section className="bg-white rounded-3xl border border-[#E9E1D3] overflow-hidden">
+      <div className="px-5 py-4 border-b border-[#E9E1D3]">
         <div className="text-sm font-semibold text-[#0E1916]">Sprich mit deinem KI-Ich</div>
         <div className="text-xs text-[#9A9089]">Nur Sprache — keine Kamera, kein Text.</div>
       </div>
@@ -231,7 +231,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
               onClick={listening ? stopListening : startListening}
               disabled={thinking}
               className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-colors disabled:opacity-50 ${
-                listening ? "bg-[#D1495B] text-white hover:bg-[#b83b4c]" : "bg-[#FA5935] text-white hover:bg-[#C8431F]"
+                listening ? "bg-[#C8431F] text-white hover:bg-[#A6371A]" : "bg-[#FA5935] text-white hover:bg-[#C8431F]"
               }`}
             >
               <MicIcon />
@@ -243,7 +243,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
                 setMuted(m => !m)
                 if (!muted) { stopAudio(); setPhase("idle") }
               }}
-              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[#FDE7E0] text-[#6B625A] hover:bg-[#F4F2FE] transition-colors"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[#E9E1D3] text-[#6B625A] hover:bg-[#F3EFE6] transition-colors"
               title={muted ? "Sprachausgabe an" : "Sprachausgabe aus"}
               aria-label={muted ? "Sprachausgabe einschalten" : "Sprachausgabe ausschalten"}
             >
@@ -259,7 +259,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
               value={textInput}
               onChange={e => setTextInput(e.target.value)}
               placeholder="Spracherkennung nur in Chrome — hier tippen…"
-              className="flex-1 rounded-xl border border-[#FDE7E0] px-3.5 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8]"
+              className="flex-1 rounded-xl border border-[#E9E1D3] px-3.5 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8]"
             />
             <button
               type="submit"
@@ -290,7 +290,7 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
     return () => clearInterval(id)
   }, [speaking])
 
-  const ringColor = listening ? "#D1495B" : thinking ? "#EF9F27" : "#FA5935"
+  const ringColor = listening ? "#C8431F" : thinking ? "#C98A3E" : "#FA5935"
 
   return (
     <div className="relative" style={{ width: 180, height: 190 }}>
@@ -334,7 +334,7 @@ function ComicAvatar({ speaking, listening, thinking }: { speaking: boolean; lis
       {listening && (
         <span className="absolute bottom-1 left-1/2 -translate-x-1/2 flex gap-1">
           {[0, 1, 2].map(i => (
-            <span key={i} className="w-1.5 rounded-full bg-[#D1495B]" style={{ height: 10, animation: `vp-bounce 0.9s ${i * 0.15}s infinite ease-in-out` }} />
+            <span key={i} className="w-1.5 rounded-full bg-[#C8431F]" style={{ height: 10, animation: `vp-bounce 0.9s ${i * 0.15}s infinite ease-in-out` }} />
           ))}
         </span>
       )}

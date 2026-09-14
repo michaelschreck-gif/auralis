@@ -7,11 +7,11 @@ export const metadata: Metadata = {
 
 export default function ImpressumPage() {
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 p-8 space-y-6 text-sm leading-relaxed text-[#475569]">
+    <article className="bg-white rounded-2xl border border-[#E9E1D3] p-8 space-y-6 text-sm leading-relaxed text-[#5A5248]">
       <header>
-        <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
+        <p className="text-xs uppercase tracking-wider font-semibold text-[#9A9089] mb-2">Rechtliches</p>
         <h1 className="text-2xl font-bold text-[#0E1916]">Impressum</h1>
-        <p className="text-xs text-[#94a3b8] mt-2">Angaben gemäß § 5 DDG.</p>
+        <p className="text-xs text-[#9A9089] mt-2">Angaben gemäß § 5 DDG.</p>
       </header>
 
       <Section title="Anbieter">

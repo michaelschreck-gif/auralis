@@ -45,7 +45,7 @@ export default function ApiDocsPage() {
   return (
     <div className="min-h-screen bg-[#FAF8F3]">
       {/* Top bar */}
-      <header className="bg-white border-b border-gray-100">
+      <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-lg bg-[#FA5935] flex items-center justify-center">
@@ -54,7 +54,7 @@ export default function ApiDocsPage() {
             <span className="text-[#0E1916] font-semibold text-sm tracking-tight">Halo</span>
           </a>
           <div className="flex items-center gap-4 text-sm">
-            <span className="text-[#94a3b8]">API v1</span>
+            <span className="text-[#9A9089]">API v1</span>
             <a
               href="/settings"
               className="text-[#FA5935] hover:underline font-medium"
@@ -69,7 +69,7 @@ export default function ApiDocsPage() {
         {/* Sidebar TOC */}
         <aside className="w-56 flex-shrink-0 hidden lg:block">
           <div className="sticky top-6">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-3">
+            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-3">
               Inhalt
             </p>
             <nav className="space-y-1">
@@ -79,8 +79,8 @@ export default function ApiDocsPage() {
                   href={`#${item.id}`}
                   className={`block text-sm hover:text-[#FA5935] transition-colors ${
                     "indent" in item && item.indent
-                      ? "text-[#94a3b8] pl-3 py-1"
-                      : "text-[#64748b] py-1.5 font-medium"
+                      ? "text-[#9A9089] pl-3 py-1"
+                      : "text-[#6B625A] py-1.5 font-medium"
                   }`}
                 >
                   {item.label}
@@ -100,14 +100,14 @@ export default function ApiDocsPage() {
             <h1 className="text-3xl font-semibold text-[#0E1916]">
               Public API Dokumentation
             </h1>
-            <p className="text-base text-[#64748b] mt-3 leading-relaxed">
+            <p className="text-base text-[#6B625A] mt-3 leading-relaxed">
               Über die Halo Public-API kannst du die KI-Reputations-Scores einer Person
               programmatisch abfragen — z.B. um Halo-Score, GEO-Score, Thought Leadership
               oder Wettbewerber-Vergleiche in eigene Dashboards, CRMs oder Reports
               einzubinden.
             </p>
-            <div className="mt-5 rounded-lg bg-white border border-gray-200 px-4 py-3 inline-block">
-              <p className="text-xs text-[#94a3b8] uppercase tracking-wider font-semibold mb-1">
+            <div className="mt-5 rounded-lg bg-white border border-[#E9E1D3] px-4 py-3 inline-block">
+              <p className="text-xs text-[#9A9089] uppercase tracking-wider font-semibold mb-1">
                 Base URL
               </p>
               <code className="text-sm font-mono text-[#0E1916]">{BASE_URL + API_PREFIX}</code>
@@ -134,13 +134,13 @@ export default function ApiDocsPage() {
               <p className="text-sm font-semibold text-[#0E1916]">
                 Lebenszyklus eines (Sub-)Accounts
               </p>
-              <ol className="list-decimal pl-5 mt-1.5 space-y-1 text-sm text-[#475569]">
-                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">POST /sub-accounts</code> — Account anlegen (nur Enterprise; bei sich selbst überspringen)</li>
-                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">POST /topics?sub_account_id=…</code> — mindestens ein Thema anlegen</li>
-                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">POST /analyze/&#123;id&#125;?sub_account_id=…</code> — Analyse für dieses Thema auslösen</li>
-                <li><code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">GET /scores/latest?sub_account_id=…</code> — Ergebnisse abrufen</li>
+              <ol className="list-decimal pl-5 mt-1.5 space-y-1 text-sm text-[#5A5248]">
+                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">POST /sub-accounts</code> — Account anlegen (nur Enterprise; bei sich selbst überspringen)</li>
+                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">POST /topics?sub_account_id=…</code> — mindestens ein Thema anlegen</li>
+                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">POST /analyze/&#123;id&#125;?sub_account_id=…</code> — Analyse für dieses Thema auslösen</li>
+                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">GET /scores/latest?sub_account_id=…</code> — Ergebnisse abrufen</li>
               </ol>
-              <p className="text-xs text-[#94a3b8] mt-2">
+              <p className="text-xs text-[#9A9089] mt-2">
                 Ohne Thema (Schritt 2) liefern /analyze und /scores nichts, da der Account kein
                 Tracking-Ziel hat. Die Analyse sucht nach dem Namen des Accounts (full_name).
               </p>
@@ -167,7 +167,7 @@ export default function ApiDocsPage() {
 
             <div className="rounded-lg bg-amber-50 border border-amber-100 p-4 mt-5">
               <p className="text-sm font-medium text-[#0E1916]">⚠ Schlüssel-Sicherheit</p>
-              <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed">
+              <p className="text-xs text-[#6B625A] mt-1.5 leading-relaxed">
                 API-Keys gewähren <strong>vollen Lesezugriff</strong> auf alle deine
                 Reputations-Daten. Behandle sie wie Passwörter: niemals in Frontend-Code
                 hardcoden, niemals in Git committen, niemals öffentlich teilen.
@@ -187,26 +187,26 @@ export default function ApiDocsPage() {
             <div className="overflow-x-auto mt-4">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Tarif</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">API-Zugang</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Abfragen / Tag</th>
+                  <tr className="border-b border-[#E9E1D3]">
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Tarif</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">API-Zugang</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Abfragen / Tag</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
                   <tr>
                     <td className="py-2.5 px-3 text-sm text-[#0E1916]">Free / Starter</td>
-                    <td className="py-2.5 px-3 text-sm text-[#64748b]">—</td>
-                    <td className="py-2.5 px-3 text-sm text-[#64748b]">Kein API-Zugang</td>
+                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">—</td>
+                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">Kein API-Zugang</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 px-3 text-sm text-[#0E1916]">Pro</td>
-                    <td className="py-2.5 px-3 text-sm text-[#64748b]">✓</td>
-                    <td className="py-2.5 px-3 text-sm text-[#64748b] tabular-nums">1.000</td>
+                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">✓</td>
+                    <td className="py-2.5 px-3 text-sm text-[#6B625A] tabular-nums">1.000</td>
                   </tr>
                   <tr>
                     <td className="py-2.5 px-3 text-sm text-[#0E1916] font-medium">Enterprise</td>
-                    <td className="py-2.5 px-3 text-sm text-[#64748b]">✓</td>
+                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">✓</td>
                     <td className="py-2.5 px-3 text-sm font-medium text-[#0E1916]">Unbegrenzt</td>
                   </tr>
                 </tbody>
@@ -230,7 +230,7 @@ export default function ApiDocsPage() {
               <p className="text-sm font-semibold text-[#0E1916]">
                 Enterprise-Lizenz — unbegrenzte Abfragen
               </p>
-              <p className="text-sm text-[#475569] mt-1.5 leading-relaxed">
+              <p className="text-sm text-[#5A5248] mt-1.5 leading-relaxed">
                 Für produktive Integrationen mit hohem Volumen bieten wir Enterprise-Lizenzen{" "}
                 <strong>ohne Abfragelimit</strong> an, inklusive priorisiertem Support. Schreib uns
                 für ein Angebot an{" "}
@@ -257,10 +257,10 @@ export default function ApiDocsPage() {
             <div className="overflow-x-auto mt-5">
               <table className="w-full text-sm border-collapse">
                 <thead>
-                  <tr className="border-b border-gray-200">
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">HTTP</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Code</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#94a3b8]">Bedeutung</th>
+                  <tr className="border-b border-[#E9E1D3]">
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">HTTP</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Code</th>
+                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Bedeutung</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -725,21 +725,21 @@ export default function ApiDocsPage() {
             <p className="text-sm font-semibold text-[#0E1916]">
               Im Namen eines Sub-Accounts handeln
             </p>
-            <p className="text-sm text-[#475569] mt-1.5 leading-relaxed">
+            <p className="text-sm text-[#5A5248] mt-1.5 leading-relaxed">
               Alle Daten-Endpoints akzeptieren den optionalen Query-Parameter{" "}
-              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">sub_account_id</code>.
+              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">sub_account_id</code>.
               Damit liest oder verwaltet der Eltern-Account die Daten eines seiner Sub-Accounts mit
               demselben API-Key — z.B.{" "}
-              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">
+              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">
                 GET /scores/latest?sub_account_id=…
               </code>{" "}
               oder{" "}
-              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">
+              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">
                 POST /analyze/&#123;id&#125;?sub_account_id=…
               </code>. Ohne den Parameter bezieht sich jeder Aufruf auf den eigenen Account. Gehört die
-              angegebene <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
+              angegebene <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
               nicht zum authentifizierten Account, antwortet die API mit{" "}
-              <code className="text-xs bg-white border border-gray-200 px-1.5 py-0.5 rounded">403 SUB_ACCOUNT_FORBIDDEN</code>.
+              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">403 SUB_ACCOUNT_FORBIDDEN</code>.
             </p>
           </div>
 
@@ -796,7 +796,7 @@ print(get_latest_scores())`}</CodeBlock>
                 support@entrenous.de
               </a>.
             </p>
-            <p className="text-xs text-[#94a3b8]">
+            <p className="text-xs text-[#9A9089]">
               Diese API ist als <strong>v1</strong> markiert. Breaking Changes werden in einer
               neuen Version (<code className="bg-gray-100 px-1 rounded">/api/v2</code>) ausgeliefert;
               v1 bleibt mindestens 12 Monate nach Release einer v2 verfügbar.
@@ -804,7 +804,7 @@ print(get_latest_scores())`}</CodeBlock>
           </Section>
 
           {/* Footer */}
-          <footer className="pt-8 border-t border-gray-200 text-xs text-[#94a3b8]">
+          <footer className="pt-8 border-t border-[#E9E1D3] text-xs text-[#9A9089]">
             <p>
               Halo — AI Visibility Monitoring · Operated by Halo UG (haftungsbeschränkt) i. G. ·{" "}
               <a href="/" className="hover:underline">Zurück zur Hauptseite</a>
@@ -830,7 +830,7 @@ function Section({
   return (
     <section id={id} className="scroll-mt-6">
       <h2 className="text-xl font-semibold text-[#0E1916] mb-3">{title}</h2>
-      <div className="space-y-3 text-sm text-[#475569] leading-relaxed">
+      <div className="space-y-3 text-sm text-[#5A5248] leading-relaxed">
         {children}
       </div>
     </section>
@@ -841,7 +841,7 @@ function CodeBlock({ language, children }: { language?: string; children: string
   return (
     <div className="relative rounded-lg bg-[#0E1916] overflow-hidden">
       {language && (
-        <div className="absolute top-2 right-3 text-[10px] uppercase tracking-wider font-semibold text-[#64748b]">
+        <div className="absolute top-2 right-3 text-[10px] uppercase tracking-wider font-semibold text-[#6B625A]">
           {language}
         </div>
       )}
@@ -859,7 +859,7 @@ function ErrorRow({ http, code, meaning }: { http: string; code: string; meaning
       <td className="py-2.5 px-3">
         <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">{code}</code>
       </td>
-      <td className="py-2.5 px-3 text-sm text-[#64748b]">{meaning}</td>
+      <td className="py-2.5 px-3 text-sm text-[#6B625A]">{meaning}</td>
     </tr>
   )
 }
@@ -882,7 +882,7 @@ function Endpoint({
   params?: { name: string; type: string; desc: string }[]
 }) {
   return (
-    <section id={id} className="scroll-mt-6 rounded-2xl border border-gray-200 bg-white p-6 space-y-4">
+    <section id={id} className="scroll-mt-6 rounded-2xl border border-[#E9E1D3] bg-white p-6 space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
         <span className={`px-2 py-0.5 rounded-md border text-xs font-semibold font-mono ${
           method === "POST"
@@ -893,11 +893,11 @@ function Endpoint({
         </span>
         <code className="text-base font-mono font-semibold text-[#0E1916]">{API_PREFIX}{path}</code>
       </div>
-      <p className="text-sm text-[#475569] leading-relaxed">{description}</p>
+      <p className="text-sm text-[#5A5248] leading-relaxed">{description}</p>
 
       {params && params.length > 0 && (
         <div>
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
             Query-Parameter
           </p>
           <table className="w-full text-xs border-collapse">
@@ -906,9 +906,9 @@ function Endpoint({
                 <tr key={p.name}>
                   <td className="py-2 pr-3 align-top">
                     <code className="font-mono font-semibold text-[#0E1916]">{p.name}</code>
-                    <span className="ml-2 text-[#94a3b8]">{p.type}</span>
+                    <span className="ml-2 text-[#9A9089]">{p.type}</span>
                   </td>
-                  <td className="py-2 text-[#64748b]">{p.desc}</td>
+                  <td className="py-2 text-[#6B625A]">{p.desc}</td>
                 </tr>
               ))}
             </tbody>
@@ -917,14 +917,14 @@ function Endpoint({
       )}
 
       <div>
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
           Beispiel-Request
         </p>
         <CodeBlock language="bash">{example}</CodeBlock>
       </div>
 
       <div>
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">
+        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
           Beispiel-Response (200 OK)
         </p>
         <CodeBlock language="json">{response}</CodeBlock>

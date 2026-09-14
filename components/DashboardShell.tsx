@@ -252,12 +252,12 @@ export default function DashboardShell({
     <div className="flex flex-col h-screen bg-[#FEFCFA] overflow-hidden">
 
       {/* ─── Topbar (nur mobil: Hamburger + Brand + Avatar) ─── */}
-      <header className="md:hidden h-[56px] flex-shrink-0 bg-white border-b border-gray-100 flex items-center px-4 gap-3 z-20">
+      <header className="md:hidden h-[56px] flex-shrink-0 bg-white border-b border-[#E9E1D3] flex items-center px-4 gap-3 z-20">
         <button
           type="button"
           onClick={() => setMobileOpen(true)}
           aria-label="Menü öffnen"
-          className="w-9 h-9 -ml-1 rounded-lg flex items-center justify-center text-[#475569] hover:bg-gray-100"
+          className="w-9 h-9 -ml-1 rounded-lg flex items-center justify-center text-[#5A5248] hover:bg-[#F3EFE6]"
         >
           <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round"/></svg>
         </button>

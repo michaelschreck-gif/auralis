@@ -74,15 +74,18 @@ export default async function PersonaPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <h1 className="text-2xl font-semibold text-[#0E1916]">Wie KI dich sieht</h1>
-          <p className="text-sm text-[#6B625A] mt-1 max-w-2xl leading-relaxed">
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">KI-Persona</span>
+          <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+            Wie KI dich sieht.
+          </h1>
+          <p className="text-sm text-[#6B625A] mt-2.5 max-w-2xl leading-relaxed">
             Halo destilliert aus den echten KI-Antworten deiner letzten Analyse, in welchen Rollen
             dich KI-Systeme wahrnehmen — gewichtet nach Prominenz. Das ist dein KI-Selbstbild.
           </p>
         </header>
 
         {/* Hero / Persona-Karte */}
-        <section className="rounded-2xl bg-[#0E1916] text-white p-6 md:p-7">
+        <section className="rounded-3xl bg-[#0E1916] text-white p-6 md:p-7">
           <div className="flex items-center gap-3 mb-4">
             <span
               className="inline-flex items-center justify-center rounded-full flex-shrink-0 text-sm font-semibold"
@@ -120,7 +123,7 @@ export default async function PersonaPage() {
 
         {/* Rollen */}
         {roles.length > 0 && (
-          <section className="bg-white rounded-2xl border border-[#FDE7E0] p-6">
+          <section className="bg-white rounded-3xl border border-[#E9E1D3] p-6">
             <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-4">
               Wahrgenommene Rollen
             </p>

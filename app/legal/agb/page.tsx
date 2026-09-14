@@ -7,11 +7,11 @@ export const metadata: Metadata = {
 
 export default function AgbPage() {
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 p-8 space-y-6 text-sm leading-relaxed text-[#475569]">
+    <article className="bg-white rounded-2xl border border-[#E9E1D3] p-8 space-y-6 text-sm leading-relaxed text-[#5A5248]">
       <header>
-        <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-2">Rechtliches</p>
+        <p className="text-xs uppercase tracking-wider font-semibold text-[#9A9089] mb-2">Rechtliches</p>
         <h1 className="text-2xl font-bold text-[#0E1916]">Allgemeine Geschäftsbedingungen</h1>
-        <p className="text-xs text-[#94a3b8] mt-2">
+        <p className="text-xs text-[#9A9089] mt-2">
           Geltend für die Nutzung der Halo-Plattform. Stand: {new Date().getFullYear()}.
         </p>
       </header>
@@ -61,7 +61,7 @@ export default function AgbPage() {
           zzgl. der gesetzlichen Umsatzsteuer.
         </p>
         <p>
-          Die Bezahlung erfolgt im Voraus per <span className="text-[#94a3b8]">[Stripe / SEPA-Lastschrift / Kreditkarte — bitte Zahlungsanbieter einsetzen]</span>.
+          Die Bezahlung erfolgt im Voraus per <span className="text-[#9A9089]">[Stripe / SEPA-Lastschrift / Kreditkarte — bitte Zahlungsanbieter einsetzen]</span>.
           Der Kunde erhält automatisch eine Rechnung per E-Mail nach jeder Belastung.
         </p>
         <p>

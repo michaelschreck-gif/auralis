@@ -108,14 +108,14 @@ export default function LoginPage() {
           </div>
           <div>
             <h2 className="text-[#0E1916] text-xl font-semibold">Check your email</h2>
-            <p className="text-[#64748b] text-sm mt-2 leading-relaxed">
+            <p className="text-[#6B625A] text-sm mt-2 leading-relaxed">
               We sent a magic link to{" "}
               <span className="text-[#0E1916] font-medium">{email}</span>
             </p>
           </div>
           <button
             onClick={() => setSent(false)}
-            className="text-xs text-[#64748b] hover:text-[#0E1916] transition-colors"
+            className="text-xs text-[#6B625A] hover:text-[#0E1916] transition-colors"
           >
             ← Use a different email
           </button>
@@ -125,12 +125,12 @@ export default function LoginPage() {
   }
 
   const inputCls =
-    "w-full bg-white border border-gray-200 rounded-lg px-4 py-2.5 text-sm text-[#0E1916] placeholder-[#94a3b8] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
+    "w-full bg-white border border-[#E9E1D3] rounded-lg px-4 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
 
   return (
     <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
       <div className="max-w-sm w-full">
-        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-8 space-y-6">
+        <div className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-8 space-y-6">
 
           {/* Branding */}
           <div className="text-center space-y-1">
@@ -140,7 +140,7 @@ export default function LoginPage() {
               </div>
               <span className="text-[#0E1916] font-semibold text-lg tracking-tight">Halo</span>
             </div>
-            <p className="text-[#64748b] text-sm">AI Visibility Monitoring for Personal Brands</p>
+            <p className="text-[#6B625A] text-sm">AI Visibility Monitoring for Personal Brands</p>
           </div>
 
           {/* Tab Switch */}
@@ -152,7 +152,7 @@ export default function LoginPage() {
                 className={`flex-1 py-2 text-sm font-medium rounded-md transition-all ${
                   tab === t
                     ? "bg-white text-[#0E1916] shadow-sm"
-                    : "text-[#64748b] hover:text-[#0E1916]"
+                    : "text-[#6B625A] hover:text-[#0E1916]"
                 }`}
               >
                 {t === "signin" ? "Anmelden" : "Registrieren"}
@@ -164,7 +164,7 @@ export default function LoginPage() {
           <button
             onClick={handleGoogle}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border border-gray-200 bg-white text-sm text-[#0E1916] font-medium hover:bg-gray-50 transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
+            className="w-full flex items-center justify-center gap-3 py-2.5 rounded-lg border border-[#E9E1D3] bg-white text-sm text-[#0E1916] font-medium hover:bg-[#FAF8F3] transition-colors disabled:opacity-40 disabled:cursor-not-allowed shadow-sm"
           >
             <GoogleIcon />
             Mit Google fortfahren
@@ -173,7 +173,7 @@ export default function LoginPage() {
           {/* Divider */}
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-gray-100" />
-            <span className="text-xs text-[#94a3b8]">oder</span>
+            <span className="text-xs text-[#9A9089]">oder</span>
             <div className="flex-1 h-px bg-gray-100" />
           </div>
 
@@ -181,7 +181,7 @@ export default function LoginPage() {
           {tab === "signin" && (
             <form onSubmit={handleSignIn} className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium">E-Mail</label>
+                <label className="text-xs text-[#6B625A] font-medium">E-Mail</label>
                 <input
                   type="email"
                   value={email}
@@ -193,7 +193,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium">Passwort</label>
+                <label className="text-xs text-[#6B625A] font-medium">Passwort</label>
                 <input
                   type="password"
                   value={password}
@@ -231,7 +231,7 @@ export default function LoginPage() {
           {tab === "signup" && (
             <form onSubmit={handleSignUp} className="space-y-3">
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium">E-Mail</label>
+                <label className="text-xs text-[#6B625A] font-medium">E-Mail</label>
                 <input
                   type="email"
                   value={email}
@@ -243,7 +243,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium">Passwort</label>
+                <label className="text-xs text-[#6B625A] font-medium">Passwort</label>
                 <input
                   type="password"
                   value={password}
@@ -255,7 +255,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium">Passwort wiederholen</label>
+                <label className="text-xs text-[#6B625A] font-medium">Passwort wiederholen</label>
                 <input
                   type="password"
                   value={confirmPassword}
@@ -295,7 +295,7 @@ export default function LoginPage() {
           )}
         </div>
 
-        <p className="text-center text-xs text-[#94a3b8] mt-6">
+        <p className="text-center text-xs text-[#9A9089] mt-6">
           Mit der Anmeldung stimmst du unseren Nutzungsbedingungen zu.
         </p>
       </div>

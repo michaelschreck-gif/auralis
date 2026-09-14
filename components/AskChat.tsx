@@ -89,13 +89,13 @@ export default function AskChat({ userName, suggestions }: Props) {
     <div className="flex flex-col h-full max-w-3xl mx-auto w-full">
       {/* Header */}
       <div className="p-8 pb-4 flex-shrink-0">
-        <span className="text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">
           Frag dein Profil
         </span>
-        <h1 className="text-2xl font-semibold text-[#0E1916] mt-1">
-          {firstName ? `Hallo ${firstName}` : "Hallo"} 👋
+        <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+          {firstName ? `Hallo ${firstName}` : "Hallo"}
         </h1>
-        <p className="text-sm text-[#64748b] mt-1">
+        <p className="text-sm text-[#6B625A] mt-2">
           Stell mir Fragen zu deinen Reputationsdaten — ich antworte mit Claude auf Basis deines aktuellen Halo Scores, deiner Themen und deiner Wettbewerber.
         </p>
       </div>
@@ -104,7 +104,7 @@ export default function AskChat({ userName, suggestions }: Props) {
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-8">
         {showEmptyState ? (
           <div className="py-6">
-            <p className="text-xs uppercase tracking-wider font-semibold text-[#94a3b8] mb-3">
+            <p className="text-xs uppercase tracking-wider font-semibold text-[#9A9089] mb-3">
               Beispielfragen
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -114,7 +114,7 @@ export default function AskChat({ userName, suggestions }: Props) {
                   type="button"
                   onClick={() => send(q)}
                   disabled={pending}
-                  className="text-left text-sm text-[#475569] rounded-lg border border-gray-100 bg-white px-4 py-3 hover:border-[#FA5935]/40 hover:bg-[#FDE7E0]/40 hover:text-[#0E1916] transition-colors disabled:opacity-50"
+                  className="text-left text-sm text-[#6B625A] rounded-xl border border-[#E9E1D3] bg-white px-4 py-3 hover:border-[#FBCBB8] hover:bg-[#FDE7E0]/40 hover:text-[#0E1916] transition-colors disabled:opacity-50"
                 >
                   „{q}"
                 </button>
@@ -137,7 +137,7 @@ export default function AskChat({ userName, suggestions }: Props) {
 
       {/* Input */}
       <form onSubmit={handleSubmit} className="p-6 pt-3 flex-shrink-0">
-        <div className="flex gap-2 items-end rounded-xl border border-gray-200 bg-white px-3 py-2.5 focus-within:border-[#FA5935] focus-within:ring-1 focus-within:ring-[#FA5935]/20 transition-colors">
+        <div className="flex gap-2 items-end rounded-xl border border-[#E9E1D3] bg-white px-3 py-2.5 focus-within:border-[#FA5935] focus-within:ring-1 focus-within:ring-[#FA5935]/20 transition-colors">
           <textarea
             value={input}
             onChange={e => setInput(e.target.value)}
@@ -150,7 +150,7 @@ export default function AskChat({ userName, suggestions }: Props) {
             placeholder={'Frag mich z.B. „Wie steigere ich meinen GEO Score?“'}
             rows={1}
             disabled={pending}
-            className="flex-1 resize-none bg-transparent text-sm text-[#0E1916] placeholder:text-[#94a3b8] focus:outline-none disabled:opacity-50 min-h-[1.5rem] max-h-32"
+            className="flex-1 resize-none bg-transparent text-sm text-[#0E1916] placeholder:text-[#9A9089] focus:outline-none disabled:opacity-50 min-h-[1.5rem] max-h-32"
           />
           <button
             type="submit"
@@ -160,7 +160,7 @@ export default function AskChat({ userName, suggestions }: Props) {
             {pending ? "..." : "Fragen"}
           </button>
         </div>
-        <p className="text-[10px] text-[#94a3b8] mt-2 text-center">
+        <p className="text-[10px] text-[#9A9089] mt-2 text-center">
           Antworten werden von Claude generiert und können ungenau sein. Prüfe wichtige Aussagen gegen deine Halo-Daten.
         </p>
       </form>
@@ -201,10 +201,10 @@ function MessageBubble({
 
 function TypingDots() {
   return (
-    <span className="inline-flex items-center gap-1 text-[#94a3b8]">
-      <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] animate-bounce" style={{ animationDelay: "0ms" }} />
-      <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] animate-bounce" style={{ animationDelay: "120ms" }} />
-      <span className="w-1.5 h-1.5 rounded-full bg-[#94a3b8] animate-bounce" style={{ animationDelay: "240ms" }} />
+    <span className="inline-flex items-center gap-1 text-[#9A9089]">
+      <span className="w-1.5 h-1.5 rounded-full bg-[#9A9089] animate-bounce" style={{ animationDelay: "0ms" }} />
+      <span className="w-1.5 h-1.5 rounded-full bg-[#9A9089] animate-bounce" style={{ animationDelay: "120ms" }} />
+      <span className="w-1.5 h-1.5 rounded-full bg-[#9A9089] animate-bounce" style={{ animationDelay: "240ms" }} />
     </span>
   )
 }

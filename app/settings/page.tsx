@@ -70,7 +70,7 @@ export default async function SettingsPage() {
         <a
           key={s.id}
           href={`#${s.id}`}
-          className="block px-4 py-3 text-sm text-[#64748b] hover:text-[#0E1916] hover:bg-gray-50 transition-colors font-medium border-b border-gray-100 last:border-0"
+          className="block px-4 py-3 text-sm text-[#6B625A] hover:text-[#0E1916] hover:bg-[#FAF8F3] transition-colors font-medium border-b border-[#E9E1D3] last:border-0"
         >
           {s.label}
         </a>

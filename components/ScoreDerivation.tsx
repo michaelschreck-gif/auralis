@@ -20,7 +20,7 @@ export default function ScoreDerivationTable({
   return (
     <div>
       {/* Formel-Kopfzeile */}
-      <p className="text-xs text-[#64748b] mb-3 leading-relaxed">
+      <p className="text-xs text-[#6B625A] mb-3 leading-relaxed">
         Jeder Score ist die Summe aus{" "}
         <span className="font-medium text-[#0E1916]">Messwert × Gewichtung</span>{" "}
         über alle Signale. Die Messwerte stammen aus deiner letzten Analyse. Die
@@ -28,9 +28,9 @@ export default function ScoreDerivationTable({
         Addition der angezeigten Werte abweichen.
       </p>
 
-      <div className="overflow-hidden rounded-xl border border-gray-100">
+      <div className="overflow-hidden rounded-xl border border-[#E9E1D3]">
         {/* Header-Zeile */}
-        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-3 py-2 bg-[#FAF8F3] text-[10px] uppercase tracking-wider font-semibold text-[#94a3b8]">
+        <div className="grid grid-cols-[1fr_auto_auto_auto] gap-2 px-3 py-2 bg-[#FAF8F3] text-[10px] uppercase tracking-wider font-semibold text-[#9A9089]">
           <span>Signal</span>
           <span className="text-right w-14">Messwert</span>
           <span className="text-right w-12">Gewicht</span>
@@ -51,7 +51,7 @@ export default function ScoreDerivationTable({
                 <span className="text-right w-14 tabular-nums text-[#0E1916] font-medium">
                   {f.rawValue}
                 </span>
-                <span className="text-right w-12 tabular-nums text-[#64748b]">
+                <span className="text-right w-12 tabular-nums text-[#6B625A]">
                   ×{f.weight.toFixed(2)}
                 </span>
                 <span className="text-right w-14 tabular-nums font-semibold text-[#0E1916]">
@@ -59,7 +59,7 @@ export default function ScoreDerivationTable({
                 </span>
               </div>
               {!compact && (
-                <p className="text-xs text-[#94a3b8] mt-1.5 leading-snug pl-[18px]">
+                <p className="text-xs text-[#9A9089] mt-1.5 leading-snug pl-[18px]">
                   {f.description}
                 </p>
               )}
@@ -68,12 +68,12 @@ export default function ScoreDerivationTable({
         </div>
 
         {/* Summen-Zeile */}
-        <div className="grid grid-cols-[1fr_auto] gap-2 px-3 py-2.5 bg-[#FAF8F3] border-t border-gray-100 items-baseline">
+        <div className="grid grid-cols-[1fr_auto] gap-2 px-3 py-2.5 bg-[#FAF8F3] border-t border-[#E9E1D3] items-baseline">
           <span className="text-xs font-semibold text-[#0E1916]">
             = Score (gerundet)
           </span>
           <span className="text-right tabular-nums text-base font-semibold text-[#0E1916]">
-            {total}<span className="text-xs text-[#94a3b8] font-normal">/100</span>
+            {total}<span className="text-xs text-[#9A9089] font-normal">/100</span>
           </span>
         </div>
       </div>

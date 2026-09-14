@@ -80,7 +80,7 @@ function ResultCard({ result }: { result: QueryResult }) {
   const [open, setOpen] = useState(false)
   const { signal } = result
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4">
+    <div className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4">
       <div className="flex gap-3">
         <div className="mt-0.5 w-5 h-5 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-semibold"
           style={{
@@ -91,7 +91,7 @@ function ResultCard({ result }: { result: QueryResult }) {
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex flex-wrap items-center gap-2 mb-1">
-            <span className="text-xs text-[#64748b] uppercase tracking-wider">
+            <span className="text-xs text-[#6B625A] uppercase tracking-wider">
               {result.queryType.replace("_", " ")}
             </span>
             {signal.mentioned && signal.position && (
@@ -103,29 +103,29 @@ function ResultCard({ result }: { result: QueryResult }) {
               <span className="text-xs px-2 py-0.5 rounded-full"
                 style={{
                   background: signal.sentiment === "positive" ? "#d1fae5" : "#f1f5f9",
-                  color: signal.sentiment === "positive" ? "#10b981" : "#64748b",
+                  color: signal.sentiment === "positive" ? "#10b981" : "#6B625A",
                 }}>
                 {signal.sentiment}
               </span>
             )}
           </div>
           {signal.contextSnippet
-            ? <p className="text-sm text-[#64748b] leading-relaxed line-clamp-2">…{signal.contextSnippet}…</p>
-            : <p className="text-sm text-[#94a3b8] italic">Not mentioned in this response.</p>
+            ? <p className="text-sm text-[#6B625A] leading-relaxed line-clamp-2">…{signal.contextSnippet}…</p>
+            : <p className="text-sm text-[#9A9089] italic">Not mentioned in this response.</p>
           }
           <button onClick={() => setOpen(v => !v)}
-            className="mt-2 text-xs text-[#94a3b8] hover:text-[#64748b] transition-colors">
+            className="mt-2 text-xs text-[#9A9089] hover:text-[#6B625A] transition-colors">
             {open ? "Hide details ↑" : "See full query ↓"}
           </button>
           {open && (
             <div className="mt-3 space-y-3">
               <div>
-                <p className="text-xs text-[#94a3b8] uppercase tracking-wider mb-1">Query sent to AI</p>
-                <p className="text-xs text-[#64748b] bg-[#FAF8F3] rounded-lg p-3 leading-relaxed">{result.prompt}</p>
+                <p className="text-xs text-[#9A9089] uppercase tracking-wider mb-1">Query sent to AI</p>
+                <p className="text-xs text-[#6B625A] bg-[#FAF8F3] rounded-lg p-3 leading-relaxed">{result.prompt}</p>
               </div>
               <div>
-                <p className="text-xs text-[#94a3b8] uppercase tracking-wider mb-1">AI response</p>
-                <p className="text-xs text-[#64748b] bg-[#FAF8F3] rounded-lg p-3 leading-relaxed whitespace-pre-wrap">{result.rawResponse}</p>
+                <p className="text-xs text-[#9A9089] uppercase tracking-wider mb-1">AI response</p>
+                <p className="text-xs text-[#6B625A] bg-[#FAF8F3] rounded-lg p-3 leading-relaxed whitespace-pre-wrap">{result.rawResponse}</p>
               </div>
             </div>
           )}
@@ -139,11 +139,11 @@ function MetricCard({ label, value, unit, color, sub }: {
   label: string; value: string; unit: string; color: string; sub?: string
 }) {
   return (
-    <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-5">
-      <p className="text-xs text-[#64748b] uppercase tracking-wider mb-3">{label}</p>
+    <div className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-5">
+      <p className="text-xs text-[#6B625A] uppercase tracking-wider mb-3">{label}</p>
       <div className="flex items-end gap-2">
         <span className="text-3xl font-semibold text-[#0E1916] leading-none">{value}</span>
-        <span className="text-xs text-[#94a3b8] mb-0.5">{unit}</span>
+        <span className="text-xs text-[#9A9089] mb-0.5">{unit}</span>
       </div>
       {sub && <p className="text-xs mt-1.5 font-medium" style={{ color }}>{sub}</p>}
     </div>
@@ -154,14 +154,14 @@ function AiModelRow({ name, score, locked }: { name: string; score: number | nul
   const initial = name[0] ?? "?"
   return (
     <div className="flex items-center gap-3">
-      <div className="w-7 h-7 rounded-lg bg-gray-50 border border-gray-100 flex items-center justify-center flex-shrink-0">
-        <span className="text-xs text-[#64748b] font-medium">{initial}</span>
+      <div className="w-7 h-7 rounded-lg bg-[#FAF8F3] border border-[#E9E1D3] flex items-center justify-center flex-shrink-0">
+        <span className="text-xs text-[#6B625A] font-medium">{initial}</span>
       </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-xs text-[#64748b]">{name}</span>
+          <span className="text-xs text-[#6B625A]">{name}</span>
           {locked
-            ? <span className="text-xs text-[#94a3b8]">🔒 Pro</span>
+            ? <span className="text-xs text-[#9A9089]">🔒 Pro</span>
             : score != null
               ? <span className="text-xs font-semibold" style={{ color: hue(score) }}>{score}</span>
               : null
@@ -190,8 +190,8 @@ function ReportView({ report }: { report: VisibilityReport }) {
           unit="in lists" color="#FA5935"/>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-[#FAF8F3] p-6">
-        <p className="text-xs text-[#64748b] uppercase tracking-wider mb-5">Score Breakdown</p>
+      <div className="rounded-xl border border-[#E9E1D3] bg-[#FAF8F3] p-6">
+        <p className="text-xs text-[#6B625A] uppercase tracking-wider mb-5">Score Breakdown</p>
         <div className="grid grid-cols-2 gap-5">
           {[
             { label: "Presence",        value: report.scoreBreakdown.presenceScore,       color: "#10b981" },
@@ -201,7 +201,7 @@ function ReportView({ report }: { report: VisibilityReport }) {
           ].map(({ label, value, color }) => (
             <div key={label} className="space-y-2">
               <div className="flex justify-between text-xs">
-                <span className="text-[#64748b]">{label}</span>
+                <span className="text-[#6B625A]">{label}</span>
                 <span className="font-semibold" style={{ color }}>{value}</span>
               </div>
               <Bar value={value} color={color}/>
@@ -210,8 +210,8 @@ function ReportView({ report }: { report: VisibilityReport }) {
         </div>
       </div>
 
-      <div className="rounded-xl border border-gray-100 bg-[#FAF8F3] p-6">
-        <p className="text-xs text-[#64748b] uppercase tracking-wider mb-4">AI Model Breakdown</p>
+      <div className="rounded-xl border border-[#E9E1D3] bg-[#FAF8F3] p-6">
+        <p className="text-xs text-[#6B625A] uppercase tracking-wider mb-4">AI Model Breakdown</p>
         <div className="space-y-4">
           <AiModelRow name="Claude Sonnet" score={report.overallScore} locked={false}/>
           <AiModelRow name="GPT-4o"        score={null}                locked/>
@@ -223,8 +223,8 @@ function ReportView({ report }: { report: VisibilityReport }) {
       {(report.dominantTopics.length > 0 || report.narratives.length > 0) && (
         <div className="grid grid-cols-2 gap-4">
           {report.dominantTopics.length > 0 && (
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4">
-              <p className="text-xs text-[#64748b] uppercase tracking-wider mb-3">Topics AI associates with you</p>
+            <div className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4">
+              <p className="text-xs text-[#6B625A] uppercase tracking-wider mb-3">Topics AI associates with you</p>
               <div className="flex flex-wrap gap-2">
                 {report.dominantTopics.map(t => (
                   <span key={t} className="text-xs px-2.5 py-1 rounded-full bg-green-50 text-green-700 border border-green-100 font-medium">
@@ -235,11 +235,11 @@ function ReportView({ report }: { report: VisibilityReport }) {
             </div>
           )}
           {report.narratives.length > 0 && (
-            <div className="rounded-xl border border-gray-100 bg-white shadow-sm p-4">
-              <p className="text-xs text-[#64748b] uppercase tracking-wider mb-3">How AI describes you</p>
+            <div className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4">
+              <p className="text-xs text-[#6B625A] uppercase tracking-wider mb-3">How AI describes you</p>
               <div className="space-y-1.5">
                 {report.narratives.slice(0, 4).map((n, i) => (
-                  <p key={i} className="text-xs text-[#64748b] leading-relaxed">"{n}"</p>
+                  <p key={i} className="text-xs text-[#6B625A] leading-relaxed">"{n}"</p>
                 ))}
               </div>
             </div>
@@ -248,7 +248,7 @@ function ReportView({ report }: { report: VisibilityReport }) {
       )}
 
       <div>
-        <p className="text-xs text-[#64748b] uppercase tracking-wider mb-3">
+        <p className="text-xs text-[#6B625A] uppercase tracking-wider mb-3">
           Query Results ({report.queryResults.length})
         </p>
         <div className="space-y-3">
@@ -258,7 +258,7 @@ function ReportView({ report }: { report: VisibilityReport }) {
         </div>
       </div>
 
-      <p className="text-xs text-[#94a3b8] text-center">
+      <p className="text-xs text-[#9A9089] text-center">
         Analyzed {new Date(report.queriedAt).toLocaleString()}
       </p>
     </div>
@@ -285,7 +285,7 @@ function TopicsPanel({
   return (
     <>
       {schedules.length === 0 && (
-        <p className="text-xs text-[#94a3b8] text-center mt-10 px-4">
+        <p className="text-xs text-[#9A9089] text-center mt-10 px-4">
           No tracked topics yet.
         </p>
       )}
@@ -295,8 +295,8 @@ function TopicsPanel({
         return (
           <button key={s.id}
             onClick={() => onSelect(s.id)}
-            className={`w-full text-left px-4 py-4 border-b border-gray-100 transition-all ${
-              active ? "bg-blue-50" : "hover:bg-gray-50"
+            className={`w-full text-left px-4 py-4 border-b border-[#E9E1D3] transition-all ${
+              active ? "bg-blue-50" : "hover:bg-[#FAF8F3]"
             }`}
             style={{ borderLeft: `2px solid ${active ? "#FA5935" : "transparent"}` }}>
             <div className="flex items-center justify-between mb-1.5">
@@ -316,7 +316,7 @@ function TopicsPanel({
                   background: score != null ? hue(score) : "transparent",
                 }}/>
             </div>
-            <p className="text-xs text-[#94a3b8] mt-1.5 truncate">
+            <p className="text-xs text-[#9A9089] mt-1.5 truncate">
               {s.language === "en" ? "🇬🇧" : "🇩🇪"} {s.name}
             </p>
           </button>
@@ -328,7 +328,7 @@ function TopicsPanel({
           className={`w-full flex items-center justify-center gap-1.5 py-2 rounded-lg text-xs transition-colors font-medium ${
             showCustom
               ? "bg-blue-50 text-[#FA5935]"
-              : "text-[#64748b] hover:text-[#0E1916] hover:bg-gray-100"
+              : "text-[#6B625A] hover:text-[#0E1916] hover:bg-[#F3EFE6]"
           }`}>
           {PlusIcon}
           Custom check
@@ -390,7 +390,7 @@ export default function VisibilityCheck({
     callApi(customName, customTopic, customLang, "__custom")
   }
 
-  const inputCls = "w-full bg-white border border-gray-200 rounded-lg px-4 py-3 text-sm text-[#0E1916] placeholder-[#94a3b8] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
+  const inputCls = "w-full bg-white border border-[#E9E1D3] rounded-lg px-4 py-3 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
 
   const panel = (
     <TopicsPanel
@@ -414,18 +414,18 @@ export default function VisibilityCheck({
       {showCustom && (
         <div className="p-8 max-w-xl">
           <h2 className="text-lg font-semibold text-[#0E1916] mb-1">Custom Check</h2>
-          <p className="text-[#64748b] text-sm mb-6">
+          <p className="text-[#6B625A] text-sm mb-6">
             One-time analysis — not saved as a tracked topic.
           </p>
           <form onSubmit={handleCustomSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium uppercase tracking-wider">Full Name</label>
+                <label className="text-xs text-[#6B625A] font-medium uppercase tracking-wider">Full Name</label>
                 <input type="text" value={customName} onChange={e => setCustomName(e.target.value)}
                   placeholder="Max Mustermann" className={inputCls}/>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-[#64748b] font-medium uppercase tracking-wider">Topic</label>
+                <label className="text-xs text-[#6B625A] font-medium uppercase tracking-wider">Topic</label>
                 <input type="text" value={customTopic} onChange={e => setCustomTopic(e.target.value)}
                   placeholder="AI Strategie" className={inputCls}/>
               </div>
@@ -437,7 +437,7 @@ export default function VisibilityCheck({
                   style={{
                     borderColor: customLang === lang ? "#FA5935" : "#e2e8f0",
                     background: customLang === lang ? "#eff2ff" : "white",
-                    color: customLang === lang ? "#FA5935" : "#64748b",
+                    color: customLang === lang ? "#FA5935" : "#6B625A",
                   }}>
                   {lang === "de" ? "🇩🇪 DE" : "🇬🇧 EN"}
                 </button>
@@ -465,7 +465,7 @@ export default function VisibilityCheck({
           <div className="flex items-start justify-between mb-8">
             <div>
               <h2 className="text-xl font-semibold text-[#0E1916]">{selected.query}</h2>
-              <p className="text-[#64748b] text-sm mt-0.5">{selected.name}</p>
+              <p className="text-[#6B625A] text-sm mt-0.5">{selected.name}</p>
             </div>
             <button onClick={runScheduleCheck}
               disabled={loading || !userName}
@@ -483,10 +483,10 @@ export default function VisibilityCheck({
 
           {!scheduleReport && !loading && (
             <div className="flex flex-col items-center justify-center py-24 text-center">
-              <div className="w-14 h-14 rounded-full bg-gray-50 border border-gray-100 flex items-center justify-center mb-5 text-[#64748b]">
+              <div className="w-14 h-14 rounded-full bg-[#FAF8F3] border border-[#E9E1D3] flex items-center justify-center mb-5 text-[#6B625A]">
                 {EyeIcon}
               </div>
-              <p className="text-[#64748b] text-sm max-w-xs leading-relaxed">
+              <p className="text-[#6B625A] text-sm max-w-xs leading-relaxed">
                 Hit{" "}
                 <span className="text-[#FA5935] font-medium">Run Visibility Check</span>{" "}
                 to see how AI systems perceive{" "}
@@ -503,7 +503,7 @@ export default function VisibilityCheck({
 
       {!showCustom && !selected && (
         <div className="flex items-center justify-center h-full">
-          <p className="text-[#94a3b8] text-sm">Select a topic to analyze.</p>
+          <p className="text-[#9A9089] text-sm">Select a topic to analyze.</p>
         </div>
       )}
     </DashboardShell>

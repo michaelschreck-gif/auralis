@@ -47,7 +47,7 @@ export default async function GeoScorePage() {
     return (
       <DashboardShell userName={userName} plan={plan}>
         <div className="p-4 md:p-8 max-w-3xl mx-auto">
-          <p className="text-sm text-[#64748b]">
+          <p className="text-sm text-[#6B625A]">
             Noch keine Analyse vorhanden.{" "}
             <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline">
               Erste Analyse starten →
