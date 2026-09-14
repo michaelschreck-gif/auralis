@@ -268,33 +268,41 @@ export default async function Home() {
       </section>
 
       {/* ─── Modelle ─── */}
-      <section className="bg-[#FAF8F3] py-16 sm:py-20">
-        <div className="max-w-6xl mx-auto px-6">
-          <div className="max-w-xl mb-10">
+      <section className="bg-[#FAF8F3]">
+        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 grid lg:grid-cols-2 gap-14 items-center">
+          <div>
             <Eyebrow>Multi-Modell-Tracking</Eyebrow>
-            <h2 className="text-2xl sm:text-3xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
+            <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916] leading-tight">
               Über mehrere KI-Modelle hinweg.
             </h2>
-            <p className="text-[#6B625A] mt-3 leading-relaxed text-[15px]">
-              DigitalHalo fragt deine Themen parallel bei den wichtigsten KI-Modellen ab — je nach Tarif automatisch mit mehr Abdeckung.
+            <p className="text-[#6B625A] mt-4 leading-relaxed">
+              DigitalHalo fragt deine Themen parallel bei den wichtigsten KI-Modellen ab — je nach
+              Tarif automatisch mit mehr Abdeckung.
             </p>
           </div>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-4">
+          <div className="rounded-3xl border border-[#E9E1D3] bg-white shadow-[0_14px_50px_-18px_rgba(14,25,22,0.14)] p-2">
             {[
-              { n: "Claude Sonnet", t: "Alle Tarife", icon: "✳️", tone: "coral" },
-              { n: "GPT-4o", t: "Ab Starter", icon: "🤖", tone: "teal" },
-              { n: "Perplexity", t: "Ab Starter", icon: "🔎", tone: "teal" },
-              { n: "Gemini", t: "Ab Pro", icon: "✨", tone: "dark" },
-              { n: "Google AI Overview", t: "Ab Pro", icon: "🌐", tone: "dark" },
-            ].map(m => (
-              <div key={m.n} className="rounded-2xl border border-[#E9E1D3] bg-white p-5 hover:border-[#FBCBB8] transition-colors">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-base mb-4 ${
-                  m.tone === "coral" ? "bg-[#FDE7E0]" : m.tone === "teal" ? "bg-[#E9F0F0]" : "bg-[#E7E3DC]"
-                }`}>{m.icon}</div>
-                <div className="text-sm font-semibold text-[#0E1916]">{m.n}</div>
-                <span className={`inline-block mt-2.5 text-[10px] font-semibold uppercase tracking-wide rounded-full px-2.5 py-1 ${
-                  m.tone === "coral" ? "bg-[#FA5935] text-white" : m.tone === "teal" ? "bg-[#6D8C8D] text-white" : "bg-[#0E1916] text-[#EAE2D5]"
-                }`}>{m.t}</span>
+              { n: "Claude Sonnet", t: "Alle Tarife", tone: "coral" },
+              { n: "GPT-4o", t: "Ab Starter", tone: "teal" },
+              { n: "Perplexity", t: "Ab Starter", tone: "teal" },
+              { n: "Gemini", t: "Ab Pro", tone: "dark" },
+              { n: "Google AI Overview", t: "Ab Pro", tone: "dark" },
+            ].map((m, i, arr) => (
+              <div
+                key={m.n}
+                className={`flex items-center justify-between px-5 py-4 ${i !== arr.length - 1 ? "border-b border-[#F0EAE0]" : ""}`}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <span
+                    className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                      m.tone === "coral" ? "bg-[#FA5935]" : m.tone === "teal" ? "bg-[#6D8C8D]" : "bg-[#0E1916]"
+                    }`}
+                  />
+                  <span className="text-sm font-medium text-[#0E1916] truncate">{m.n}</span>
+                </div>
+                <span className="text-[11px] uppercase tracking-wide text-[#9A9089] font-semibold shrink-0 ml-4">
+                  {m.t}
+                </span>
               </div>
             ))}
           </div>
