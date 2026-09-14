@@ -75,7 +75,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
   }
 
   return (
-    <section id="public-profile" className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-6 space-y-5">
+    <section id="public-profile" className="bg-white rounded-2xl border border-[#E9E1D3] p-6 space-y-5">
       <div>
         <h2 className="text-base font-semibold text-[#0E1916]">Public Halo Score Profil</h2>
         <p className="text-xs text-[#6B625A] mt-1 leading-relaxed">
@@ -101,7 +101,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
           onClick={() => handleToggle(!enabled)}
           disabled={pending}
           className={`relative inline-flex h-7 w-12 flex-shrink-0 rounded-full transition-colors ${
-            enabled ? "bg-[#FA5935]" : "bg-gray-300"
+            enabled ? "bg-[#FA5935]" : "bg-[#D8D0C0]"
           } disabled:opacity-50`}
         >
           <span
@@ -116,7 +116,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
         <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-2.5 text-xs text-red-700">{error}</div>
       )}
       {success && (
-        <div className="rounded-lg bg-green-50 border border-green-100 px-4 py-2.5 text-xs text-green-700">{success}</div>
+        <div className="rounded-lg bg-[#E9F0F0] border border-[#C7D9D9] px-4 py-2.5 text-xs text-[#1C2A2A]">{success}</div>
       )}
 
       {/* Slug editor + URL */}
@@ -139,7 +139,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                 type="button"
                 onClick={handleSaveSlug}
                 disabled={pending}
-                className="px-4 py-2 rounded-lg bg-[#0E1916] hover:bg-gray-800 text-white text-sm font-medium transition-colors disabled:opacity-40"
+                className="px-4 py-2 rounded-lg bg-[#0E1916] hover:bg-[#1C2E29] text-white text-sm font-medium transition-colors disabled:opacity-40"
               >
                 Speichern
               </button>
@@ -181,7 +181,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
                 />
               </div>
               <p className="text-xs text-[#6B625A] mb-2">HTML-Snippet zum Einbetten:</p>
-              <pre className="text-[11px] bg-[#0E1916] text-gray-100 rounded-md p-3 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap break-all">
+              <pre className="text-[11px] bg-[#0E1916] text-[#EAE2D5] rounded-md p-3 overflow-x-auto leading-relaxed font-mono whitespace-pre-wrap break-all">
 {embedCode}
               </pre>
               <button

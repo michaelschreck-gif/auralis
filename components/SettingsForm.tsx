@@ -85,6 +85,12 @@ export default function SettingsForm({
 
   return (
     <div className="p-8 max-w-2xl space-y-10">
+      <header>
+        <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Einstellungen</span>
+        <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
+          Dein Konto.
+        </h1>
+      </header>
 
       {/* Profile */}
       <section id="profile" className="space-y-5">
@@ -118,9 +124,9 @@ export default function SettingsForm({
                   onClick={() => setLanguage(lang)}
                   className="px-4 py-2.5 rounded-lg text-sm border font-medium transition-colors"
                   style={{
-                    borderColor: language === lang ? "#FA5935" : "#e2e8f0",
-                    background: language === lang ? "#eff2ff" : "white",
-                    color: language === lang ? "#FA5935" : "#6B625A",
+                    borderColor: language === lang ? "#FA5935" : "#E9E1D3",
+                    background: language === lang ? "#FDE7E0" : "white",
+                    color: language === lang ? "#C8431F" : "#6B625A",
                   }}
                 >
                   {lang === "de" ? "🇩🇪 Deutsch" : "🇬🇧 English"}
@@ -139,7 +145,7 @@ export default function SettingsForm({
         >
           {saving ? (
             <>
-              <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin"/>
+              <span className="w-3.5 h-3.5 border border-[#FBCBB8] border-t-white rounded-full animate-spin"/>
               Speichert…
             </>
           ) : saved ? "Gespeichert ✓" : "Änderungen speichern"}
@@ -159,7 +165,7 @@ export default function SettingsForm({
 
         <div className="space-y-3">
           {schedules.map(s => (
-            <div key={s.id} className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4 flex items-center gap-4">
+            <div key={s.id} className="rounded-2xl border border-[#E9E1D3] bg-white p-4 flex items-center gap-4">
               <div className="flex-1 min-w-0">
                 <p className="text-sm text-[#0E1916] font-medium truncate">{s.query}</p>
               </div>
@@ -190,7 +196,7 @@ export default function SettingsForm({
           <h2 className="text-base font-semibold text-[#0E1916]">Tarif</h2>
           <p className="text-xs text-[#6B625A] mt-0.5">Dein aktuelles Abonnement.</p>
         </div>
-        <div className="rounded-xl border border-[#E9E1D3] bg-white shadow-sm p-4 flex items-center justify-between">
+        <div className="rounded-2xl border border-[#E9E1D3] bg-white p-4 flex items-center justify-between">
           <div>
             <p className="text-sm text-[#0E1916] font-medium capitalize">{plan}</p>
             <p className="text-xs text-[#6B625A] mt-0.5">
@@ -198,7 +204,7 @@ export default function SettingsForm({
             </p>
           </div>
           {plan === "free" && (
-            <span className="text-xs px-3 py-1.5 rounded-full bg-[#FDE7E0] text-[#FA5935] border border-[#FBCBB8] font-medium cursor-pointer hover:bg-blue-100 transition-colors">
+            <span className="text-xs px-3 py-1.5 rounded-full bg-[#FDE7E0] text-[#FA5935] border border-[#FBCBB8] font-medium cursor-pointer hover:bg-[#FBCBB8] transition-colors">
               Upgrade →
             </span>
           )}

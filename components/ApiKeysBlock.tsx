@@ -67,11 +67,11 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
   }
 
   return (
-    <section id="api" className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-6 space-y-5">
+    <section id="api" className="bg-white rounded-2xl border border-[#E9E1D3] p-6 space-y-5">
       <div>
         <h2 className="text-base font-semibold text-[#0E1916]">API-Keys</h2>
         <p className="text-xs text-[#6B625A] mt-1">
-          Bearer-Tokens für die Halo-Public-API (<code className="text-[10px] bg-gray-100 px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.{" "}
+          Bearer-Tokens für die Halo-Public-API (<code className="text-[10px] bg-[#F1EEE7] px-1.5 py-0.5 rounded">/api/v1/...</code>). Verfügbar ab Tarif Pro.{" "}
           <a href="/docs/api" target="_blank" rel="noopener" className="text-[#FA5935] hover:underline font-medium">
             API-Dokumentation öffnen ↗
           </a>
@@ -79,7 +79,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
       </div>
 
       {!isEligible && (
-        <div className="rounded-xl bg-amber-50 border border-amber-100 p-4">
+        <div className="rounded-xl bg-[#F6ECD9] border border-[#E7CFA3] p-4">
           <p className="text-sm font-medium text-[#0E1916]">🔒 Pro-Funktion</p>
           <p className="text-xs text-[#6B625A] mt-1">
             API-Zugang ist ab Tarif <span className="font-medium text-[#0E1916]">Pro</span> verfügbar.
@@ -90,24 +90,24 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
 
       {/* Just-created key shown once */}
       {justCreated && (
-        <div className="rounded-xl bg-green-50 border border-green-100 p-4 space-y-3">
+        <div className="rounded-xl bg-[#E9F0F0] border border-[#C7D9D9] p-4 space-y-3">
           <div>
-            <p className="text-sm font-medium text-green-900">
+            <p className="text-sm font-medium text-[#1C2A2A]">
               ✓ API-Key „{justCreated.name}" erstellt
             </p>
-            <p className="text-xs text-green-800 mt-1 leading-relaxed">
+            <p className="text-xs text-[#4C6667] mt-1 leading-relaxed">
               <span className="font-medium">Dieser Key wird nur einmal angezeigt.</span>{" "}
               Speichere ihn jetzt sicher ab — du kannst ihn später nicht mehr einsehen.
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <code className="flex-1 text-xs bg-white border border-green-200 rounded-md px-3 py-2 font-mono break-all">
+            <code className="flex-1 text-xs bg-white border border-[#C7D9D9] rounded-md px-3 py-2 font-mono break-all">
               {justCreated.plaintext}
             </code>
             <button
               type="button"
               onClick={() => copyToClipboard(justCreated.plaintext)}
-              className="flex-shrink-0 px-3 py-2 rounded-md bg-[#0E1916] hover:bg-gray-800 text-white text-xs font-medium transition-colors"
+              className="flex-shrink-0 px-3 py-2 rounded-md bg-[#0E1916] hover:bg-[#1C2E29] text-white text-xs font-medium transition-colors"
             >
               {copied ? "✓ Kopiert" : "Kopieren"}
             </button>
@@ -115,7 +115,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
           <button
             type="button"
             onClick={() => setJustCreated(null)}
-            className="text-xs text-green-800 hover:text-green-950 underline"
+            className="text-xs text-[#4C6667] hover:text-[#1C2A2A] underline"
           >
             Ich habe den Key sicher gespeichert
           </button>
@@ -181,7 +181,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
               Deine Keys ({keys.filter(k => !k.revoked_at).length} aktiv / {keys.length} gesamt)
             </p>
           </div>
-          <div className="divide-y divide-gray-100">
+          <div className="divide-y divide-[#E9E1D3]">
             {keys.map(k => (
               <div key={k.id} className="px-4 py-3 flex items-center gap-3">
                 <div className="min-w-0 flex-1">
@@ -253,7 +253,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
             <p className="text-xs text-[#6B625A]">
               Ersetze <code className="text-[10px] bg-white px-1.5 py-0.5 rounded border border-[#E9E1D3]">$AURALIS_KEY</code> mit deinem neuen Key:
             </p>
-            <pre className="text-[11px] bg-[#0E1916] text-gray-100 rounded-md px-3 py-2.5 overflow-x-auto leading-relaxed">
+            <pre className="text-[11px] bg-[#0E1916] text-[#EAE2D5] rounded-md px-3 py-2.5 overflow-x-auto leading-relaxed">
 {`curl https://digital-halo.de/api/v1/scores/latest \\
   -H "Authorization: Bearer $AURALIS_KEY"`}
             </pre>
