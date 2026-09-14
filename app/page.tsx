@@ -179,7 +179,7 @@ export default async function Home() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <DimCard tint="#E6F1FB" label="#185FA5" text="#0C447C" bar="#378ADD" track="#B5D4F4" name="GEO Score" val={72} desc="Wie oft KI-Systeme dich in Antworten nennen." />
           <DimCard tint="#FBF0DE" label="#8A5A0E" text="#5C3A06" bar="#E08A1E" track="#F6D79B" name="SEO Score" val={64} desc="Deine Reputation in der klassischen Google-Suche." />
-          <DimCard tint="#FDE7E0" label="#C8431F" text="#0E1916" bar="#FA5935" track="#FBCBB8" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
+          <DimCard tint="#E9F0F0" label="#4C6667" text="#1C2A2A" bar="#6D8C8D" track="#C7D9D9" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
           <DimCard tint="#E1F5EE" label="#0F6E56" text="#04342C" bar="#1D9E75" track="#9FE1CB" name="Digitale Autorität" val={63} desc="Die Stärke deiner Online-Spur." />
         </div>
       </section>
@@ -453,7 +453,7 @@ function HeroCockpit() {
         {[
           { l: "GEO", v: 72, tint: "#E6F1FB", tx: "#0C447C" },
           { l: "SEO", v: 64, tint: "#FBF0DE", tx: "#5C3A06" },
-          { l: "T. L.", v: 41, tint: "#FDE7E0", tx: "#0E1916" },
+          { l: "T. L.", v: 41, tint: "#E9F0F0", tx: "#1C2A2A" },
           { l: "Aut.", v: 63, tint: "#E1F5EE", tx: "#04342C" },
         ].map(d => (
           <div key={d.l} className="rounded-xl p-2.5" style={{ background: d.tint }}>
