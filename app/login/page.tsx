@@ -103,7 +103,7 @@ export default function LoginPage() {
     return (
       <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
         <div className="max-w-sm w-full text-center space-y-5">
-          <div className="w-14 h-14 rounded-full bg-blue-50 border border-blue-100 flex items-center justify-center mx-auto text-2xl">
+          <div className="w-14 h-14 rounded-full bg-[#FDE7E0] border border-[#FBCBB8] flex items-center justify-center mx-auto text-2xl">
             ✉
           </div>
           <div>
@@ -213,11 +213,11 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim() || !password.trim()}
-                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin" />
+                    <span className="w-3.5 h-3.5 border border-[#FBCBB8] border-t-white rounded-full animate-spin" />
                     Anmelden…
                   </span>
                 ) : (
@@ -280,11 +280,11 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading || !email.trim() || !password.trim() || !confirmPassword.trim()}
-                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-blue-700 text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
               >
                 {loading ? (
                   <span className="flex items-center justify-center gap-2">
-                    <span className="w-3.5 h-3.5 border border-blue-300 border-t-white rounded-full animate-spin" />
+                    <span className="w-3.5 h-3.5 border border-[#FBCBB8] border-t-white rounded-full animate-spin" />
                     Konto erstellen…
                   </span>
                 ) : (

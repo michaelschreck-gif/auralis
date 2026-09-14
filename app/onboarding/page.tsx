@@ -136,10 +136,10 @@ export default function OnboardingPage() {
     setPhase("result")
   }
 
-  const bandColor = (s: number) => (s >= 76 ? "#22A06B" : s >= 51 ? "#FA5935" : s >= 26 ? "#EF9F27" : "#D1495B")
+  const bandColor = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#6D8C8D" : s >= 26 ? "#C98A3E" : "#3A4442")
 
   return (
-    <div className="min-h-screen bg-[#F7F6FD] flex items-center justify-center p-6">
+    <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
       <div className="max-w-md w-full">
         {/* Brand */}
         <div className="flex items-center justify-center gap-2.5 mb-6">
@@ -175,7 +175,7 @@ export default function OnboardingPage() {
                     className="flex-1 py-2 rounded-xl text-sm border font-medium transition-colors"
                     style={{
                       borderColor: language === l ? "#FA5935" : "#FDE7E0",
-                      background: language === l ? "#F4F2FE" : "white",
+                      background: language === l ? "#FDE7E0" : "white",
                       color: language === l ? "#C8431F" : "#6B625A",
                     }}
                   >
@@ -207,7 +207,7 @@ export default function OnboardingPage() {
               {topics.length > 0 && (
                 <div className="flex flex-wrap gap-2">
                   {topics.map(t => (
-                    <span key={t} className="inline-flex items-center gap-1.5 bg-[#F4F2FE] text-[#C8431F] text-sm rounded-full pl-3 pr-2 py-1.5">
+                    <span key={t} className="inline-flex items-center gap-1.5 bg-[#FDE7E0] text-[#C8431F] text-sm rounded-full pl-3 pr-2 py-1.5">
                       {t}
                       <button onClick={() => setTopics(topics.filter(x => x !== t))} className="text-[#9A9089] hover:text-[#C8431F]" aria-label="Entfernen">✕</button>
                     </span>
@@ -234,7 +234,7 @@ export default function OnboardingPage() {
                   <button
                     key={s}
                     onClick={() => addChip(s)}
-                    className="text-xs text-[#6B625A] border border-[#FDE7E0] hover:border-[#FBCBB8] hover:bg-[#F4F2FE] rounded-full px-3 py-1.5 transition-colors"
+                    className="text-xs text-[#6B625A] border border-[#FDE7E0] hover:border-[#FBCBB8] hover:bg-[#FDE7E0] rounded-full px-3 py-1.5 transition-colors"
                   >
                     + {s}
                   </button>
@@ -246,7 +246,7 @@ export default function OnboardingPage() {
               <div className="flex gap-2">
                 <button
                   onClick={() => setPhase("name")}
-                  className="px-4 py-3 rounded-xl text-sm text-[#6B625A] border border-[#FDE7E0] hover:bg-[#F4F2FE] transition-colors"
+                  className="px-4 py-3 rounded-xl text-sm text-[#6B625A] border border-[#FDE7E0] hover:bg-[#FDE7E0] transition-colors"
                 >
                   ←
                 </button>

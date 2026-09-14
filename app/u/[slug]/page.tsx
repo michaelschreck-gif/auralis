@@ -95,7 +95,7 @@ export default async function PublicProfilePage(
           </a>
           <a
             href="/login"
-            className="text-sm px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-blue-700 text-white transition-colors font-semibold"
+            className="text-sm px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors font-semibold"
           >
             Eigenen Score messen →
           </a>
@@ -104,9 +104,9 @@ export default async function PublicProfilePage(
 
       <main className="max-w-3xl mx-auto px-6 py-12">
         {/* Profile hero */}
-        <section className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-8 mb-6">
+        <section className="bg-white rounded-2xl border border-[#E9E1D3] p-8 mb-6">
           <div className="flex items-center gap-5 mb-6">
-            <div className="w-16 h-16 rounded-full bg-blue-50 border-2 border-blue-100 flex items-center justify-center flex-shrink-0">
+            <div className="w-16 h-16 rounded-full bg-[#FDE7E0] border-2 border-[#FBCBB8] flex items-center justify-center flex-shrink-0">
               <span className="text-xl font-bold text-[#FA5935]">{initials}</span>
             </div>
             <div className="min-w-0 flex-1">
@@ -177,7 +177,7 @@ export default async function PublicProfilePage(
         </section>
 
         {/* Methodology */}
-        <section className="bg-white rounded-2xl border border-[#E9E1D3] shadow-sm p-6 mb-6">
+        <section className="bg-white rounded-2xl border border-[#E9E1D3] p-6 mb-6">
           <h2 className="text-base font-semibold text-[#0E1916] mb-3">Was wird gemessen?</h2>
           <p className="text-sm text-[#6B625A] leading-relaxed">
             Der Halo Score™ misst, wie sichtbar diese Person in KI-Antworten auftaucht.
@@ -196,7 +196,7 @@ export default async function PublicProfilePage(
           <p className="text-sm text-[#6B625A] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
           <a
             href="/login"
-            className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-blue-700 text-white text-sm font-semibold transition-colors shadow-sm"
+            className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-semibold transition-colors shadow-sm"
           >
             Kostenlos messen lassen →
           </a>

@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function KontaktPage() {
   return (
-    <div className="min-h-screen bg-[#F7F6FD] text-[#0E1916]">
+    <div className="min-h-screen bg-[#FAF8F3] text-[#0E1916]">
       {/* Topbar */}
       <header className="bg-white border-b border-[#FDE7E0]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -39,7 +39,7 @@ export default function KontaktPage() {
             href="mailto:michael@linkedinconsulting.digital"
             className="block rounded-2xl bg-white border border-[#FDE7E0] p-6 hover:border-[#FBCBB8] transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#F4F2FE] flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-[#FDE7E0] flex items-center justify-center mb-3">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8431F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <rect x="2" y="4" width="20" height="16" rx="2" /><path d="m22 7-10 5L2 7" />
               </svg>
@@ -53,7 +53,7 @@ export default function KontaktPage() {
             href="tel:+4915563664275"
             className="block rounded-2xl bg-white border border-[#FDE7E0] p-6 hover:border-[#FBCBB8] transition-colors"
           >
-            <div className="w-10 h-10 rounded-xl bg-[#F4F2FE] flex items-center justify-center mb-3">
+            <div className="w-10 h-10 rounded-xl bg-[#FDE7E0] flex items-center justify-center mb-3">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C8431F" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z" />
               </svg>
