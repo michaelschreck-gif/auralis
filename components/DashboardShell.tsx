@@ -245,7 +245,7 @@ export default function DashboardShell({
   )
 
   const brand = (
-    <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
+    <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
   )
 
   return (

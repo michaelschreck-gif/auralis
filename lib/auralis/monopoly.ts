@@ -24,7 +24,7 @@ export const MONOPOLY_BANDS: MonopolyBand[] = [
   { label: "Dominant", min: 60, color: "#C8431F" },
   { label: "Umkämpft", min: 40, color: "#C98A3E" },
   { label: "Randständig", min: 20, color: "#8A5A0E" },
-  { label: "Unsichtbar", min: 0, color: "#3A4442" },
+  { label: "Unsichtbar", min: 0, color: "#5E6563" },
 ]
 
 export function monopolyBand(score: number): MonopolyBand {

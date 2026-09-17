@@ -33,7 +33,7 @@ type Props = {
 const impactStyles: Record<string, string> = {
   high: "bg-[#FDE7E0] text-[#C8431F] border-[#FBCBB8]",
   medium: "bg-[#F6ECD9] text-[#6B4A1E] border-[#E7CFA3]",
-  low: "bg-[#E9F0F0] text-[#1C2A2A] border-[#C7D9D9]",
+  low: "bg-[#E8EEEE] text-[#1C2A2A] border-[#BFD6D6]",
 }
 const impactLabels: Record<string, string> = {
   high: "Hohe Wirkung",
@@ -146,7 +146,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
                     type="button"
                     onClick={() => run(() => markRecommendationDone(rec.id), rec.id)}
                     disabled={pending}
-                    className="text-xs px-3 py-1.5 rounded-full bg-[#6D8C8D] hover:bg-[#5A7576] text-white font-medium transition-colors disabled:opacity-40"
+                    className="text-xs px-3 py-1.5 rounded-full bg-[#8CAAAB] hover:bg-[#6B8B8C] text-white font-medium transition-colors disabled:opacity-40"
                   >
                     {busyId === rec.id ? "…" : "✓ Erledigt"}
                   </button>
@@ -178,7 +178,7 @@ export default function RecommendationsPanel({ open, done, currentScore, hasRepo
               <div key={rec.id} className="bg-white rounded-3xl border border-[#E9E1D3] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex items-start gap-3 min-w-0">
-                    <div className="w-7 h-7 rounded-xl bg-[#E9F0F0] text-[#1C2A2A] flex items-center justify-center text-sm flex-shrink-0">
+                    <div className="w-7 h-7 rounded-xl bg-[#E8EEEE] text-[#1C2A2A] flex items-center justify-center text-sm flex-shrink-0">
                       ✓
                     </div>
                     <div className="min-w-0">

@@ -11,8 +11,9 @@ export const metadata: Metadata = {
     "DigitalHalo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
 }
 
-// ─── Markenfarben (Digital_Halo_Brandkit V1.0) ───
-// Coral #FA5935 · tief #C8431F · Teal #6D8C8D · Schwarz #0E1916 · Beige #EAE2D5
+// ─── Markenfarben (Digital_Halo_Brandkit V1.0 + CI S3 Mockup) ───
+// Coral #FA5935 · tief #C8431F · Teal #8CAAAB · Schwarz #0E1916 · Beige #EAE2D5
+// zusaetzlich: Graphit #5E6563 (Digitale Autoritaet) · Taupe #AA9175 (Beige-Akzent)
 // Flächen: Weiß / #FAF8F3 (Beige-Tint)
 
 export default async function Home() {
@@ -34,7 +35,7 @@ export default async function Home() {
           <nav>
             <div className="max-w-6xl mx-auto px-6 h-[76px] flex items-center justify-between">
               <a href="#top" className="flex items-center gap-2.5">
-                <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-5 w-auto" />
+                <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-6 w-auto" />
               </a>
               <div className="hidden md:flex items-center gap-7 text-sm">
                 <a href="#funktionen" className="text-white/80 hover:text-white transition-colors">Funktionen</a>
@@ -112,12 +113,12 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ─── So funktioniert's (3 Schritte) ─── */}
-      <section id="ablauf" className="bg-[#FAF8F3]">
-        <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24">
+      {/* ─── So funktioniert's (3 Schritte) — CI-Hintergrund (Brandkit-Gradient) ─── */}
+      <section id="ablauf" className="halo-gradient">
+        <div className="halo-gradient-content max-w-6xl mx-auto px-6 py-20 sm:py-24">
           <div className="max-w-xl mb-14">
-            <Eyebrow>So funktioniert&apos;s</Eyebrow>
-            <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916]">
+            <Eyebrow dark>So funktioniert&apos;s</Eyebrow>
+            <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-white">
               In 3 Schritten zu deinem Halo Score.
             </h2>
           </div>
@@ -127,10 +128,10 @@ export default async function Home() {
               { n: "2", t: "Analyse starten", d: "DigitalHalo stellt 7 typische Suchfragen an die KI-Modelle und wertet aus, wie prominent du genannt wirst." },
               { n: "3", t: "Score & Empfehlungen", d: "Du bekommst deinen Halo Score, Wettbewerber-Vergleich und konkrete nächste Schritte." },
             ].map(s => (
-              <div key={s.n} className="rounded-3xl border border-[#E9E1D3] bg-white p-7">
-                <div className="w-11 h-11 rounded-2xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center text-lg font-bold mb-4">{s.n}</div>
-                <div className="font-semibold text-[#0E1916] mb-1.5">{s.t}</div>
-                <p className="text-sm text-[#6B625A] leading-relaxed">{s.d}</p>
+              <div key={s.n} className="rounded-3xl border border-white/25 bg-white/10 backdrop-blur-sm p-7">
+                <div className="w-11 h-11 rounded-2xl bg-[#FA5935] text-white flex items-center justify-center text-lg font-bold mb-4">{s.n}</div>
+                <div className="font-semibold text-white mb-1.5">{s.t}</div>
+                <p className="text-sm text-[#FBCBB8] leading-relaxed">{s.d}</p>
               </div>
             ))}
           </div>
@@ -170,8 +171,8 @@ export default async function Home() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <DimCard tint="#FDE7E0" text="#7A2A12" track="#F7B49B" bar="#FA5935" name="GEO Score" val={72} desc="Wie oft KI-Systeme dich in Antworten nennen." />
           <DimCard tint="#F6ECD9" text="#6B4A1E" track="#E7CFA3" bar="#C98A3E" name="SEO Score" val={64} desc="Deine Reputation in der klassischen Google-Suche." />
-          <DimCard tint="#E9F0F0" text="#1C2A2A" track="#C7D9D9" bar="#6D8C8D" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
-          <DimCard tint="#E7E3DC" text="#3A4442" track="#CFCABF" bar="#3A4442" name="Digitale Autorität" val={63} desc="Die Stärke deiner Online-Spur." />
+          <DimCard tint="#E8EEEE" text="#1C2A2A" track="#BFD6D6" bar="#8CAAAB" name="Thought Leadership" val={41} desc="Ob KI dich als Experten einordnet." />
+          <DimCard tint="#E6E8E7" text="#5E6563" track="#C7CBC9" bar="#5E6563" name="Digitale Autorität" val={63} desc="Die Stärke deiner Online-Spur." />
         </div>
       </section>
 
@@ -212,7 +213,7 @@ export default async function Home() {
       </section>
 
       {/* ─── Public API (vollflaechig, Teal-Tint) ─── */}
-      <section className="bg-[#E9F0F0]">
+      <section className="bg-[#E8EEEE]">
         <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 grid lg:grid-cols-2 gap-14 items-center">
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[#3D6A6B]">Public API</span>
@@ -295,7 +296,7 @@ export default async function Home() {
                 <div className="flex items-center gap-3 min-w-0">
                   <span
                     className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                      m.tone === "coral" ? "bg-[#FA5935]" : m.tone === "teal" ? "bg-[#6D8C8D]" : "bg-[#0E1916]"
+                      m.tone === "coral" ? "bg-[#FA5935]" : m.tone === "teal" ? "bg-[#8CAAAB]" : "bg-[#0E1916]"
                     }`}
                   />
                   <span className="text-sm font-medium text-[#0E1916] truncate">{m.n}</span>
@@ -378,7 +379,7 @@ export default async function Home() {
         <div className="max-w-6xl mx-auto px-6 grid sm:grid-cols-2 lg:grid-cols-4 gap-10 pb-12 text-sm">
           <div>
             <div className="mb-3.5">
-              <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-5 w-auto" />
+              <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-6 w-auto" />
             </div>
             <p className="text-[#9DAEA9] leading-relaxed text-[13px] max-w-[220px]">
               KI-Reputations-Monitor für Personal Brands. Gehostet in der EU.
@@ -448,8 +449,8 @@ function HeroCockpit() {
         {[
           { l: "GEO", v: 72, tint: "#FDE7E0", tx: "#7A2A12" },
           { l: "SEO", v: 64, tint: "#F6ECD9", tx: "#6B4A1E" },
-          { l: "T. L.", v: 41, tint: "#E9F0F0", tx: "#1C2A2A" },
-          { l: "Aut.", v: 63, tint: "#E7E3DC", tx: "#3A4442" },
+          { l: "T. L.", v: 41, tint: "#E8EEEE", tx: "#1C2A2A" },
+          { l: "Aut.", v: 63, tint: "#E6E8E7", tx: "#5E6563" },
         ].map(d => (
           <div key={d.l} className="rounded-xl p-2.5" style={{ background: d.tint }}>
             <div className="text-[11px]" style={{ color: d.tx }}>{d.l}</div>
@@ -492,7 +493,7 @@ function PriceCard({ name, price, sub, feats, featured = false }: {
       </div>
       <ul className="space-y-2.5 mb-6">
         {feats.map(f => (
-          <li key={f} className="flex gap-2.5 text-sm text-[#3D3A35]"><span className="text-[#6D8C8D] font-bold">✓</span>{f}</li>
+          <li key={f} className="flex gap-2.5 text-sm text-[#3D3A35]"><span className="text-[#8CAAAB] font-bold">✓</span>{f}</li>
         ))}
       </ul>
       <Link href="/login" className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#FDE7E0]"}`}>

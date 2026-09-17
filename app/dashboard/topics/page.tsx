@@ -4,7 +4,7 @@ import DashboardShell from "@/components/DashboardShell"
 
 // Brandkit-konform statt Grün/Rot-Ampel: Koralle = stark, Teal = mittel, Stein = niedrig.
 function hue(s: number) {
-  return s >= 70 ? "#FA5935" : s >= 45 ? "#6D8C8D" : "#5A5248"
+  return s >= 70 ? "#FA5935" : s >= 45 ? "#8CAAAB" : "#5E6563"
 }
 
 function scoreLabel(s: number) {

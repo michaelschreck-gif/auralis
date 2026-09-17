@@ -138,7 +138,7 @@ export default function OnboardingPage() {
     setPhase("result")
   }
 
-  const bandColor = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#6D8C8D" : s >= 26 ? "#C98A3E" : "#3A4442")
+  const bandColor = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#8CAAAB" : s >= 26 ? "#C98A3E" : "#5E6563")
   const bandColorOnDark = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#9BB8B8" : s >= 26 ? "#E3B573" : "#D8D0C0")
 
   const DOT_PHASES: Phase[] = ["name", "topics", "result"]
@@ -149,7 +149,7 @@ export default function OnboardingPage() {
       <div className="max-w-md w-full">
         {/* Brand + Fortschritt */}
         <div className="flex flex-col items-center gap-4 mb-6">
-          <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
+          <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
           <div className="flex items-center gap-2">
             {DOT_PHASES.map((p, i) => (
               <span

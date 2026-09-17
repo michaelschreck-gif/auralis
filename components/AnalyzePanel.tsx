@@ -170,7 +170,7 @@ export default function AnalyzePanel({
                     disabled={disabled}
                     className={`flex-shrink-0 px-4 py-2 rounded-full text-xs font-medium transition-colors ${
                       wasSuccess
-                        ? "bg-[#E9F0F0] text-[#1C2A2A] border border-[#C7D9D9]"
+                        ? "bg-[#E8EEEE] text-[#1C2A2A] border border-[#BFD6D6]"
                         : "bg-[#FA5935] hover:bg-[#C8431F] text-white disabled:opacity-40 disabled:cursor-not-allowed"
                     }`}
                   >

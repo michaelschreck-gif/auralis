@@ -51,9 +51,11 @@ export const DIMENSION_THEME: Record<ScoreKey, DimensionTheme> = {
     bg: "#FDE7E0", track: "#F7B49B", accent: "#FA5935", text: "#7A2A12", label: "#C8431F",
   },
   "thought-leadership": {
-    bg: "#E9F0F0", track: "#C7D9D9", accent: "#6D8C8D", text: "#1C2A2A", label: "#4C6667",
+    // Offizielle Brandkit-Referenz (CI S3 Mockup): Tint e8eeee / Akzent 8caaab.
+    bg: "#E8EEEE", track: "#BFD6D6", accent: "#8CAAAB", text: "#1C2A2A", label: "#5C7A7B",
   },
   "digital-authority": {
-    bg: "#E7E3DC", track: "#CFCABF", accent: "#3A4442", text: "#3A4442", label: "#5A5248",
+    // Offizielle Brandkit-Referenz (CI S3 Mockup): Tint e6e8e7 / Akzent 5e6563.
+    bg: "#E6E8E7", track: "#C7CBC9", accent: "#5E6563", text: "#3A3F3D", label: "#6B7371",
   },
 }

@@ -14,7 +14,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
       <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-4 w-auto" />
+            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
           </Link>
           <div className="flex items-center gap-4 text-sm">
             <span className="text-[#9A9089] hidden sm:inline">Rechtliches</span>

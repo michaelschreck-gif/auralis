@@ -23,8 +23,8 @@ type ModelInfo = {
 // dieselbe Logik wie im Multi-Modell-Tracking-Abschnitt der Landingpage.
 const TIER_COLOR: Record<ModelInfo["unlocksOn"], string> = {
   free: "#FA5935",
-  starter: "#6D8C8D",
-  pro: "#3A4442",
+  starter: "#8CAAAB",
+  pro: "#5E6563",
 }
 
 const MODELS: ModelInfo[] = [
@@ -103,7 +103,7 @@ function ModelCard({
           </div>
         </div>
         {state.kind === "score" && (
-          <span className="text-xs px-2.5 py-1 rounded-full bg-[#E9F0F0] text-[#1C2A2A] border border-[#C7D9D9] font-medium">
+          <span className="text-xs px-2.5 py-1 rounded-full bg-[#E8EEEE] text-[#1C2A2A] border border-[#BFD6D6] font-medium">
             Aktiv
           </span>
         )}

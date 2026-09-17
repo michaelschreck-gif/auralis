@@ -11,8 +11,8 @@ type Params = { slug: string }
 
 const SUB_THEME = {
   geo: { bg: "#FDE7E0", track: "#F7B49B", accent: "#FA5935", text: "#7A2A12", label: "#C8431F" },
-  thoughtLeadership: { bg: "#E9F0F0", track: "#C7D9D9", accent: "#6D8C8D", text: "#1C2A2A", label: "#4C6667" },
-  digitalAuthority: { bg: "#E7E3DC", track: "#CFCABF", accent: "#3A4442", text: "#3A4442", label: "#5A5248" },
+  thoughtLeadership: { bg: "#E8EEEE", track: "#BFD6D6", accent: "#8CAAAB", text: "#1C2A2A", label: "#5C7A7B" },
+  digitalAuthority: { bg: "#E6E8E7", track: "#C7CBC9", accent: "#5E6563", text: "#3A3F3D", label: "#6B7371" },
 } as const
 
 async function loadProfileBySlug(slug: string) {
@@ -94,7 +94,7 @@ export default async function PublicProfilePage(
       <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <a href="/" className="flex items-center gap-2.5">
-            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-4 w-auto" />
+            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
           </a>
           <a
             href="/login"

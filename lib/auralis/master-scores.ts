@@ -97,9 +97,9 @@ export type RawFactorKey = "presence" | "position" | "context" | "topic" | "ment
 // Brandkit-Palette (dieselben Töne wie DimCard auf der Landingpage) statt
 // der früheren Blau/Grün/Lila-Mischung, die nicht zum Brandkit passte.
 const COLOR_CORAL      = "#FA5935"
-const COLOR_TEAL       = "#6D8C8D"
+const COLOR_TEAL       = "#8CAAAB"
 const COLOR_AMBER      = "#C98A3E"
-const COLOR_DARK       = "#3A4442"
+const COLOR_DARK       = "#5E6563"
 const COLOR_CORAL_DEEP = "#C8431F"
 
 export const RAW_FACTOR_META: Record<

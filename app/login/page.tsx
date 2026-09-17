@@ -133,7 +133,7 @@ export default function LoginPage() {
 
         {/* Left: brand panel */}
         <div className="hidden md:flex flex-col justify-between bg-[#0E1916] p-11">
-          <img src="/brand/combinationmark-white.svg" alt="Halo" className="h-[18px] w-auto" />
+          <img src="/brand/combinationmark-white.svg" alt="Halo" className="h-[22px] w-auto" />
 
           <div className="mt-10">
             <span className="text-[11px] font-semibold uppercase tracking-wider text-[#F7B49B]">
@@ -166,13 +166,13 @@ export default function LoginPage() {
                   <div className="text-[10px]" style={{ color: "#7A2A12" }}>GEO</div>
                   <div className="text-[15px] font-bold tabular-nums" style={{ color: "#7A2A12" }}>72</div>
                 </div>
-                <div className="rounded-lg p-2" style={{ background: "#E9F0F0" }}>
+                <div className="rounded-lg p-2" style={{ background: "#E8EEEE" }}>
                   <div className="text-[10px]" style={{ color: "#1C2A2A" }}>T. L.</div>
                   <div className="text-[15px] font-bold tabular-nums" style={{ color: "#1C2A2A" }}>41</div>
                 </div>
-                <div className="rounded-lg p-2" style={{ background: "#E7E3DC" }}>
-                  <div className="text-[10px]" style={{ color: "#3A4442" }}>Aut.</div>
-                  <div className="text-[15px] font-bold tabular-nums" style={{ color: "#3A4442" }}>63</div>
+                <div className="rounded-lg p-2" style={{ background: "#E6E8E7" }}>
+                  <div className="text-[10px]" style={{ color: "#5E6563" }}>Aut.</div>
+                  <div className="text-[15px] font-bold tabular-nums" style={{ color: "#5E6563" }}>63</div>
                 </div>
               </div>
             </div>
@@ -326,7 +326,7 @@ export default function LoginPage() {
                 </div>
               )}
               {successMsg && (
-                <div className="rounded-lg bg-[#E9F0F0] border border-[#C7D9D9] px-4 py-3">
+                <div className="rounded-lg bg-[#E8EEEE] border border-[#BFD6D6] px-4 py-3">
                   <p className="text-xs text-[#1C2A2A] font-medium">{successMsg}</p>
                 </div>
               )}

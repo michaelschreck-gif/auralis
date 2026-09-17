@@ -116,7 +116,7 @@ export default function PublicProfileBlock({ initialEnabled, initialSlug, fullNa
         <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-2.5 text-xs text-red-700">{error}</div>
       )}
       {success && (
-        <div className="rounded-lg bg-[#E9F0F0] border border-[#C7D9D9] px-4 py-2.5 text-xs text-[#1C2A2A]">{success}</div>
+        <div className="rounded-lg bg-[#E8EEEE] border border-[#BFD6D6] px-4 py-2.5 text-xs text-[#1C2A2A]">{success}</div>
       )}
 
       {/* Slug editor + URL */}

@@ -4,10 +4,14 @@
   --background: #FAF8F3;
   --foreground: #0E1916;
 
-  /* DigitalHalo brand set (Visual Identity Guidelines v1.0) */
+  /* DigitalHalo brand set (Visual Identity Guidelines v1.0 + CI S3 Mockup) */
   --color-beige: #eae2d5;
   --color-coral: #fa5935;
   --color-teal: #8caaab;
+  --color-teal-tint: #e8eeee;
+  --color-taupe: #aa9175;
+  --color-graphite: #5e6563;
+  --color-graphite-tint: #e6e8e7;
 }
 
 html {

@@ -124,9 +124,9 @@ export type ProbabilityBand = { label: string; min: number; color: string }
 export const PROBABILITY_BANDS: ProbabilityBand[] = [
   // Brandkit-konform statt Grün/Rot-Ampel.
   { label: "Erste Wahl", min: 75, color: "#FA5935" },
-  { label: "Im Kandidatenkreis", min: 45, color: "#6D8C8D" },
+  { label: "Im Kandidatenkreis", min: 45, color: "#8CAAAB" },
   { label: "Selten empfohlen", min: 20, color: "#C98A3E" },
-  { label: "Nicht auf dem Schirm", min: 0, color: "#3A4442" },
+  { label: "Nicht auf dem Schirm", min: 0, color: "#5E6563" },
 ]
 
 export function probabilityBand(p: number): ProbabilityBand {

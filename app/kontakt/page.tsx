@@ -13,7 +13,7 @@ export default function KontaktPage() {
       <header className="bg-white border-b border-[#E9E1D3]">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5">
-            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
+            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
           </Link>
           <Link href="/" className="text-sm text-[#C8431F] hover:underline font-medium">
             Zur Startseite →
@@ -61,14 +61,14 @@ export default function KontaktPage() {
           </a>
 
           {/* Antwortzeit */}
-          <div className="rounded-3xl bg-[#E9F0F0] border border-[#C7D9D9] p-6">
+          <div className="rounded-3xl bg-[#E8EEEE] border border-[#BFD6D6] p-6">
             <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center mb-3.5">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#4C6667" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#5C7A7B" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
               </svg>
             </div>
             <div className="text-sm font-semibold text-[#1C2A2A]">Antwortzeit</div>
-            <div className="text-sm text-[#4C6667] mt-0.5">meist &lt; 1 Werktag</div>
+            <div className="text-sm text-[#5C7A7B] mt-0.5">meist &lt; 1 Werktag</div>
           </div>
         </div>
 

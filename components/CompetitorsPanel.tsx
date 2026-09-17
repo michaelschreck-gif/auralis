@@ -32,7 +32,7 @@ type Props = {
 // Brandkit-konform: neutral → aufbauend → etabliert → Marke (Koralle) für "Dominant".
 function scoreBand(s: number): { color: string; bg: string; label: string } {
   if (s >= 76) return { color: "#7A2A12", bg: "#FDE7E0", label: "Dominant" }
-  if (s >= 51) return { color: "#1C2A2A", bg: "#E9F0F0", label: "Etabliert" }
+  if (s >= 51) return { color: "#1C2A2A", bg: "#E8EEEE", label: "Etabliert" }
   if (s >= 26) return { color: "#6B4A1E", bg: "#F6ECD9", label: "Aufbauend" }
   return { color: "#5A5248", bg: "#F1EEE7", label: "Nicht sichtbar" }
 }
@@ -271,7 +271,7 @@ export default function CompetitorsPanel({ self, competitors, canAnalyze, plan, 
                       }
                       className={`text-xs px-3 py-1.5 rounded-full font-medium transition-colors ${
                         successId === r.competitorId
-                          ? "bg-[#E9F0F0] text-[#1C2A2A] border border-[#C7D9D9]"
+                          ? "bg-[#E8EEEE] text-[#1C2A2A] border border-[#BFD6D6]"
                           : canAnalyze
                           ? "bg-[#FA5935] hover:bg-[#C8431F] text-white disabled:opacity-40 disabled:cursor-not-allowed"
                           : "bg-[#F3EFE6] text-[#9A9089] cursor-not-allowed border border-[#E9E1D3]"

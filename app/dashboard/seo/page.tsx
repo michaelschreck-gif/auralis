@@ -15,8 +15,8 @@ import SeoRunButton from "@/components/SeoRunButton"
 export const dynamic = "force-dynamic"
 
 // Vier Stufen, Brandkit-konform: neutral → aufbauend → etabliert → Marke (Koralle).
-const BAND_FILL   = ["#F1EEE7", "#F6ECD9", "#E9F0F0", "#FDE7E0"]
-const BAND_BORDER = ["#D8D0C0", "#E7CFA3", "#C7D9D9", "#FBCBB8"]
+const BAND_FILL   = ["#F1EEE7", "#F6ECD9", "#E8EEEE", "#FDE7E0"]
+const BAND_BORDER = ["#D8D0C0", "#E7CFA3", "#BFD6D6", "#FBCBB8"]
 const BAND_TEXT   = ["#5A5248", "#6B4A1E", "#1C2A2A", "#7A2A12"]
 
 export default async function SeoScorePage() {

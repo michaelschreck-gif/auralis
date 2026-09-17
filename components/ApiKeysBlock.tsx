@@ -90,18 +90,18 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
 
       {/* Just-created key shown once */}
       {justCreated && (
-        <div className="rounded-xl bg-[#E9F0F0] border border-[#C7D9D9] p-4 space-y-3">
+        <div className="rounded-xl bg-[#E8EEEE] border border-[#BFD6D6] p-4 space-y-3">
           <div>
             <p className="text-sm font-medium text-[#1C2A2A]">
               ✓ API-Key „{justCreated.name}" erstellt
             </p>
-            <p className="text-xs text-[#4C6667] mt-1 leading-relaxed">
+            <p className="text-xs text-[#5C7A7B] mt-1 leading-relaxed">
               <span className="font-medium">Dieser Key wird nur einmal angezeigt.</span>{" "}
               Speichere ihn jetzt sicher ab — du kannst ihn später nicht mehr einsehen.
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <code className="flex-1 text-xs bg-white border border-[#C7D9D9] rounded-md px-3 py-2 font-mono break-all">
+            <code className="flex-1 text-xs bg-white border border-[#BFD6D6] rounded-md px-3 py-2 font-mono break-all">
               {justCreated.plaintext}
             </code>
             <button
@@ -115,7 +115,7 @@ export default function ApiKeysBlock({ keys, plan, isEligible }: Props) {
           <button
             type="button"
             onClick={() => setJustCreated(null)}
-            className="text-xs text-[#4C6667] hover:text-[#1C2A2A] underline"
+            className="text-xs text-[#5C7A7B] hover:text-[#1C2A2A] underline"
           >
             Ich habe den Key sicher gespeichert
           </button>
