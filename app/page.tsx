@@ -47,8 +47,8 @@ export default async function Home() {
                 <Link href="/login" className="text-sm px-3.5 py-2 rounded-full text-white hover:bg-white/10 transition-colors font-medium">
                   Anmelden
                 </Link>
-                <Link href="/login" className="text-sm px-4 py-2 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] transition-colors font-semibold">
-                  Kostenlos starten
+                <Link href="/warteliste" className="text-sm px-4 py-2 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] transition-colors font-semibold">
+                  Warteliste
                 </Link>
               </div>
             </div>
@@ -64,8 +64,8 @@ export default async function Home() {
                 — mit <span className="text-white font-semibold">Halo Score™</span>, Wettbewerber-Vergleich und konkreten Empfehlungen.
               </p>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-8">
-                <Link href="/login" className="text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors text-center">
-                  Kostenlos starten →
+                <Link href="/warteliste" className="text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors text-center">
+                  Jetzt vormerken →
                 </Link>
                 <a href="#ablauf" className="text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors text-center">
                   So funktioniert&apos;s →
@@ -150,8 +150,8 @@ export default async function Home() {
               Der Halo Score™ kombiniert vier Dimensionen — GEO, SEO, Thought Leadership und Digitale
               Autorität — zu einem Wert von 0 bis 100.
             </p>
-            <Link href="/login" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors">
-              Eigenen Score messen →
+            <Link href="/warteliste" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors">
+              Jetzt vormerken →
             </Link>
           </div>
           <div className="flex justify-center">
@@ -367,8 +367,8 @@ export default async function Home() {
             <p className="text-white/85 mt-5 max-w-md leading-relaxed">
               Sieh in 60 Sekunden, wo du in der KI-Suche stehst. Kostenlos, keine Kreditkarte.
             </p>
-            <Link href="/login" className="inline-block mt-9 text-sm px-8 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
-              Kostenlos starten →
+            <Link href="/warteliste" className="inline-block mt-9 text-sm px-8 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
+              Jetzt vormerken →
             </Link>
           </div>
         </div>
@@ -496,8 +496,8 @@ function PriceCard({ name, price, sub, feats, featured = false }: {
           <li key={f} className="flex gap-2.5 text-sm text-[#3D3A35]"><span className="text-[#8CAAAB] font-bold">✓</span>{f}</li>
         ))}
       </ul>
-      <Link href="/login" className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#FDE7E0]"}`}>
-        {name === "Free" ? "Kostenlos starten" : `${name} wählen`}
+      <Link href="/warteliste" className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#FDE7E0]"}`}>
+        Vormerken
       </Link>
     </div>
   )

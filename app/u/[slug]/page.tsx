@@ -97,10 +97,10 @@ export default async function PublicProfilePage(
             <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
           </a>
           <a
-            href="/login"
+            href="/warteliste"
             className="text-sm px-4 py-2 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors font-semibold"
           >
-            Eigenen Score messen →
+            Auf die Warteliste →
           </a>
         </div>
       </header>
@@ -189,13 +189,13 @@ export default async function PublicProfilePage(
         <section className="text-center py-8">
           <p className="text-sm text-[#6B625A] mb-4">Willst du deinen eigenen Halo Score™ kennen?</p>
           <a
-            href="/login"
+            href="/warteliste"
             className="inline-block px-6 py-3 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-semibold transition-colors"
           >
-            Kostenlos messen lassen →
+            Jetzt vormerken →
           </a>
           <p className="text-xs text-[#9A9089] mt-3">
-            Keine Kreditkarte · 1 kostenlose Analyse · DSGVO-konform
+            Kein Spam · Keine Kreditkarte · DSGVO-konform
           </p>
         </section>
       </main>

@@ -91,10 +91,10 @@ export default function KontaktPage() {
 
         <div className="mt-8">
           <Link
-            href="/login"
+            href="/warteliste"
             className="inline-block text-sm px-5 py-3 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors"
           >
-            Kostenlos starten →
+            Jetzt vormerken →
           </Link>
         </div>
       </main>
