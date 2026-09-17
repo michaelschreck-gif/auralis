@@ -115,6 +115,7 @@ export default async function Home() {
 
       {/* ─── So funktioniert's (3 Schritte) — CI-Hintergrund (Brandkit-Gradient) ─── */}
       <section id="ablauf" className="halo-gradient">
+        <div className="halo-gradient-scrim" />
         <div className="halo-gradient-content max-w-6xl mx-auto px-6 py-20 sm:py-24">
           <div className="max-w-xl mb-14">
             <Eyebrow dark>So funktioniert&apos;s</Eyebrow>
@@ -131,7 +132,7 @@ export default async function Home() {
               <div key={s.n} className="rounded-3xl border border-white/25 bg-white/10 backdrop-blur-sm p-7">
                 <div className="w-11 h-11 rounded-2xl bg-[#FA5935] text-white flex items-center justify-center text-lg font-bold mb-4">{s.n}</div>
                 <div className="font-semibold text-white mb-1.5">{s.t}</div>
-                <p className="text-sm text-[#FBCBB8] leading-relaxed">{s.d}</p>
+                <p className="text-sm text-white/80 leading-relaxed">{s.d}</p>
               </div>
             ))}
           </div>
@@ -341,7 +342,7 @@ export default async function Home() {
               { q: "Was ist DigitalHalo?", a: "DigitalHalo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
               { q: "Wie unterscheidet sich DigitalHalo von klassischem SEO?", a: "Klassisches SEO misst dein Google-Ranking. DigitalHalo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren. Mit dem SEO Score deckt DigitalHalo beides ab." },
               { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
-              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Der Zugang ist aktuell auf die Warteliste beschraenkt. Sobald du dran bist, startest du kostenlos mit einer Analyse — eine Kreditkarte brauchst du dafuer nicht." },
+              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Halo ist aktuell einem exklusiven Nutzerkreis vorbehalten — trag dich auf die Warteliste ein. Sobald ein Platz frei wird, startest du kostenlos mit einer Analyse, eine Kreditkarte brauchst du dafuer nicht." },
               { q: "Werden meine Daten an die KI-Anbieter verkauft?", a: "Nein. Wir senden nur die generierten Suchfragen an die KI-APIs. Deine Account-Daten bleiben in der EU. Wir verkaufen niemals Nutzerdaten." },
               { q: "Kann ich DigitalHalo in eigene Tools integrieren?", a: "Ja, ab Tarif Pro über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
             ].map(f => (

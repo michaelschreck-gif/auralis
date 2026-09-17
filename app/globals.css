@@ -65,3 +65,12 @@ body {
   position: relative;
   z-index: 2;
 }
+/* Optional darkening scrim for sections where the blobs alone don't reliably
+   cover enough of a (shorter) container to keep white text readable against
+   the light beige base. Sits below the content, above the blobs/noise. */
+.halo-gradient-scrim {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: color-mix(in srgb, #0e1916 62%, transparent);
+}

@@ -69,14 +69,14 @@ export default function WartelistePage() {
         <div className="p-8 sm:p-11 flex flex-col justify-center">
           <div className="mb-6">
             <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">
-              Bald verfügbar
+              Exklusiver Zugang
             </span>
             <h3 className="font-[family-name:var(--font-display)] font-normal text-2xl text-[#0E1916] mt-2">
               Auf die Warteliste
             </h3>
             <p className="text-[#6B625A] text-sm mt-1 leading-relaxed">
-              Halo ist aktuell noch nicht frei zugänglich. Trag dich mit deiner E-Mail ein
-              und wir melden uns, sobald du dabei sein kannst.
+              Halo ist aktuell einem exklusiven Nutzerkreis vorbehalten. Trag dich mit deiner
+              E-Mail ein und wir melden uns, sobald ein Platz für dich frei wird.
             </p>
           </div>
 
