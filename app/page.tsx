@@ -71,7 +71,7 @@ export default async function Home() {
                   So funktioniert&apos;s →
                 </a>
               </div>
-              <p className="text-xs text-white/70 mt-4">1 Analyse kostenlos · keine Kreditkarte · DSGVO-konform</p>
+              <p className="text-xs text-white/70 mt-4">Kein Spam · keine Kreditkarte · DSGVO-konform</p>
             </div>
 
             <div className="mt-14 max-w-[760px]">
@@ -341,7 +341,7 @@ export default async function Home() {
               { q: "Was ist DigitalHalo?", a: "DigitalHalo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
               { q: "Wie unterscheidet sich DigitalHalo von klassischem SEO?", a: "Klassisches SEO misst dein Google-Ranking. DigitalHalo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren. Mit dem SEO Score deckt DigitalHalo beides ab." },
               { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
-              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Free-Account erstellen, 1 Analyse starten, alle Cockpit-Funktionen sehen. Upgrade ist optional." },
+              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Der Zugang ist aktuell auf die Warteliste beschraenkt. Sobald du dran bist, startest du kostenlos mit einer Analyse — eine Kreditkarte brauchst du dafuer nicht." },
               { q: "Werden meine Daten an die KI-Anbieter verkauft?", a: "Nein. Wir senden nur die generierten Suchfragen an die KI-APIs. Deine Account-Daten bleiben in der EU. Wir verkaufen niemals Nutzerdaten." },
               { q: "Kann ich DigitalHalo in eigene Tools integrieren?", a: "Ja, ab Tarif Pro über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
             ].map(f => (
@@ -365,7 +365,7 @@ export default async function Home() {
               Mehr Reputation. Weniger Rätselraten.
             </h2>
             <p className="text-white/85 mt-5 max-w-md leading-relaxed">
-              Sieh in 60 Sekunden, wo du in der KI-Suche stehst. Kostenlos, keine Kreditkarte.
+              Trag dich auf die Warteliste ein und sei unter den Ersten, die ihren Halo Score sehen. Kostenlos, keine Kreditkarte.
             </p>
             <Link href="/warteliste" className="inline-block mt-9 text-sm px-8 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
               Jetzt vormerken →
