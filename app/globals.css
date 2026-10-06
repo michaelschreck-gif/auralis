@@ -74,3 +74,21 @@ body {
   z-index: 1;
   background: color-mix(in srgb, #0e1916 62%, transparent);
 }
+
+
+/* ─── Tool-Oberfläche (App-Shell): Manrope + kräftige Überschriften ───
+   Überschreibt nur innerhalb von .app-shell die Display-/Sans-Schrift, damit
+   die Marketing-Webseite unverändert bleibt. */
+.app-shell {
+  --font-sans: var(--font-manrope), system-ui, sans-serif;
+  --font-display: var(--font-manrope), system-ui, sans-serif;
+  font-family: var(--font-manrope), system-ui, sans-serif;
+}
+.app-shell h1,
+.app-shell h2 {
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+.app-shell h3 {
+  font-weight: 700;
+}

@@ -10,7 +10,7 @@ import {
   type MasterScore,
   type ScoreKey,
 } from "@/lib/auralis/master-scores"
-import { AURA_THEME, DIMENSION_THEME, SEO_THEME, type DimensionTheme } from "@/lib/auralis/theme"
+import { AURA_THEME, DIMENSION_THEME, SEO_THEME } from "@/lib/auralis/theme"
 import type { SeoScore } from "@/lib/auralis/seo-score"
 import ScoreExplainer from "./ScoreExplainer"
 import { Icons } from "./DashboardShell"
@@ -33,9 +33,10 @@ export default function Cockpit({
 
   const masters = useMemo(() => report ? computeMasterScores(report) : null, [report])
   const lastAnalyzedAt = report?.queriedAt ? new Date(report.queriedAt) : null
-  const firstName = (userName ?? "").split(" ")[0] || "👋"
+  const firstName = (userName ?? "").split(" ")[0] || "da"
+  const initial = (userName ?? "").trim().charAt(0).toUpperCase() || "H"
 
-  // Alle vier Dimensionen zusammen sortiert, um "Deine Stärken" / "Ausbaufähig" dynamisch zu bilden.
+  // Alle Dimensionen sortiert, um "Stärken" / "Ausbaufähig" dynamisch zu bilden.
   const ranked = useMemo(() => {
     if (!masters) return []
     const rows: { label: string; value: number }[] = [
@@ -49,21 +50,33 @@ export default function Cockpit({
   const strengths = ranked.slice(0, 2)
   const opportunities = ranked.slice(-2).reverse()
 
+  const greeting = (
+    <div className="flex items-center gap-4">
+      <span className="w-12 h-12 rounded-full bg-gradient-to-br from-[#FA5935] to-[#0E1916] text-white flex items-center justify-center text-lg font-extrabold flex-shrink-0">
+        {initial}
+      </span>
+      <div>
+        <h1 className="text-2xl sm:text-3xl tracking-tight text-[#0E1916]">Guten Tag, {firstName}.</h1>
+        <p className="text-sm text-[#5E6563] mt-0.5">
+          {lastAnalyzedAt ? <>Letzte Analyse {relativeTime(lastAnalyzedAt)}</> : "So sehen dich KI-Systeme."}
+        </p>
+      </div>
+    </div>
+  )
+
   return (
     <div>
       {!masters && (
-        <div className="p-4 md:p-8 max-w-6xl mx-auto">
-          <header className="mb-6">
-            <h1 className="text-2xl font-semibold text-[#0E1916]">Hallo, {firstName} 👋</h1>
-          </header>
-          <div className="rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/60 p-8 text-center">
-            <p className="text-base font-medium text-[#0E1916]">Noch keine Analyse vorhanden.</p>
-            <p className="text-sm text-[#C8431F] mt-2 mb-5">
-              Starte deine erste Reputationsanalyse, um deinen Halo Score und die drei Dimensionen zu sehen.
+        <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+          {greeting}
+          <div className="rounded-3xl border border-[#E9E1D3] bg-white p-8 sm:p-10 text-center">
+            <p className="text-lg font-bold text-[#0E1916]">Noch keine Analyse vorhanden.</p>
+            <p className="text-sm text-[#5E6563] mt-2 mb-6 max-w-md mx-auto">
+              Starte deine erste Reputationsanalyse, um deinen Halo Score und die Dimensionen zu sehen.
             </p>
             <Link
               href="/dashboard/analyze"
-              className="inline-block px-5 py-2.5 rounded-lg bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-medium transition-colors"
+              className="inline-block px-6 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-bold transition-colors"
             >
               Neue Analyse starten →
             </Link>
@@ -71,136 +84,111 @@ export default function Cockpit({
         </div>
       )}
 
-      {masters && (
-        <>
-          {/* ─── Hero: vollflächig, wie "Master-Metrik" auf der Landingpage ─── */}
-          <div className="bg-[#0E1916] relative overflow-hidden">
-            <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 md:py-14 grid md:grid-cols-[1fr_auto] items-center gap-8 md:gap-12 relative">
-              <div>
-                <div className="text-[13px] text-[#9DAEA9] mb-1.5">Hallo, {firstName} 👋</div>
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#F7B49B]">
-                  Dein Halo Score™
-                </span>
-                <h1 className="font-[family-name:var(--font-display)] font-normal text-3xl sm:text-4xl tracking-tight text-white mt-2.5 leading-tight">
-                  {masters.aura.band.label}.
-                </h1>
-                <p className="text-[#D8CFC4] text-[14.5px] leading-relaxed mt-3 max-w-md">
-                  So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden — kombiniert
-                  aus GEO, SEO, Thought Leadership und Digitaler Autorität.
-                  {lastAnalyzedAt && <> · Letzte Analyse {relativeTime(lastAnalyzedAt)}</>}
-                </p>
-                <div className="flex items-center gap-2.5 mt-6 flex-wrap">
-                  <Link
-                    href="/dashboard/analyze"
-                    className="px-5 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#E14A2A] text-[#0E1916] text-sm font-semibold transition-colors"
-                  >
-                    Neue Analyse
-                  </Link>
-                  {latestReportId && (
-                    <a
-                      href={`/api/reports/${latestReportId}/pdf`}
-                      download
-                      aria-label="PDF-Report herunterladen"
-                      className="px-4 py-2.5 rounded-full border border-white/35 text-white text-sm font-medium hover:bg-white/10 transition-colors"
-                    >
-                      ↓ PDF-Report
-                    </a>
-                  )}
-                  <button
-                    type="button"
-                    onClick={() => setOpenKey("aura")}
-                    className="text-[12.5px] text-[#FBCBB8] underline underline-offset-4 decoration-[#FBCBB8]/50 hover:text-white transition-colors"
-                  >
-                    So wird gerechnet
-                  </button>
-                </div>
-              </div>
+      {masters && report && (
+        <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-5">
+          {greeting}
 
-              <svg
-                width="152" height="152" viewBox="0 0 200 200"
-                className="flex-shrink-0 mx-auto md:mx-0"
-                role="img" aria-label={`Halo Score ${masters.aura.value} von 100`}
-              >
-                <circle cx="100" cy="100" r="64" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="16" />
-                <circle
-                  cx="100" cy="100" r="64" fill="none" stroke={AURA_THEME.ring} strokeWidth="16" strokeLinecap="round"
-                  strokeDasharray={`${(masters.aura.value / 100) * 402.1} 402.1`}
-                  transform="rotate(-90 100 100)"
-                />
-                <text x="100" y="96" textAnchor="middle" fill="#ffffff" fontSize="42" fontWeight="700" fontFamily="sans-serif">{masters.aura.value}</text>
-                <text x="100" y="122" textAnchor="middle" fill="#FBCBB8" fontSize="13" fontFamily="sans-serif">/ 100</text>
-              </svg>
+          {/* ─── Halo Score: große dunkle Karte ─── */}
+          <section className="rounded-3xl bg-[#0E1916] text-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
+            <svg
+              width="136" height="136" viewBox="0 0 200 200"
+              className="flex-shrink-0"
+              role="img" aria-label={`Halo Score ${masters.aura.value} von 100`}
+            >
+              <circle cx="100" cy="100" r="64" fill="none" stroke="rgba(255,255,255,0.14)" strokeWidth="16" />
+              <circle
+                cx="100" cy="100" r="64" fill="none" stroke={AURA_THEME.ring} strokeWidth="16" strokeLinecap="round"
+                strokeDasharray={`${(masters.aura.value / 100) * 402.1} 402.1`}
+                transform="rotate(-90 100 100)"
+              />
+              <text x="100" y="96" textAnchor="middle" fill="#ffffff" fontSize="42" fontWeight="800" fontFamily="sans-serif">{masters.aura.value}</text>
+              <text x="100" y="122" textAnchor="middle" fill="#FBCBB8" fontSize="13" fontFamily="sans-serif">/ 100</text>
+            </svg>
+            <div className="flex-1 min-w-0">
+              <div className="text-[11px] font-semibold uppercase tracking-wider text-[#F7B49B]">Dein Halo Score™</div>
+              <h2 className="text-2xl sm:text-3xl tracking-tight text-white mt-1.5">{masters.aura.band.label}.</h2>
+              <p className="text-[#D8CFC4] text-sm leading-relaxed mt-2 max-w-xl">
+                So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden — kombiniert aus GEO, SEO, Thought Leadership und Digitaler Autorität.
+              </p>
+              <div className="flex items-center gap-2.5 mt-5 flex-wrap">
+                <Link
+                  href="/dashboard/analyze"
+                  className="px-5 py-2.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#0E1916] text-sm font-bold transition-colors"
+                >
+                  Neue Analyse
+                </Link>
+                {latestReportId && (
+                  <a
+                    href={`/api/reports/${latestReportId}/pdf`}
+                    download
+                    aria-label="PDF-Report herunterladen"
+                    className="px-4 py-2.5 rounded-full border border-white/35 text-white text-sm font-semibold hover:bg-white/10 transition-colors"
+                  >
+                    ↓ PDF-Report
+                  </a>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setOpenKey("aura")}
+                  className="text-[13px] text-[#FBCBB8] underline underline-offset-4 decoration-[#FBCBB8]/50 hover:text-white transition-colors"
+                >
+                  So wird gerechnet
+                </button>
+              </div>
             </div>
+          </section>
+
+          {/* ─── Kennzahlen ─── */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <Kpi label="Halo Score" value={String(masters.aura.value)} tint="#FDE7E0" dot="#FA5935" />
+            <Kpi label="Erwähnungsquote" value={`${Math.round(report.mentionRate)} %`} tint="#E8EEEE" dot="#8CAAAB" />
+            <Kpi label="Ø Position" value={report.averagePosition === null ? "—" : report.averagePosition.toFixed(1)} tint="#F6ECD9" dot="#C98A3E" />
+            <Kpi label="Stärkste Dimension" value={masters.strongest.shortLabel} tint="#E6E8E7" dot="#5E6563" />
           </div>
 
-          <div className="max-w-6xl mx-auto px-4 md:px-8">
+          {/* ─── Drei Karten ─── */}
+          <div className="grid lg:grid-cols-3 gap-5">
 
-            {/* ─── Vier Dimensionen — exakt die DimCard-Optik der Landingpage ─── */}
-            <section className="py-8 md:py-10">
-              <div className="mb-5">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Deine Scores</span>
-                <h2 className="font-[family-name:var(--font-display)] font-normal text-2xl tracking-tight text-[#0E1916] mt-2">
-                  GEO, SEO, Thought Leadership &amp; Autorität.
-                </h2>
+            <Card icon={Icons.overview} title="Dimensionen" subtitle="Dein Halo Score im Detail">
+              <div className="space-y-3.5">
+                <DimRow label="GEO Score" value={masters.geo.value} theme={DIMENSION_THEME.geo} onExplain={() => setOpenKey("geo")} />
+                <DimRow label="Thought Leadership" value={masters.thoughtLeadership.value} theme={DIMENSION_THEME["thought-leadership"]} onExplain={() => setOpenKey("thought-leadership")} />
+                <DimRow label="Digitale Autorität" value={masters.digitalAuthority.value} theme={DIMENSION_THEME["digital-authority"]} onExplain={() => setOpenKey("digital-authority")} />
+                <DimRow label="SEO Score" value={seoScore?.value ?? null} theme={SEO_THEME} href="/dashboard/seo" />
               </div>
-              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-                <SubScoreCard score={masters.geo} theme={DIMENSION_THEME.geo} onExplain={() => setOpenKey("geo")} />
-                <SeoMiniCard score={seoScore} />
-                <SubScoreCard score={masters.thoughtLeadership} theme={DIMENSION_THEME["thought-leadership"]} onExplain={() => setOpenKey("thought-leadership")} />
-                <SubScoreCard score={masters.digitalAuthority} theme={DIMENSION_THEME["digital-authority"]} onExplain={() => setOpenKey("digital-authority")} />
-              </div>
-            </section>
+            </Card>
 
-            {/* ─── Einordnung — das Problem/Lösung-Zweikarten-Muster der Landingpage ─── */}
-            <section className="pb-8 md:pb-10">
-              <div className="mb-5">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Einordnung</span>
-                <h2 className="font-[family-name:var(--font-display)] font-normal text-2xl tracking-tight text-[#0E1916] mt-2">
-                  Wo du stehst — und was als Nächstes zählt.
-                </h2>
-              </div>
-              <div className="grid sm:grid-cols-2 gap-4">
-                <div className="rounded-3xl border border-[#E9E1D3] bg-white p-6 sm:p-7">
-                  <div className="text-[#6B625A] font-semibold mb-3.5 text-sm">Ausbaufähig</div>
-                  <ul className="space-y-2.5 text-sm text-[#4A453F]">
-                    {opportunities.map(o => (
-                      <li key={o.label} className="flex gap-2.5">
-                        <span className="text-[#9A9089] font-bold">✕</span>{o.label} · {o.value}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="rounded-3xl border border-[#FBCBB8] bg-gradient-to-br from-[#FDE7E0] to-[#F3EFE6] p-6 sm:p-7">
-                  <div className="text-[#C8431F] font-semibold mb-3.5 text-sm">Deine Stärken</div>
-                  <ul className="space-y-2.5 text-sm text-[#5C2A12]">
+            <Card icon={Icons.recommended} title="Einordnung" subtitle="Wo du stehst">
+              <div className="space-y-5 text-sm">
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#C8431F] mb-2">Deine Stärken</div>
+                  <ul className="space-y-2 text-[#3D4A46]">
                     {strengths.map(s => (
-                      <li key={s.label} className="flex gap-2.5">
-                        <span className="text-[#FA5935] font-bold">✓</span>{s.label} · {s.value}
-                      </li>
+                      <li key={s.label} className="flex gap-2.5"><span className="text-[#FA5935] font-bold">✓</span>{s.label} · {s.value}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <div className="text-[11px] font-semibold uppercase tracking-wide text-[#5E6563] mb-2">Ausbaufähig</div>
+                  <ul className="space-y-2 text-[#3D4A46]">
+                    {opportunities.map(o => (
+                      <li key={o.label} className="flex gap-2.5"><span className="text-[#9A9089] font-bold">✕</span>{o.label} · {o.value}</li>
                     ))}
                   </ul>
                 </div>
               </div>
-            </section>
+            </Card>
 
-            {/* ─── So geht's weiter — das Funktionen-Kartenraster der Landingpage ─── */}
-            <section className="pb-10 md:pb-14">
-              <div className="mb-5">
-                <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">So geht&apos;s weiter</span>
-                <h2 className="font-[family-name:var(--font-display)] font-normal text-2xl tracking-tight text-[#0E1916] mt-2">
-                  Nächste Schritte für mehr Sichtbarkeit.
-                </h2>
+            <Card icon={Icons.recommendations} title="Nächste Schritte" subtitle="Mehr Sichtbarkeit">
+              <div className="space-y-1.5 -mx-2">
+                <StepRow href="/dashboard/recommendations" icon={Icons.recommendations} title="Empfehlungen" desc="Konkrete nächste Schritte" />
+                <StepRow href="/dashboard/competitors" icon={Icons.competitors} title="Wettbewerber" desc="Wer steht statt dir in der Antwort?" />
+                <StepRow href="/dashboard/sources" icon={Icons.sources} title="Quellen" desc="Woher KI ihr Wissen bezieht" />
+                <StepRow href="/dashboard/monopoly" icon={Icons.monopoly} title="Themen-Monopol" desc="Wo du (fast) konkurrenzlos bist" />
               </div>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                <NextStepCard href="/dashboard/competitors" icon={Icons.competitors} title="Wettbewerber" desc="Wer steht statt dir in der KI-Antwort? Ranking ansehen." />
-                <NextStepCard href="/dashboard/recommendations" icon={Icons.recommendations} title="Empfehlungen" desc="Konkrete nächste Schritte, von Claude generiert." />
-                <NextStepCard href="/dashboard/sources" icon={Icons.sources} title="Quellen" desc="Woher KI-Systeme ihr Wissen über dich beziehen." />
-                <NextStepCard href="/dashboard/monopoly" icon={Icons.monopoly} title="Themen-Monopol" desc="Bei welchen Themen du (fast) konkurrenzlos bist." />
-              </div>
-            </section>
-
+            </Card>
           </div>
-        </>
+        </div>
       )}
 
       {/* ─── Score Explainer Modal ─── */}
@@ -225,80 +213,66 @@ function pickScore(m: ReturnType<typeof computeMasterScores>, key: ScoreKey): Ma
   return m.digitalAuthority
 }
 
-/** Score-Karte — exakt die DimCard-Optik der Landingpage (rounded-3xl, tabular val, Balken, Beschreibung). */
-function SubScoreCard({ score, theme, onExplain }: { score: MasterScore; theme: DimensionTheme; onExplain: () => void }) {
+function Kpi({ label, value, tint, dot }: { label: string; value: string; tint: string; dot: string }) {
   return (
-    <div className="rounded-3xl p-5 sm:p-6" style={{ background: theme.bg }}>
-      <div className="flex items-start justify-between">
-        <span className="text-sm font-medium" style={{ color: theme.text }}>{score.label}</span>
-        <button
-          type="button"
-          onClick={onExplain}
-          aria-label={`${score.label} erklären`}
-          className="w-5 h-5 rounded-full text-[11px] font-semibold flex items-center justify-center flex-shrink-0"
-          style={{ background: theme.track, color: theme.text }}
-        >
-          ?
-        </button>
+    <div className="rounded-3xl border border-[#E9E1D3] bg-white p-5 flex items-center gap-4">
+      <span className="w-11 h-11 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: tint }}>
+        <span className="w-3.5 h-3.5 rounded-full" style={{ background: dot }} />
+      </span>
+      <div className="min-w-0">
+        <div className="text-xl sm:text-2xl font-extrabold tracking-tight leading-tight truncate">{value}</div>
+        <div className="text-[13px] text-[#5E6563]">{label}</div>
       </div>
-      <div className="text-3xl font-bold mt-1 tabular-nums" style={{ color: theme.text }}>
-        {score.value}
-      </div>
-      <div className="h-1.5 rounded-full mt-3 overflow-hidden" style={{ background: theme.track }}>
-        <div className="h-1.5 rounded-full" style={{ width: `${score.value}%`, background: theme.accent }} />
-      </div>
-      <p className="text-xs mt-3 leading-relaxed" style={{ color: theme.label }}>{score.band.label}</p>
     </div>
   )
 }
 
-/** SEO-Karte: eigene Pipeline, daher Link zur Detailseite statt Explainer-Modal. */
-function SeoMiniCard({ score }: { score: SeoScore | null }) {
-  const t = SEO_THEME
+/** Karte mit Icon-Kachel, Titel und Untertitel — wie die Startseiten-Karten der Leadesk-App. */
+function Card({ icon, title, subtitle, children }: { icon: React.ReactNode; title: string; subtitle: string; children: React.ReactNode }) {
   return (
-    <Link href="/dashboard/seo" className="rounded-3xl p-5 sm:p-6 block" style={{ background: t.bg }}>
-      <div className="flex items-start justify-between">
-        <span className="text-sm font-medium" style={{ color: t.text }}>SEO Score</span>
-        <span
-          className="w-5 h-5 rounded-full text-[11px] font-semibold flex items-center justify-center flex-shrink-0"
-          style={{ background: t.track, color: t.text }}
-          aria-hidden
-        >
-          ›
-        </span>
+    <section className="rounded-3xl border border-[#E9E1D3] bg-white p-6">
+      <div className="flex items-center gap-3.5 mb-5">
+        <span className="w-11 h-11 rounded-2xl bg-[#F6F3EC] text-[#0E1916] flex items-center justify-center flex-shrink-0">{icon}</span>
+        <div>
+          <h3 className="text-lg leading-tight">{title}</h3>
+          <div className="text-[13px] text-[#5E6563]">{subtitle}</div>
+        </div>
       </div>
-      {score ? (
-        <>
-          <div className="text-3xl font-bold mt-1 tabular-nums" style={{ color: t.text }}>
-            {score.value}
-          </div>
-          <div className="h-1.5 rounded-full mt-3 overflow-hidden" style={{ background: t.track }}>
-            <div className="h-1.5 rounded-full" style={{ width: `${score.value}%`, background: t.accent }} />
-          </div>
-          <p className="text-xs mt-3 leading-relaxed" style={{ color: t.label }}>{score.band.label}</p>
-        </>
-      ) : (
-        <>
-          <div className="text-3xl font-bold mt-1 tabular-nums" style={{ color: t.text }}>—</div>
-          <div className="h-1.5 rounded-full mt-3 overflow-hidden" style={{ background: t.track }}>
-            <div className="h-1.5 rounded-full" style={{ width: "0%", background: t.accent }} />
-          </div>
-          <p className="text-xs mt-3 leading-relaxed" style={{ color: t.label }}>Noch nicht aktiv</p>
-        </>
-      )}
-    </Link>
+      {children}
+    </section>
   )
 }
 
-/** "So geht's weiter"-Karte — exakt die Funktionen-Kartenoptik der Landingpage (Icon statt Emoji). */
-function NextStepCard({ href, icon, title, desc }: { href: string; icon: React.ReactNode; title: string; desc: string }) {
+type Theme = { bg: string; track: string; accent: string; text: string; label: string }
+
+function DimRow({ label, value, theme, onExplain, href }: { label: string; value: number | null; theme: Theme; onExplain?: () => void; href?: string }) {
+  const bar = (
+    <>
+      <span className="w-32 flex-shrink-0 text-sm text-[#3D4A46] text-left">{label}</span>
+      <span className="flex-1 h-2.5 rounded-full" style={{ background: theme.track }}>
+        <span className="block h-2.5 rounded-full" style={{ width: `${value ?? 0}%`, background: theme.accent }} />
+      </span>
+      <b className="w-8 text-right text-sm tabular-nums">{value ?? "—"}</b>
+    </>
+  )
+  const cls = "w-full flex items-center gap-3 rounded-xl hover:bg-[#FAF8F3] -mx-2 px-2 py-1 transition-colors"
+  if (href) return <Link href={href} className={cls}>{bar}</Link>
   return (
-    <Link href={href} className="rounded-3xl border border-[#E9E1D3] bg-white p-6 hover:border-[#FBCBB8] transition-colors block">
-      <div className="w-10 h-10 rounded-2xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center mb-4">
-        {icon}
-      </div>
-      <div className="font-semibold text-[#0E1916] mb-1 text-sm">{title}</div>
-      <p className="text-[13px] text-[#6B625A] leading-relaxed">{desc}</p>
+    <button type="button" onClick={onExplain} aria-label={`${label} erklären`} className={cls}>
+      {bar}
+    </button>
+  )
+}
+
+function StepRow({ href, icon, title, desc }: { href: string; icon: React.ReactNode; title: string; desc: string }) {
+  return (
+    <Link href={href} className="flex items-center gap-3.5 rounded-2xl px-2 py-2.5 hover:bg-[#FAF8F3] transition-colors">
+      <span className="w-10 h-10 rounded-xl bg-[#FDE7E0] text-[#C8431F] flex items-center justify-center flex-shrink-0">{icon}</span>
+      <span className="flex-1 min-w-0">
+        <span className="block font-bold text-sm text-[#0E1916]">{title}</span>
+        <span className="block text-[13px] text-[#5E6563] truncate">{desc}</span>
+      </span>
+      <span className="text-[#9A9089]" aria-hidden>›</span>
     </Link>
   )
 }

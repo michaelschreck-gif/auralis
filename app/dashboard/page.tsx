@@ -1,63 +1,63 @@
 import { redirect } from "next/navigation"
-import { createSupabaseServerClient } from "@/lib/supabase/server"
-import Cockpit from "@/components/Cockpit"
+import Link from "next/link"
 import DashboardShell from "@/components/DashboardShell"
-import type { VisibilityReport } from "@/lib/auralis/analyzer"
-import { computeSeoScore, type SeoReportData, type SeoScore } from "@/lib/auralis/seo-score"
+import OwnDashboard from "@/components/OwnDashboard"
+import TeamAddPanel from "@/components/TeamAddPanel"
+import { TeamBands, TeamKpis, TeamRows } from "@/components/TeamViews"
+import { getEnterpriseContext, getTeam } from "@/lib/team"
+import { createSupabaseServerClient } from "@/lib/supabase/server"
 
 export const dynamic = "force-dynamic"
 
+// Zwei Abläufe, entschieden über den Tarif:
+//  - Enterprise  → Corporate: Team-Übersicht mit Personen-Liste
+//  - alle anderen → Einzeluser: persönlicher Halo Score
 export default async function DashboardPage() {
-  let supabase
+  let isEnterprise = false
   try {
-    supabase = await createSupabaseServerClient()
-  } catch {
-    return redirect("/login")
+    const supabase = await createSupabaseServerClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) redirect("/login")
+    const { data: profile } = await supabase.from("profiles").select("plan").eq("id", user.id).single()
+    isEnterprise = profile?.plan === "enterprise"
+  } catch (e) {
+    // redirect() wirft intern — weiterreichen
+    if (e && typeof e === "object" && "digest" in e) throw e
+    redirect("/login")
   }
 
-  const { data: { user } } = await supabase.auth.getUser()
-  if (!user) redirect("/login")
+  if (!isEnterprise) return <OwnDashboard />
 
-  let userName = ""
-  let plan = "free"
-  let report: VisibilityReport | null = null
-  let latestReportId: string | null = null
-  let seoScore: SeoScore | null = null
-
-  try {
-    const [profileResult, reportResult, seoResult] = await Promise.all([
-      supabase
-        .from("profiles")
-        .select("full_name, plan")
-        .eq("id", user!.id)
-        .single(),
-      supabase
-        .from("visibility_reports")
-        .select("id, raw_data")
-        .eq("profile_id", user!.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-      supabase
-        .from("seo_reports")
-        .select("raw_data")
-        .eq("profile_id", user!.id)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle(),
-    ])
-    userName = profileResult.data?.full_name ?? ""
-    plan = profileResult.data?.plan ?? "free"
-    report = (reportResult.data?.raw_data ?? null) as VisibilityReport | null
-    latestReportId = reportResult.data?.id ?? null
-    seoScore = computeSeoScore((seoResult.data?.raw_data ?? null) as SeoReportData | null)
-  } catch {
-    // continue with empty defaults
-  }
+  const ctx = await getEnterpriseContext()
+  if (!ctx) return <OwnDashboard />
+  const members = await getTeam(ctx.userId)
 
   return (
-    <DashboardShell userName={userName} plan={plan}>
-      <Cockpit userName={userName} report={report} latestReportId={latestReportId} seoScore={seoScore} />
+    <DashboardShell userName={ctx.fullName} plan="enterprise">
+      <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+        <header className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <h1 className="text-3xl tracking-tight text-[#0E1916]">Dein Team im Überblick</h1>
+            <p className="text-[15px] text-[#5E6563] mt-1.5">
+              Halo Scores aller Personen im Monitoring · {members.length} {members.length === 1 ? "Person" : "Personen"}
+            </p>
+          </div>
+        </header>
+
+        <TeamAddPanel />
+        <TeamKpis members={members} />
+
+        <div className="grid lg:grid-cols-[1fr_340px] gap-5 items-start">
+          <section>
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-xl tracking-tight">Personen</h2>
+              <Link href="/dashboard/team" className="text-sm font-bold text-[#0E1916] hover:text-[#C8431F]">Alle ansehen ›</Link>
+            </div>
+            <TeamRows members={members} limit={6} />
+          </section>
+          <TeamBands members={members} />
+        </div>
+      </div>
     </DashboardShell>
   )
 }
