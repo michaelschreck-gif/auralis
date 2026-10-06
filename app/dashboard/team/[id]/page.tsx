@@ -3,16 +3,16 @@ import { notFound, redirect } from "next/navigation"
 import DashboardShell from "@/components/DashboardShell"
 import TeamAnalyzeForm from "@/components/TeamAnalyzeForm"
 import { initialsOf, relativeDate } from "@/components/TeamViews"
-import { getEnterpriseContext, getTeam } from "@/lib/team"
+import { getTeamContext, getTeam } from "@/lib/team"
 import { AURA_THEME, DIMENSION_THEME } from "@/lib/auralis/theme"
 
 export const dynamic = "force-dynamic"
 
 export default async function TeamMemberPage({ params }: { params: Promise<{ id: string }> }) {
-  const ctx = await getEnterpriseContext()
+  const ctx = await getTeamContext()
   if (!ctx) redirect("/dashboard")
   const { id } = await params
-  const members = await getTeam(ctx.userId)
+  const members = await getTeam(ctx.teamId, ctx.userId)
   const m = members.find(x => x.id === id)
   if (!m) notFound()
 
@@ -24,7 +24,7 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
   const score = m.score
 
   return (
-    <DashboardShell userName={ctx.fullName} plan="enterprise">
+    <DashboardShell userName={ctx.fullName} plan={ctx.plan} corporate>
       <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
         <Link href="/dashboard/team" className="text-sm font-bold text-[#5E6563] hover:text-[#0E1916]">← Alle Personen</Link>
 

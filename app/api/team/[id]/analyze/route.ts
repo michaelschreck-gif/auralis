@@ -2,7 +2,7 @@
 // Body: { topic: string } — legt bei Bedarf das Thema (monitoring_schedule) an und führt die Analyse aus.
 
 import { NextResponse } from "next/server"
-import { getEnterpriseContext } from "@/lib/team"
+import { getTeamContext, isInTeam } from "@/lib/team"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import { runAnalysisForSchedule } from "@/lib/auralis/runner"
 
@@ -10,18 +10,18 @@ export const dynamic = "force-dynamic"
 export const maxDuration = 60
 
 export async function POST(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  const me = await getEnterpriseContext()
-  if (!me) return NextResponse.json({ error: "Nur im Enterprise-Tarif verfügbar." }, { status: 403 })
+  const me = await getTeamContext()
+  if (!me) return NextResponse.json({ error: "Kein Team ausgewählt." }, { status: 403 })
 
   const { id } = await ctx.params
   const db = createSupabaseServiceClient()
 
   const { data: person } = await db
     .from("profiles")
-    .select("id, parent_account_id, language")
+    .select("id, language")
     .eq("id", id)
     .maybeSingle()
-  if (!person || person.parent_account_id !== me.userId) {
+  if (!person || !(await isInTeam(me.teamId, person.id))) {
     return NextResponse.json({ error: "Person nicht gefunden." }, { status: 404 })
   }
 

@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { useState, type ReactNode } from "react"
+import { usePathname, useRouter } from "next/navigation"
+import { useEffect, useState, type ReactNode } from "react"
 
 // ─── Navigation: Icon-Leiste mit Flyouts (Leadesk-Stil), je nach Tarif zwei Abläufe ───
 type IconKey =
@@ -200,9 +200,17 @@ export const Icons: Record<IconKey, ReactNode> = {
   ),
 }
 
+type TeamRef = { id: string; name: string }
+type TeamsState = { teams: TeamRef[]; activeId: string | null }
+
+// Bleibt über Client-Navigationen erhalten, damit Leiste und Wechsler nicht flackern.
+const teamsStore: { current: TeamsState | null } = { current: null }
+
 interface Props {
   userName?: string
   plan?: string
+  /** Team-Ablauf erzwingen (Team-Seiten); sonst ergibt er sich aus Tarif und Team-Mitgliedschaft. */
+  corporate?: boolean
   panelHeader?: string
   panelCount?: string
   panelContent?: ReactNode
@@ -225,6 +233,7 @@ function isActive(pathname: string, href: string): boolean {
 export default function DashboardShell({
   userName = "",
   plan = "free",
+  corporate = false,
   panelHeader = "Topics",
   panelCount,
   panelContent,
@@ -232,14 +241,51 @@ export default function DashboardShell({
   children,
 }: Props) {
   const pathname = usePathname()
+  const router = useRouter()
+  const [teamsState, setTeamsState] = useState<TeamsState | null>(teamsStore.current)
+  const [teamMenuOpen, setTeamMenuOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+
+  useEffect(() => {
+    let off = false
+    fetch("/api/teams")
+      .then(r => (r.ok ? r.json() : null))
+      .then((d: TeamsState | null) => {
+        if (d && !off) { setTeamsState(d) }
+      })
+      .catch(() => {})
+    return () => { off = true }
+  }, [])
+
+  useEffect(() => {
+    teamsStore.current = teamsState
+  }, [teamsState])
+
+  async function switchTeam(teamId: string) {
+    setTeamMenuOpen(false)
+    if (teamId === teamsState?.activeId) return
+    const res = await fetch("/api/teams/active", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ teamId }),
+    })
+    if (!res.ok) return
+    const next = { teams: teamsState?.teams ?? [], activeId: teamId }
+    setTeamsState(next)
+    // Eine Personen-Detailseite gehört zum alten Team → zurück zur Liste.
+    if (pathname.startsWith("/dashboard/team/")) router.push("/dashboard/team")
+    else router.refresh()
+  }
+  const teams = teamsState?.teams ?? []
+  const activeTeam = teams.find(t => t.id === teamsState?.activeId) ?? teams[0] ?? null
+
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const initials = userName
     ? userName.split(" ").map(n => n[0] ?? "").join("").toUpperCase().slice(0, 2)
     : "?"
   const firstName = userName.split(" ")[0] ?? ""
   const planLabel = PLAN_LABELS[plan] ?? "Free"
-  const isCorporate = plan === "enterprise"
+  const isCorporate = corporate || plan === "enterprise" || teams.length > 0
   const rail = isCorporate ? CORPORATE_RAIL : SINGLE_RAIL
 
   const railBtn = (active: boolean) =>
@@ -342,6 +388,52 @@ export default function DashboardShell({
           <span className="w-2 h-2 rounded-full bg-[#FA5935]" />
           Frag dein Profil
         </Link>
+
+        {activeTeam && (
+          <div className="relative">
+            <button
+              type="button"
+              onClick={() => teams.length > 1 && setTeamMenuOpen(o => !o)}
+              aria-haspopup={teams.length > 1 ? "menu" : undefined}
+              aria-expanded={teamMenuOpen}
+              title={teams.length > 1 ? "Team wechseln" : "Dein Team"}
+              className={`h-9 inline-flex items-center gap-2 rounded-full border border-[#E9E1D3] bg-white px-3.5 text-[13px] font-semibold text-[#0E1916] max-w-[200px] ${
+                teams.length > 1 ? "hover:bg-[#F6F3EC] cursor-pointer" : "cursor-default"
+              }`}
+            >
+              <span className="w-4 flex items-center justify-center text-[#5E6563]">{Icons.team}</span>
+              <span className="truncate">{activeTeam.name}</span>
+              {teams.length > 1 && (
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" className="flex-shrink-0 text-[#5E6563]">
+                  <path d="M2 3.5l3 3 3-3" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </button>
+            {teamMenuOpen && (
+              <>
+                <div className="fixed inset-0 z-40" onClick={() => setTeamMenuOpen(false)} aria-hidden="true" />
+                <div role="menu" className="absolute left-0 top-11 z-50 w-64 rounded-2xl border border-[#E9E1D3] bg-white shadow-[0_14px_40px_-16px_rgba(14,25,22,0.25)] p-2">
+                  <div className="px-3 pt-2 pb-1.5 text-[11px] font-semibold uppercase tracking-wide text-[#9A9089]">Team wechseln</div>
+                  {teams.map(t => (
+                    <button
+                      key={t.id}
+                      type="button"
+                      role="menuitemradio"
+                      aria-checked={t.id === activeTeam.id}
+                      onClick={() => switchTeam(t.id)}
+                      className={`w-full flex items-center gap-2 text-left px-3 py-2 rounded-xl text-[13.5px] ${
+                        t.id === activeTeam.id ? "bg-[#FDE7E0] text-[#C8431F] font-semibold" : "text-[#3D4A46] hover:bg-[#F6F3EC]"
+                      }`}
+                    >
+                      <span className="flex-1 truncate">{t.name}</span>
+                      {t.id === activeTeam.id && <span aria-hidden="true">✓</span>}
+                    </button>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
+        )}
 
         <div className="ml-auto flex items-center gap-3">
           <span

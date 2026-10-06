@@ -1,8 +1,8 @@
-// POST /api/team — legt Personen (Sub-Accounts) für den eingeloggten Enterprise-Nutzer an.
+// POST /api/team — legt Personen an und fügt sie dem aktuell gewählten Team hinzu.
 // Body: { people: [{ full_name, email }] }  (Einzelperson = Liste mit einem Eintrag, CSV-Import = mehrere)
 
 import { NextResponse } from "next/server"
-import { getEnterpriseContext } from "@/lib/team"
+import { getTeamContext, addToTeam } from "@/lib/team"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import { createSubAccount } from "@/lib/sub-accounts"
 
@@ -10,9 +10,9 @@ export const dynamic = "force-dynamic"
 const MAX_PEOPLE = 200
 
 export async function POST(req: Request) {
-  const ctx = await getEnterpriseContext()
+  const ctx = await getTeamContext()
   if (!ctx) {
-    return NextResponse.json({ error: "Nur im Enterprise-Tarif verfügbar." }, { status: 403 })
+    return NextResponse.json({ error: "Kein Team ausgewählt." }, { status: 403 })
   }
 
   let body: { people?: { full_name?: unknown; email?: unknown }[] }
@@ -40,6 +40,8 @@ export async function POST(req: Request) {
     if (res.ok) created.push(res.id)
     else failed.push({ email: email || "(leer)", error: res.message })
   }
+
+  await addToTeam(ctx.teamId, created)
 
   return NextResponse.json({ created: created.length, failed })
 }

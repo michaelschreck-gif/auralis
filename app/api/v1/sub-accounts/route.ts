@@ -14,6 +14,7 @@
  * POST /api/v1/sub-accounts   → neuen Sub-Account anlegen (nur Enterprise)
  */
 
+import { addSubAccountToOwnerTeam } from "@/lib/team"
 import { NextResponse } from "next/server"
 import crypto from "node:crypto"
 import { authenticateApiKey, jsonError } from "@/lib/api-auth"
@@ -159,6 +160,8 @@ export async function POST(req: Request) {
     await supabase.auth.admin.deleteUser(subId).catch(() => {})
     return jsonError("Failed to finalize sub-account.", "INTERNAL", 500)
   }
+
+  await addSubAccountToOwnerTeam({ id: auth.profile.id, full_name: auth.profile.full_name }, subId)
 
   return NextResponse.json(
     {
