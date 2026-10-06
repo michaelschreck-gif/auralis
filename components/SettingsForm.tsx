@@ -153,12 +153,15 @@ export default function SettingsForm({
       {/* Monitoring Topics */}
       <section id="topics" className="space-y-5">
         <div>
-          <h2 className="text-base font-semibold text-[#0E1916]">Überwachte Themen</h2>
-          <p className="text-xs text-[#6B625A] mt-0.5">Themen, die automatisch per geplanter KI-Reputations-Analyse verfolgt werden.</p>
+          <h2 className="text-base font-semibold text-[#0E1916]">Messrhythmus</h2>
+          <p className="text-xs text-[#6B625A] mt-0.5">
+            Wie oft jedes Thema automatisch gemessen wird. Person, Region und Themen änderst du im{" "}
+            <a href="/dashboard/setup" className="text-[#FA5935] hover:underline font-medium">Setup</a>.
+          </p>
         </div>
 
         {schedules.length === 0 && (
-          <p className="text-sm text-[#6B625A]">Noch keine aktiven Themen. Füge im Dashboard eines hinzu.</p>
+          <p className="text-sm text-[#6B625A]">Noch keine aktiven Themen. Lege sie im Setup fest.</p>
         )}
 
         <div className="space-y-3">

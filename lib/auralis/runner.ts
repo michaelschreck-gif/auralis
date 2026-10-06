@@ -387,6 +387,25 @@ async function measureAllProviders(
   return { outcomes, stability, marketResults }
 }
 
+/** Festgelegter Name der bewerteten Person; fehlende Spalte/Migration → null. */
+async function loadSubjectName(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+): Promise<string | null> {
+  try {
+    const { data, error } = await (supabase as SupabaseClient)
+      .from("profiles")
+      .select("subject_name")
+      .eq("id", profileId)
+      .single()
+    if (error) return null
+    const v = (data as { subject_name?: string | null } | null)?.subject_name
+    return v && v.trim() ? v.trim() : null
+  } catch {
+    return null
+  }
+}
+
 /** Zielmärkte des Profils laden; fehlende Spalte/Migration → Standardmarkt. */
 async function loadTargetMarkets(
   supabase: SupabaseClient<Database>,
@@ -494,7 +513,10 @@ export async function runAnalysisForSchedule(
   // Branding"). Würde man den durchreichen, würde die Namens-Erkennung auf dem
   // generischen Themenwort („Branding") anschlagen und JEDE Antwort als Treffer
   // werten → falsche 100/100. Fallback: bereinigter schedule.name.
+  // Setup: ausdrücklich festgelegter Name der bewerteten Person hat Vorrang.
+  const subjectName = await loadSubjectName(supabase, schedule.profile_id)
   const targetName =
+    subjectName ||
     (profile?.full_name && profile.full_name.trim()) ||
     sanitizeTargetName(schedule.name)
 

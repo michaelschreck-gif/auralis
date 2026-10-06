@@ -6,6 +6,7 @@
 --   2) Zielmärkte               (profiles.target_markets)
 --   3) Kalibrierung             (calibration_runs)
 --   4) Hintergrund-Analysejobs  (analysis_jobs)
+--   5) Setup: bewertete Person  (profiles.subject_name)
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
@@ -74,5 +75,9 @@ DROP POLICY IF EXISTS "analysis_jobs: owner read" ON public.analysis_jobs;
 CREATE POLICY "analysis_jobs: owner read"
   ON public.analysis_jobs FOR SELECT
   USING (profile_id = auth.uid());
+
+-- 5) Setup: Name der bewerteten Person ─────────────────────────────────────────
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS subject_name text;
 
 COMMIT;

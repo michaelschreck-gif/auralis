@@ -46,10 +46,10 @@ export async function GET(request: NextRequest) {
     .eq("id", session.user.id)
     .single()
 
-  // New users (no name set) go to onboarding; returning users go to dashboard
+  // New users (no name set) go to the setup assistant; returning users go to dashboard
   if (profile?.full_name) {
     return NextResponse.redirect(`${origin}/dashboard`)
   }
 
-  return NextResponse.redirect(`${origin}/onboarding`)
+  return NextResponse.redirect(`${origin}/dashboard/setup`)
 }

@@ -163,9 +163,9 @@ export default async function TopicsPage() {
         {(schedules ?? []).length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <p className="text-[#6B625A] text-sm max-w-xs leading-relaxed">
-              Noch keine Themen verfolgt. Schließe das{" "}
-              <a href="/onboarding" className="text-[#FA5935] hover:underline font-medium">Onboarding</a>{" "}
-              ab oder starte eine Analyse auf der{" "}
+              Noch keine Themen verfolgt. Lege sie im{" "}
+              <a href="/dashboard/setup" className="text-[#FA5935] hover:underline font-medium">Setup</a>{" "}
+              fest und starte danach eine Analyse auf der{" "}
               <a href="/dashboard/analyze" className="text-[#FA5935] hover:underline font-medium">Analyse-Seite</a>.
             </p>
           </div>

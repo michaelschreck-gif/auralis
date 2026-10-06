@@ -82,14 +82,22 @@ export default function Cockpit({
           <div className="rounded-3xl border border-[#E9E1D3] bg-white p-8 sm:p-10 text-center">
             <p className="text-lg font-bold text-[#0E1916]">Noch keine Analyse vorhanden.</p>
             <p className="text-sm text-[#5E6563] mt-2 mb-6 max-w-md mx-auto">
-              Starte deine erste Reputationsanalyse, um deinen Halo Score und die Dimensionen zu sehen.
+              Lege im Setup fest, wen wir bewerten, in welcher Region und zu welchen Themen — danach startet die erste Analyse.
             </p>
-            <Link
-              href="/dashboard/analyze"
-              className="inline-block px-6 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-bold transition-colors"
-            >
-              Neue Analyse starten →
-            </Link>
+            <div className="flex items-center justify-center gap-3 flex-wrap">
+              <Link
+                href="/dashboard/setup"
+                className="inline-block px-6 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-bold transition-colors"
+              >
+                Setup starten →
+              </Link>
+              <Link
+                href="/dashboard/analyze"
+                className="inline-block px-5 py-2.5 rounded-full border border-[#E9E1D3] text-[#0E1916] text-sm font-semibold hover:bg-[#F6F3EC] transition-colors"
+              >
+                Zu den Analysen
+              </Link>
+            </div>
           </div>
         </div>
       )}
@@ -178,8 +186,8 @@ export default function Cockpit({
             <section className="rounded-3xl border border-[#E9E1D3] bg-white p-6">
               <div className="flex items-baseline justify-between gap-3 flex-wrap mb-4">
                 <h3 className="text-lg leading-tight">Sichtbarkeit nach Markt</h3>
-                <Link href="/settings#markets" className="text-[13px] font-semibold text-[#C8431F] hover:underline">
-                  Zielmärkte ändern
+                <Link href="/dashboard/setup" className="text-[13px] font-semibold text-[#C8431F] hover:underline">
+                  Regionen ändern
                 </Link>
               </div>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3.5">

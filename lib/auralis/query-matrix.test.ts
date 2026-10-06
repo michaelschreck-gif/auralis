@@ -166,3 +166,39 @@ test("Kalibrierung: Aufbereitung gruppiert, sortiert Warnungen zuerst, Verlauf c
   assert.deepEqual(a.history.map(h => h.score), [50, 60])
   assert.equal(a.latest.score, 60)
 })
+
+// ─── Setup-Eingaben ──────────────────────────────────────────────────────────
+import { validateSetupInput as _validate, parseTopicSuggestions } from "./setup-input.ts"
+import { isMarketId } from "./markets.ts"
+
+const validateSetupInput = (raw: unknown, plan: string) =>
+  _validate(raw, {
+    marketLanguage: id => (isMarketId(id) ? MARKETS[id].language : null),
+    maxMarkets: maxMarketsForPlan(plan),
+  })
+
+test("Setup: gültige Eingabe, Sprache folgt erstem Markt", () => {
+  const r = validateSetupInput({ subjectName: "  Maud  Schock ", markets: ["us"], topics: ["Branding", "branding", " AI "] }, "pro")
+  assert.ok(r.ok)
+  if (r.ok) {
+    assert.equal(r.value.subjectName, "Maud Schock")
+    assert.deepEqual(r.value.topics, ["Branding", "AI"])
+    assert.equal(r.language, "en")
+  }
+})
+
+test("Setup: Fehlerfälle", () => {
+  assert.equal(validateSetupInput({ subjectName: "A", markets: ["dach"], topics: ["x"] }, "pro").ok, false)
+  assert.equal(validateSetupInput({ subjectName: "Max M", markets: [], topics: ["x"] }, "pro").ok, false)
+  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["dach"], topics: [] }, "pro").ok, false)
+  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["dach", "us"], topics: ["x"] }, "free").ok, false)
+  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["zzz"], topics: ["x"] }, "pro").ok, false)
+  const many = Array.from({ length: 11 }, (_, i) => `T${i}`)
+  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["dach"], topics: many }, "pro").ok, false)
+})
+
+test("Themen-Vorschläge: JSON und Zeilen", () => {
+  assert.deepEqual(parseTopicSuggestions('Hier: ["Leadership", "KI-Strategie", "leadership"]'), ["Leadership", "KI-Strategie"])
+  assert.deepEqual(parseTopicSuggestions("1. Vertrieb\n- Marketing\n"), ["Vertrieb", "Marketing"])
+  assert.deepEqual(parseTopicSuggestions("[]"), [])
+})

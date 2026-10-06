@@ -8,11 +8,15 @@ import { useState, type ReactNode } from "react"
 type IconKey =
   | "overview" | "visibility" | "persona" | "monopoly" | "recommended" | "analyze"
   | "sources" | "competitors" | "geo" | "seo" | "thought" | "topics"
-  | "recommendations" | "ask" | "responses" | "settings" | "team"
+  | "recommendations" | "ask" | "responses" | "settings" | "team" | "setup"
 
 type NavItem = { href: string; label: string; icon: IconKey }
 type RailGroup = { label: string; icon: IconKey; items: NavItem[] }
 
+const SETUP_GROUP: RailGroup = {
+  label: "Setup", icon: "setup",
+  items: [{ href: "/dashboard/setup", label: "Setup", icon: "setup" }],
+}
 const SCORES_GROUP: RailGroup = {
   label: "Scores", icon: "visibility",
   items: [
@@ -48,6 +52,7 @@ const SETTINGS_GROUP: RailGroup = {
 // Einzeluser (Free / Starter / Pro): persönlicher Halo Score
 const SINGLE_RAIL: RailGroup[] = [
   { label: "Übersicht", icon: "overview", items: [{ href: "/dashboard", label: "Übersicht", icon: "overview" }] },
+  SETUP_GROUP,
   {
     label: "Analyse", icon: "analyze",
     items: [
@@ -63,6 +68,7 @@ const SINGLE_RAIL: RailGroup[] = [
 // Corporate (Enterprise): Team-Übersicht + Personen, eigenes Profil bleibt erreichbar
 const CORPORATE_RAIL: RailGroup[] = [
   { label: "Team-Übersicht", icon: "overview", items: [{ href: "/dashboard", label: "Team-Übersicht", icon: "overview" }] },
+  SETUP_GROUP,
   { label: "Personen", icon: "team", items: [{ href: "/dashboard/team", label: "Personen", icon: "team" }] },
   {
     label: "Mein Profil", icon: "persona",
@@ -176,6 +182,13 @@ export const Icons: Record<IconKey, ReactNode> = {
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
       <circle cx="7.5" cy="7.5" r="2.5" stroke="currentColor" strokeWidth="1.2"/>
       <path d="M7.5 1v1.5M7.5 12.5V14M1 7.5h1.5M12.5 7.5H14M2.9 2.9l1.1 1.1M11 11l1.1 1.1M2.9 12.1l1.1-1.1M11 4l1.1-1.1" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  ),
+  setup: (
+    <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
+      <path d="M2 4h6M11 4h2M2 11h2M7 11h6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+      <circle cx="9.5" cy="4" r="1.5" stroke="currentColor" strokeWidth="1.2"/>
+      <circle cx="5.5" cy="11" r="1.5" stroke="currentColor" strokeWidth="1.2"/>
     </svg>
   ),
   team: (
