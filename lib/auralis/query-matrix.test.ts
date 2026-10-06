@@ -104,3 +104,47 @@ test("Märkte: Standort-Hinweis nur für Märkte mit Bezug", () => {
   assert.equal(locationSystemSuffix(MARKETS.global), "")
   assert.match(locationSystemSuffix(MARKETS.us), /United States/)
 })
+
+// ─── Modell-Gewichte ─────────────────────────────────────────────────────────
+import { normalizedWeights, weightedMean } from "./model-weights.ts"
+
+test("Modell-Gewichte: normalisiert auf 1, auch bei Teilmenge", () => {
+  const all = normalizedWeights(["gpt-4o", "gemini-flash", "claude-sonnet", "perplexity-sonar"])
+  assert.ok(Math.abs(all.reduce((a, b) => a + b, 0) - 1) < 1e-9)
+  const two = normalizedWeights(["gpt-4o", "claude-sonnet"])
+  assert.ok(Math.abs(two[0] + two[1] - 1) < 1e-9)
+  assert.ok(two[0] > two[1])
+  assert.deepEqual(normalizedWeights(["claude-sonnet"]), [1])
+  assert.ok(normalizedWeights(["unbekannt"])[0] === 1)
+})
+
+test("Gewichteter Mittelwert", () => {
+  assert.equal(weightedMean([100, 0], [3, 1]), 75)
+  assert.equal(weightedMean([40, 60], [1, 1]), 50)
+  assert.equal(weightedMean([], []), 0)
+  assert.equal(weightedMean([10, 30], [0, 0]), 20)
+})
+
+// ─── Glättung ────────────────────────────────────────────────────────────────
+import { smoothReports } from "./smoothing.ts"
+
+const rep = (score: number, pos: number | null) => ({
+  overallScore: score,
+  mentionRate: score,
+  averagePosition: pos,
+  scoreBreakdown: { presenceScore: score, positionScore: score, contextScore: score, topicAlignmentScore: score },
+})
+
+test("Glättung: ein Lauf bleibt unverändert, ohne Info", () => {
+  const r = smoothReports([rep(50, 2)])
+  assert.equal(r.info, null)
+  assert.equal(r.report.overallScore, 50)
+})
+
+test("Glättung: Mittel über Läufe, Info mit letztem Einzelwert", () => {
+  const { report, info } = smoothReports([rep(70, 2), rep(50, null), rep(60, 4)])
+  assert.equal(report.overallScore, 60)
+  assert.equal(report.scoreBreakdown.presenceScore, 60)
+  assert.equal(report.averagePosition, 3)
+  assert.deepEqual(info, { runs: 3, days: 28, latestScore: 70 })
+})

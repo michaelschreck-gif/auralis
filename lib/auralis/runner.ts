@@ -15,6 +15,7 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { generateQueryMatrix, type MatrixDepth, type MatrixQuery } from "./query-matrix"
+import { normalizedWeights, weightedMean } from "./model-weights"
 import { CALIBRATION_PANEL, calibrationSeed, evaluateCalibration, type CalibrationEntry, type CalibrationVerdict } from "./calibration"
 import { MARKETS, resolveMarkets, locationSystemSuffix, type Market, type MarketId } from "./markets"
 import { computeStability, computeIntentStats, type ScoreStability, type IntentStat } from "./stability"
@@ -97,7 +98,7 @@ export type MultiModelVisibilityReport = VisibilityReport & {
   /** Erwähnungen je Fragetyp über alle Modelle und Runden. */
   intentStats?: IntentStat[]
   /** Messdesign dieses Laufs (für Transparenz / Vergleichbarkeit). */
-  methodology?: { depth: MatrixDepth; rounds: number; queriesPerRound: number; markets?: MarketId[] }
+  methodology?: { depth: MatrixDepth; rounds: number; queriesPerRound: number; markets?: MarketId[]; modelWeights?: Record<string, number> }
   /** Ergebnis je Zielmarkt (nur wenn mehr als ein Markt gemessen wurde). */
   marketResults?: MarketResult[]
 }
@@ -111,6 +112,8 @@ function aggregateReports(
   topics: string[],
   reports: VisibilityReport[],
   allQueryResults: QueryResult[],
+  /** Optionale Gewichte je Report (gleiche Reihenfolge); Standard: gleichgewichtet. */
+  weights?: number[],
 ): VisibilityReport {
   if (reports.length === 0) {
     // Fallback: leerer Report (sollte nie passieren wenn min. 1 Provider erfolgreich war)
@@ -120,13 +123,14 @@ function aggregateReports(
     return reports[0]
   }
 
-  const meanRound = (vals: number[]) =>
-    Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)
+  const w = weights && weights.length === reports.length ? weights : reports.map(() => 1)
+
+  const meanRound = (vals: number[]) => Math.round(weightedMean(vals, w))
 
   const meanOrNull = (vals: (number | null)[]) => {
-    const filtered = vals.filter((v): v is number => v !== null)
-    if (filtered.length === 0) return null
-    return Math.round((filtered.reduce((a, b) => a + b, 0) / filtered.length) * 100) / 100
+    const idx = vals.map((v, i) => (v === null ? -1 : i)).filter(i => i >= 0)
+    if (idx.length === 0) return null
+    return Math.round(weightedMean(idx.map(i => vals[i] as number), idx.map(i => w[i])) * 100) / 100
   }
 
   // Topics + Narratives mergen
@@ -344,10 +348,11 @@ async function measureAllProviders(
   let stability: ScoreStability | null = null
   const marketResults: MarketResult[] = []
   if (ok.length > 0) {
+    const okWeights = normalizedWeights(ok.map(o => o.provider.id))
     const common = Math.min(...ok.map(o => o.roundReports.length))
     const roundScores: number[] = []
     for (let r = 0; r < common; r++) {
-      roundScores.push(ok.reduce((a, o) => a + o.roundReports[r].overallScore, 0) / ok.length)
+      roundScores.push(weightedMean(ok.map(o => o.roundReports[r].overallScore), okWeights))
     }
     stability = computeStability(roundScores)
 
@@ -360,9 +365,12 @@ async function measureAllProviders(
         let mentionSum = 0
         let mentionN = 0
         for (let r = 0; r < mCommon; r++) {
-          scores.push(perProvider.reduce((a, x) => a + x[r].overallScore, 0) / perProvider.length)
+          scores.push(weightedMean(perProvider.map(x => x[r].overallScore), okWeights))
         }
-        perProvider.forEach(x => x.forEach(rep => { mentionSum += rep.mentionRate; mentionN += 1 }))
+        perProvider.forEach((x, pi) => x.forEach(rep => {
+          mentionSum += rep.mentionRate * okWeights[pi]
+          mentionN += okWeights[pi]
+        }))
         marketResults.push({
           id: market.id,
           label: market.label,
@@ -540,11 +548,13 @@ export async function runAnalysisForSchedule(
 
   // 6. Aggregate across successful providers (mean of per-model scores)
   const allQueryResults = providerOutcomes.flatMap(o => o.queryResults)
+  const providerWeights = normalizedWeights(successfulProviders.map(o => o.provider.id))
   const aggregateReport = aggregateReports(
     targetName,
     [schedule.query],
     successfulProviders.map(o => o.report!),
     allQueryResults,
+    providerWeights,
   )
 
   // 7. Sentiment over all signals from all providers
@@ -574,6 +584,9 @@ export async function runAnalysisForSchedule(
       rounds: stability?.rounds ?? 1,
       queriesPerRound,
       markets: markets.map(m => m.id),
+      modelWeights: Object.fromEntries(
+        successfulProviders.map((o, i) => [o.provider.id, Math.round(providerWeights[i] * 100) / 100]),
+      ),
     },
     marketResults: marketResults.length > 0 ? marketResults : undefined,
   }
@@ -734,11 +747,13 @@ export async function runCompetitorAnalysis(
 
   // 6. Aggregate
   const allQueryResults = providerOutcomes.flatMap(o => o.queryResults)
+  const providerWeights = normalizedWeights(successfulProviders.map(o => o.provider.id))
   const aggregateReport = aggregateReports(
     competitor.name,
     topics,
     successfulProviders.map(o => o.report!),
     allQueryResults,
+    providerWeights,
   )
   const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
 
@@ -764,6 +779,9 @@ export async function runCompetitorAnalysis(
       rounds: stability?.rounds ?? 1,
       queriesPerRound,
       markets: markets.map(m => m.id),
+      modelWeights: Object.fromEntries(
+        successfulProviders.map((o, i) => [o.provider.id, Math.round(providerWeights[i] * 100) / 100]),
+      ),
     },
     marketResults: marketResults.length > 0 ? marketResults : undefined,
   }
@@ -918,8 +936,9 @@ export async function runCalibrationEntry(
     )
   }
 
-  const score = Math.round(ok.reduce((a, o) => a + o.report!.overallScore, 0) / ok.length)
-  const mentionRate = Math.round(ok.reduce((a, o) => a + o.report!.mentionRate, 0) / ok.length)
+  const okWeights = normalizedWeights(ok.map(o => o.provider.id))
+  const score = Math.round(weightedMean(ok.map(o => o.report!.overallScore), okWeights))
+  const mentionRate = Math.round(weightedMean(ok.map(o => o.report!.mentionRate), okWeights))
   const rounds = stability?.rounds ?? 1
 
   // Vorherigen Wert desselben Eintrags für die Drift-Prüfung laden.

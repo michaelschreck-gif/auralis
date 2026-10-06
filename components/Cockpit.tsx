@@ -13,6 +13,7 @@ import {
 import { AURA_THEME, DIMENSION_THEME, SEO_THEME } from "@/lib/auralis/theme"
 import type { SeoScore } from "@/lib/auralis/seo-score"
 import type { ScoreStability } from "@/lib/auralis/stability"
+import type { SmoothingInfo } from "@/lib/auralis/smoothing"
 import type { MarketResult } from "@/lib/auralis/runner"
 import ScoreExplainer from "./ScoreExplainer"
 import { Icons } from "./DashboardShell"
@@ -22,6 +23,7 @@ export default function Cockpit({
   report,
   latestReportId,
   seoScore = null,
+  smoothing = null,
 }: {
   userName: string
   /** Latest visibility report from raw_data jsonb, or null if user has none yet. */
@@ -30,6 +32,8 @@ export default function Cockpit({
   latestReportId?: string | null
   /** Aktueller SEO-Score (eigene Pipeline), null wenn noch keine SEO-Analyse. */
   seoScore?: SeoScore | null
+  /** Gleitender Durchschnitt über mehrere Läufe (null = Einzellauf). */
+  smoothing?: SmoothingInfo | null
 }) {
   const stability =
     ((report as unknown as { stability?: ScoreStability | null } | null)?.stability) ?? null
@@ -116,6 +120,12 @@ export default function Cockpit({
               <p className="text-[#D8CFC4] text-sm leading-relaxed mt-2 max-w-xl">
                 So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden — kombiniert aus GEO, SEO, Thought Leadership und Digitaler Autorität.
               </p>
+              {smoothing && (
+                <p className="mt-3 text-[12px] text-[#D8CFC4]">
+                  Gleitender Durchschnitt aus {smoothing.runs} Messungen der letzten {smoothing.days} Tage
+                  {" · "}letzter Einzellauf: <span className="font-semibold text-white">{smoothing.latestScore}</span>
+                </p>
+              )}
               {stability && (
                 <p
                   className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-white/10 text-[12px] text-[#F3E9DD]"
