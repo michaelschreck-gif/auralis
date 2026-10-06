@@ -11,6 +11,7 @@
 import { NextResponse } from "next/server"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
+import type { Database } from "@/lib/supabase/database.types"
 import { validateSetupInput } from "@/lib/auralis/setup-input"
 import { isMarketId, maxMarketsForPlan, MARKETS } from "@/lib/auralis/markets"
 
@@ -57,7 +58,10 @@ export async function POST(request: Request) {
   const warnings: string[] = []
   let savedParts: string[] | null = null
   for (const attempt of attempts) {
-    const { error } = await supabase.from("profiles").update(attempt.data).eq("id", user.id)
+    const { error } = await supabase
+      .from("profiles")
+      .update(attempt.data as Database["public"]["Tables"]["profiles"]["Update"])
+      .eq("id", user.id)
     if (!error) { savedParts = attempt.saved; break }
     if (!isMissingColumn(error.message, "subject_name") && !isMissingColumn(error.message, "target_markets")) {
       return NextResponse.json({ error: error.message }, { status: 500 })
