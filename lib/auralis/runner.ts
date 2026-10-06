@@ -15,7 +15,8 @@
 
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { generateQueryMatrix, type MatrixDepth, type MatrixQuery } from "./query-matrix"
-import { resolveMarkets, locationSystemSuffix, type Market, type MarketId } from "./markets"
+import { CALIBRATION_PANEL, calibrationSeed, evaluateCalibration, type CalibrationEntry, type CalibrationVerdict } from "./calibration"
+import { MARKETS, resolveMarkets, locationSystemSuffix, type Market, type MarketId } from "./markets"
 import { computeStability, computeIntentStats, type ScoreStability, type IntentStat } from "./stability"
 import {
   extractMentionSignal,
@@ -217,9 +218,10 @@ async function runProvider(
   provider: LLMProvider,
   queries: RunQuery[],
   targetName: string,
-  opts: { rounds?: number; startedAt?: number } = {},
+  opts: { rounds?: number; startedAt?: number; roundBudgetMs?: number } = {},
 ): Promise<{ queryResults: QueryResult[]; rounds: QueryResult[][]; error?: string }> {
   const rounds = Math.max(1, opts.rounds ?? 1)
+  const roundBudgetMs = opts.roundBudgetMs ?? ROUND_START_BUDGET_MS
   const startedAt = opts.startedAt ?? Date.now()
 
   type Task = { round: number; index: number }
@@ -238,7 +240,7 @@ async function runProvider(
     while (true) {
       const task = tasks[cursor++]
       if (!task) return
-      if (task.round > 0 && Date.now() - startedAt > ROUND_START_BUDGET_MS) continue
+      if (task.round > 0 && Date.now() - startedAt > roundBudgetMs) continue
       const query = queries[task.index]
       try {
         const rawResponse = await provider.call(
@@ -309,6 +311,7 @@ async function measureAllProviders(
   targetName: string,
   topics: string[],
   rounds: number,
+  roundBudgetMs?: number,
 ): Promise<Measurement> {
   const startedAt = Date.now()
   const runQueries = toRunQueries(plans)
@@ -316,7 +319,7 @@ async function measureAllProviders(
   const outcomes: ProviderOutcome[] = await Promise.all(
     providers.map(async (provider) => {
       const { queryResults, rounds: roundResults, error } = await runProvider(
-        provider, runQueries, targetName, { rounds, startedAt },
+        provider, runQueries, targetName, { rounds, startedAt, roundBudgetMs },
       )
       if (error || roundResults.length === 0) {
         return { provider, queryResults: [], roundReports: [], marketRounds: {}, report: null, error: error ?? "no report" }
@@ -872,3 +875,89 @@ export function canAnalyzeCompetitors(plan: PlanType): boolean {
 
 // Re-exports for backward-compatibility with old imports
 export { claudeProvider }
+
+
+// ─── Kalibrierung ────────────────────────────────────────────────────────────
+
+export type CalibrationRunResult = {
+  entry: CalibrationEntry
+  score: number
+  mentionRate: number
+  rounds: number
+  verdict: CalibrationVerdict
+}
+
+/**
+ * Misst einen Panel-Eintrag mit festem Seed (identische Fragen bei jedem Lauf)
+ * über alle konfigurierten Provider und schreibt das Ergebnis nach
+ * `calibration_runs`. Wirft, wenn kein Provider ein Ergebnis liefert.
+ */
+export async function runCalibrationEntry(
+  entry: CalibrationEntry,
+  supabase: SupabaseClient<Database>,
+  options: { providerOverride?: LLMProvider[]; roundBudgetMs?: number } = {},
+): Promise<CalibrationRunResult> {
+  const providers = options.providerOverride ?? providersForPlan("enterprise")
+  if (providers.length === 0) throw new Error("No LLM providers configured.")
+
+  const market = MARKETS[entry.market]
+  const plans = buildMarketPlans(
+    [market],
+    [entry.topic],
+    { depth: "standard", rounds: 2 },
+    calibrationSeed(entry.key),
+  )
+  const { outcomes, stability } = await measureAllProviders(
+    providers, plans, entry.personName, [entry.topic], 2, options.roundBudgetMs,
+  )
+  const ok = outcomes.filter(o => o.report !== null)
+  if (ok.length === 0) {
+    throw new Error(
+      `Calibration ${entry.key}: all providers failed: ` +
+        outcomes.map(o => `${o.provider.id}: ${o.error ?? "no report"}`).join("; "),
+    )
+  }
+
+  const score = Math.round(ok.reduce((a, o) => a + o.report!.overallScore, 0) / ok.length)
+  const mentionRate = Math.round(ok.reduce((a, o) => a + o.report!.mentionRate, 0) / ok.length)
+  const rounds = stability?.rounds ?? 1
+
+  // Vorherigen Wert desselben Eintrags für die Drift-Prüfung laden.
+  const untyped = supabase as unknown as SupabaseClient
+  const { data: prev } = await untyped
+    .from("calibration_runs")
+    .select("score")
+    .eq("entry_key", entry.key)
+    .order("measured_at", { ascending: false })
+    .limit(1)
+  const previousScore = (prev?.[0] as { score?: number } | undefined)?.score ?? null
+  const verdict = evaluateCalibration(entry, score, previousScore)
+
+  const { error } = await untyped.from("calibration_runs").insert({
+    entry_key: entry.key,
+    kind: entry.kind,
+    person_name: entry.personName,
+    topic: entry.topic,
+    language: entry.language,
+    score,
+    mention_rate: mentionRate,
+    rounds,
+    queries_per_round: plans[0].queries.length,
+    per_model: ok.map(o => ({
+      provider: o.provider.id,
+      modelTag: o.provider.modelTag,
+      score: o.report!.overallScore,
+      mentionRate: o.report!.mentionRate,
+    })),
+    flag: verdict.flag,
+    flag_detail: verdict.flag ? verdict.detail : null,
+  })
+  if (error) throw new Error(`calibration_runs insert failed: ${error.message}`)
+
+  if (verdict.flag) {
+    console.error(`[calibration] ${verdict.flag}: ${verdict.detail}`)
+  }
+  return { entry, score, mentionRate, rounds, verdict }
+}
+
+export { CALIBRATION_PANEL }
