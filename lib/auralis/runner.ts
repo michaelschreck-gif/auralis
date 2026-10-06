@@ -181,6 +181,8 @@ export function measurementProfileForPlan(plan: PlanType): MeasurementProfile {
 const PROVIDER_CONCURRENCY = 10
 /** Nach dieser Zeit werden keine NEUEN Folgerunden mehr gestartet (Runde 1 läuft immer). */
 const ROUND_START_BUDGET_MS = 32_000
+/** Zeitbudget für Hintergrundläufe (Funktion hat 300 s; Reserve für Speichern). */
+const BACKGROUND_ROUND_BUDGET_MS = 120_000
 
 /** Eine konkrete Frage inkl. Markt-Kontext. IDs sind `${marketId}::${queryId}`. */
 type RunQuery = MatrixQuery & {
@@ -448,6 +450,11 @@ export type RunAnalysisOptions = {
   trigger: TriggerType
   /** When true, also advance `next_run_at` after successful run (cron-only). */
   advanceNextRunAt?: boolean
+  /**
+   * Hintergrundlauf (Job): volles Messdesign des Tarifs ohne Budget-Kürzung bei
+   * mehreren Märkten, großzügigeres Zeitbudget (Funktion läuft bis 300 s).
+   */
+  background?: boolean
   /** Optional override of which providers to use. Defaults to providersForPlan(profile.plan). */
   providerOverride?: LLMProvider[]
 }
@@ -504,13 +511,17 @@ export async function runAnalysisForSchedule(
     plan,
     schedule.language === "en" ? "en" : "de",
   )
-  const measurement = budgetForMarkets(measurementProfileForPlan(plan), markets.length)
+  const baseProfile = measurementProfileForPlan(plan)
+  const measurement = options.background
+    ? (markets.length > 3 ? { depth: "standard" as const, rounds: baseProfile.rounds } : baseProfile)
+    : budgetForMarkets(baseProfile, markets.length)
   const marketPlans = buildMarketPlans(markets, [schedule.query], measurement, `${schedule.id}-${Date.now()}`)
   const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
 
   // 4. Fan-out per provider (parallel), mehrere Runden und Märkte
   const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
     providers, marketPlans, targetName, [schedule.query], measurement.rounds,
+    options.background ? BACKGROUND_ROUND_BUDGET_MS : undefined,
   )
 
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)

@@ -1,5 +1,6 @@
 "use client"
 
+import { runAnalysisAndWait } from "@/lib/analysis-client"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
@@ -40,29 +41,22 @@ export default function AnalyzePanel({
   const [runningId, setRunningId] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [successId, setSuccessId] = useState<string | null>(null)
+  const [elapsed, setElapsed] = useState(0)
 
   async function trigger(scheduleId: string) {
     setRunningId(scheduleId)
+    setElapsed(0)
     setError(null)
     setSuccessId(null)
-    try {
-      const res = await fetch(`/api/analyze/${scheduleId}`, {
-        method: "POST",
-      })
-      const body = await res.json()
-      if (!res.ok) {
-        setError(body?.error ?? "Analyse fehlgeschlagen.")
-        setRunningId(null)
-        return
-      }
-      setSuccessId(scheduleId)
-      setRunningId(null)
-      // Refresh server data (history + last_run_at)
-      router.refresh()
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Netzwerkfehler.")
-      setRunningId(null)
+    const outcome = await runAnalysisAndWait(scheduleId, setElapsed)
+    setRunningId(null)
+    if (!outcome.ok) {
+      setError(outcome.error)
+      return
     }
+    setSuccessId(scheduleId)
+    // Refresh server data (history + last_run_at)
+    router.refresh()
   }
 
   const limitReached = remaining === 0
@@ -177,7 +171,7 @@ export default function AnalyzePanel({
                     {isRunning ? (
                       <span className="flex items-center gap-2">
                         <span className="w-3 h-3 border border-[#FBCBB8] border-t-white rounded-full animate-spin" />
-                        Läuft…
+                        {elapsed > 0 ? `Misst… ${elapsed}s` : "Läuft…"}
                       </span>
                     ) : wasSuccess ? (
                       "✓ Fertig"

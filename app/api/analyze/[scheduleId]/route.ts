@@ -1,4 +1,6 @@
-import { NextResponse } from "next/server"
+import { NextResponse, after } from "next/server"
+import { createSupabaseServiceClient } from "@/lib/supabase/client"
+import { enqueueAnalysisJob, executeAnalysisJob, hasActiveJob } from "@/lib/auralis/jobs"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import {
   runAnalysisForSchedule,
@@ -6,8 +8,8 @@ import {
   type PlanType,
 } from "@/lib/auralis/runner"
 
-// Analyses can take 10-30 seconds (5 parallel Anthropic calls).
-export const maxDuration = 60
+// Der Lauf selbst läuft im Hintergrund (after()) und darf bis zu 300 s dauern.
+export const maxDuration = 300
 
 export async function POST(
   _req: Request,
@@ -78,7 +80,32 @@ export async function POST(
     )
   }
 
-  // 4. Run the analysis (10-30s, 5 parallel Anthropic calls)
+  // 4a. Bevorzugt: als Hintergrund-Job starten und sofort antworten (202).
+  //     Fehlt die Tabelle (Migration nicht ausgeführt), fällt der Code unten
+  //     auf den synchronen Lauf zurück.
+  try {
+    const service = createSupabaseServiceClient()
+    if (await hasActiveJob(service, scheduleId)) {
+      return NextResponse.json(
+        { error: "Für dieses Thema läuft bereits eine Messung. Bitte warte, bis sie abgeschlossen ist." },
+        { status: 409 },
+      )
+    }
+    const jobId = await enqueueAnalysisJob(service, {
+      profileId: user.id,
+      scheduleId,
+      trigger: "manual",
+      advanceNextRunAt: false,
+    })
+    if (jobId) {
+      after(() => executeAnalysisJob(service, jobId))
+      return NextResponse.json({ ok: true, jobId, remaining: limit.remaining }, { status: 202 })
+    }
+  } catch (e) {
+    console.error("[analyze] job path failed, falling back to sync:", e)
+  }
+
+  // 4b. Fallback: synchroner Lauf (Messdesign mit Zeitbudget für 60 s)
   try {
     const result = await runAnalysisForSchedule(scheduleId, supabase, {
       trigger: "manual",

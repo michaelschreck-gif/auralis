@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
 import { computeMasterScores } from "@/lib/auralis/master-scores"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
+import { runAnalysisAndWait } from "@/lib/analysis-client"
 
 type Phase = "name" | "topics" | "running" | "result"
 
@@ -108,9 +109,9 @@ export default function OnboardingPage() {
     // 3. Erste Analyse direkt starten (primäres Thema)
     const first = inserted[0]
     try {
-      const res = await fetch(`/api/analyze/${first.id}`, { method: "POST" })
-      const data = await res.json().catch(() => ({}))
-      if (res.ok && data?.reportId) {
+      const outcome = await runAnalysisAndWait(first.id)
+      if (outcome.ok) {
+        const data = { reportId: outcome.reportId, score: outcome.score }
         // Halo Score exakt wie im Cockpit aus dem Report ableiten
         let score: number | null = typeof data.score === "number" ? Math.round(data.score) : null
         let band = ""

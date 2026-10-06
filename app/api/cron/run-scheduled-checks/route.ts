@@ -17,6 +17,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
 import { runAnalysisForSchedule } from "@/lib/auralis/runner"
+import { enqueueAnalysisJob, executeAnalysisJob, hasActiveJob } from "@/lib/auralis/jobs"
 
 // Multi-model runs can take 30-60s with all 4 providers.
 // Vercel cron functions on the Hobby plan are capped at 10s; on Pro/Enterprise
@@ -38,19 +39,59 @@ export async function GET(request: NextRequest) {
   }
 
   const total = (schedules ?? []).length
-  let processed = 0
+  let dispatched = 0
   let failed = 0
   const errors: { scheduleId: string; error: string }[] = []
 
-  // Process schedules sequentially to avoid hammering provider APIs.
-  // (Could be parallelized with Promise.allSettled if rate limits allow.)
+  // Je fälligem Thema einen Job anlegen und in einer EIGENEN Funktionsinstanz
+  // starten (/api/internal/run-job). So laufen die Themen parallel, und jeder
+  // Lauf hat die vollen 300 s statt sich die Zeit dieser Funktion zu teilen.
+  // Fehlt die Tabelle (Migration offen) oder schlägt der Start fehl, läuft das
+  // Thema direkt in dieser Funktion (alter Pfad).
+  const origin = request.nextUrl.origin
   for (const schedule of schedules ?? []) {
     try {
-      await runAnalysisForSchedule(schedule.id, supabase, {
+      if (await hasActiveJob(supabase, schedule.id)) continue
+
+      const jobId = await enqueueAnalysisJob(supabase, {
+        profileId: schedule.profile_id,
+        scheduleId: schedule.id,
         trigger: "scheduled",
         advanceNextRunAt: true,
       })
-      processed++
+
+      let started = false
+      if (jobId) {
+        try {
+          const res = await fetch(`${origin}/api/internal/run-job`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${process.env.CRON_SECRET}`,
+            },
+            body: JSON.stringify({ jobId }),
+            signal: AbortSignal.timeout(20_000),
+          })
+          started = res.status === 202
+          if (!started) console.error(`[cron] run-job returned ${res.status} for ${schedule.id}`)
+        } catch (e) {
+          console.error(`[cron] run-job dispatch failed for ${schedule.id}:`, e)
+        }
+      }
+
+      if (started) {
+        dispatched++
+      } else if (jobId) {
+        // Job direkt hier ausführen (Fallback), damit nichts liegen bleibt.
+        await executeAnalysisJob(supabase, jobId)
+        dispatched++
+      } else {
+        await runAnalysisForSchedule(schedule.id, supabase, {
+          trigger: "scheduled",
+          advanceNextRunAt: true,
+        })
+        dispatched++
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err)
       console.error(`[cron] schedule ${schedule.id} failed:`, message)
@@ -59,5 +100,5 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ processed, failed, total, errors })
+  return NextResponse.json({ dispatched, failed, total, errors })
 }
