@@ -1,5 +1,6 @@
 import { NextResponse, after } from "next/server"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
+import { publicErrorMessage } from "@/lib/auralis/errors"
 import { enqueueAnalysisJob, executeAnalysisJob, hasActiveJob } from "@/lib/auralis/jobs"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import {
@@ -122,6 +123,6 @@ export async function POST(
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     console.error("[analyze]", scheduleId, message)
-    return NextResponse.json({ error: message }, { status: 500 })
+    return NextResponse.json({ error: publicErrorMessage(message) }, { status: 500 })
   }
 }

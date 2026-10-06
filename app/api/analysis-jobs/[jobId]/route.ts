@@ -7,6 +7,7 @@ import { NextResponse } from "next/server"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { isStale, type JobRow } from "@/lib/auralis/jobs"
+import { publicErrorMessage } from "@/lib/auralis/errors"
 
 export const dynamic = "force-dynamic"
 
@@ -50,7 +51,7 @@ export async function GET(
     status: job.status,
     reportId: job.report_id,
     score,
-    error: job.error,
+    error: job.status === "failed" ? publicErrorMessage(job.error) : null,
     startedAt: job.started_at,
   })
 }

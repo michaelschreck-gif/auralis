@@ -202,3 +202,14 @@ test("Themen-Vorschläge: JSON und Zeilen", () => {
   assert.deepEqual(parseTopicSuggestions("1. Vertrieb\n- Marketing\n"), ["Vertrieb", "Marketing"])
   assert.deepEqual(parseTopicSuggestions("[]"), [])
 })
+
+// ─── Kundentaugliche Fehlertexte ─────────────────────────────────────────────
+import { publicErrorMessage } from "./errors.ts"
+
+test("Fehlertexte: keine Anbieter-Details für Kunden", () => {
+  const credit = publicErrorMessage('All providers failed: claude-sonnet: 400 {"message":"Your credit balance is too low"}; gpt-4o: OpenAI API 429: no credits remaining')
+  assert.match(credit, /vorübergehend nicht verfügbar/)
+  assert.ok(!/claude|openai|credit|400|429/i.test(credit))
+  assert.match(publicErrorMessage("rate limit exceeded"), /ausgelastet/)
+  assert.match(publicErrorMessage(null), /fehlgeschlagen/)
+})
