@@ -55,6 +55,7 @@ export default function SetupAssistant({
   const [phase, setPhase] = useState<"edit" | "saving" | "running" | "done">("edit")
   const [result, setResult] = useState<{ score: number | null; analysed: boolean; failed?: string } | null>(null)
   const [msgIndex, setMsgIndex] = useState(0)
+  const [warnings, setWarnings] = useState<string[]>([])
 
   useEffect(() => {
     if (phase !== "running") return
@@ -124,6 +125,7 @@ export default function SetupAssistant({
       const data = await res.json().catch(() => ({}))
       if (!res.ok) { setError(data?.error ?? "Speichern fehlgeschlagen."); setPhase("edit"); return }
       firstScheduleId = data.firstScheduleId ?? null
+      setWarnings(Array.isArray(data.warnings) ? data.warnings : [])
     } catch {
       setError("Netzwerkfehler beim Speichern."); setPhase("edit"); return
     }
@@ -183,6 +185,12 @@ export default function SetupAssistant({
               )}
               <p className="text-sm text-[#5E6563]">Du kannst die Analyse jederzeit unter „Analyse“ starten.</p>
             </>
+          )}
+          {warnings.length > 0 && (
+            <div className="rounded-2xl bg-[#FDF3E3] border border-[#EBCB94] p-4 text-left text-sm text-[#6B4A12] space-y-1.5">
+              <p className="font-semibold">Hinweis</p>
+              {warnings.map(w => <p key={w}>{w}</p>)}
+            </div>
           )}
           <div className="flex items-center justify-center gap-3 flex-wrap pt-2">
             <Link href="/dashboard" className="px-6 py-2.5 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white text-sm font-bold transition-colors">

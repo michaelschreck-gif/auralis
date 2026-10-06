@@ -40,21 +40,37 @@ export async function POST(request: Request) {
   const language = parsed.language
 
   // 1. Profil: Person, Regionen, Sprache
+  //    Die Spalten subject_name / target_markets kommen aus Migrationen. Fehlen
+  //    sie noch, speichern wir den Rest und weisen darauf hin, statt das ganze
+  //    Setup scheitern zu lassen.
   const baseUpdate = {
     language,
     ...(profile?.full_name ? {} : { full_name: subjectName }),
   }
-  const full = await supabase
-    .from("profiles")
-    .update({ ...baseUpdate, subject_name: subjectName, target_markets: markets })
-    .eq("id", user.id)
-  if (full.error) {
-    const missing = /subject_name|target_markets/.test(full.error.message)
-    if (!missing) return NextResponse.json({ error: full.error.message }, { status: 500 })
-    return NextResponse.json(
-      { error: "Die Datenbank ist noch nicht vollständig eingerichtet (Migration fehlt). Bitte beim Support melden." },
-      { status: 500 },
-    )
+  const isMissingColumn = (msg: string, col: string) => msg.includes(col)
+  const attempts: { label: string; data: Record<string, unknown>; saved: string[] }[] = [
+    { label: "all", data: { ...baseUpdate, subject_name: subjectName, target_markets: markets }, saved: ["name", "regions"] },
+    { label: "markets", data: { ...baseUpdate, target_markets: markets }, saved: ["regions"] },
+    { label: "name", data: { ...baseUpdate, subject_name: subjectName }, saved: ["name"] },
+    { label: "base", data: baseUpdate, saved: [] },
+  ]
+  const warnings: string[] = []
+  let savedParts: string[] | null = null
+  for (const attempt of attempts) {
+    const { error } = await supabase.from("profiles").update(attempt.data).eq("id", user.id)
+    if (!error) { savedParts = attempt.saved; break }
+    if (!isMissingColumn(error.message, "subject_name") && !isMissingColumn(error.message, "target_markets")) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+  }
+  if (savedParts === null) {
+    return NextResponse.json({ error: "Profil konnte nicht gespeichert werden." }, { status: 500 })
+  }
+  if (!savedParts.includes("name")) {
+    warnings.push("Der Personenname wird erst berücksichtigt, wenn die Datenbank-Erweiterung eingespielt ist. Bis dahin wird der Konto-Name bewertet.")
+  }
+  if (!savedParts.includes("regions")) {
+    warnings.push("Die Regionsauswahl wird erst berücksichtigt, wenn die Datenbank-Erweiterung eingespielt ist. Bis dahin wird der Standardmarkt gemessen.")
   }
 
   // 2. Themen abgleichen
@@ -103,5 +119,5 @@ export async function POST(request: Request) {
     if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  return NextResponse.json({ ok: true, scheduleIds, firstScheduleId: scheduleIds[0] ?? null })
+  return NextResponse.json({ ok: true, scheduleIds, firstScheduleId: scheduleIds[0] ?? null, warnings })
 }
