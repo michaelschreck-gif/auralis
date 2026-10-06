@@ -12,6 +12,7 @@ import {
 } from "@/lib/auralis/master-scores"
 import { AURA_THEME, DIMENSION_THEME, SEO_THEME } from "@/lib/auralis/theme"
 import type { SeoScore } from "@/lib/auralis/seo-score"
+import type { ScoreStability } from "@/lib/auralis/stability"
 import ScoreExplainer from "./ScoreExplainer"
 import { Icons } from "./DashboardShell"
 
@@ -29,6 +30,8 @@ export default function Cockpit({
   /** Aktueller SEO-Score (eigene Pipeline), null wenn noch keine SEO-Analyse. */
   seoScore?: SeoScore | null
 }) {
+  const stability =
+    ((report as unknown as { stability?: ScoreStability | null } | null)?.stability) ?? null
   const [openKey, setOpenKey] = useState<ScoreKey | null>(null)
 
   const masters = useMemo(() => report ? computeMasterScores(report) : null, [report])
@@ -110,6 +113,17 @@ export default function Cockpit({
               <p className="text-[#D8CFC4] text-sm leading-relaxed mt-2 max-w-xl">
                 So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden — kombiniert aus GEO, SEO, Thought Leadership und Digitaler Autorität.
               </p>
+              {stability && (
+                <p
+                  className="inline-flex items-center gap-1.5 mt-3 px-3 py-1 rounded-full bg-white/10 text-[12px] text-[#F3E9DD]"
+                  title={`Der Score wurde in ${stability.rounds} unabhängigen Messrunden mit wechselnden Fragen erhoben (Spanne ${stability.min}–${stability.max}).`}
+                >
+                  <span className="font-semibold">± {stability.margin}</span>
+                  <span>
+                    Messgenauigkeit {stability.level} · {stability.rounds} Messrunden
+                  </span>
+                </p>
+              )}
               <div className="flex items-center gap-2.5 mt-5 flex-wrap">
                 <Link
                   href="/dashboard/analyze"

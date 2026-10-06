@@ -14,7 +14,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { generateVisibilityQueries, type QueryConfig } from "./queries"
+import { generateQueryMatrix, type MatrixDepth } from "./query-matrix"
+import { computeStability, computeIntentStats, type ScoreStability, type IntentStat } from "./stability"
 import {
   extractMentionSignal,
   buildVisibilityReport,
@@ -80,6 +81,12 @@ export type MultiModelVisibilityReport = VisibilityReport & {
   perModelBreakdown?: PerModelBreakdown[]
   /** Welche Provider erfolgreich gelaufen sind. */
   providersUsed?: ProviderId[]
+  /** Schwankungsbreite über mehrere Messrunden (null bei nur einer Runde). */
+  stability?: ScoreStability | null
+  /** Erwähnungen je Fragetyp über alle Modelle und Runden. */
+  intentStats?: IntentStat[]
+  /** Messdesign dieses Laufs (für Transparenz / Vergleichbarkeit). */
+  methodology?: { depth: MatrixDepth; rounds: number; queriesPerRound: number }
 }
 
 /**
@@ -136,24 +143,70 @@ function aggregateReports(
   }
 }
 
+// ─── Messdesign je Tarif ─────────────────────────────────────────────────────
+
+export type MeasurementProfile = { depth: MatrixDepth; rounds: number }
+
 /**
- * Führt die N Queries gegen einen Provider aus und gibt die QueryResults zurück.
+ * Wie gründlich gemessen wird. Mehr Runden = stabilerer Score + Schwankungsbreite,
+ * kostet aber proportional mehr API-Aufrufe.
+ */
+export function measurementProfileForPlan(plan: PlanType): MeasurementProfile {
+  switch (plan) {
+    case "enterprise": return { depth: "extended", rounds: 3 }
+    case "pro":        return { depth: "extended", rounds: 2 }
+    case "starter":    return { depth: "standard", rounds: 2 }
+    default:           return { depth: "standard", rounds: 1 }
+  }
+}
+
+/** Max. gleichzeitige Aufrufe je Provider (Rate-Limits schonen). */
+const PROVIDER_CONCURRENCY = 10
+/** Nach dieser Zeit werden keine NEUEN Folgerunden mehr gestartet (Runde 1 läuft immer). */
+const ROUND_START_BUDGET_MS = 32_000
+
+type MatrixQueryList = ReturnType<typeof generateQueryMatrix>
+
+/**
+ * Führt die Queries in `rounds` Wiederholungen gegen einen Provider aus.
  * Wirft NICHT — gibt stattdessen ein Result-Objekt mit `error` zurück, damit
  * ein Provider-Fehler nicht den ganzen Run killt.
+ *
+ * - Aufrufe laufen über einen kleinen Worker-Pool (PROVIDER_CONCURRENCY).
+ * - Einzelne fehlgeschlagene Aufrufe machen nur ihre Runde ungültig; es zählen
+ *   nur VOLLSTÄNDIGE Runden (sonst würden fehlende Fragen den Score drücken).
+ * - Folgerunden werden nur gestartet, solange das Zeitbudget reicht.
  */
 async function runProvider(
   provider: LLMProvider,
-  queries: ReturnType<typeof generateVisibilityQueries>,
+  queries: MatrixQueryList,
   targetName: string,
-): Promise<{ queryResults: QueryResult[]; error?: string }> {
-  try {
-    const queryResults = await Promise.all(
-      queries.map(async (query) => {
-        const rawResponse = await provider.call(
-          query.prompt,
-          AI_SIMULATION_SYSTEM_PROMPT,
-        )
-        const qr = extractMentionSignal(
+  opts: { rounds?: number; startedAt?: number } = {},
+): Promise<{ queryResults: QueryResult[]; rounds: QueryResult[][]; error?: string }> {
+  const rounds = Math.max(1, opts.rounds ?? 1)
+  const startedAt = opts.startedAt ?? Date.now()
+
+  type Task = { round: number; index: number }
+  const tasks: Task[] = []
+  for (let r = 0; r < rounds; r++) {
+    for (let i = 0; i < queries.length; i++) tasks.push({ round: r, index: i })
+  }
+
+  const slots: (QueryResult | null)[][] = Array.from({ length: rounds }, () =>
+    Array.from({ length: queries.length }, () => null),
+  )
+  let cursor = 0
+  let firstError: string | undefined
+
+  async function worker() {
+    while (true) {
+      const task = tasks[cursor++]
+      if (!task) return
+      if (task.round > 0 && Date.now() - startedAt > ROUND_START_BUDGET_MS) continue
+      const query = queries[task.index]
+      try {
+        const rawResponse = await provider.call(query.prompt, AI_SIMULATION_SYSTEM_PROMPT)
+        slots[task.round][task.index] = extractMentionSignal(
           rawResponse,
           targetName,
           query.id,
@@ -161,15 +214,77 @@ async function runProvider(
           query.prompt,
           query.type,
         )
-        return qr
-      }),
-    )
-    return { queryResults }
-  } catch (e) {
-    const message = e instanceof Error ? e.message : String(e)
-    console.error(`[runner] provider ${provider.id} failed:`, message)
-    return { queryResults: [], error: message }
+      } catch (e) {
+        const message = e instanceof Error ? e.message : String(e)
+        if (!firstError) firstError = message
+        console.error(`[runner] provider ${provider.id} call failed:`, message)
+      }
+    }
   }
+
+  await Promise.all(
+    Array.from({ length: Math.min(PROVIDER_CONCURRENCY, tasks.length) }, () => worker()),
+  )
+
+  const completeRounds = slots
+    .filter(round => round.every(r => r !== null))
+    .map(round => round as QueryResult[])
+
+  if (completeRounds.length === 0) {
+    return {
+      queryResults: [],
+      rounds: [],
+      error: firstError ?? "no complete measurement round",
+    }
+  }
+  return { queryResults: completeRounds.flat(), rounds: completeRounds }
+}
+
+type ProviderOutcome = {
+  provider: LLMProvider
+  queryResults: QueryResult[]
+  roundReports: VisibilityReport[]
+  report: VisibilityReport | null
+  error?: string
+}
+
+/**
+ * Misst alle Provider parallel in mehreren Runden und liefert je Provider den
+ * gemittelten Report plus Rundenwerte für die Schwankungsbreite.
+ */
+async function measureAllProviders(
+  providers: LLMProvider[],
+  queries: MatrixQueryList,
+  targetName: string,
+  topics: string[],
+  rounds: number,
+): Promise<{ outcomes: ProviderOutcome[]; stability: ScoreStability | null }> {
+  const startedAt = Date.now()
+  const outcomes: ProviderOutcome[] = await Promise.all(
+    providers.map(async (provider) => {
+      const { queryResults, rounds: roundResults, error } = await runProvider(
+        provider, queries, targetName, { rounds, startedAt },
+      )
+      if (error || roundResults.length === 0) {
+        return { provider, queryResults: [], roundReports: [], report: null, error: error ?? "no report" }
+      }
+      const roundReports = roundResults.map(rr => buildVisibilityReport(targetName, topics, rr))
+      const report = aggregateReports(targetName, topics, roundReports, queryResults)
+      return { provider, queryResults, roundReports, report }
+    }),
+  )
+
+  const ok = outcomes.filter(o => o.report !== null)
+  let stability: ScoreStability | null = null
+  if (ok.length > 0) {
+    const common = Math.min(...ok.map(o => o.roundReports.length))
+    const roundScores: number[] = []
+    for (let r = 0; r < common; r++) {
+      roundScores.push(ok.reduce((a, o) => a + o.roundReports[r].overallScore, 0) / ok.length)
+    }
+    stability = computeStability(roundScores)
+  }
+  return { outcomes, stability }
 }
 
 export type RunAnalysisResult = {
@@ -235,23 +350,19 @@ export async function runAnalysisForSchedule(
     throw new Error("No LLM providers configured. Set ANTHROPIC_API_KEY at minimum.")
   }
 
-  // 3. Generate the standard 7 queries (config.name ist für die Prompts irrelevant)
-  const config: QueryConfig = {
-    name: targetName,
-    topics: [schedule.query],
-    language: schedule.language === "en" ? "en" : "de",
-  }
-  const queries = generateVisibilityQueries(config)
+  // 3. Fragen-Matrix: ausgewogene Stichprobe aus dem Pool (Messdesign je Tarif)
+  const measurement = measurementProfileForPlan(plan)
+  const queries = generateQueryMatrix(
+    {
+      topics: [schedule.query],
+      language: schedule.language === "en" ? "en" : "de",
+    },
+    { depth: measurement.depth, seed: `${schedule.id}-${Date.now()}` },
+  )
 
-  // 4. Fan-out per provider, in parallel
-  const providerOutcomes = await Promise.all(
-    providers.map(async (provider) => {
-      const { queryResults, error } = await runProvider(provider, queries, targetName)
-      const report = error
-        ? null
-        : buildVisibilityReport(targetName, [schedule.query], queryResults)
-      return { provider, queryResults, report, error }
-    }),
+  // 4. Fan-out per provider (parallel), mehrere Runden
+  const { outcomes: providerOutcomes, stability } = await measureAllProviders(
+    providers, queries, targetName, [schedule.query], measurement.rounds,
   )
 
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
@@ -314,6 +425,15 @@ export async function runAnalysisForSchedule(
     ...aggregateReport,
     perModelBreakdown,
     providersUsed: successfulProviders.map(o => o.provider.id),
+    stability,
+    intentStats: computeIntentStats(
+      allQueryResults.map(r => ({ type: r.queryType, mentioned: r.signal.mentioned })),
+    ),
+    methodology: {
+      depth: measurement.depth,
+      rounds: stability?.rounds ?? 1,
+      queriesPerRound: queries.length,
+    },
   }
 
   const { data: savedReport, error: reportError } = await supabase
@@ -422,27 +542,20 @@ export async function runCompetitorAnalysis(
     throw new Error("No LLM providers configured.")
   }
 
-  // 3. Generate queries (per-competitor language from Sprint 12)
+  // 3. Fragen-Matrix (gleiches Messdesign wie bei der eigenen Analyse → vergleichbar)
   const topics = (competitor.topics && competitor.topics.length > 0)
     ? competitor.topics
     : ["expertise"]
   const lang: "de" | "en" = competitor.language === "de" ? "de" : "en"
-  const config: QueryConfig = {
-    name: competitor.name,
-    topics,
-    language: lang,
-  }
-  const queries = generateVisibilityQueries(config)
+  const measurement = measurementProfileForPlan(plan)
+  const queries = generateQueryMatrix(
+    { topics, language: lang },
+    { depth: measurement.depth, seed: `${competitor.id}-${Date.now()}` },
+  )
 
   // 4. Fan-out
-  const providerOutcomes = await Promise.all(
-    providers.map(async (provider) => {
-      const { queryResults, error } = await runProvider(provider, queries, competitor.name)
-      const report = error
-        ? null
-        : buildVisibilityReport(competitor.name, topics, queryResults)
-      return { provider, queryResults, report, error }
-    }),
+  const { outcomes: providerOutcomes, stability } = await measureAllProviders(
+    providers, queries, competitor.name, topics, measurement.rounds,
   )
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
   if (successfulProviders.length === 0) {
@@ -500,6 +613,15 @@ export async function runCompetitorAnalysis(
     ...aggregateReport,
     perModelBreakdown,
     providersUsed: successfulProviders.map(o => o.provider.id),
+    stability,
+    intentStats: computeIntentStats(
+      allQueryResults.map(r => ({ type: r.queryType, mentioned: r.signal.mentioned })),
+    ),
+    methodology: {
+      depth: measurement.depth,
+      rounds: stability?.rounds ?? 1,
+      queriesPerRound: queries.length,
+    },
   }
 
   // 7. Persist competitor_reports row
