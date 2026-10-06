@@ -145,11 +145,15 @@ export default function OnboardingPage() {
   const dotIndex = phase === "running" ? 2 : DOT_PHASES.indexOf(phase)
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3] flex items-center justify-center p-6">
+    <div className="app-shell min-h-screen bg-white flex flex-col">
+      {/* Top-Leiste im App-Stil */}
+      <header className="h-14 flex-shrink-0 flex items-center px-4">
+        <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
+      </header>
+      <div className="flex-1 bg-[#FAF8F3] md:border md:border-b-0 md:border-[#E9E1D3] md:rounded-t-3xl md:mx-4 flex items-center justify-center p-6">
       <div className="max-w-md w-full">
-        {/* Brand + Fortschritt */}
+        {/* Fortschritt */}
         <div className="flex flex-col items-center gap-4 mb-6">
-          <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-6 w-auto" />
           <div className="flex items-center gap-2">
             {DOT_PHASES.map((p, i) => (
               <span
@@ -298,7 +302,7 @@ export default function OnboardingPage() {
             <div className="space-y-5">
               <div className="text-center">
                 <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Dein erster Halo Score</span>
-                <p className="text-sm text-[#6B625A] mt-1.5">für „{result.topic}"</p>
+                <p className="text-sm text-[#6B625A] mt-1.5">für „{result.topic}“</p>
               </div>
 
               {result.score !== null ? (
@@ -334,6 +338,7 @@ export default function OnboardingPage() {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   )
