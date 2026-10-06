@@ -148,3 +148,21 @@ test("Glättung: Mittel über Läufe, Info mit letztem Einzelwert", () => {
   assert.equal(report.averagePosition, 3)
   assert.deepEqual(info, { runs: 3, days: 28, latestScore: 70 })
 })
+
+// ─── Kalibrierung: Aufbereitung ──────────────────────────────────────────────
+import { shapeCalibration } from "./calibration.ts"
+
+test("Kalibrierung: Aufbereitung gruppiert, sortiert Warnungen zuerst, Verlauf chronologisch", () => {
+  const row = (key: string, score: number, at: string, flag: string | null = null, kind = "positive") => ({
+    entry_key: key, kind, person_name: key.toUpperCase(), topic: "T", language: "de",
+    score, mention_rate: score, rounds: 2, flag, flag_detail: flag ? "x" : null, measured_at: at,
+  })
+  const views = shapeCalibration([
+    row("a", 60, "2026-10-03"), row("a", 50, "2026-10-02"),
+    row("b", 20, "2026-10-03", "negative_control_hit", "negative"),
+  ])
+  assert.equal(views[0].key, "b")
+  const a = views.find(v => v.key === "a")!
+  assert.deepEqual(a.history.map(h => h.score), [50, 60])
+  assert.equal(a.latest.score, 60)
+})

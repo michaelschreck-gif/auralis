@@ -8,22 +8,10 @@ import { NextResponse } from "next/server"
 import type { SupabaseClient } from "@supabase/supabase-js"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { createSupabaseServiceClient } from "@/lib/supabase/client"
+import { shapeCalibration, type CalibrationRow } from "@/lib/auralis/calibration"
 
 export const dynamic = "force-dynamic"
 
-type Row = {
-  entry_key: string
-  kind: string
-  person_name: string
-  topic: string
-  language: string
-  score: number
-  mention_rate: number
-  rounds: number
-  flag: string | null
-  flag_detail: string | null
-  measured_at: string
-}
 
 export async function GET() {
   const session = await createSupabaseServerClient()
@@ -41,23 +29,7 @@ export async function GET() {
     .limit(300)
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
 
-  const byEntry = new Map<string, Row[]>()
-  for (const r of (data ?? []) as Row[]) {
-    const list = byEntry.get(r.entry_key) ?? []
-    if (list.length < 12) list.push(r)
-    byEntry.set(r.entry_key, list)
-  }
-
-  const entries = Array.from(byEntry.entries()).map(([key, history]) => ({
-    key,
-    kind: history[0].kind,
-    personName: history[0].person_name,
-    topic: history[0].topic,
-    latest: { score: history[0].score, mentionRate: history[0].mention_rate, measuredAt: history[0].measured_at },
-    history: history.map(h => ({ score: h.score, measuredAt: h.measured_at })).reverse(),
-    flag: history[0].flag,
-    flagDetail: history[0].flag_detail,
-  }))
+  const entries = shapeCalibration((data ?? []) as CalibrationRow[])
 
   return NextResponse.json({
     entries,

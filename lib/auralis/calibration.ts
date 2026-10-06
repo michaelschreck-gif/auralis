@@ -90,3 +90,56 @@ export function pickStalestEntries(
   }
   return [...panel].sort((a, b) => ts(a) - ts(b)).slice(0, count)
 }
+
+// ─── Aufbereitung für die Admin-Ansicht ──────────────────────────────────────
+
+export type CalibrationRow = {
+  entry_key: string
+  kind: string
+  person_name: string
+  topic: string
+  language: string
+  score: number
+  mention_rate: number
+  rounds: number
+  flag: string | null
+  flag_detail: string | null
+  measured_at: string
+}
+
+export type CalibrationEntryView = {
+  key: string
+  kind: string
+  personName: string
+  topic: string
+  latest: { score: number; mentionRate: number; measuredAt: string }
+  history: { score: number; measuredAt: string }[]
+  flag: string | null
+  flagDetail: string | null
+}
+
+/** Gruppiert Rohzeilen (neueste zuerst) je Panel-Eintrag; Verlauf chronologisch. */
+export function shapeCalibration(rows: CalibrationRow[], historyLimit = 12): CalibrationEntryView[] {
+  const byEntry = new Map<string, CalibrationRow[]>()
+  for (const r of rows) {
+    const list = byEntry.get(r.entry_key) ?? []
+    if (list.length < historyLimit) list.push(r)
+    byEntry.set(r.entry_key, list)
+  }
+  const views = Array.from(byEntry.entries()).map(([key, history]) => ({
+    key,
+    kind: history[0].kind,
+    personName: history[0].person_name,
+    topic: history[0].topic,
+    latest: { score: history[0].score, mentionRate: history[0].mention_rate, measuredAt: history[0].measured_at },
+    history: history.map(h => ({ score: h.score, measuredAt: h.measured_at })).reverse(),
+    flag: history[0].flag,
+    flagDetail: history[0].flag_detail,
+  }))
+  // Warnungen zuerst, dann negative Kontrollen, dann alphabetisch
+  return views.sort((a, b) => {
+    if (!!a.flag !== !!b.flag) return a.flag ? -1 : 1
+    if (a.kind !== b.kind) return a.kind === "negative" ? -1 : 1
+    return a.personName.localeCompare(b.personName)
+  })
+}
