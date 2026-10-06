@@ -69,3 +69,38 @@ test("Intent-Stats zählen Erwähnungen je Fragetyp", () => {
   ])
   assert.deepEqual(st.find(x => x.type === "a"), { type: "a", mentioned: 1, total: 2 })
 })
+
+// ─── Zielmärkte ──────────────────────────────────────────────────────────────
+import { resolveMarkets, maxMarketsForPlan, MARKETS, locationSystemSuffix } from "./markets.ts"
+
+test("Märkte: Fallback nach Sprache, wenn nichts gewählt", () => {
+  assert.deepEqual(resolveMarkets([], "pro", "de").map(m => m.id), ["dach"])
+  assert.deepEqual(resolveMarkets(null, "pro", "en").map(m => m.id), ["global"])
+})
+
+test("Märkte: ungültige/doppelte IDs fliegen raus, Tarif-Limit greift", () => {
+  const sel = ["us", "xx", "us", "uk", "dach", "eu"]
+  assert.deepEqual(resolveMarkets(sel, "free", "de").map(m => m.id), ["us"])
+  assert.deepEqual(resolveMarkets(sel, "starter", "de").map(m => m.id), ["us", "uk"])
+  assert.deepEqual(resolveMarkets(sel, "pro", "de").map(m => m.id), ["us", "uk", "dach"])
+  assert.equal(maxMarketsForPlan("enterprise"), 7)
+})
+
+test("Märkte: Fragen folgen Sprache und Region des Marktes", () => {
+  const us = generateQueryMatrix(
+    { topics: ["Personal Branding"], language: MARKETS.us.language, region: MARKETS.us.region },
+    { depth: "extended", seed: 5 },
+  )
+  assert.ok(us.every(q => !/\bim\b|Wer sind/.test(q.prompt)))
+  assert.ok(us.some(q => q.prompt.includes("the United States")))
+  const glob = generateQueryMatrix(
+    { topics: ["Personal Branding"], language: "en", region: "" },
+    { depth: "extended", seed: 5 },
+  )
+  assert.ok(glob.every(q => !q.prompt.includes("undefined")))
+})
+
+test("Märkte: Standort-Hinweis nur für Märkte mit Bezug", () => {
+  assert.equal(locationSystemSuffix(MARKETS.global), "")
+  assert.match(locationSystemSuffix(MARKETS.us), /United States/)
+})

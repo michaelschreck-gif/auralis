@@ -22,6 +22,12 @@ type PlanType = Database["public"]["Enums"]["plan_type"]
 
 export type ProviderId = "claude-sonnet" | "gpt-4o" | "perplexity-sonar" | "gemini-flash"
 
+/** Optionale Messkontext-Angaben für einen Aufruf. */
+export type CallOptions = {
+  /** ISO-3166-Alpha-2: Standort für Anbieter mit Websuche (aktuell Perplexity). */
+  country?: string
+}
+
 export type LLMProvider = {
   id: ProviderId
   /** Display-Name in UI + DB-Spalte query_results.model */
@@ -33,7 +39,12 @@ export type LLMProvider = {
    * Caller fängt + loggt, damit ein einzelner Provider-Fehler nicht den
    * gesamten Analyse-Lauf killt.
    */
-  call(prompt: string, systemPrompt: string, maxTokens?: number): Promise<string>
+  call(
+    prompt: string,
+    systemPrompt: string,
+    maxTokens?: number,
+    options?: CallOptions,
+  ): Promise<string>
   /** Prüft ob der nötige API-Key gesetzt ist. */
   isConfigured(): boolean
 }
@@ -107,24 +118,34 @@ export const perplexityProvider: LLMProvider = {
   label: "Perplexity",
   modelTag: "sonar",
   isConfigured: () => !!process.env.PERPLEXITY_API_KEY,
-  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS) {
+  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS, options) {
     const apiKey = process.env.PERPLEXITY_API_KEY
     if (!apiKey) throw new Error("PERPLEXITY_API_KEY missing")
-    const res = await fetch("https://api.perplexity.ai/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-      body: JSON.stringify({
-        model: "sonar",
-        max_tokens: maxTokens,
-        messages: [
-          { role: "system", content: systemPrompt },
-          { role: "user", content: prompt },
-        ],
-      }),
-    })
+
+    const send = (withLocation: boolean) =>
+      fetch("https://api.perplexity.ai/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "sonar",
+          max_tokens: maxTokens,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: prompt },
+          ],
+          ...(withLocation && options?.country
+            ? { web_search_options: { user_location: { country: options.country } } }
+            : {}),
+        }),
+      })
+
+    let res = await send(true)
+    // Falls der Standort-Parameter abgelehnt wird: einmal ohne wiederholen,
+    // damit die Messung nicht an einem Zusatzfeature scheitert.
+    if (res.status === 400 && options?.country) res = await send(false)
     if (!res.ok) {
       const errText = await res.text().catch(() => "")
       throw new Error(`Perplexity API ${res.status}: ${errText.slice(0, 200)}`)

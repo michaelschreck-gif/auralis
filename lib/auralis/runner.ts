@@ -14,7 +14,8 @@
  */
 
 import type { SupabaseClient } from "@supabase/supabase-js"
-import { generateQueryMatrix, type MatrixDepth } from "./query-matrix"
+import { generateQueryMatrix, type MatrixDepth, type MatrixQuery } from "./query-matrix"
+import { resolveMarkets, locationSystemSuffix, type Market, type MarketId } from "./markets"
 import { computeStability, computeIntentStats, type ScoreStability, type IntentStat } from "./stability"
 import {
   extractMentionSignal,
@@ -59,6 +60,15 @@ function deriveSentiment(sentiments: string[]): SentimentType | null {
 
 // ─── Multi-Model: Per-Provider Breakdown im raw_data ────────────────────────
 
+export type MarketResult = {
+  id: MarketId
+  label: string
+  flag: string
+  score: number
+  mentionRate: number
+  stability: ScoreStability | null
+}
+
 export type PerModelBreakdown = {
   provider: ProviderId
   label: string
@@ -86,7 +96,9 @@ export type MultiModelVisibilityReport = VisibilityReport & {
   /** Erwähnungen je Fragetyp über alle Modelle und Runden. */
   intentStats?: IntentStat[]
   /** Messdesign dieses Laufs (für Transparenz / Vergleichbarkeit). */
-  methodology?: { depth: MatrixDepth; rounds: number; queriesPerRound: number }
+  methodology?: { depth: MatrixDepth; rounds: number; queriesPerRound: number; markets?: MarketId[] }
+  /** Ergebnis je Zielmarkt (nur wenn mehr als ein Markt gemessen wurde). */
+  marketResults?: MarketResult[]
 }
 
 /**
@@ -165,7 +177,30 @@ const PROVIDER_CONCURRENCY = 10
 /** Nach dieser Zeit werden keine NEUEN Folgerunden mehr gestartet (Runde 1 läuft immer). */
 const ROUND_START_BUDGET_MS = 32_000
 
-type MatrixQueryList = ReturnType<typeof generateQueryMatrix>
+/** Eine konkrete Frage inkl. Markt-Kontext. IDs sind `${marketId}::${queryId}`. */
+type RunQuery = MatrixQuery & {
+  market: MarketId
+  systemSuffix: string
+  country?: string
+}
+
+type MarketPlan = { market: Market; queries: MatrixQuery[] }
+
+function toRunQueries(plans: MarketPlan[]): RunQuery[] {
+  return plans.flatMap(({ market, queries }) =>
+    queries.map(q => ({
+      ...q,
+      id: `${market.id}::${q.id}`,
+      market: market.id,
+      systemSuffix: locationSystemSuffix(market),
+      country: market.country,
+    })),
+  )
+}
+
+function marketOfQueryId(id: string): MarketId {
+  return id.split("::")[0] as MarketId
+}
 
 /**
  * Führt die Queries in `rounds` Wiederholungen gegen einen Provider aus.
@@ -173,13 +208,14 @@ type MatrixQueryList = ReturnType<typeof generateQueryMatrix>
  * ein Provider-Fehler nicht den ganzen Run killt.
  *
  * - Aufrufe laufen über einen kleinen Worker-Pool (PROVIDER_CONCURRENCY).
+ * - Reihenfolge ist rundenweise: erst Runde 1 für ALLE Märkte, dann Runde 2 …
  * - Einzelne fehlgeschlagene Aufrufe machen nur ihre Runde ungültig; es zählen
  *   nur VOLLSTÄNDIGE Runden (sonst würden fehlende Fragen den Score drücken).
  * - Folgerunden werden nur gestartet, solange das Zeitbudget reicht.
  */
 async function runProvider(
   provider: LLMProvider,
-  queries: MatrixQueryList,
+  queries: RunQuery[],
   targetName: string,
   opts: { rounds?: number; startedAt?: number } = {},
 ): Promise<{ queryResults: QueryResult[]; rounds: QueryResult[][]; error?: string }> {
@@ -205,7 +241,12 @@ async function runProvider(
       if (task.round > 0 && Date.now() - startedAt > ROUND_START_BUDGET_MS) continue
       const query = queries[task.index]
       try {
-        const rawResponse = await provider.call(query.prompt, AI_SIMULATION_SYSTEM_PROMPT)
+        const rawResponse = await provider.call(
+          query.prompt,
+          AI_SIMULATION_SYSTEM_PROMPT + query.systemSuffix,
+          undefined,
+          { country: query.country },
+        )
         slots[task.round][task.index] = extractMentionSignal(
           rawResponse,
           targetName,
@@ -243,39 +284,62 @@ async function runProvider(
 type ProviderOutcome = {
   provider: LLMProvider
   queryResults: QueryResult[]
+  /** Runden-Reports über alle Märkte (Mittel der Markt-Reports je Runde). */
   roundReports: VisibilityReport[]
+  /** Runden-Reports je Markt. */
+  marketRounds: Partial<Record<MarketId, VisibilityReport[]>>
   report: VisibilityReport | null
   error?: string
 }
 
+type Measurement = {
+  outcomes: ProviderOutcome[]
+  stability: ScoreStability | null
+  marketResults: MarketResult[]
+}
+
 /**
- * Misst alle Provider parallel in mehreren Runden und liefert je Provider den
- * gemittelten Report plus Rundenwerte für die Schwankungsbreite.
+ * Misst alle Provider parallel in mehreren Runden und Märkten und liefert je
+ * Provider den gemittelten Report plus Rundenwerte für die Schwankungsbreite.
+ * Der Gesamtscore ist das Mittel der Märkte (gleich gewichtet).
  */
 async function measureAllProviders(
   providers: LLMProvider[],
-  queries: MatrixQueryList,
+  plans: MarketPlan[],
   targetName: string,
   topics: string[],
   rounds: number,
-): Promise<{ outcomes: ProviderOutcome[]; stability: ScoreStability | null }> {
+): Promise<Measurement> {
   const startedAt = Date.now()
+  const runQueries = toRunQueries(plans)
+
   const outcomes: ProviderOutcome[] = await Promise.all(
     providers.map(async (provider) => {
       const { queryResults, rounds: roundResults, error } = await runProvider(
-        provider, queries, targetName, { rounds, startedAt },
+        provider, runQueries, targetName, { rounds, startedAt },
       )
       if (error || roundResults.length === 0) {
-        return { provider, queryResults: [], roundReports: [], report: null, error: error ?? "no report" }
+        return { provider, queryResults: [], roundReports: [], marketRounds: {}, report: null, error: error ?? "no report" }
       }
-      const roundReports = roundResults.map(rr => buildVisibilityReport(targetName, topics, rr))
+
+      const marketRounds: Partial<Record<MarketId, VisibilityReport[]>> = {}
+      const roundReports: VisibilityReport[] = roundResults.map(rr => {
+        const perMarket = plans.map(({ market }) => {
+          const subset = rr.filter(r => marketOfQueryId(r.queryId) === market.id)
+          const rep = buildVisibilityReport(targetName, topics, subset)
+          ;(marketRounds[market.id] ??= []).push(rep)
+          return rep
+        })
+        return aggregateReports(targetName, topics, perMarket, rr)
+      })
       const report = aggregateReports(targetName, topics, roundReports, queryResults)
-      return { provider, queryResults, roundReports, report }
+      return { provider, queryResults, roundReports, marketRounds, report }
     }),
   )
 
   const ok = outcomes.filter(o => o.report !== null)
   let stability: ScoreStability | null = null
+  const marketResults: MarketResult[] = []
   if (ok.length > 0) {
     const common = Math.min(...ok.map(o => o.roundReports.length))
     const roundScores: number[] = []
@@ -283,8 +347,80 @@ async function measureAllProviders(
       roundScores.push(ok.reduce((a, o) => a + o.roundReports[r].overallScore, 0) / ok.length)
     }
     stability = computeStability(roundScores)
+
+    if (plans.length > 1) {
+      for (const { market } of plans) {
+        const perProvider = ok.map(o => o.marketRounds[market.id] ?? [])
+        const mCommon = Math.min(...perProvider.map(x => x.length))
+        if (mCommon === 0) continue
+        const scores: number[] = []
+        let mentionSum = 0
+        let mentionN = 0
+        for (let r = 0; r < mCommon; r++) {
+          scores.push(perProvider.reduce((a, x) => a + x[r].overallScore, 0) / perProvider.length)
+        }
+        perProvider.forEach(x => x.forEach(rep => { mentionSum += rep.mentionRate; mentionN += 1 }))
+        marketResults.push({
+          id: market.id,
+          label: market.label,
+          flag: market.flag,
+          score: Math.round(scores.reduce((a, b) => a + b, 0) / scores.length),
+          mentionRate: mentionN ? Math.round(mentionSum / mentionN) : 0,
+          stability: computeStability(scores),
+        })
+      }
+    }
   }
-  return { outcomes, stability }
+  return { outcomes, stability, marketResults }
+}
+
+/** Zielmärkte des Profils laden; fehlende Spalte/Migration → Standardmarkt. */
+async function loadTargetMarkets(
+  supabase: SupabaseClient<Database>,
+  profileId: string,
+  plan: PlanType,
+  language: "de" | "en",
+): Promise<Market[]> {
+  let selected: unknown = null
+  try {
+    const { data, error } = await (supabase as SupabaseClient)
+      .from("profiles")
+      .select("target_markets")
+      .eq("id", profileId)
+      .single()
+    if (!error) selected = (data as { target_markets?: unknown } | null)?.target_markets ?? null
+  } catch {
+    // Spalte existiert (noch) nicht → Fallback
+  }
+  return resolveMarkets(selected, plan, language)
+}
+
+/**
+ * Budget je Markt: Mit mehreren Märkten teilen sich diese die Aufrufe.
+ * Mehr als ein Markt → Standardtiefe (7 Fragen) und Runden so, dass das
+ * Gesamtbudget des Tarifs ungefähr gehalten wird.
+ */
+function budgetForMarkets(profile: MeasurementProfile, marketCount: number): MeasurementProfile {
+  if (marketCount <= 1) return profile
+  const base = profile.depth === "extended" ? 12 : 7
+  const total = base * profile.rounds
+  const rounds = Math.min(profile.rounds, Math.max(1, Math.floor(total / (7 * marketCount))))
+  return { depth: "standard", rounds }
+}
+
+function buildMarketPlans(
+  markets: Market[],
+  topics: string[],
+  measurement: MeasurementProfile,
+  seedBase: string,
+): MarketPlan[] {
+  return markets.map(market => ({
+    market,
+    queries: generateQueryMatrix(
+      { topics, language: market.language, region: market.region },
+      { depth: measurement.depth, seed: `${seedBase}-${market.id}` },
+    ),
+  }))
 }
 
 export type RunAnalysisResult = {
@@ -351,18 +487,19 @@ export async function runAnalysisForSchedule(
   }
 
   // 3. Fragen-Matrix: ausgewogene Stichprobe aus dem Pool (Messdesign je Tarif)
-  const measurement = measurementProfileForPlan(plan)
-  const queries = generateQueryMatrix(
-    {
-      topics: [schedule.query],
-      language: schedule.language === "en" ? "en" : "de",
-    },
-    { depth: measurement.depth, seed: `${schedule.id}-${Date.now()}` },
+  const markets = await loadTargetMarkets(
+    supabase,
+    schedule.profile_id,
+    plan,
+    schedule.language === "en" ? "en" : "de",
   )
+  const measurement = budgetForMarkets(measurementProfileForPlan(plan), markets.length)
+  const marketPlans = buildMarketPlans(markets, [schedule.query], measurement, `${schedule.id}-${Date.now()}`)
+  const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
 
-  // 4. Fan-out per provider (parallel), mehrere Runden
-  const { outcomes: providerOutcomes, stability } = await measureAllProviders(
-    providers, queries, targetName, [schedule.query], measurement.rounds,
+  // 4. Fan-out per provider (parallel), mehrere Runden und Märkte
+  const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
+    providers, marketPlans, targetName, [schedule.query], measurement.rounds,
   )
 
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
@@ -432,8 +569,10 @@ export async function runAnalysisForSchedule(
     methodology: {
       depth: measurement.depth,
       rounds: stability?.rounds ?? 1,
-      queriesPerRound: queries.length,
+      queriesPerRound,
+      markets: markets.map(m => m.id),
     },
+    marketResults: marketResults.length > 0 ? marketResults : undefined,
   }
 
   const { data: savedReport, error: reportError } = await supabase
@@ -547,15 +686,15 @@ export async function runCompetitorAnalysis(
     ? competitor.topics
     : ["expertise"]
   const lang: "de" | "en" = competitor.language === "de" ? "de" : "en"
-  const measurement = measurementProfileForPlan(plan)
-  const queries = generateQueryMatrix(
-    { topics, language: lang },
-    { depth: measurement.depth, seed: `${competitor.id}-${Date.now()}` },
-  )
+  // Gleiche Zielmärkte wie der Besitzer → Vergleich mit dem eigenen Score ist fair.
+  const markets = await loadTargetMarkets(supabase, competitor.profile_id, plan, lang)
+  const measurement = budgetForMarkets(measurementProfileForPlan(plan), markets.length)
+  const marketPlans = buildMarketPlans(markets, topics, measurement, `${competitor.id}-${Date.now()}`)
+  const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
 
   // 4. Fan-out
-  const { outcomes: providerOutcomes, stability } = await measureAllProviders(
-    providers, queries, competitor.name, topics, measurement.rounds,
+  const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
+    providers, marketPlans, competitor.name, topics, measurement.rounds,
   )
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
   if (successfulProviders.length === 0) {
@@ -620,8 +759,10 @@ export async function runCompetitorAnalysis(
     methodology: {
       depth: measurement.depth,
       rounds: stability?.rounds ?? 1,
-      queriesPerRound: queries.length,
+      queriesPerRound,
+      markets: markets.map(m => m.id),
     },
+    marketResults: marketResults.length > 0 ? marketResults : undefined,
   }
 
   // 7. Persist competitor_reports row

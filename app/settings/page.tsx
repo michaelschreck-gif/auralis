@@ -4,6 +4,8 @@ import DashboardShell from "@/components/DashboardShell"
 import SettingsForm from "@/components/SettingsForm"
 import ApiKeysBlock, { type ApiKeyRow } from "@/components/ApiKeysBlock"
 import PublicProfileBlock from "@/components/PublicProfileBlock"
+import MarketsBlock from "@/components/MarketsBlock"
+import { isMarketId, type MarketId } from "@/lib/auralis/markets"
 import { isPlanEligible } from "@/lib/api-auth"
 import type { Database } from "@/lib/supabase/database.types"
 
@@ -12,6 +14,7 @@ type PlanType = Database["public"]["Enums"]["plan_type"]
 const SECTIONS = [
   { id: "profile",        label: "Profil" },
   { id: "topics",         label: "Überwachte Themen" },
+  { id: "markets",        label: "Zielmärkte" },
   { id: "plan",           label: "Tarif" },
   { id: "public-profile", label: "Public Profile" },
   { id: "api",            label: "API-Keys" },
@@ -34,6 +37,7 @@ export default async function SettingsPage() {
   let profile = null
   let schedules: { id: string; name: string; query: string; frequency: string; language: string }[] = []
   let apiKeys: ApiKeyRow[] = []
+  let targetMarkets: MarketId[] = []
 
   try {
     const [profileResult, schedulesResult, apiKeysResult] = await Promise.all([
@@ -59,6 +63,19 @@ export default async function SettingsPage() {
     apiKeys = (apiKeysResult.data ?? []) as ApiKeyRow[]
   } catch {
     // continue with empty defaults
+  }
+
+  // Zielmärkte separat laden: fehlt die Spalte (Migration noch nicht
+  // ausgeführt), bleibt die Seite trotzdem benutzbar.
+  try {
+    const { data: m, error: mErr } = await supabase
+      .from("profiles")
+      .select("target_markets")
+      .eq("id", user!.id)
+      .single()
+    if (!mErr) targetMarkets = ((m?.target_markets ?? []) as string[]).filter(isMarketId)
+  } catch {
+    // Standardmarkt
   }
 
   const plan: PlanType = (profile?.plan ?? "free") as PlanType
@@ -94,6 +111,15 @@ export default async function SettingsPage() {
         plan={plan}
         schedules={schedules ?? []}
       />
+
+      <div className="px-8 pb-8 max-w-2xl">
+        <MarketsBlock
+          userId={user.id}
+          plan={plan}
+          initialMarkets={targetMarkets}
+          defaultMarket={(profile?.language ?? "de") === "de" ? "dach" : "global"}
+        />
+      </div>
 
       {/* Public Profile + API-Keys live below the form; match its px-8/max-w-2xl rhythm. */}
       <div className="px-8 pb-8 max-w-2xl space-y-6">

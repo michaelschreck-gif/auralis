@@ -350,6 +350,7 @@ export type Database = {
           plan: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled: boolean
           public_slug: string | null
+          target_markets: string[]
           timezone: string
           updated_at: string
           website_url: string | null
@@ -367,6 +368,7 @@ export type Database = {
           plan?: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled?: boolean
           public_slug?: string | null
+          target_markets?: string[]
           timezone?: string
           updated_at?: string
           website_url?: string | null
@@ -384,6 +386,7 @@ export type Database = {
           plan?: Database["public"]["Enums"]["plan_type"]
           public_profile_enabled?: boolean
           public_slug?: string | null
+          target_markets?: string[]
           timezone?: string
           updated_at?: string
           website_url?: string | null

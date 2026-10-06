@@ -13,6 +13,7 @@ import {
 import { AURA_THEME, DIMENSION_THEME, SEO_THEME } from "@/lib/auralis/theme"
 import type { SeoScore } from "@/lib/auralis/seo-score"
 import type { ScoreStability } from "@/lib/auralis/stability"
+import type { MarketResult } from "@/lib/auralis/runner"
 import ScoreExplainer from "./ScoreExplainer"
 import { Icons } from "./DashboardShell"
 
@@ -32,6 +33,8 @@ export default function Cockpit({
 }) {
   const stability =
     ((report as unknown as { stability?: ScoreStability | null } | null)?.stability) ?? null
+  const marketResults =
+    ((report as unknown as { marketResults?: MarketResult[] } | null)?.marketResults) ?? []
   const [openKey, setOpenKey] = useState<ScoreKey | null>(null)
 
   const masters = useMemo(() => report ? computeMasterScores(report) : null, [report])
@@ -159,6 +162,36 @@ export default function Cockpit({
             <Kpi label="Ø Position" value={report.averagePosition === null ? "—" : report.averagePosition.toFixed(1)} tint="#F6ECD9" dot="#C98A3E" />
             <Kpi label="Stärkste Dimension" value={masters.strongest.shortLabel} tint="#E6E8E7" dot="#5E6563" />
           </div>
+
+          {/* ─── Zielmärkte (nur bei mehreren gemessenen Märkten) ─── */}
+          {marketResults.length > 1 && (
+            <section className="rounded-3xl border border-[#E9E1D3] bg-white p-6">
+              <div className="flex items-baseline justify-between gap-3 flex-wrap mb-4">
+                <h3 className="text-lg leading-tight">Sichtbarkeit nach Markt</h3>
+                <Link href="/settings#markets" className="text-[13px] font-semibold text-[#C8431F] hover:underline">
+                  Zielmärkte ändern
+                </Link>
+              </div>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-3.5">
+                {marketResults.map(m => (
+                  <div key={m.id}>
+                    <div className="flex items-center justify-between text-sm mb-1.5">
+                      <span className="font-semibold text-[#0E1916]">
+                        <span aria-hidden className="mr-1.5">{m.flag}</span>{m.label}
+                      </span>
+                      <span className="font-extrabold text-[#0E1916]">
+                        {m.score}
+                        {m.stability && <span className="ml-1 text-[11px] font-medium text-[#5E6563]">± {m.stability.margin}</span>}
+                      </span>
+                    </div>
+                    <div className="h-2 rounded-full bg-[#F1ECE2] overflow-hidden">
+                      <div className="h-full rounded-full bg-[#FA5935]" style={{ width: `${Math.max(2, m.score)}%` }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
 
           {/* ─── Drei Karten ─── */}
           <div className="grid lg:grid-cols-3 gap-5">
