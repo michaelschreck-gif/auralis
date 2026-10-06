@@ -206,10 +206,6 @@ export const ALL_PROVIDERS: LLMProvider[] = [
   geminiProvider,
 ]
 
-export function providerById(id: string): LLMProvider | undefined {
-  return ALL_PROVIDERS.find(p => p.id === id || p.modelTag === id)
-}
-
 // ─── Plan-Gating ────────────────────────────────────────────────────────────
 
 /**

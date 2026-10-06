@@ -1,92 +1,49 @@
-# Auralis — AI Visibility Check
+# DigitalHalo (Repo: auralis)
 
-## Was ist das?
+Misst, wie KI-Systeme (Claude, GPT-4o, Perplexity, Gemini) eine Person oder Marke wahrnehmen, und verdichtet das zum **Halo Score**.
+Live: https://digital-halo.de · Admin-App (separat): admin-auralis
 
-Das Kernfeature von Auralis: Ein System, das analysiert wie KI-Systeme eine Person wahrnehmen.
+## Stack
 
-## Dateistruktur
+Next.js (App Router) · TypeScript · Tailwind v4 · Supabase (Auth + Postgres) · Vercel (Auto-Deploy bei Push auf `main`).
 
-```
-auralis/
-├── app/
-│   └── api/
-│       └── visibility-check/
-│           └── route.ts          ← Next.js API Route (POST endpoint)
-├── lib/
-│   └── auralis/
-│       ├── queries.ts            ← Query-Generator für AI-Abfragen
-│       └── analyzer.ts           ← Signal-Extraktion & Scoring
-└── components/
-    └── VisibilityCheck.tsx       ← React UI Komponente
-```
+## Zwei Abläufe im Tool
 
-## Setup in Next.js
+Der Tarif (`profiles.plan`) entscheidet über die Oberfläche:
 
-### 1. Dependencies installieren
+- **Free / Starter / Pro** – persönlicher Halo Score (`components/OwnDashboard.tsx`, `Cockpit.tsx`).
+- **Enterprise** – Team-Übersicht mit Personenliste (`app/dashboard/team`, `lib/team.ts`, `lib/sub-accounts.ts`).
+
+## So entsteht der Score (`lib/auralis/`)
+
+| Baustein | Datei |
+| --- | --- |
+| Fragen-Matrix (Absicht × Rolle × Formulierung, feste Intent-Gewichte) | `query-matrix.ts` |
+| Zielmärkte (Sprache, Region, Standort-Hinweis; Tarif-Limits) | `markets.ts` |
+| Messlauf: Modelle × Märkte × Wiederholungen, Worker-Pool, Zeitbudget | `runner.ts` |
+| Hintergrund-Jobs (`analysis_jobs`, `after()`) | `jobs.ts`, `app/api/analyze`, `app/api/internal/run-job` |
+| Modell-Gewichtung nach Reichweite (Annahme, anpassbar) | `model-weights.ts` |
+| Schwankungsbreite über Messrunden | `stability.ts` |
+| Gleitender Durchschnitt (28 Tage) | `smoothing.ts` |
+| Kontrollpersonen / Drift-Erkennung (täglicher Cron) | `calibration.ts`, `app/api/cron/calibrate`, `/admin/calibration` |
+| Master-Scores (GEO, Thought Leadership, Digitale Autorität) | `master-scores.ts` |
+
+## Entwicklung
 
 ```bash
-npm install @anthropic-ai/sdk
+npm install
+npm run dev     # lokal
+npm test        # Unit-Tests (lib/**/*.test.ts, ohne LLM-Aufrufe)
+npx tsc --noEmit && npx eslint app components lib
 ```
 
-### 2. Environment Variable setzen
+Umgebungsvariablen: Supabase-Keys, `ANTHROPIC_API_KEY` (Pflicht), optional `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`, `GOOGLE_AI_API_KEY`, `CRON_SECRET`.
 
-In `.env.local`:
-```
-ANTHROPIC_API_KEY=sk-ant-...
-```
+## Datenbank
 
-### 3. Dateien in dein Projekt kopieren
+Migrationen liegen in `supabase/migrations/`. Gebündelte, mehrfach ausführbare Fassung offener Migrationen: `supabase/manual/`.
 
-Kopiere die Dateien in die entsprechenden Verzeichnisse deines Next.js Projekts.
-Das Projekt muss den `app/` Router verwenden (Next.js 13+).
+## Cron (`vercel.json`)
 
-### 4. Komponente einbinden
-
-```tsx
-// app/page.tsx oder app/check/page.tsx
-import VisibilityCheck from "@/components/VisibilityCheck"
-
-export default function Page() {
-  return <VisibilityCheck />
-}
-```
-
-### 5. Tailwind CSS
-
-Die Komponente nutzt Tailwind. Stelle sicher dass Tailwind konfiguriert ist:
-```bash
-npm install tailwindcss
-```
-
-## Wie es funktioniert
-
-1. Nutzer gibt Name + Themen ein
-2. `generateVisibilityQueries()` erstellt 5 strukturierte Abfragen
-3. Jede Abfrage geht an Claude — simuliert wie ein echter User fragt
-4. `extractMentionSignal()` analysiert ob die Person genannt wird
-5. `buildVisibilityReport()` berechnet den Aura Score (0–100)
-
-### Aura Score Berechnung
-
-| Dimension | Gewichtung | Was wird gemessen |
-|---|---|---|
-| Presence Score | 35% | In wieviel % der Abfragen erscheint die Person? |
-| Position Score | 25% | Wie früh / prominent in den Listen? |
-| Context Score | 25% | Wie positiv / autoritär wird die Person beschrieben? |
-| Topic Alignment | 15% | Stimmen die KI-Themen mit den gewünschten Themen überein? |
-
-## Nächste Schritte / Erweiterungen
-
-- [ ] Parallele Abfragen an GPT-4 und Gemini (via deren APIs)
-- [ ] Supabase: Ergebnisse speichern und Trends über Zeit tracken
-- [ ] pgvector: Embeddings der Antworten für semantisches Clustering
-- [ ] Competitor Comparison: Gleiche Queries für Wettbewerber ausführen
-- [ ] Scheduled Analysis: Tägliche Cron-Jobs für Monitoring
-- [ ] Export: PDF Report mit den Ergebnissen
-
-## Hinweis zur Produkt-Logik
-
-Das "Claude befragt Claude" Pattern ist ein MVP-Shortcut.
-In der Produktion solltest du echte Abfragen an alle KI-Systeme senden.
-Die Architektur (queries.ts → route.ts → analyzer.ts) ist bereits
-so gebaut, dass du pro System eine eigene API-Verbindung einbauen kannst.
+- `0 6 * * *` – fällige Themen als Jobs verteilen (`/api/cron/run-scheduled-checks`)
+- `0 4 * * *` – Kalibrierung (`/api/cron/calibrate`)

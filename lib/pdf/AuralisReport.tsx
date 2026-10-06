@@ -13,7 +13,6 @@ import {
   View,
   StyleSheet,
   Svg,
-  Rect,
   Polyline,
   Circle,
   Line,

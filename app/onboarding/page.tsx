@@ -139,7 +139,6 @@ export default function OnboardingPage() {
     setPhase("result")
   }
 
-  const bandColor = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#8CAAAB" : s >= 26 ? "#C98A3E" : "#5E6563")
   const bandColorOnDark = (s: number) => (s >= 76 ? "#FA5935" : s >= 51 ? "#9BB8B8" : s >= 26 ? "#E3B573" : "#D8D0C0")
 
   const DOT_PHASES: Phase[] = ["name", "topics", "result"]

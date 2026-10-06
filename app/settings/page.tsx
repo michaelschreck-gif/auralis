@@ -107,7 +107,6 @@ export default async function SettingsPage() {
         initialName={profile?.full_name ?? ""}
         initialEmail={profile?.email ?? user.email ?? ""}
         initialLanguage={profile?.language ?? "de"}
-        initialTimezone={profile?.timezone ?? "Europe/Berlin"}
         plan={plan}
         schedules={schedules ?? []}
       />

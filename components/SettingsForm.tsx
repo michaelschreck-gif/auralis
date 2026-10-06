@@ -17,7 +17,6 @@ interface Props {
   initialName: string
   initialEmail: string
   initialLanguage: string
-  initialTimezone: string
   plan: string
   schedules: Schedule[]
 }
@@ -27,7 +26,6 @@ export default function SettingsForm({
   initialName,
   initialEmail,
   initialLanguage,
-  initialTimezone,
   plan,
   schedules: initialSchedules,
 }: Props) {
