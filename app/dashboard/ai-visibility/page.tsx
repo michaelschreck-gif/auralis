@@ -173,8 +173,8 @@ function ModelCard({
 
         {state.kind === "providerMissing" && (
           <p className="text-xs text-[#6B625A]">
-            Dieser Provider ist auf dem Server noch nicht konfiguriert. Sobald der API-Key gesetzt ist,
-            wird er ab der nächsten Analyse automatisch mitgemessen.
+            Dieses Modell ist noch nicht verfügbar. Sobald es freigeschaltet ist, wird es ab der
+            nächsten Analyse automatisch mitgemessen.
           </p>
         )}
 
@@ -312,7 +312,7 @@ export default async function AiVisibilityPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">KI-Reputation</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Pro KI-Modell</span>
           <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
             Wie jedes Modell dich sieht.
           </h1>

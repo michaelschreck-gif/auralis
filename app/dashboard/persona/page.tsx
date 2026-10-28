@@ -38,6 +38,7 @@ export default async function PersonaPage() {
   let summary = ""
   let generatedAt: string | null = null
   let hasReport = false
+  let reportCreatedAt: string | null = null
 
   try {
     const [profileResult, personaResult, reportResult] = await Promise.all([
@@ -51,7 +52,7 @@ export default async function PersonaPage() {
         .maybeSingle(),
       supabase
         .from("visibility_reports")
-        .select("id")
+        .select("id, created_at")
         .eq("profile_id", user!.id)
         .order("created_at", { ascending: false })
         .limit(1)
@@ -63,6 +64,7 @@ export default async function PersonaPage() {
     summary = personaResult.data?.summary ?? ""
     generatedAt = personaResult.data?.generated_at ?? null
     hasReport = !!reportResult.data?.id
+    reportCreatedAt = reportResult.data?.created_at ?? null
   } catch {
     // continue with defaults
   }
@@ -117,6 +119,11 @@ export default async function PersonaPage() {
             <p className="text-[11px] text-[#F7B49B] mt-3">
               Zuletzt erstellt am{" "}
               {new Date(generatedAt).toLocaleDateString("de-DE", { day: "2-digit", month: "long", year: "numeric" })}
+            </p>
+          )}
+          {generatedAt && reportCreatedAt && new Date(reportCreatedAt) > new Date(generatedAt) && (
+            <p className="text-[12px] text-white bg-white/10 rounded-xl px-3 py-2 mt-3">
+              Seit dieser Persona gab es eine neuere Analyse. Generiere sie neu, damit sie zu deinen aktuellen Themen passt.
             </p>
           )}
         </section>

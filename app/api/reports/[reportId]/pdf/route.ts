@@ -135,8 +135,8 @@ export async function GET(
     return NextResponse.json({ error: "Report ohne Datenfeld" }, { status: 422 })
   }
 
-  // Side-Quests: Profile (für Namen), Topics, History, Competitors parallel laden.
-  const [profileResult, schedulesResult, historyResult, competitorsResult] = await Promise.all([
+  // Side-Quests: Profile (für Namen), Topics, History parallel laden.
+  const [profileResult, schedulesResult, historyResult] = await Promise.all([
     supabase
       .from("profiles")
       .select("full_name")
@@ -153,12 +153,6 @@ export async function GET(
       .eq("profile_id", user.id)
       .order("created_at", { ascending: true })
       .limit(60),
-    supabase
-      .from("competitors")
-      .select("name, last_score")
-      .eq("profile_id", user.id)
-      .order("last_score", { ascending: false, nullsFirst: false })
-      .limit(5),
   ])
 
   const userName = profileResult.data?.full_name ?? "Halo-Nutzer"
@@ -177,11 +171,6 @@ export async function GET(
       date: r.created_at,
       score: Math.round(Number(r.visibility_score)),
     }))
-
-  const competitors = (competitorsResult.data ?? []).map(c => ({
-    name: c.name,
-    score: c.last_score != null ? Math.round(Number(c.last_score)) : null,
-  }))
 
   const masters = computeMasterScores(rawReport)
 
@@ -210,7 +199,6 @@ export async function GET(
         topics,
         history,
         recommendations,
-        competitors,
       }),
     )
   } catch (e) {

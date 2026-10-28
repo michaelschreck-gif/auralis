@@ -27,9 +27,11 @@ export default async function OwnDashboard() {
   let latestReportId: string | null = null
   let seoScore: SeoScore | null = null
   let smoothing: SmoothingInfo | null = null
+  let todos: { id: string; title: string; impact: string }[] = []
+  let activeTopics: string[] = []
 
   try {
-    const [profileResult, reportResult, seoResult] = await Promise.all([
+    const [profileResult, reportResult, seoResult, todosResult, schedulesResult] = await Promise.all([
       supabase
         .from("profiles")
         .select("full_name, plan")
@@ -49,7 +51,25 @@ export default async function OwnDashboard() {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle(),
+      supabase
+        .from("recommendations")
+        .select("id, title, impact, created_at")
+        .eq("profile_id", user!.id)
+        .eq("status", "open")
+        .order("created_at", { ascending: false })
+        .limit(10),
+      supabase
+        .from("monitoring_schedules")
+        .select("query")
+        .eq("profile_id", user!.id)
+        .eq("is_active", true),
     ])
+    activeTopics = (schedulesResult.data ?? []).map(s => s.query)
+    const impactRank: Record<string, number> = { high: 0, medium: 1, low: 2 }
+    todos = (todosResult.data ?? [])
+      .map(t => ({ id: t.id, title: t.title, impact: t.impact }))
+      .sort((a, b) => (impactRank[a.impact] ?? 3) - (impactRank[b.impact] ?? 3))
+      .slice(0, 3)
     userName = profileResult.data?.full_name ?? ""
     plan = profileResult.data?.plan ?? "free"
     report = (reportResult.data?.raw_data ?? null) as VisibilityReport | null
@@ -80,7 +100,7 @@ export default async function OwnDashboard() {
 
   return (
     <DashboardShell userName={userName} plan={plan}>
-      <Cockpit userName={userName} report={report} latestReportId={latestReportId} seoScore={seoScore} smoothing={smoothing} />
+      <Cockpit userName={userName} report={report} latestReportId={latestReportId} seoScore={seoScore} smoothing={smoothing} todos={todos} activeTopics={activeTopics} />
     </DashboardShell>
   )
 }

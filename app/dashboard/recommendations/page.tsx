@@ -66,7 +66,7 @@ export default async function RecommendationsPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Empfehlungen</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">To-dos</span>
           <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
             Konkrete nächste Schritte.
           </h1>

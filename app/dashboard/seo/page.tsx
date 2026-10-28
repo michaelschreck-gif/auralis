@@ -75,7 +75,7 @@ export default async function SeoScorePage() {
           <svg
             width="112" height="112" viewBox="0 0 112 112"
             className="flex-shrink-0 mx-auto sm:mx-0"
-            role="img" aria-label={`SEO Score ${score ? score.value : "noch nicht aktiv"}`}
+            role="img" aria-label={`Google-Sichtbarkeit ${score ? score.value : "noch nicht aktiv"}`}
           >
             <circle cx="56" cy="56" r="44" fill="none" stroke={t.track} strokeWidth="11" />
             <circle
@@ -105,9 +105,9 @@ export default async function SeoScorePage() {
         {/* Setup-Hinweis wenn noch keine Daten */}
         {!score && (
           <section className="rounded-3xl border border-[#E9E1D3] bg-white p-6 md:p-7">
-            <p className="text-base font-medium text-[#0E1916]">So wird dein SEO Score aktiv</p>
+            <p className="text-base font-medium text-[#0E1916]">So wird deine Google-Sichtbarkeit aktiv</p>
             <p className="text-sm text-[#6B625A] mt-1.5 leading-relaxed max-w-2xl">
-              Der SEO Score nutzt dieselben Themen wie deine KI-Analysen, misst aber die klassische
+              Die Google-Sichtbarkeit nutzt dieselben Themen wie deine KI-Analysen, misst aber die klassische
               Google-Suche. Dafür werden zwei Datenquellen angebunden:
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
@@ -132,7 +132,7 @@ export default async function SeoScorePage() {
             <p className="text-xs text-[#9A9089] mt-4">
               {configured
                 ? "Die Google-Suche (SERP) ist verbunden. Starte oben eine SEO-Analyse, um deine echten Werte zu sehen."
-                : "Status: Gerüst steht. Sobald die Datenquellen serverseitig konfiguriert sind, erscheinen hier echte Werte — die Themen und die Anzeige sind bereits vorbereitet."}
+                : "Die Messung der Google-Sichtbarkeit ist noch nicht verfügbar. Sobald sie freigeschaltet ist, erscheinen hier deine echten Werte — automatisch für deine bestehenden Themen."}
             </p>
           </section>
         )}

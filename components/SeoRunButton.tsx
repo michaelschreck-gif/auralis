@@ -34,8 +34,8 @@ export default function SeoRunButton({ configured }: { configured: boolean }) {
   if (!configured) {
     return (
       <p className="text-xs text-[#9A9089]">
-        Sobald die SERP-Datenquelle serverseitig konfiguriert ist (DATAFORSEO_LOGIN/PASSWORD),
-        erscheint hier ein Button, um die SEO-Analyse zu starten.
+        Die Messung der Google-Sichtbarkeit wird gerade vorbereitet. Sobald sie verfügbar ist,
+        kannst du sie hier starten.
       </p>
     )
   }

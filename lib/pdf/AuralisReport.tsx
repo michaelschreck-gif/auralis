@@ -30,7 +30,6 @@ export type AuralisReportProps = {
   topics: string[]
   history: HistoryPoint[]
   recommendations?: { title: string; impact: string; category: string }[]
-  competitors?: { name: string; score: number | null }[]
 }
 
 const COLORS = {
@@ -138,16 +137,6 @@ const styles = StyleSheet.create({
     letterSpacing: 0.5,
     fontFamily: "Helvetica-Bold",
   },
-  // Competitor list
-  compRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingVertical: 5,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-  },
-  compName: { flex: 1, fontSize: 10, color: COLORS.ink },
-  compScore: { fontSize: 11, fontFamily: "Helvetica-Bold", color: COLORS.primary, width: 50, textAlign: "right" },
   // Footer
   footer: {
     position: "absolute",
@@ -239,7 +228,7 @@ function impactColor(impact: string): { bg: string; color: string } {
 }
 
 export function AuralisReport(props: AuralisReportProps) {
-  const { userName, reportCreatedAt, masters, mentionRate, averagePosition, topics, history, recommendations, competitors } = props
+  const { userName, reportCreatedAt, masters, mentionRate, averagePosition, topics, history, recommendations } = props
   const dateStr = new Date(reportCreatedAt).toLocaleDateString("de-DE", {
     day: "2-digit",
     month: "long",
@@ -356,21 +345,6 @@ export function AuralisReport(props: AuralisReportProps) {
                   </View>
                 )
               })}
-            </View>
-          </>
-        )}
-
-        {/* Competitors */}
-        {competitors && competitors.length > 0 && (
-          <>
-            <Text style={styles.h2}>Wettbewerber</Text>
-            <View>
-              {competitors.slice(0, 5).map((c, i) => (
-                <View key={i} style={styles.compRow}>
-                  <Text style={styles.compName}>{c.name}</Text>
-                  <Text style={styles.compScore}>{c.score != null ? `${c.score}/100` : "—"}</Text>
-                </View>
-              ))}
             </View>
           </>
         )}

@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import DashboardShell from "@/components/DashboardShell"
 import EvidenceList, { type EvidenceGroup, type EvidenceItem } from "@/components/EvidenceList"
+import StaleReportNotice from "@/components/StaleReportNotice"
 
 export const dynamic = "force-dynamic"
 
@@ -20,6 +21,8 @@ export default async function ResponsesPage() {
   let plan = "free"
   let groups: EvidenceGroup[] = []
   let analyzedAt: string | null = null
+  let reportTopics: string[] = []
+  let activeTopics: string[] = []
 
   try {
     const profileResult = await supabase
@@ -31,9 +34,16 @@ export default async function ResponsesPage() {
     plan = profileResult.data?.plan ?? "free"
 
     // Jüngsten Report finden
+    const { data: schedules } = await supabase
+      .from("monitoring_schedules")
+      .select("query")
+      .eq("profile_id", user!.id)
+      .eq("is_active", true)
+    activeTopics = (schedules ?? []).map(s => s.query)
+
     const latestReport = await supabase
       .from("visibility_reports")
-      .select("id, created_at")
+      .select("id, created_at, raw_data")
       .eq("profile_id", user!.id)
       .order("created_at", { ascending: false })
       .limit(1)
@@ -41,6 +51,7 @@ export default async function ResponsesPage() {
 
     const reportId = latestReport.data?.id ?? null
     analyzedAt = latestReport.data?.created_at ?? null
+    reportTopics = ((latestReport.data?.raw_data as { topics?: string[] } | null)?.topics) ?? []
 
     if (reportId) {
       const { data: rows } = await supabase
@@ -102,6 +113,7 @@ export default async function ResponsesPage() {
           </div>
         ) : (
           <>
+            <StaleReportNotice reportTopics={reportTopics} activeTopics={activeTopics} />
             <div className="rounded-2xl border border-[#FBCBB8] bg-[#FDE7E0]/40 p-4 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
               <span className="text-[#0E1916]">
                 <span className="font-semibold">{mentionedAnswers}</span> von{" "}

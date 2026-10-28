@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic"
 export const metadata: Metadata = {
   title: "DigitalHalo — KI-Reputations-Monitoring für Personal Brands",
   description:
-    "DigitalHalo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Wettbewerber-Vergleich und konkreten Empfehlungen.",
+    "DigitalHalo misst, wie sichtbar du in ChatGPT, Claude, Perplexity, Gemini und Google AI Overviews bist — mit Halo Score™, Impulsen von sichtbaren Personen und konkreten Empfehlungen.",
 }
 
 // ─── Markenfarben (Digital_Halo_Brandkit V1.0 + CI S3 Mockup) ───
@@ -61,7 +61,7 @@ export default async function Home() {
               </h1>
               <p className="text-base sm:text-lg text-white/85 leading-relaxed mt-6 max-w-lg">
                 DigitalHalo misst deine Reputation in ChatGPT, Claude, Perplexity, Gemini &amp; Google AI Overviews
-                — mit <span className="text-white font-semibold">Halo Score™</span>, Wettbewerber-Vergleich und konkreten Empfehlungen.
+                — mit <span className="text-white font-semibold">Halo Score™</span>, Impulsen von sichtbaren Personen und konkreten Empfehlungen.
               </p>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-8">
                 <Link href="/warteliste" className="text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors text-center">
@@ -97,7 +97,7 @@ export default async function Home() {
           <div className="rounded-3xl border border-[#E9E1D3] bg-white p-7 sm:p-8">
             <div className="text-[#6B625A] font-semibold mb-4">Ohne DigitalHalo</div>
             <ul className="space-y-3 text-sm text-[#4A453F]">
-              {["Einmal in ChatGPT getestet — und dann?", "Keine Ahnung, wer statt dir genannt wird", "Kein Trend: sichtbarer oder unsichtbarer?", "Nur Vermutungen statt Schritte"].map(t => (
+              {["Einmal in ChatGPT getestet — und dann?", "Keine Ahnung, wer bei deinen Themen genannt wird", "Kein Trend: sichtbarer oder unsichtbarer?", "Nur Vermutungen statt Schritte"].map(t => (
                 <li key={t} className="flex gap-2.5"><span className="text-[#9A9089] font-bold">✕</span>{t}</li>
               ))}
             </ul>
@@ -105,7 +105,7 @@ export default async function Home() {
           <div className="rounded-3xl border border-[#FBCBB8] bg-gradient-to-br from-[#FDE7E0] to-[#F3EFE6] p-7 sm:p-8">
             <div className="text-[#C8431F] font-semibold mb-4">Mit DigitalHalo</div>
             <ul className="space-y-3 text-sm text-[#5C2A12]">
-              {["Halo Score™: eine Zahl für deine KI-Reputation", "Wettbewerber-Benchmark mit harten Zahlen", "Trend pro Thema über 30 Tage", "Konkrete Empfehlungen, von Claude generiert"].map(t => (
+              {["Halo Score™: eine Zahl für deine KI-Reputation", "Impulse: wer bei deinen Themen schon sichtbar ist", "Trend pro Thema über 30 Tage", "Konkrete Empfehlungen, von Claude generiert"].map(t => (
                 <li key={t} className="flex gap-2.5"><span className="text-[#FA5935] font-bold">✓</span>{t}</li>
               ))}
             </ul>
@@ -127,7 +127,7 @@ export default async function Home() {
             {[
               { n: "1", t: "Thema definieren", d: "Sag, mit welchen Begriffen KI dich verbinden soll — z. B. AI-Strategie oder Personal Branding." },
               { n: "2", t: "Analyse starten", d: "DigitalHalo stellt 7 typische Suchfragen an die KI-Modelle und wertet aus, wie prominent du genannt wirst." },
-              { n: "3", t: "Score & Empfehlungen", d: "Du bekommst deinen Halo Score, Wettbewerber-Vergleich und konkrete nächste Schritte." },
+              { n: "3", t: "Score & Empfehlungen", d: "Du bekommst deinen Halo Score, Impulse und konkrete nächste Schritte." },
             ].map(s => (
               <div key={s.n} className="rounded-3xl border border-white/25 bg-white/10 backdrop-blur-sm p-7">
                 <div className="w-11 h-11 rounded-2xl bg-[#FA5935] text-white flex items-center justify-center text-lg font-bold mb-4">{s.n}</div>
@@ -177,36 +177,33 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ─── Wettbewerber ─── */}
+      {/* ─── Impulse ─── */}
       <section className="bg-[#FAF8F3]">
         <div className="max-w-6xl mx-auto px-6 py-20 sm:py-24 grid lg:grid-cols-2 gap-14 items-center">
           <div>
-            <Eyebrow>Wettbewerber</Eyebrow>
+            <Eyebrow>Impulse</Eyebrow>
             <h2 className="text-3xl sm:text-4xl font-[family-name:var(--font-display)] font-normal tracking-tight mt-3 text-[#0E1916] leading-tight">
-              Wer steht statt dir in der KI-Antwort?
+              Lerne von denen, die KI schon nennt.
             </h2>
             <p className="text-[#6B625A] mt-4 leading-relaxed">
-              Füge Wettbewerber hinzu und analysiere sie mit derselben Pipeline. Du bekommst harte
-              Vergleichszahlen und eine Lückenanalyse — kein Bauchgefühl.
+              DigitalHalo zeigt dir, welche Personen die KI bei deinen Themen bereits empfiehlt — und womit sie
+              sichtbar geworden sind: Bücher, Podcasts, Keynotes. Kein Ranking, kein Vergleich, sondern Ideen für
+              deine nächsten Schritte.
             </p>
           </div>
           <div className="rounded-3xl border border-[#E9E1D3] bg-white shadow-[0_14px_50px_-18px_rgba(14,25,22,0.14)] p-5">
-            <div className="text-[11px] uppercase tracking-wider text-[#9A9089] font-semibold mb-3">Ranking nach Halo Score</div>
+            <div className="text-[11px] uppercase tracking-wider text-[#9A9089] font-semibold mb-3">Was sichtbare Personen gemeinsam haben</div>
             {[
-              { r: "1", n: "Andrew Ng", topic: "AI · Machine Learning", s: 84, band: "Dominant", me: false },
-              { r: "2", n: "Du", topic: "Deine Themen", s: 72, band: "Etabliert", me: true },
-              { r: "3", n: "Mark Zuckerberg", topic: "Social Media · Metaverse", s: 48, band: "Aufbauend", me: false },
+              { t: "Keynotes & Vorträge", d: "4 Personen · Regelmäßig auf Konferenzen sprechen" },
+              { t: "Bücher", d: "3 Personen · Ein Fachbuch zu deinem Thema schreiben" },
+              { t: "Podcasts", d: "2 Personen · Als Gast auftreten oder selbst starten" },
             ].map(c => (
-              <div key={c.r} className={`flex items-center gap-3 rounded-2xl px-3 py-2.5 mb-2 ${c.me ? "bg-[#FDE7E0]" : "bg-[#FAF8F3]"}`}>
-                <span className="w-5 text-sm text-[#9A9089] font-semibold tabular-nums">{c.r}</span>
+              <div key={c.t} className="flex items-center gap-3 rounded-2xl px-3 py-2.5 mb-2 bg-[#FAF8F3]">
                 <div className="min-w-0 flex-1">
-                  <div className="text-sm font-medium truncate text-[#0E1916]">{c.n}{c.me && <span className="ml-2 text-[10px] bg-[#FA5935] text-white rounded-full px-2 py-0.5 align-middle">Du</span>}</div>
-                  <div className="text-xs text-[#9A9089] truncate">{c.topic}</div>
+                  <div className="text-sm font-medium truncate text-[#0E1916]">{c.t}</div>
+                  <div className="text-xs text-[#9A9089] truncate">{c.d}</div>
                 </div>
-                <div className="text-right">
-                  <div className="text-lg font-bold text-[#0E1916] leading-none tabular-nums">{c.s}</div>
-                  <div className="text-[10px] text-[#9A9089] uppercase tracking-wide">{c.band}</div>
-                </div>
+                <span className="text-[11px] font-semibold text-[#C8431F] whitespace-nowrap">+ Maßnahme</span>
               </div>
             ))}
           </div>
@@ -222,7 +219,7 @@ export default async function Home() {
               Scores per HTTP in dein eigenes Stack.
             </h2>
             <p className="text-[#3D5252] mt-4 leading-relaxed">
-              Hol dir Halo Score, Sub-Scores und Wettbewerber-Daten in dein CRM oder BI-Tool.
+              Hol dir Halo Score, Sub-Scores und Themen-Daten in dein CRM oder BI-Tool.
               Bearer-Auth, REST, JSON. Enterprise-Tarif: unbegrenzte Abfragen &amp; Sub-Accounts.
             </p>
             <a href="/docs/api" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-white border border-[#FBCBB8] text-[#C8431F] font-medium hover:bg-[#FDE7E0] transition-colors">
@@ -256,7 +253,7 @@ export default async function Home() {
             { i: "🔍", t: "SEO Score", d: "Reputation in der Google-Suche." },
             { i: "🏆", t: "Thought Leadership", d: "Expertenwahrnehmung messbar." },
             { i: "📊", t: "Score-Verlauf", d: "30-Tage-Trends pro Thema." },
-            { i: "⚔️", t: "Wettbewerber", d: "Benchmark + Lückenanalyse." },
+            { i: "💡", t: "Impulse", d: "Von sichtbaren Personen lernen." },
             { i: "✨", t: "KI-Empfehlungen", d: "Konkrete Schritte von Claude." },
             { i: "🔗", t: "Public API", d: "REST-Zugang für Integrationen." },
           ].map(f => (
@@ -321,8 +318,8 @@ export default async function Home() {
         </div>
         <div className="grid md:grid-cols-3 gap-5">
           <PriceCard name="Free" price="€0" sub="Zum Reinschnuppern" feats={["1 Analyse / Monat", "1 Thema", "Halo Score + Sub-Scores", "Claude Sonnet 4.5"]} />
-          <PriceCard name="Starter" price="€79" sub="Für aktive Personal Brands" feats={["Tägliche Analysen", "Unbegrenzte manuelle Analysen", "Bis zu 5 Themen", "GPT-4o + Perplexity", "Wettbewerber-Analysen"]} />
-          <PriceCard name="Pro" price="€299" sub="Für Vielnutzer & Agenturen" featured feats={["Alle Starter-Funktionen", "Gemini + AI Overview", "Public-API-Zugang", "Unbegrenzte Wettbewerber", "Priorisierter Support"]} />
+          <PriceCard name="Starter" price="€79" sub="Für aktive Personal Brands" feats={["Tägliche Analysen", "Unbegrenzte manuelle Analysen", "Bis zu 5 Themen", "GPT-4o + Perplexity", "Impulse"]} />
+          <PriceCard name="Pro" price="€299" sub="Für Vielnutzer & Agenturen" featured feats={["Alle Starter-Funktionen", "Gemini + AI Overview", "Public-API-Zugang", "Empfehlungs-Quote", "Priorisierter Support"]} />
         </div>
         <p className="text-sm text-[#6B625A] mt-6">
           Enterprise mit unbegrenzter API, Sub-Accounts, SSO &amp; Onboarding —{" "}
