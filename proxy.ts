@@ -1,7 +1,19 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
+import { crossDomainRedirect, domainConfigFromEnv } from "@/lib/domains"
 
 export async function proxy(request: NextRequest) {
+  const { pathname, search } = request.nextUrl
+
+  // Webseite (digital-halo.de) ↔ Tool (app.digital-halo.de) – siehe lib/domains.ts
+  const host = request.headers.get("host") ?? ""
+  const target = crossDomainRedirect(host, pathname, search, domainConfigFromEnv())
+  if (target) return NextResponse.redirect(target, 308)
+
+  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding") || pathname === "/settings"
+  const isAuthPage = pathname === "/login"
+  if (!isProtected && !isAuthPage) return NextResponse.next()
+
   let supabaseResponse = NextResponse.next({ request })
 
   const supabase = createServerClient(
@@ -24,10 +36,6 @@ export async function proxy(request: NextRequest) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-  const { pathname } = request.nextUrl
-
-  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding") || pathname === "/settings"
-  const isAuthPage = pathname === "/login"
 
   if (!user && isProtected) {
     return NextResponse.redirect(new URL("/login", request.url))
@@ -41,5 +49,9 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/onboarding/:path*", "/settings", "/login"],
+  matcher: [
+    "/", "/dashboard/:path*", "/onboarding/:path*", "/settings/:path*", "/login",
+    "/auth/:path*", "/admin/:path*",
+    "/warteliste", "/kontakt", "/legal/:path*", "/docs/:path*", "/u/:path*",
+  ],
 }
