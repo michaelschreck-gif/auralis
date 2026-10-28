@@ -7,79 +7,89 @@ import { useEffect, useState, type ReactNode } from "react"
 // ─── Navigation: Icon-Leiste mit Flyouts (Leadesk-Stil), je nach Tarif zwei Abläufe ───
 type IconKey =
   | "overview" | "visibility" | "persona" | "monopoly" | "recommended" | "analyze"
-  | "sources" | "competitors" | "geo" | "seo" | "thought" | "topics"
+  | "sources" | "impulse" | "geo" | "seo" | "thought" | "topics"
   | "recommendations" | "ask" | "responses" | "settings" | "team" | "setup"
 
 type NavItem = { href: string; label: string; icon: IconKey }
 type RailGroup = { label: string; icon: IconKey; items: NavItem[] }
 
-const SETUP_GROUP: RailGroup = {
-  label: "Setup", icon: "setup",
-  items: [{ href: "/dashboard/setup", label: "Setup", icon: "setup" }],
-}
-const SCORES_GROUP: RailGroup = {
-  label: "Scores", icon: "visibility",
+// Fünf Hauptbereiche, je eine Frage:
+//   Übersicht (Wo stehe ich?) · Sichtbarkeit (Woraus besteht es?) · Belege (Was sagt die KI?)
+//   Impulse (Wer ist auf meinen Themen sichtbar?) · Maßnahmen (Was tue ich jetzt?)
+// Dazu Team (nur Agentur/Enterprise) und Einstellungen. Unterseiten erscheinen als Reiter.
+const VISIBILITY_GROUP: RailGroup = {
+  label: "Sichtbarkeit", icon: "visibility",
   items: [
-    { href: "/dashboard/ai-visibility",      label: "KI-Reputation",      icon: "visibility" },
-    { href: "/dashboard/geo",                label: "GEO Score",          icon: "geo" },
-    { href: "/dashboard/seo",                label: "SEO Score",          icon: "seo" },
-    { href: "/dashboard/thought-leadership", label: "Thought Leadership", icon: "thought" },
+    { href: "/dashboard/geo",                label: "KI-Sichtbarkeit",     icon: "geo" },
+    { href: "/dashboard/thought-leadership", label: "Expertenstatus",      icon: "thought" },
+    { href: "/dashboard/seo",                label: "Google-Sichtbarkeit", icon: "seo" },
+    { href: "/dashboard/ai-visibility",      label: "Pro KI-Modell",       icon: "visibility" },
+    { href: "/dashboard/topics",             label: "Pro Thema",           icon: "topics" },
+    { href: "/dashboard/monopoly",           label: "Themenführung",       icon: "monopoly" },
+    { href: "/dashboard/recommended",        label: "Empfehlungs-Quote",   icon: "recommended" },
   ],
 }
-const INSIGHTS_GROUP: RailGroup = {
-  label: "Insights", icon: "topics",
+const EVIDENCE_GROUP: RailGroup = {
+  label: "Belege", icon: "responses",
   items: [
-    { href: "/dashboard/topics",      label: "Themen",         icon: "topics" },
-    { href: "/dashboard/monopoly",    label: "Themen-Monopol", icon: "monopoly" },
-    { href: "/dashboard/sources",     label: "Quellen",        icon: "sources" },
-    { href: "/dashboard/responses",   label: "KI-Antworten",   icon: "responses" },
-    { href: "/dashboard/competitors", label: "Wettbewerber",   icon: "competitors" },
+    { href: "/dashboard/responses", label: "KI-Antworten", icon: "responses" },
+    { href: "/dashboard/sources",   label: "Quellen",      icon: "sources" },
+    { href: "/dashboard/persona",   label: "KI-Persona",   icon: "persona" },
   ],
+}
+const IMPULSE_GROUP: RailGroup = {
+  label: "Impulse", icon: "impulse",
+  items: [{ href: "/dashboard/impulse", label: "Impulse", icon: "impulse" }],
 }
 const ACTIONS_GROUP: RailGroup = {
-  label: "Aktionen", icon: "recommendations",
+  label: "Maßnahmen", icon: "recommendations",
   items: [
-    { href: "/dashboard/recommendations", label: "Empfehlungen",        icon: "recommendations" },
-    { href: "/dashboard/recommended",     label: "Wirst du empfohlen?", icon: "recommended" },
-    { href: "/dashboard/ask",             label: "Frag dein Profil",    icon: "ask" },
+    { href: "/dashboard/recommendations", label: "To-dos",    icon: "recommendations" },
+    { href: "/dashboard/ask",             label: "Assistent", icon: "ask" },
   ],
 }
 const SETTINGS_GROUP: RailGroup = {
-  label: "Account", icon: "settings",
-  items: [{ href: "/settings", label: "Einstellungen", icon: "settings" }],
+  label: "Einstellungen", icon: "settings",
+  items: [
+    { href: "/dashboard/setup", label: "Profil & Themen", icon: "setup" },
+    { href: "/settings",        label: "Konto & Tarif",   icon: "settings" },
+  ],
 }
 
-// Einzeluser (Free / Starter / Pro): persönlicher Halo Score
+// Einzeluser (Free / Starter / Pro): Start = persönliche Übersicht
 const SINGLE_RAIL: RailGroup[] = [
-  { label: "Übersicht", icon: "overview", items: [{ href: "/dashboard", label: "Übersicht", icon: "overview" }] },
-  SETUP_GROUP,
   {
-    label: "Analyse", icon: "analyze",
+    label: "Übersicht", icon: "overview",
     items: [
-      { href: "/dashboard/analyze", label: "Analyse",    icon: "analyze" },
-      { href: "/dashboard/persona", label: "KI-Persona", icon: "persona" },
+      { href: "/dashboard",         label: "Übersicht", icon: "overview" },
+      { href: "/dashboard/analyze", label: "Analysen",  icon: "analyze" },
     ],
   },
-  SCORES_GROUP,
-  INSIGHTS_GROUP,
+  VISIBILITY_GROUP,
+  EVIDENCE_GROUP,
+  IMPULSE_GROUP,
   ACTIONS_GROUP,
 ]
 
-// Corporate (Enterprise): Team-Übersicht + Personen, eigenes Profil bleibt erreichbar
+// Agentur / Enterprise: Start = Team, die eigene Übersicht bleibt erreichbar
 const CORPORATE_RAIL: RailGroup[] = [
-  { label: "Team-Übersicht", icon: "overview", items: [{ href: "/dashboard", label: "Team-Übersicht", icon: "overview" }] },
-  SETUP_GROUP,
-  { label: "Personen", icon: "team", items: [{ href: "/dashboard/team", label: "Personen", icon: "team" }] },
   {
-    label: "Mein Profil", icon: "persona",
+    label: "Team", icon: "team",
     items: [
-      { href: "/dashboard/me",      label: "Mein Score", icon: "overview" },
-      { href: "/dashboard/analyze", label: "Analyse",    icon: "analyze" },
-      { href: "/dashboard/persona", label: "KI-Persona", icon: "persona" },
+      { href: "/dashboard",      label: "Team-Übersicht", icon: "team" },
+      { href: "/dashboard/team", label: "Personen",       icon: "team" },
     ],
   },
-  SCORES_GROUP,
-  INSIGHTS_GROUP,
+  {
+    label: "Übersicht", icon: "overview",
+    items: [
+      { href: "/dashboard/me",      label: "Meine Übersicht", icon: "overview" },
+      { href: "/dashboard/analyze", label: "Analysen",        icon: "analyze" },
+    ],
+  },
+  VISIBILITY_GROUP,
+  EVIDENCE_GROUP,
+  IMPULSE_GROUP,
   ACTIONS_GROUP,
 ]
 
@@ -127,11 +137,10 @@ export const Icons: Record<IconKey, ReactNode> = {
       <path d="M4 9h5M4 11h4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
-  competitors: (
+  impulse: (
     <svg width="15" height="15" viewBox="0 0 15 15" fill="none">
-      <circle cx="5" cy="5" r="2" stroke="currentColor" strokeWidth="1.2"/>
-      <circle cx="11" cy="5" r="2" stroke="currentColor" strokeWidth="1.2"/>
-      <path d="M2 13c0-1.66 1.34-3 3-3s3 1.34 3 3M8 13c0-1.66 1.34-3 3-3s3 1.34 3 3" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+      <path d="M7.5 1.5a4.2 4.2 0 00-2.6 7.5c.5.4.8 1 .8 1.6v.4h3.6v-.4c0-.6.3-1.2.8-1.6a4.2 4.2 0 00-2.6-7.5z" stroke="currentColor" strokeWidth="1.2" strokeLinejoin="round"/>
+      <path d="M5.9 13h3.2" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
     </svg>
   ),
   geo: (
@@ -326,6 +335,32 @@ export default function DashboardShell({
     )
   }
 
+  // Reiter des aktuellen Bereichs (nur wenn er mehrere Unterseiten hat)
+  const currentGroup = [...rail, SETTINGS_GROUP].find(g => g.items.some(i => isActive(pathname, i.href)))
+  const sectionTabs = currentGroup && currentGroup.items.length > 1 ? (
+    <nav aria-label={currentGroup.label} className="px-4 md:px-8 pt-4 md:pt-6">
+      <div className="max-w-6xl mx-auto flex items-center gap-1.5 overflow-x-auto pb-1">
+        <span className="hidden sm:inline text-[11px] font-semibold uppercase tracking-wide text-[#9A9089] mr-2 flex-shrink-0">
+          {currentGroup.label}
+        </span>
+        {currentGroup.items.map(item => (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={isActive(pathname, item.href) ? "page" : undefined}
+            className={`flex-shrink-0 px-3.5 py-1.5 rounded-full text-[13px] transition-colors ${
+              isActive(pathname, item.href)
+                ? "bg-[#0E1916] text-white font-semibold"
+                : "text-[#3D4A46] hover:bg-[#F3EFE6]"
+            }`}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </nav>
+  ) : null
+
   // Mobile-Drawer: alle Gruppen aufgeklappt
   const drawerNav = (
     <nav className="flex-1 px-3 py-3 overflow-y-auto">
@@ -386,7 +421,7 @@ export default function DashboardShell({
           className="hidden md:inline-flex h-9 items-center gap-2 rounded-full border border-[#E9E1D3] bg-white hover:bg-[#F6F3EC] text-[#0E1916] text-[13px] font-semibold px-4 transition-colors"
         >
           <span className="w-2 h-2 rounded-full bg-[#FA5935]" />
-          Frag dein Profil
+          Assistent
         </Link>
 
         {activeTeam && (
@@ -529,7 +564,10 @@ export default function DashboardShell({
             </div>
           )}
 
-          <main className="flex-1 overflow-y-auto">{children}</main>
+          <main className="flex-1 overflow-y-auto">
+            {sectionTabs}
+            {children}
+          </main>
         </div>
       </div>
     </div>

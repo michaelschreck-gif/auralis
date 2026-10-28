@@ -107,12 +107,12 @@ export default async function MonopolyPage() {
     <DashboardShell userName={userName} plan={plan}>
       <div className="p-4 md:p-8 max-w-4xl mx-auto space-y-6">
         <header>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Themen-Monopol</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Themenführung</span>
           <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
             Wie sehr „besitzt" du ein Thema?
           </h1>
           <p className="text-sm text-[#6B625A] mt-2.5 max-w-2xl leading-relaxed">
-            Der Monopoly-Score misst, wie konsequent KI dich auf die vordersten Plätze setzt, wenn sie
+            Die Themenführung misst, wie konsequent KI dich auf die vordersten Plätze setzt, wenn sie
             offen nach den führenden Köpfen eines Themas gefragt wird — die Frage, die über
             Speaker-Gagen, Mandate und Reputation entscheidet.
           </p>
@@ -123,7 +123,7 @@ export default async function MonopolyPage() {
             <p className="text-sm text-[#6B625A] max-w-sm mx-auto leading-relaxed">
               Noch keine auswertbaren Analysen. Starte eine{" "}
               <a href="/dashboard/analyze" className="text-[#C8431F] hover:underline font-medium">Analyse</a>{" "}
-              — danach zeigt Halo hier dein Themen-Monopol.
+              — danach zeigt Halo hier deine Themenführung.
             </p>
           </div>
         ) : (
@@ -133,7 +133,7 @@ export default async function MonopolyPage() {
               <Ring value={avg} color="#FA5935" />
               <div>
                 <div className="text-[11px] uppercase tracking-wider text-[#F7B49B]">
-                  Durchschnittliches Monopol
+                  Durchschnittliche Themenführung
                 </div>
                 <div className="text-lg font-semibold mt-0.5">
                   über {topics.length} {topics.length === 1 ? "Thema" : "Themen"}

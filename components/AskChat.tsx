@@ -96,7 +96,7 @@ export default function AskChat({ userName, suggestions }: Props) {
           {firstName ? `Hallo ${firstName}` : "Hallo"}
         </h1>
         <p className="text-sm text-[#6B625A] mt-2">
-          Stell mir Fragen zu deinen Reputationsdaten — ich antworte mit Claude auf Basis deines aktuellen Halo Scores, deiner Themen und deiner Wettbewerber.
+          Stell mir Fragen zu deinen Reputationsdaten — ich antworte mit Claude auf Basis deines aktuellen Halo Scores und deiner Themen.
         </p>
       </div>
 
@@ -147,7 +147,7 @@ export default function AskChat({ userName, suggestions }: Props) {
                 send(input)
               }
             }}
-            placeholder={'Frag mich z.B. „Wie steigere ich meinen GEO Score?“'}
+            placeholder={'Frag mich z.B. „Wie steigere ich meine KI-Sichtbarkeit?“'}
             rows={1}
             disabled={pending}
             className="flex-1 resize-none bg-transparent text-sm text-[#0E1916] placeholder:text-[#9A9089] focus:outline-none disabled:opacity-50 min-h-[1.5rem] max-h-32"

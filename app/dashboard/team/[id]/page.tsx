@@ -17,8 +17,8 @@ export default async function TeamMemberPage({ params }: { params: Promise<{ id:
   if (!m) notFound()
 
   const dims = [
-    { label: "GEO Score", value: m.geo, theme: DIMENSION_THEME.geo },
-    { label: "Thought Leadership", value: m.thoughtLeadership, theme: DIMENSION_THEME["thought-leadership"] },
+    { label: "KI-Sichtbarkeit", value: m.geo, theme: DIMENSION_THEME.geo },
+    { label: "Expertenstatus", value: m.thoughtLeadership, theme: DIMENSION_THEME["thought-leadership"] },
     { label: "Digitale Autorität", value: m.digitalAuthority, theme: DIMENSION_THEME["digital-authority"] },
   ]
   const score = m.score

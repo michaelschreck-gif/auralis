@@ -22,11 +22,6 @@ const TOC = [
   { id: "ep-me",         label: "  GET /me", indent: true },
   { id: "ep-latest",     label: "  GET /scores/latest", indent: true },
   { id: "ep-history",    label: "  GET /scores/history", indent: true },
-  { id: "ep-competitors", label: "  GET /competitors", indent: true },
-  { id: "ep-competitors-add", label: "  POST /competitors", indent: true },
-  { id: "ep-competitors-del", label: "  DELETE /competitors/{id}", indent: true },
-  { id: "ep-competitors-analyze", label: "  POST /competitors/{id}/analyze", indent: true },
-  { id: "ep-gaps",       label: "  GET /competitors/{id}/gaps", indent: true },
   { id: "ep-responses",  label: "  GET /responses", indent: true },
   { id: "ep-monopoly",   label: "  GET /monopoly", indent: true },
   { id: "ep-recprob",    label: "  GET /recommendation-probability", indent: true },
@@ -99,8 +94,8 @@ export default function ApiDocsPage() {
             </h1>
             <p className="text-base text-[#6B625A] mt-3 leading-relaxed">
               Über die Halo Public-API kannst du die KI-Reputations-Scores einer Person
-              programmatisch abfragen — z.B. um Halo-Score, GEO-Score, Thought Leadership
-              oder Wettbewerber-Vergleiche in eigene Dashboards, CRMs oder Reports
+              programmatisch abfragen — z.B. um Halo-Score, KI-Sichtbarkeit, Expertenstatus
+              oder Themen-Auswertungen in eigene Dashboards, CRMs oder Reports
               einzubinden.
             </p>
             <div className="mt-5 rounded-lg bg-white border border-[#E9E1D3] px-4 py-3 inline-block">
@@ -115,14 +110,14 @@ export default function ApiDocsPage() {
           <Section id="introduction" title="Einführung">
             <p>
               Die API gibt programmatischen Zugriff auf die Reputations-Daten eines
-              Halo-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen,
-              Wettbewerber) und verwaltend (Wettbewerber anlegen/löschen, Analysen auslösen,
-              Sub-Accounts anlegen). Sie ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
+              Halo-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen)
+              und verwaltend (Themen anlegen/löschen, Analysen auslösen, Sub-Accounts anlegen). Sie ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
               <strong>Enterprise</strong>; Free- und Starter-Accounts können sich nicht
               authentifizieren.
             </p>
             <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>18 Endpoints: 11× GET (lesen), 5× POST (anlegen/auslösen), 2× DELETE</li>
+              <li>13 Endpoints: 9× GET (lesen), 3× POST (anlegen/auslösen), 1× DELETE</li>
+              <li>Die früheren <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">/competitors</code>-Endpoints wurden entfernt und antworten mit <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">410 ENDPOINT_REMOVED</code>.</li>
               <li>Tageslimit je Tarif — Pro 1.000/Tag, <strong>Enterprise unbegrenzt</strong> (siehe Limits &amp; Tarife)</li>
               <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
               <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
@@ -283,8 +278,8 @@ export default function ApiDocsPage() {
               Alle Endpoints liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
               Lesende Endpoints sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code>;
               schreibende nutzen <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">POST</code>{" "}
-              (Thema/Wettbewerber anlegen, Analyse/Wettbewerber-Analyse auslösen, Sub-Account anlegen) bzw.{" "}
-              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">DELETE</code> (Thema/Wettbewerber entfernen).
+              (Thema anlegen, Analyse auslösen, Sub-Account anlegen) bzw.{" "}
+              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">DELETE</code> (Thema entfernen).
               Daten-Endpoints akzeptieren zusätzlich den optionalen Query-Parameter{" "}
               <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
               (siehe Hinweis am Ende dieses Abschnitts).
@@ -368,117 +363,6 @@ export default function ApiDocsPage() {
       "trigger": "scheduled"
     },
     ...
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-competitors"
-            method="GET"
-            path="/competitors"
-            description="Liste aller verfolgten Wettbewerber mit zuletzt gemessenem Score (oder null falls noch nicht analysiert)."
-            example={`curl ${BASE_URL}${API_PREFIX}/competitors \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "competitors": [
-    {
-      "id": "f73395d1-7ce1-443f-b9e6-c0d594ca583c",
-      "name": "Mark Zuckerberg",
-      "topics": ["Social Media", "AI", "Metaverse"],
-      "language": "en",
-      "last_score": 48,
-      "last_analyzed_at": "2026-05-26T14:55:21Z"
-    },
-    {
-      "id": "8eb0e9ef-2894-4796-880a-cd6c2cd3a302",
-      "name": "Andrew Ng",
-      "topics": ["AI", "Machine Learning", "Education"],
-      "language": "en",
-      "last_score": 84,
-      "last_analyzed_at": "2026-05-26T14:42:39Z"
-    }
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-competitors-add"
-            method="POST"
-            path="/competitors"
-            description="Legt einen neuen Wettbewerber an. topics kann ein Array oder ein kommagetrennter String sein (max. 10). language steuert die Sprache der KI-Abfragen (Standard en, region-neutral für globale Figuren)."
-            example={`curl -X POST ${BASE_URL}${API_PREFIX}/competitors \\
-  -H "Authorization: Bearer aur_sk_xxxxx" \\
-  -H "Content-Type: application/json" \\
-  -d '{"name":"Andrew Ng","topics":["AI","Machine Learning"],"language":"en"}'`}
-            response={`{
-  "competitor": {
-    "id": "uuid",
-    "name": "Andrew Ng",
-    "topics": ["AI", "Machine Learning"],
-    "language": "en",
-    "last_score": null,
-    "last_analyzed_at": null
-  }
-}`}
-          />
-
-          <Endpoint
-            id="ep-competitors-del"
-            method="DELETE"
-            path="/competitors/{id}"
-            description="Entfernt einen Wettbewerber samt seiner gespeicherten Analyse-Berichte."
-            params={[
-              { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers (aus /competitors)." },
-            ]}
-            example={`curl -X DELETE ${BASE_URL}${API_PREFIX}/competitors/8eb0e9ef-... \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{ "deleted": true, "id": "8eb0e9ef-..." }`}
-          />
-
-          <Endpoint
-            id="ep-competitors-analyze"
-            method="POST"
-            path="/competitors/{id}/analyze"
-            description="Löst eine Reputations-Analyse für einen Wettbewerber aus (entspricht „Analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden. Kein Request-Body nötig."
-            params={[
-              { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers." },
-            ]}
-            example={`curl -X POST ${BASE_URL}${API_PREFIX}/competitors/8eb0e9ef-.../analyze \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "competitor": { "id": "8eb0e9ef-...", "name": "Andrew Ng" },
-  "report_id": "uuid",
-  "score": 84,
-  "sentiment": "positive",
-  "mention_rate": 100,
-  "providers_used": ["claude-sonnet"]
-}`}
-          />
-
-          <Endpoint
-            id="ep-gaps"
-            method="GET"
-            path="/competitors/{id}/gaps"
-            description="Lückenanalyse zwischen dir und einem Wettbewerber: pro Frage-Archetyp, wer genannt wird. Zeigt konkrete inhaltliche Lücken (Wettbewerber genannt, du nicht) und Vorsprünge. Nutzt deinen jüngsten Report und den jüngsten Report des Wettbewerbers (404, falls einer fehlt)."
-            params={[
-              { name: "id", type: "uuid (Pfad)", desc: "ID des Wettbewerbers (aus /competitors)." },
-            ]}
-            example={`curl ${BASE_URL}${API_PREFIX}/competitors/8eb0e9ef-.../gaps \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "competitor": { "id": "8eb0e9ef-...", "name": "Andrew Ng" },
-  "gap_count": 3,
-  "advantage_count": 2,
-  "comparisons": [
-    {
-      "type": "expert_discovery",
-      "label": "Experten-Suche",
-      "hint": "Wer gilt als führende Expertin/Experte für das Thema?",
-      "self_mentioned": false,
-      "competitor_mentioned": true,
-      "verdict": "gap"
-    }
-    // … topic_authority, recommendation, leadership, popular_figures
   ]
 }`}
           />

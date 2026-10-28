@@ -17,6 +17,7 @@ import type { SmoothingInfo } from "@/lib/auralis/smoothing"
 import type { MarketResult } from "@/lib/auralis/runner"
 import ScoreExplainer from "./ScoreExplainer"
 import { Icons } from "./DashboardShell"
+import StaleReportNotice from "./StaleReportNotice"
 
 export default function Cockpit({
   userName,
@@ -24,6 +25,8 @@ export default function Cockpit({
   latestReportId,
   seoScore = null,
   smoothing = null,
+  todos = [],
+  activeTopics = [],
 }: {
   userName: string
   /** Latest visibility report from raw_data jsonb, or null if user has none yet. */
@@ -34,6 +37,10 @@ export default function Cockpit({
   seoScore?: SeoScore | null
   /** Gleitender Durchschnitt über mehrere Läufe (null = Einzellauf). */
   smoothing?: SmoothingInfo | null
+  /** Bis zu drei offene Maßnahmen für die Übersicht. */
+  todos?: { id: string; title: string; impact: string }[]
+  /** Aktuell beobachtete Themen — für den Hinweis auf veraltete Analysen. */
+  activeTopics?: string[]
 }) {
   const stability =
     ((report as unknown as { stability?: ScoreStability | null } | null)?.stability) ?? null
@@ -50,15 +57,17 @@ export default function Cockpit({
   const ranked = useMemo(() => {
     if (!masters) return []
     const rows: { label: string; value: number }[] = [
-      { label: "GEO Score", value: masters.geo.value },
-      { label: "Thought Leadership", value: masters.thoughtLeadership.value },
+      { label: "KI-Sichtbarkeit", value: masters.geo.value },
+      { label: "Expertenstatus", value: masters.thoughtLeadership.value },
       { label: "Digitale Autorität", value: masters.digitalAuthority.value },
     ]
-    if (seoScore) rows.push({ label: "SEO Score", value: seoScore.value })
+    if (seoScore) rows.push({ label: "Google-Sichtbarkeit", value: seoScore.value })
     return [...rows].sort((a, b) => b.value - a.value)
   }, [masters, seoScore])
-  const strengths = ranked.slice(0, 2)
-  const opportunities = ranked.slice(-2).reverse()
+  // Stärken nur, wenn wirklich etwas gemessen wurde (0 ist nie eine Stärke);
+  // eine Dimension erscheint nie gleichzeitig als Stärke und als Schwäche.
+  const strengths = ranked.filter(r => r.value > 0).slice(0, 2)
+  const opportunities = ranked.filter(r => !strengths.includes(r)).slice(-2).reverse()
 
   const greeting = (
     <div className="flex items-center gap-4">
@@ -106,6 +115,8 @@ export default function Cockpit({
         <div className="p-4 md:p-8 max-w-6xl mx-auto space-y-5">
           {greeting}
 
+          <StaleReportNotice reportTopics={report.topics ?? []} activeTopics={activeTopics} />
+
           {/* ─── Halo Score: große dunkle Karte ─── */}
           <section className="rounded-3xl bg-[#0E1916] text-white p-6 sm:p-8 flex flex-col sm:flex-row sm:items-center gap-6 sm:gap-10">
             <svg
@@ -126,7 +137,7 @@ export default function Cockpit({
               <div className="text-[11px] font-semibold uppercase tracking-wider text-[#F7B49B]">Dein Halo Score™</div>
               <h2 className="text-2xl sm:text-3xl tracking-tight text-white mt-1.5">{masters.aura.band.label}.</h2>
               <p className="text-[#D8CFC4] text-sm leading-relaxed mt-2 max-w-xl">
-                So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden — kombiniert aus GEO, SEO, Thought Leadership und Digitaler Autorität.
+                So sichtbar bist du insgesamt, wenn KI-Systeme nach deinen Themen gefragt werden — kombiniert aus KI-Sichtbarkeit, Expertenstatus, Digitaler Autorität und Google-Sichtbarkeit.
               </p>
               {smoothing && (
                 <p className="mt-3 text-[12px] text-[#D8CFC4]">
@@ -178,7 +189,7 @@ export default function Cockpit({
             <Kpi label="Halo Score" value={String(masters.aura.value)} tint="#FDE7E0" dot="#FA5935" />
             <Kpi label="Erwähnungsquote" value={`${Math.round(report.mentionRate)} %`} tint="#E8EEEE" dot="#8CAAAB" />
             <Kpi label="Ø Position" value={report.averagePosition === null ? "—" : report.averagePosition.toFixed(1)} tint="#F6ECD9" dot="#C98A3E" />
-            <Kpi label="Stärkste Dimension" value={masters.strongest.shortLabel} tint="#E6E8E7" dot="#5E6563" />
+            <Kpi label="Stärkste Dimension" value={masters.strongest.value > 0 ? masters.strongest.shortLabel : "—"} tint="#E6E8E7" dot="#5E6563" />
           </div>
 
           {/* ─── Zielmärkte (nur bei mehreren gemessenen Märkten) ─── */}
@@ -216,10 +227,10 @@ export default function Cockpit({
 
             <Card icon={Icons.overview} title="Dimensionen" subtitle="Dein Halo Score im Detail">
               <div className="space-y-3.5">
-                <DimRow label="GEO Score" value={masters.geo.value} theme={DIMENSION_THEME.geo} onExplain={() => setOpenKey("geo")} />
-                <DimRow label="Thought Leadership" value={masters.thoughtLeadership.value} theme={DIMENSION_THEME["thought-leadership"]} onExplain={() => setOpenKey("thought-leadership")} />
+                <DimRow label="KI-Sichtbarkeit" value={masters.geo.value} theme={DIMENSION_THEME.geo} onExplain={() => setOpenKey("geo")} />
+                <DimRow label="Expertenstatus" value={masters.thoughtLeadership.value} theme={DIMENSION_THEME["thought-leadership"]} onExplain={() => setOpenKey("thought-leadership")} />
                 <DimRow label="Digitale Autorität" value={masters.digitalAuthority.value} theme={DIMENSION_THEME["digital-authority"]} onExplain={() => setOpenKey("digital-authority")} />
-                <DimRow label="SEO Score" value={seoScore?.value ?? null} theme={SEO_THEME} href="/dashboard/seo" />
+                <DimRow label="Google-Sichtbarkeit" value={seoScore?.value ?? null} theme={SEO_THEME} href="/dashboard/seo" />
               </div>
             </Card>
 
@@ -227,11 +238,17 @@ export default function Cockpit({
               <div className="space-y-5 text-sm">
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-wide text-[#C8431F] mb-2">Deine Stärken</div>
-                  <ul className="space-y-2 text-[#3D4A46]">
-                    {strengths.map(s => (
-                      <li key={s.label} className="flex gap-2.5"><span className="text-[#FA5935] font-bold">✓</span>{s.label} · {s.value}</li>
-                    ))}
-                  </ul>
+                  {strengths.length > 0 ? (
+                    <ul className="space-y-2 text-[#3D4A46]">
+                      {strengths.map(s => (
+                        <li key={s.label} className="flex gap-2.5"><span className="text-[#FA5935] font-bold">✓</span>{s.label} · {s.value}</li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-[#5E6563] leading-relaxed">
+                      Noch keine Stärke messbar — die KI nennt dich bei deinen Themen bisher nicht.
+                    </p>
+                  )}
                 </div>
                 <div>
                   <div className="text-[11px] font-semibold uppercase tracking-wide text-[#5E6563] mb-2">Ausbaufähig</div>
@@ -244,13 +261,28 @@ export default function Cockpit({
               </div>
             </Card>
 
-            <Card icon={Icons.recommendations} title="Nächste Schritte" subtitle="Mehr Sichtbarkeit">
-              <div className="space-y-1.5 -mx-2">
-                <StepRow href="/dashboard/recommendations" icon={Icons.recommendations} title="Empfehlungen" desc="Konkrete nächste Schritte" />
-                <StepRow href="/dashboard/competitors" icon={Icons.competitors} title="Wettbewerber" desc="Wer steht statt dir in der Antwort?" />
-                <StepRow href="/dashboard/sources" icon={Icons.sources} title="Quellen" desc="Woher KI ihr Wissen bezieht" />
-                <StepRow href="/dashboard/monopoly" icon={Icons.monopoly} title="Themen-Monopol" desc="Wo du (fast) konkurrenzlos bist" />
-              </div>
+            <Card icon={Icons.recommendations} title="Was du jetzt tun kannst" subtitle="Deine nächsten Schritte">
+              {todos.length > 0 ? (
+                <div className="space-y-2.5">
+                  <ol className="space-y-2.5">
+                    {todos.slice(0, 3).map((t, i) => (
+                      <li key={t.id} className="flex gap-3 text-sm text-[#3D4A46]">
+                        <span className="w-6 h-6 rounded-full bg-[#FDE7E0] text-[#C8431F] text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                        <span className="leading-snug">{t.title}</span>
+                      </li>
+                    ))}
+                  </ol>
+                  <Link href="/dashboard/recommendations" className="inline-block text-[13px] font-semibold text-[#C8431F] hover:underline pt-1">
+                    Alle Maßnahmen ansehen ›
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-1.5 -mx-2">
+                  <StepRow href="/dashboard/recommendations" icon={Icons.recommendations} title="Maßnahmen erstellen" desc="Konkrete Schritte aus deiner letzten Analyse" />
+                  <StepRow href="/dashboard/impulse" icon={Icons.impulse} title="Impulse" desc="Wer auf deinen Themen schon sichtbar ist" />
+                  <StepRow href="/dashboard/responses" icon={Icons.responses} title="KI-Antworten" desc="Was die KI wörtlich über deine Themen sagt" />
+                </div>
+              )}
             </Card>
           </div>
         </div>

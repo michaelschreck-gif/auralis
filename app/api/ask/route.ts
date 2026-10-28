@@ -8,7 +8,6 @@
  *   - Aktueller Halo Score + Sub-Scores
  *   - Liste der überwachten Themen
  *   - Letzte Score-Verläufe (bis zu 10)
- *   - Wettbewerber-Snapshot
  *   - Vorherige Nachrichten dieser Session
  *
  * Streamt die Antwort als plain text. Pro/Enterprise-only.
@@ -115,7 +114,7 @@ export async function POST(req: Request) {
   }
 
   // Kontext-Daten parallel laden
-  const [latestReportResult, historyResult, schedulesResult, competitorsResult] =
+  const [latestReportResult, historyResult, schedulesResult] =
     await Promise.all([
       supabase
         .from("visibility_reports")
@@ -134,12 +133,6 @@ export async function POST(req: Request) {
         .from("monitoring_schedules")
         .select("name, query, frequency, is_active")
         .eq("profile_id", user.id),
-      supabase
-        .from("competitors")
-        .select("name, last_score, last_analyzed_at")
-        .eq("profile_id", user.id)
-        .order("last_score", { ascending: false, nullsFirst: false })
-        .limit(5),
     ])
 
   const latestReport = latestReportResult.data?.raw_data as unknown as VisibilityReport | null
@@ -206,16 +199,6 @@ export async function POST(req: Request) {
     lines.push("")
   }
 
-  const competitors = competitorsResult.data ?? []
-  if (competitors.length > 0) {
-    lines.push(`# Wettbewerber`)
-    competitors.forEach(c => {
-      const score = c.last_score != null ? Math.round(Number(c.last_score)) : "—"
-      lines.push(`- ${c.name}: ${score}/100`)
-    })
-    lines.push("")
-  }
-
   const contextBlock = lines.join("\n").trim()
 
   // System-Prompt — Claude als Halo-Coach
@@ -223,9 +206,9 @@ export async function POST(req: Request) {
 
 Regeln:
 - Antworte immer auf Deutsch, höflich und direkt.
-- Beziehe dich auf die echten Zahlen unten. Erfinde keine Zahlen, keine Wettbewerber, keine Quellen.
+- Beziehe dich auf die echten Zahlen unten. Erfinde keine Zahlen, keine Personen, keine Quellen. Vergleiche die Person nicht mit anderen Personen und erstelle keine Rankings über Dritte.
 - Sei konkret und konsulentenhaft: nenne 2–4 priorisierte Maßnahmen statt allgemeiner Ratschläge.
-- Wenn der User nach Daten fragt, die nicht in der Kontextbox stehen, sag ehrlich, dass du sie nicht hast, und empfiehl, wo er sie im Tool findet (z.B. /dashboard/sources, /dashboard/competitors).
+- Wenn der User nach Daten fragt, die nicht in der Kontextbox stehen, sag ehrlich, dass du sie nicht hast, und empfiehl, wo er sie im Tool findet (z.B. /dashboard/sources, /dashboard/impulse).
 - Halte Antworten kompakt: meist 2–6 Absätze, gerne Listen für Handlungsempfehlungen.
 
 Kontext zur Person (aktuelle Daten aus Halo):

@@ -128,10 +128,11 @@ export default async function SourcesPage() {
             </p>
             <div className="text-sm text-[#5C2A12] mt-3 space-y-3 leading-relaxed max-w-xl">
               <p>
-                Deine Analysen laufen aktuell mit <span className="font-medium text-[#0E1916]">Claude</span>.
-                Claude antwortet aus seinem Trainingswissen und gibt dabei – wie die meisten
-                KI-Assistenten – normalerweise keine konkreten Webadressen an. Deshalb gibt es hier
-                nichts auszuwerten, obwohl deine Analysen einwandfrei funktionieren.
+                Die KI-Modelle deiner letzten Analysen haben keine Webadressen genannt. Die meisten
+                KI-Assistenten antworten aus ihrem Trainingswissen und geben dabei keine Quellen an.
+                Deshalb gibt es hier nichts auszuwerten, obwohl deine Analysen einwandfrei funktionieren.
+                Welche Modelle gemessen wurden, siehst du unter{" "}
+                <a href="/dashboard/ai-visibility" className="text-[#FA5935] hover:underline font-medium">Sichtbarkeit › Pro KI-Modell</a>.
               </p>
               <p>
                 Echte Quell-Links liefern vor allem <span className="font-medium text-[#0E1916]">web-vernetzte
@@ -190,7 +191,7 @@ export default async function SourcesPage() {
           <p className="text-xs text-[#9A9089]">
             Hinweis: Diese Liste zeigt Webadressen, die KI-Modelle in den Antworten der letzten{" "}
             {reportCount} Analyse{reportCount === 1 ? "" : "n"} genannt haben. Web-vernetzte Modelle
-            (z.&nbsp;B. Perplexity) liefern hier deutlich mehr als reine Wissensmodelle wie Claude.
+            (z.&nbsp;B. Perplexity) liefern hier deutlich mehr als reine Wissensmodelle.
           </p>
         )}
       </div>

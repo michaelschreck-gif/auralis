@@ -151,7 +151,7 @@ export default async function TopicsPage() {
     >
       <div className="p-4 md:p-8">
         <div className="mb-8">
-          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Themen</span>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Pro Thema</span>
           <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
             Themenführerschaft.
           </h1>

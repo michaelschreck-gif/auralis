@@ -205,9 +205,9 @@ export function computeMasterScores(report: VisibilityReport): MasterScores {
   const finalAura = clamp(report.overallScore || auraComposite)
 
   const aura: MasterScore = build("aura", "Halo Score™", "Halo", finalAura, AURA_BANDS)
-  const geo:  MasterScore = build("geo",  "GEO Score", "GEO", clamp(geoValue), DEFAULT_BANDS)
+  const geo:  MasterScore = build("geo",  "KI-Sichtbarkeit", "KI-Sichtbarkeit", clamp(geoValue), DEFAULT_BANDS)
   const thoughtLeadership: MasterScore = build(
-    "thought-leadership", "Thought Leadership", "Thought Leadership",
+    "thought-leadership", "Expertenstatus", "Expertenstatus",
     clamp(tlValue), TL_BANDS,
   )
   const digitalAuthority: MasterScore = build(
@@ -355,8 +355,8 @@ export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
   },
   "geo": {
     key: "geo",
-    title: "GEO Score",
-    subtitle: "Generative Engine Optimization – sichtbar in KI-Suche",
+    title: "KI-Sichtbarkeit",
+    subtitle: "Wie oft und wie weit oben KI-Assistenten dich nennen (GEO)",
     what: "Wie häufig und prominent KI-Systeme (ChatGPT, Claude, Perplexity) dich bei thematischen Anfragen erwähnen. Setzt sich zusammen aus Erwähnungsrate, Position in Listen, Tonalität der Erwähnung und Themenabdeckung.",
     weights: weightsFor("geo"),
     bands: DEFAULT_BANDS,
@@ -368,8 +368,8 @@ export const SCORE_DEFINITIONS: Record<ScoreKey, ScoreDefinition> = {
   },
   "thought-leadership": {
     key: "thought-leadership",
-    title: "Thought Leadership",
-    subtitle: "Vordenker- & Expertenwahrnehmung",
+    title: "Expertenstatus",
+    subtitle: "Ob die KI dich als Fachperson einordnet (Thought Leadership)",
     what: "Wie stark KI-Systeme dich als Vordenker und Experte einordnen. Betont dieselben Roh-Signale wie der GEO Score, gewichtet aber Themenabdeckung und Tonalität höher: Themenabdeckung (35%), Tonalität (25%), Erwähnungsrate (25%) und Positionsqualität (15%).",
     weights: weightsFor("thought-leadership"),
     bands: TL_BANDS,

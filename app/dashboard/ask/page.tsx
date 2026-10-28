@@ -13,7 +13,7 @@ const ALLOWED_PLANS: PlanType[] = ["pro", "enterprise"]
 const SUGGESTIONS = [
   "Wo liegt mein größtes Wachstumspotenzial?",
   "Was sollte ich diese Woche tun, um sichtbarer zu werden?",
-  "Wie schneide ich gegen meine Wettbewerber ab?",
+  "Von welchen Personen auf meinen Themen kann ich lernen?",
   "Welches meiner Themen wird in KI am schlechtesten erkannt?",
   "Wie kann ich meinen Thought-Leadership-Score steigern?",
 ]
@@ -44,12 +44,12 @@ export default async function AskPage() {
       <DashboardShell userName={userName} plan={plan}>
         <div className="p-4 md:p-8 max-w-2xl mx-auto">
           <header>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Frag dein Profil</span>
+            <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Assistent</span>
             <h1 className="font-[family-name:var(--font-display)] font-normal text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">
               Dein persönlicher KI-Reputations-Coach.
             </h1>
             <p className="text-sm text-[#6B625A] mt-2.5">
-              Stelle Claude Fragen zu deinem Halo Score, deinen Themen und deinen Wettbewerbern.
+              Stelle Claude Fragen zu deinem Halo Score, deinen Themen und den Impulsen aus deinen KI-Antworten.
               Claude antwortet auf Basis deiner echten Halo-Daten.
             </p>
           </header>
@@ -63,7 +63,7 @@ export default async function AskPage() {
             </h2>
             <p className="text-sm text-[#6B625A] mt-2 leading-relaxed">
               „Frag dein Profil" ist Teil des Pro-Tarifs. Du bekommst dort zusätzlich
-              Multi-Modell-Tracking, Wettbewerber-Analyse, Public Profile + Badge, PDF-Reports
+              Multi-Modell-Tracking, Impulse, Public Profile + Badge, PDF-Reports
               und die Public Read-API.
             </p>
             <a
