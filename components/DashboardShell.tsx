@@ -215,11 +215,17 @@ type TeamsState = { teams: TeamRef[]; activeId: string | null }
 // Bleibt über Client-Navigationen erhalten, damit Leiste und Wechsler nicht flackern.
 const teamsStore: { current: TeamsState | null } = { current: null }
 
+// Letzte echte Nutzerdaten, damit die Ladeanzeige (app/dashboard/loading.tsx) nicht „?“ / „Free“ zeigt.
+type UserState = { userName: string; plan: string; corporate: boolean }
+const userStore: { current: UserState | null } = { current: null }
+
 interface Props {
   userName?: string
   plan?: string
   /** Team-Ablauf erzwingen (Team-Seiten); sonst ergibt er sich aus Tarif und Team-Mitgliedschaft. */
   corporate?: boolean
+  /** Ladeanzeige: Nutzerdaten der zuletzt angezeigten Seite verwenden statt der Props. */
+  placeholder?: boolean
   panelHeader?: string
   panelCount?: string
   panelContent?: ReactNode
@@ -240,9 +246,10 @@ function isActive(pathname: string, href: string): boolean {
 }
 
 export default function DashboardShell({
-  userName = "",
-  plan = "free",
-  corporate = false,
+  userName: userNameProp = "",
+  plan: planProp = "free",
+  corporate: corporateProp = false,
+  placeholder = false,
   panelHeader = "Topics",
   panelCount,
   panelContent,
@@ -269,6 +276,16 @@ export default function DashboardShell({
   useEffect(() => {
     teamsStore.current = teamsState
   }, [teamsState])
+
+  const known = placeholder ? userStore.current : null
+  const userName = placeholder ? known?.userName ?? "" : userNameProp
+  const plan = placeholder ? known?.plan ?? "free" : planProp
+  const corporate = placeholder ? known?.corporate ?? false : corporateProp
+  const showPlan = !placeholder || known !== null
+
+  useEffect(() => {
+    if (!placeholder) userStore.current = { userName: userNameProp, plan: planProp, corporate: corporateProp }
+  }, [placeholder, userNameProp, planProp, corporateProp])
 
   async function switchTeam(teamId: string) {
     setTeamMenuOpen(false)
@@ -471,13 +488,15 @@ export default function DashboardShell({
         )}
 
         <div className="ml-auto flex items-center gap-3">
-          <span
-            className={`hidden sm:inline-flex h-8 items-center rounded-xl px-3 text-[12.5px] font-bold ${
-              isCorporate ? "bg-[#0E1916] text-white" : "bg-[#E8EEEE] text-[#1C2A2A]"
-            }`}
-          >
-            {planLabel}
-          </span>
+          {showPlan && (
+            <span
+              className={`hidden sm:inline-flex h-8 items-center rounded-xl px-3 text-[12.5px] font-bold ${
+                isCorporate ? "bg-[#0E1916] text-white" : "bg-[#E8EEEE] text-[#1C2A2A]"
+              }`}
+            >
+              {planLabel}
+            </span>
+          )}
 
           <div className="relative">
             <button
