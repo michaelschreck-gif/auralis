@@ -427,7 +427,7 @@ function HeroCockpit() {
         <span className="w-2.5 h-2.5 rounded-full bg-[#F0997B]" />
         <span className="w-2.5 h-2.5 rounded-full bg-[#FAC775]" />
         <span className="w-2.5 h-2.5 rounded-full bg-[#9FE1CB]" />
-        <span className="text-xs text-[#9A9089] ml-2">digital-halo.de/dashboard</span>
+        <span className="text-xs text-[#9A9089] ml-2">app.digital-halo.de/dashboard</span>
       </div>
       <div className="rounded-2xl bg-[#0E1916] p-5 flex items-center gap-5">
         <svg width="96" height="96" viewBox="0 0 96 96" className="flex-shrink-0" role="img" aria-label="Halo Score 75">
