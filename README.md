@@ -1,7 +1,11 @@
 # DigitalHalo (Repo: auralis)
 
 Misst, wie KI-Systeme (Claude, GPT-4o, Perplexity, Gemini) eine Person oder Marke wahrnehmen, und verdichtet das zum **Halo Score**.
-Live: https://digital-halo.de · Admin-App (separat): admin-auralis
+Live: Webseite https://digital-halo.de · Tool https://app.digital-halo.de · Admin-App (separat): admin-auralis
+
+Die Aufteilung macht `proxy.ts` (Regeln in `lib/domains.ts`), aktiv sobald `NEXT_PUBLIC_SITE_URL` und
+`NEXT_PUBLIC_APP_URL` gesetzt sind (nur Production). `/api` und `/badge` laufen auf beiden Domains.
+DNS liegt bei Strato (`app` → CNAME auf Vercel), Funktionen laufen in `fra1`.
 
 ## Stack
 
