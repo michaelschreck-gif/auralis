@@ -1,815 +1,274 @@
 /**
- * Public API documentation page at /docs/api.
- * No authentication required — shareable URL for external developers.
+ * Öffentliche API-Dokumentation unter /docs/api (ohne Login, teilbar).
+ * Beschreibt API v2 (Konten und Personen). v1 antwortet mit 410.
  */
 
 import type { Metadata } from "next"
+import Link from "next/link"
 
 export const metadata: Metadata = {
   title: "Halo API – Dokumentation",
-  description: "Public REST API für Halo — KI-Reputations-Scores per HTTP abfragen.",
+  description: "REST-API für Halo: Halo Score, Messungen, Themen und Belege per HTTP.",
 }
 
-const BASE_URL = "https://digital-halo.de"
-const API_PREFIX = "/api/v1"
+const BASE = "https://digital-halo.de/api/v2"
 
-const TOC = [
-  { id: "introduction",  label: "Einführung" },
-  { id: "authentication", label: "Authentifizierung" },
-  { id: "limits",        label: "Limits & Tarife" },
-  { id: "errors",        label: "Fehler-Codes" },
-  { id: "endpoints",     label: "Endpoints" },
-  { id: "ep-me",         label: "  GET /me", indent: true },
-  { id: "ep-latest",     label: "  GET /scores/latest", indent: true },
-  { id: "ep-history",    label: "  GET /scores/history", indent: true },
-  { id: "ep-responses",  label: "  GET /responses", indent: true },
-  { id: "ep-monopoly",   label: "  GET /monopoly", indent: true },
-  { id: "ep-recprob",    label: "  GET /recommendation-probability", indent: true },
-  { id: "ep-recommendations", label: "  GET /recommendations", indent: true },
-  { id: "ep-topics-list", label: "  GET /topics", indent: true },
-  { id: "ep-topics",     label: "  POST /topics", indent: true },
-  { id: "ep-topics-del", label: "  DELETE /topics/{id}", indent: true },
-  { id: "ep-analyze",    label: "  POST /analyze/{id}", indent: true },
-  { id: "ep-subaccounts-list", label: "  GET /sub-accounts", indent: true },
-  { id: "ep-subaccounts",  label: "  POST /sub-accounts", indent: true },
-  { id: "examples",      label: "Code-Beispiele" },
-  { id: "support",       label: "Support" },
-] as const
+type Endpoint = {
+  id: string
+  method: "GET" | "POST" | "DELETE"
+  path: string
+  text: string
+  body?: string
+  response: string
+}
+
+const ENDPOINTS: Endpoint[] = [
+  {
+    id: "account",
+    method: "GET",
+    path: "/account",
+    text: "Das Konto des Schlüssels mit allen Personen und ihrem aktuellen Halo Score.",
+    response: `{
+  "account": { "id": "…", "name": "Vertrieb DACH", "type": "team" },
+  "persons": [
+    { "id": "…", "first_name": "Maud", "last_name": "Schock", "market": "dach",
+      "halo_score": 64, "band": "Etabliert", "measured_at": "2026-10-29T13:59:17Z" }
+  ]
+}`,
+  },
+  {
+    id: "persons-list",
+    method: "GET",
+    path: "/persons",
+    text: "Alle Personen des Kontos (ohne Scores).",
+    response: `{ "persons": [ { "id": "…", "first_name": "Maud", "last_name": "Schock", "context": "…", "market": "dach", "website_url": null, "created_at": "…" } ] }`,
+  },
+  {
+    id: "persons-create",
+    method: "POST",
+    path: "/persons",
+    text: "Person anlegen (nur Team-Konten). Startet sofort die erste Messung je Thema.",
+    body: `{ "first_name": "Maud", "last_name": "Schock", "context": "Geschäftsführerin", "market": "dach",
+  "topics": ["Personal Branding", "LinkedIn"] }`,
+    response: `{ "person": { "id": "…", … }, "job_ids": ["…", "…"] }   // 201`,
+  },
+  {
+    id: "person",
+    method: "GET",
+    path: "/persons/{id}",
+    text: "Person mit Halo Score, Trend, den drei Säulen und Themen. Nicht gemessene Säulen haben value: null und measured: false und zählen nicht in den Score.",
+    response: `{
+  "person": { "id": "…", "first_name": "Maud", … },
+  "halo": {
+    "score": 64, "band": "Etabliert", "trend": 3, "coverage": 0.7,
+    "models_ok": 2, "models_total": 3, "measured_at": "…",
+    "pillars": [
+      { "key": "ai", "label": "KI-Sichtbarkeit", "weight": 0.5, "value": 58, "measured": true },
+      { "key": "google", "label": "Google-Sichtbarkeit", "weight": 0.3, "value": null, "measured": false },
+      { "key": "perception", "label": "Wahrnehmung", "weight": 0.2, "value": 97, "measured": true }
+    ]
+  },
+  "topics": [ { "id": "…", "name": "Personal Branding", "ai_score": 58, "change": 3, "last_run_at": "…", "next_run_at": "…" } ]
+}`,
+  },
+  {
+    id: "history",
+    method: "GET",
+    path: "/persons/{id}/history",
+    text: "Verlauf des Halo Scores, ein Punkt je Tag mit Messung.",
+    response: `{ "history": [ { "date": "2026-10-22", "score": 61 }, { "date": "2026-10-29", "score": 64 } ] }`,
+  },
+  {
+    id: "topics-list",
+    method: "GET",
+    path: "/persons/{id}/topics",
+    text: "Themen der Person mit Messrhythmus.",
+    response: `{ "topics": [ { "id": "…", "name": "Personal Branding", "is_active": true, "frequency": "weekly", "last_run_at": "…", "next_run_at": "…" } ] }`,
+  },
+  {
+    id: "topics-create",
+    method: "POST",
+    path: "/persons/{id}/topics",
+    text: "Thema anlegen. frequency: daily, weekly (Standard) oder monthly. Höchstens 5 aktive Themen je Person.",
+    body: `{ "name": "LinkedIn", "frequency": "weekly" }`,
+    response: `{ "topic": { "id": "…", "name": "LinkedIn", … } }   // 201`,
+  },
+  {
+    id: "topics-delete",
+    method: "DELETE",
+    path: "/topics/{id}",
+    text: "Thema löschen. Bisherige Messungen bleiben erhalten.",
+    response: `{ "deleted": true }`,
+  },
+  {
+    id: "measure",
+    method: "POST",
+    path: "/persons/{id}/measure",
+    text: "Neue Messung aller aktiven Themen starten. Antwortet sofort; eine Messung dauert meist ein bis zwei Minuten. Läuft für ein Thema schon eine, wird deren Job zurückgegeben.",
+    response: `{ "jobs": [ { "topic_id": "…", "job_id": "…", "already_running": false } ] }   // 202`,
+  },
+  {
+    id: "jobs",
+    method: "GET",
+    path: "/jobs/{id}",
+    text: "Status einer Messung: queued, running, done oder failed.",
+    response: `{ "job": { "id": "…", "status": "done", "measurement_id": "…", "error": null, "finished_at": "…" } }`,
+  },
+  {
+    id: "answers",
+    method: "GET",
+    path: "/persons/{id}/answers",
+    text: "Die echten KI-Antworten der jüngsten Messung je Thema – die Belege hinter dem Score.",
+    response: `{ "answers": [ { "topic": { "id": "…", "name": "…" }, "model": "gpt-4o", "query_type": "expert_discovery",
+  "prompt": "Wer sind die führenden …", "response": "…", "mentioned": true, "position": 2 } ] }`,
+  },
+  {
+    id: "competitors",
+    method: "GET",
+    path: "/persons/{id}/competitors",
+    text: "Wettbewerber mit ihrer jüngsten KI-Sichtbarkeit.",
+    response: `{ "competitors": [ { "id": "…", "name": "…", "ai_score": 46, "measured_at": "…" } ] }`,
+  },
+  {
+    id: "actions",
+    method: "GET",
+    path: "/persons/{id}/actions",
+    text: "Maßnahmen (offen und erledigt) mit Score bei Erstellung und beim Abhaken.",
+    response: `{ "actions": [ { "id": "…", "title": "…", "status": "open", "impact": "Hohe Wirkung", "score_before": 61, … } ] }`,
+  },
+]
+
+const ERRORS: [string, number, string][] = [
+  ["MISSING_TOKEN", 401, "Authorization-Header fehlt."],
+  ["INVALID_TOKEN_FORMAT", 401, "Schlüssel beginnt nicht mit aur_sk_."],
+  ["INVALID_TOKEN", 401, "Schlüssel unbekannt."],
+  ["TOKEN_REVOKED", 401, "Schlüssel wurde widerrufen."],
+  ["NOT_FOUND", 404, "Person, Thema oder Job gehört nicht zu diesem Konto oder existiert nicht."],
+  ["INVALID_INPUT", 400, "Pflichtfeld fehlt oder ist ungültig."],
+  ["NO_TOPICS", 400, "Die Person hat keine aktiven Themen."],
+  ["TEAM_REQUIRED", 403, "Nur in Team-Konten möglich."],
+  ["LIMIT_REACHED", 403, "Themen- oder Personen-Limit erreicht."],
+  ["DUPLICATE", 409, "Thema existiert bereits."],
+  ["RATE_LIMITED", 429, "Tageslimit erreicht; reset gibt den Zeitpunkt an."],
+  ["API_VERSION_GONE", 410, "Aufruf an /api/v1 – bitte /api/v2 nutzen."],
+  ["INTERNAL", 500, "Interner Fehler."],
+]
+
+const METHOD_COLOR = { GET: "bg-[#E3F1E8] text-[#1F6B3A]", POST: "bg-[#FDE7E0] text-[#C8431F]", DELETE: "bg-[#F0EAE0] text-[#6B625A]" }
+
+function Code({ children }: { children: string }) {
+  return <pre className="mt-2 overflow-x-auto rounded-xl bg-[#0E1916] text-[#F3EFE8] text-xs leading-relaxed p-4">{children}</pre>
+}
 
 export default function ApiDocsPage() {
   return (
     <div className="min-h-screen bg-[#FAF8F3]">
-      {/* Top bar */}
       <header className="bg-white border-b border-[#E9E1D3]">
-        <div className="max-w-5xl mx-auto px-6 py-4 flex items-center justify-between">
-          <a href="/" className="flex items-center gap-2.5">
-            <img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" />
-          </a>
-          <div className="flex items-center gap-4 text-sm">
-            <span className="text-[#9A9089]">API v1</span>
-            <a
-              href="/settings"
-              className="text-[#FA5935] hover:underline font-medium"
-            >
-              Mein API-Key →
-            </a>
-          </div>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 flex items-center justify-between">
+          <Link href="/"><img src="/brand/combinationmark-black.svg" alt="Halo" className="h-5 w-auto" /></Link>
+          <span className="text-sm text-[#9A9089]">API v2</span>
         </div>
       </header>
 
-      <div className="max-w-5xl mx-auto px-6 py-10 flex gap-10">
-        {/* Sidebar TOC */}
-        <aside className="w-56 flex-shrink-0 hidden lg:block">
-          <div className="sticky top-6">
-            <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-3">
-              Inhalt
-            </p>
-            <nav className="space-y-1">
-              {TOC.map(item => (
-                <a
-                  key={item.id}
-                  href={`#${item.id}`}
-                  className={`block text-sm hover:text-[#FA5935] transition-colors ${
-                    "indent" in item && item.indent
-                      ? "text-[#9A9089] pl-3 py-1"
-                      : "text-[#6B625A] py-1.5 font-medium"
-                  }`}
-                >
-                  {item.label}
-                </a>
-              ))}
-            </nav>
-          </div>
-        </aside>
-
-        {/* Content */}
-        <main className="flex-1 min-w-0 space-y-12">
-          {/* Headline */}
-          <section>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">
-              Halo API · v1
-            </span>
-            <h1 className="font-[family-name:var(--font-display)] font-normal text-3xl sm:text-4xl tracking-tight text-[#0E1916] mt-2">
-              Public API Dokumentation
-            </h1>
-            <p className="text-base text-[#6B625A] mt-3 leading-relaxed">
-              Über die Halo Public-API kannst du die KI-Reputations-Scores einer Person
-              programmatisch abfragen — z.B. um Halo-Score, KI-Sichtbarkeit, Expertenstatus
-              oder Themen-Auswertungen in eigene Dashboards, CRMs oder Reports
-              einzubinden.
-            </p>
-            <div className="mt-5 rounded-lg bg-white border border-[#E9E1D3] px-4 py-3 inline-block">
-              <p className="text-xs text-[#9A9089] uppercase tracking-wider font-semibold mb-1">
-                Base URL
-              </p>
-              <code className="text-sm font-mono text-[#0E1916]">{BASE_URL + API_PREFIX}</code>
-            </div>
-          </section>
-
-          {/* Intro */}
-          <Section id="introduction" title="Einführung">
-            <p>
-              Die API gibt programmatischen Zugriff auf die Reputations-Daten eines
-              Halo-Accounts — lesend (Scores, Verlauf, KI-Antworten, Empfehlungen)
-              und verwaltend (Themen anlegen/löschen, Analysen auslösen, Sub-Accounts anlegen). Sie ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
-              <strong>Enterprise</strong>; Free- und Starter-Accounts können sich nicht
-              authentifizieren.
-            </p>
-            <ul className="list-disc pl-6 space-y-1.5 text-sm">
-              <li>13 Endpoints: 9× GET (lesen), 3× POST (anlegen/auslösen), 1× DELETE</li>
-              <li>Die früheren <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">/competitors</code>-Endpoints wurden entfernt und antworten mit <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">410 ENDPOINT_REMOVED</code>.</li>
-              <li>Tageslimit je Tarif — Pro 1.000/Tag, <strong>Enterprise unbegrenzt</strong> (siehe Limits &amp; Tarife)</li>
-              <li>Sub-Accounts: Enterprise legt verwaltete Unter-Accounts an und steuert sie per <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code></li>
-              <li>JSON-Responses mit konsistenter Fehler-Struktur, Bearer-Token-Auth, HTTPS-Pflicht</li>
-            </ul>
-            <div className="rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/50 p-5 mt-2">
-              <p className="text-sm font-semibold text-[#0E1916]">
-                Lebenszyklus eines (Sub-)Accounts
-              </p>
-              <ol className="list-decimal pl-5 mt-1.5 space-y-1 text-sm text-[#5A5248]">
-                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">POST /sub-accounts</code> — Account anlegen (nur Enterprise; bei sich selbst überspringen)</li>
-                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">POST /topics?sub_account_id=…</code> — mindestens ein Thema anlegen</li>
-                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">POST /analyze/&#123;id&#125;?sub_account_id=…</code> — Analyse für dieses Thema auslösen</li>
-                <li><code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">GET /scores/latest?sub_account_id=…</code> — Ergebnisse abrufen</li>
-              </ol>
-              <p className="text-xs text-[#9A9089] mt-2">
-                Ohne Thema (Schritt 2) liefern /analyze und /scores nichts, da der Account kein
-                Tracking-Ziel hat. Die Analyse sucht nach dem Namen des Accounts (full_name).
-              </p>
-            </div>
-          </Section>
-
-          {/* Auth */}
-          <Section id="authentication" title="Authentifizierung">
-            <p>
-              Jede Anfrage benötigt einen API-Key im{" "}
-              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">Authorization</code>{" "}
-              Header:
-            </p>
-            <CodeBlock language="http">{`Authorization: Bearer aur_sk_<dein-key>`}</CodeBlock>
-
-            <h3 className="text-base font-semibold text-[#0E1916] mt-6">Key erstellen</h3>
-            <ol className="list-decimal pl-6 space-y-1.5 text-sm">
-              <li>Einloggen in <a href="/settings" className="text-[#FA5935] hover:underline">Halo Einstellungen</a></li>
-              <li>Zum Block <em>„API-Keys"</em> scrollen</li>
-              <li><em>„+ Neuen API-Key generieren"</em> klicken</li>
-              <li>Name vergeben (z.B. „Production CRM") und Submit</li>
-              <li>Den angezeigten Key sofort sicher speichern — er wird nur einmal angezeigt</li>
-            </ol>
-
-            <div className="rounded-lg bg-amber-50 border border-amber-100 p-4 mt-5">
-              <p className="text-sm font-medium text-[#0E1916]">⚠ Schlüssel-Sicherheit</p>
-              <p className="text-xs text-[#6B625A] mt-1.5 leading-relaxed">
-                API-Keys gewähren <strong>vollen Lesezugriff</strong> auf alle deine
-                Reputations-Daten. Behandle sie wie Passwörter: niemals in Frontend-Code
-                hardcoden, niemals in Git committen, niemals öffentlich teilen.
-                Bei Verdacht auf Kompromittierung den Key sofort in den Einstellungen
-                widerrufen.
-              </p>
-            </div>
-          </Section>
-
-          {/* Errors */}
-          {/* Limits & Tarife */}
-          <Section id="limits" title="Limits & Tarife">
-            <p>
-              Der API-Zugang ist Bestandteil der Tarife <strong>Pro</strong> und{" "}
-              <strong>Enterprise</strong>. Die Anzahl der Abfragen pro Tag hängt vom Tarif ab:
-            </p>
-            <div className="overflow-x-auto mt-4">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-[#E9E1D3]">
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Tarif</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">API-Zugang</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Abfragen / Tag</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  <tr>
-                    <td className="py-2.5 px-3 text-sm text-[#0E1916]">Free / Starter</td>
-                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">—</td>
-                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">Kein API-Zugang</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2.5 px-3 text-sm text-[#0E1916]">Pro</td>
-                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">✓</td>
-                    <td className="py-2.5 px-3 text-sm text-[#6B625A] tabular-nums">1.000</td>
-                  </tr>
-                  <tr>
-                    <td className="py-2.5 px-3 text-sm text-[#0E1916] font-medium">Enterprise</td>
-                    <td className="py-2.5 px-3 text-sm text-[#6B625A]">✓</td>
-                    <td className="py-2.5 px-3 text-sm font-medium text-[#0E1916]">Unbegrenzt</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <p>
-              Das Limit wird pro Account gezählt und setzt sich täglich um{" "}
-              <strong>00:00 UTC</strong> zurück. Wird es überschritten, antwortet die API mit{" "}
-              <code className="bg-gray-100 px-1 rounded">429 RATE_LIMITED</code>; die Antwort enthält
-              das erreichte Limit und den Reset-Zeitpunkt:
-            </p>
-            <CodeBlock language="json">{`{
-  "error": "Tägliches API-Limit erreicht (1000 Abfragen/Tag im Tarif pro). …",
-  "code": "RATE_LIMITED",
-  "limit": 1000,
-  "used": 1001,
-  "reset": "2026-06-09T00:00:00.000Z",
-  "plan": "pro"
-}`}</CodeBlock>
-            <div className="mt-5 rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/50 p-5">
-              <p className="text-sm font-semibold text-[#0E1916]">
-                Enterprise-Lizenz — unbegrenzte Abfragen
-              </p>
-              <p className="text-sm text-[#5A5248] mt-1.5 leading-relaxed">
-                Für produktive Integrationen mit hohem Volumen bieten wir Enterprise-Lizenzen{" "}
-                <strong>ohne Abfragelimit</strong> an, inklusive priorisiertem Support. Schreib uns
-                für ein Angebot an{" "}
-                <a href="mailto:michael.schreck@entrenous.de?subject=Halo%20Enterprise-API-Lizenz" className="text-[#FA5935] hover:underline font-medium">
-                  michael.schreck@entrenous.de
-                </a>{" "}
-                oder sieh dir die{" "}
-                <a href="/#preise" className="text-[#FA5935] hover:underline font-medium">
-                  Tarifübersicht
-                </a>{" "}
-                an.
-              </p>
-            </div>
-          </Section>
-
-          <Section id="errors" title="Fehler-Codes">
-            <p>
-              Alle Fehlerantworten haben das gleiche JSON-Schema:
-            </p>
-            <CodeBlock language="json">{`{
-  "error": "Human-readable error message",
-  "code": "MACHINE_READABLE_CODE"
-}`}</CodeBlock>
-            <div className="overflow-x-auto mt-5">
-              <table className="w-full text-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-[#E9E1D3]">
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">HTTP</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Code</th>
-                    <th className="text-left py-2 px-3 text-xs uppercase tracking-wider font-semibold text-[#9A9089]">Bedeutung</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  <ErrorRow http="401" code="MISSING_TOKEN" meaning="Authorization-Header fehlt oder ist nicht Bearer." />
-                  <ErrorRow http="401" code="INVALID_TOKEN_FORMAT" meaning="Token beginnt nicht mit aur_sk_." />
-                  <ErrorRow http="401" code="INVALID_TOKEN" meaning="Token nicht gefunden — wurde er ggf. widerrufen oder falsch kopiert?" />
-                  <ErrorRow http="401" code="TOKEN_REVOKED" meaning="Der Key wurde in den Einstellungen widerrufen." />
-                  <ErrorRow http="403" code="PLAN_REQUIRED" meaning="Tarif unterstützt API nicht. Upgrade auf Pro/Enterprise nötig." />
-                  <ErrorRow http="429" code="RATE_LIMITED" meaning="Tägliches Abfragelimit erreicht. Reset um 00:00 UTC — oder Enterprise-Lizenz für unbegrenzte Abfragen." />
-                  <ErrorRow http="404" code="NO_REPORT" meaning="Noch keine Reputations-Analyse vorhanden. Im Tool zuerst eine Analyse triggern." />
-                  <ErrorRow http="409" code="EMAIL_EXISTS" meaning="Beim Anlegen eines Sub-Accounts: ein Account mit dieser E-Mail existiert bereits." />
-                  <ErrorRow http="403" code="SUB_ACCOUNT_FORBIDDEN" meaning="sub_account_id gehört nicht zu diesem Account (oder existiert nicht)." />
-                  <ErrorRow http="400" code="INVALID_INPUT" meaning="Ungültiger Request-Body (z.B. fehlendes Pflichtfeld beim Anlegen/POST)." />
-                  <ErrorRow http="500" code="INTERNAL" meaning="Serverseitiger Fehler — Support kontaktieren falls anhaltend." />
-                </tbody>
-              </table>
-            </div>
-          </Section>
-
-          {/* Endpoints */}
-          <Section id="endpoints" title="Endpoints">
-            <p>
-              Alle Endpoints liefern <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">application/json</code>.
-              Lesende Endpoints sind <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">GET</code>;
-              schreibende nutzen <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">POST</code>{" "}
-              (Thema anlegen, Analyse auslösen, Sub-Account anlegen) bzw.{" "}
-              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">DELETE</code> (Thema entfernen).
-              Daten-Endpoints akzeptieren zusätzlich den optionalen Query-Parameter{" "}
-              <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
-              (siehe Hinweis am Ende dieses Abschnitts).
-            </p>
-          </Section>
-
-          <Endpoint
-            id="ep-me"
-            method="GET"
-            path="/me"
-            description="Gibt die Profil-Basics des authentifizierten Accounts zurück. Nützlich, um zu prüfen, ob ein Key gültig ist und zu welchem Account er gehört."
-            example={`curl ${BASE_URL}${API_PREFIX}/me \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "id": "e24182d8-446a-4bbf-8aba-3459ff31bd66",
-  "email": "user@example.com",
-  "full_name": "Elon Musk",
-  "plan": "pro",
-  "language": "de"
-}`}
-          />
-
-          <Endpoint
-            id="ep-latest"
-            method="GET"
-            path="/scores/latest"
-            description="Aktuelle Werte für die 4 Master-Scores (Halo, GEO, Thought Leadership, Digitale Autorität) aus dem jüngsten Report — inkl. Score-Herleitung pro Dimension (Messwert × Gewicht = Beitrag) und Per-Modell-Aufschlüsselung. Antwortet 404, wenn noch keine Analyse durchgeführt wurde."
-            example={`curl ${BASE_URL}${API_PREFIX}/scores/latest \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "aura": {
-    "value": 58,
-    "band": "Etabliert",
-    "breakdown": {
-      "total": 58,
-      "factors": [
-        { "key": "presence",  "label": "Erwähnungsrate",
-          "raw_value": 29, "weight": 0.35, "contribution": 10 },
-        { "key": "position",  "label": "Positionsqualität",
-          "raw_value": 85, "weight": 0.25, "contribution": 21 }
-        // … context, topic
-      ]
-    }
-  },
-  "geo":                { "value": 58, "band": "Etabliert", "breakdown": { ... } },
-  "thought_leadership": { "value": 48, "band": "Bekannt im Fachkreis", "breakdown": { ... } },
-  "digital_authority":  { "value": 49, "band": "Etablierend", "breakdown": { ... } },
-  "strongest":          { "key": "geo", "value": 58 },
-  "biggest_opportunity":{ "key": "thought-leadership", "value": 48 },
-  "mention_rate": 29,
-  "average_position": 2.0,
-  "per_model": [
-    { "provider": "claude-sonnet", "label": "Claude Sonnet",
-      "model": "claude-sonnet-5-5", "score": 58, "mention_rate": 29,
-      "average_position": 2.0, "error": null }
-  ],
-  "providers_used": ["claude-sonnet"],
-  "queried_at": "2026-05-31T06:19:12Z",
-  "summary": "Score: 58/100. Erwähnt in 29% der Abfragen."
-}`}
-          />
-
-          <Endpoint
-            id="ep-history"
-            method="GET"
-            path="/scores/history"
-            description="Score-Zeitreihe der letzten N Tage. Default = 30 Tage. Min = 1, Max = 365."
-            params={[
-              { name: "days", type: "integer", desc: "Anzahl Tage rückwirkend. Optional, default 30, clamp 1–365." },
-            ]}
-            example={`curl "${BASE_URL}${API_PREFIX}/scores/history?days=90" \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "days": 90,
-  "since": "2026-02-25T...",
-  "points": [
-    {
-      "date": "2026-03-01T06:00:00Z",
-      "score": 75,
-      "sentiment": "positive",
-      "trigger": "scheduled"
-    },
-    ...
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-responses"
-            method="GET"
-            path="/responses"
-            description="Die tatsächlichen KI-Antworten hinter deinen Scores (Belege) aus der jüngsten Analyse, gruppiert nach Frage. Pro Antwort: Modell, ob du genannt wurdest, Listenposition, Tonalität und der volle Antworttext."
-            example={`curl ${BASE_URL}${API_PREFIX}/responses \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "analyzed_at": "2026-05-31T06:19:12Z",
-  "total": 7,
-  "mentioned": 2,
-  "groups": [
-    {
-      "prompt": "Wer sind die führenden Experten für …?",
-      "answers": [
-        {
-          "model": "claude-sonnet-5-5",
-          "mentioned": true,
-          "position": 2,
-          "sentiment": "positive",
-          "response": "… vollständiger Antworttext …"
-        }
-      ]
-    }
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-monopoly"
-            method="GET"
-            path="/monopoly"
-            description="Expert Monopoly Score je Thema: wie konsequent KI dich auf die vordersten Plätze setzt, wenn sie offen nach den führenden Köpfen eines Themas gefragt wird. Rein aus Positions-/Nennungsdaten der jüngsten Analyse je Thema abgeleitet — kein zusätzlicher LLM-Aufruf. Bänder: Monopol (80+), Dominant (60+), Umkämpft (40+), Randständig (20+), Unsichtbar (0+)."
-            example={`curl ${BASE_URL}${API_PREFIX}/monopoly \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "average": 64,
-  "topics": [
-    {
-      "topic": "Elektroautos",
-      "score": 88,
-      "band": "Monopol",
-      "mention_share": 100,
-      "top_position_share": 80,
-      "best_position": 1,
-      "rivals_mentioned": 4,
-      "analyzed_at": "2026-06-11T06:19:12Z"
-    }
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-recprob"
-            method="GET"
-            path="/recommendation-probability"
-            description="Letzte Messung der Empfehlungs-Wahrscheinlichkeit: wie oft die Person genannt wird, wenn KI nach einem Keynote-Speaker, Berater, Trainer oder Podcast-Gast für ihre Themen gefragt wird. Pro Rolle: Wahrscheinlichkeit (Trefferquote), Treffer/Abfragen und beste Position. 404, falls noch keine Messung lief. Die Messung selbst wird im Dashboard ausgelöst (Pro-Feature)."
-            example={`curl ${BASE_URL}${API_PREFIX}/recommendation-probability \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "overall": 58,
-  "measured_at": "2026-06-11T06:19:12Z",
-  "roles": [
-    {
-      "role": "keynote",
-      "label": "Keynote-Speaker",
-      "probability": 75,
-      "mentions": 3,
-      "samples": 4,
-      "best_position": 1
-    }
-    // … consultant, trainer, podcast
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-recommendations"
-            method="GET"
-            path="/recommendations"
-            description="Persistierte Handlungsempfehlungen (offen + umgesetzt), inkl. Score-Stand bei Erstellung und Umsetzung für die Wirkungs-Messung."
-            params={[
-              { name: "status", type: "string", desc: "open | done | all. Optional; Standard = offen + umgesetzt (dismissed ausgeblendet)." },
-            ]}
-            example={`curl "${BASE_URL}${API_PREFIX}/recommendations?status=open" \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "recommendations": [
-    {
-      "id": "uuid",
-      "title": "Veröffentliche regelmäßig zu deinen Zielthemen",
-      "description": "…",
-      "impact": "high",
-      "category": "Inhalt",
-      "status": "open",
-      "score_at_creation": 58,
-      "score_at_done": null,
-      "created_at": "2026-05-31T06:20:00Z",
-      "done_at": null
-    }
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-topics-list"
-            method="GET"
-            path="/topics"
-            description="Listet die Themen (monitoring_schedules) des Accounts. Jedes Thema hat eine ID, die als scheduleId für POST /analyze dient."
-            example={`curl ${BASE_URL}${API_PREFIX}/topics \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "topics": [
-    {
-      "id": "uuid",
-      "name": "Personal Branding",
-      "query": "Personal Branding",
-      "frequency": "weekly",
-      "language": "de",
-      "is_active": true,
-      "last_run_at": null,
-      "next_run_at": "2026-06-15T06:00:00Z",
-      "created_at": "2026-06-08T09:12:00Z"
-    }
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-topics"
-            method="POST"
-            path="/topics"
-            description="Legt ein neues Thema an. Pflicht für frisch erstellte (Sub-)Accounts, bevor /analyze und /scores funktionieren. Die zurückgegebene id ist die scheduleId für POST /analyze."
-            params={[
-              { name: "query", type: "string (Body)", desc: "Das zu trackende Thema (z.B. „Personal Branding“). Pflicht, max. 200 Zeichen." },
-              { name: "name", type: "string (Body)", desc: "Anzeige-Label. Optional, Default = query." },
-              { name: "frequency", type: "string (Body)", desc: "daily | weekly | monthly. Optional, Default weekly." },
-              { name: "language", type: "string (Body)", desc: "Abfragesprache (de, en, fr, es, it, nl, pt). Optional, Default = Sprache des Accounts." },
-            ]}
-            example={`curl -X POST ${BASE_URL}${API_PREFIX}/topics \\
-  -H "Authorization: Bearer aur_sk_xxxxx" \\
-  -H "Content-Type: application/json" \\
-  -d '{"query":"Personal Branding","frequency":"weekly","language":"de"}'`}
-            response={`{
-  "topic": {
-    "id": "uuid",
-    "name": "Personal Branding",
-    "query": "Personal Branding",
-    "frequency": "weekly",
-    "language": "de",
-    "is_active": true,
-    "next_run_at": "2026-06-15T06:00:00Z"
-  }
-}`}
-          />
-
-          <Endpoint
-            id="ep-topics-del"
-            method="DELETE"
-            path="/topics/{id}"
-            description="Löscht ein Thema des Accounts."
-            params={[
-              { name: "id", type: "uuid (Pfad)", desc: "ID des Themas (aus GET /topics bzw. POST /topics)." },
-            ]}
-            example={`curl -X DELETE ${BASE_URL}${API_PREFIX}/topics/02f2c43e-... \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{ "deleted": true, "id": "uuid" }`}
-          />
-
-          <Endpoint
-            id="ep-analyze"
-            method="POST"
-            path="/analyze/{scheduleId}"
-            description="Löst eine neue Reputations-Analyse für eines deiner Themen aus (entspricht „Jetzt analysieren“ im Dashboard). Läuft synchron ~10–30 Sekunden und gibt das Ergebnis zurück. Erfordert kein Request-Body."
-            params={[
-              { name: "scheduleId", type: "uuid (Pfad)", desc: "ID des Themas (monitoring_schedule). IDs findest du in /me-Kontext bzw. im Dashboard." },
-            ]}
-            example={`curl -X POST ${BASE_URL}${API_PREFIX}/analyze/02f2c43e-... \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "report_id": "uuid",
-  "score": 58,
-  "sentiment": "positive",
-  "mention_rate": 29,
-  "providers_used": ["claude-sonnet"]
-}`}
-          />
-
-          <Endpoint
-            id="ep-subaccounts-list"
-            method="GET"
-            path="/sub-accounts"
-            description="Listet alle Sub-Accounts, die unter diesem Account angelegt wurden. Verwaltete Sub-Accounts sind eigene Halo-Profile (eigene Themen & Scores), die über den Eltern-Account verknüpft sind."
-            example={`curl ${BASE_URL}${API_PREFIX}/sub-accounts \\
-  -H "Authorization: Bearer aur_sk_xxxxx"`}
-            response={`{
-  "sub_accounts": [
-    {
-      "id": "uuid",
-      "email": "kunde@example.com",
-      "full_name": "Kunden-Name",
-      "plan": "pro",
-      "language": "de",
-      "created_at": "2026-06-08T09:12:00Z"
-    }
-  ]
-}`}
-          />
-
-          <Endpoint
-            id="ep-subaccounts"
-            method="POST"
-            path="/sub-accounts"
-            description="Legt einen neuen verwalteten Sub-Account an. Nur mit Enterprise-Lizenz verfügbar, ohne Mengenbegrenzung. Der Sub-Account erhält den Tarif „Pro“ und wird über den Eltern-Account gesteuert (kein eigener Login-Flow — es wird keine Einladungs- oder Bestätigungsmail versendet)."
-            params={[
-              { name: "full_name", type: "string (Body)", desc: "Anzeigename des Sub-Accounts. Pflicht, max. 120 Zeichen." },
-              { name: "email", type: "string (Body)", desc: "Eindeutige E-Mail-Adresse. Pflicht. Wird zur Identifikation genutzt." },
-              { name: "language", type: "string (Body)", desc: "Abfragesprache (de, en, fr, es, it, nl, pt). Optional, Default = Sprache des Eltern-Accounts." },
-            ]}
-            example={`curl -X POST ${BASE_URL}${API_PREFIX}/sub-accounts \\
-  -H "Authorization: Bearer aur_sk_xxxxx" \\
-  -H "Content-Type: application/json" \\
-  -d '{"full_name":"Kunden-Name","email":"kunde@example.com","language":"de"}'`}
-            response={`{
-  "sub_account": {
-    "id": "uuid",
-    "email": "kunde@example.com",
-    "full_name": "Kunden-Name",
-    "plan": "pro",
-    "language": "de",
-    "parent_account_id": "uuid-des-eltern-accounts"
-  }
-}`}
-          />
-
-          <div className="rounded-xl border border-[#FBCBB8] bg-[#FDE7E0]/50 p-5">
-            <p className="text-sm font-semibold text-[#0E1916]">
-              Im Namen eines Sub-Accounts handeln
-            </p>
-            <p className="text-sm text-[#5A5248] mt-1.5 leading-relaxed">
-              Alle Daten-Endpoints akzeptieren den optionalen Query-Parameter{" "}
-              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">sub_account_id</code>.
-              Damit liest oder verwaltet der Eltern-Account die Daten eines seiner Sub-Accounts mit
-              demselben API-Key — z.B.{" "}
-              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">
-                GET /scores/latest?sub_account_id=…
-              </code>{" "}
-              oder{" "}
-              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">
-                POST /analyze/&#123;id&#125;?sub_account_id=…
-              </code>. Ohne den Parameter bezieht sich jeder Aufruf auf den eigenen Account. Gehört die
-              angegebene <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">sub_account_id</code>{" "}
-              nicht zum authentifizierten Account, antwortet die API mit{" "}
-              <code className="text-xs bg-white border border-[#E9E1D3] px-1.5 py-0.5 rounded">403 SUB_ACCOUNT_FORBIDDEN</code>.
-            </p>
-          </div>
-
-          {/* Examples */}
-          <Section id="examples" title="Code-Beispiele">
-            <h3 className="text-base font-semibold text-[#0E1916]">cURL</h3>
-            <CodeBlock language="bash">{`# Profile abrufen
-curl ${BASE_URL}${API_PREFIX}/me \\
-  -H "Authorization: Bearer $AURALIS_API_KEY"
-
-# Aktuelle Scores
-curl ${BASE_URL}${API_PREFIX}/scores/latest \\
-  -H "Authorization: Bearer $AURALIS_API_KEY"`}</CodeBlock>
-
-            <h3 className="text-base font-semibold text-[#0E1916] mt-6">JavaScript (Node.js / Browser)</h3>
-            <CodeBlock language="javascript">{`const API_KEY = process.env.AURALIS_API_KEY
-const headers = { Authorization: \`Bearer \${API_KEY}\` }
-
-async function getLatestScores() {
-  const res = await fetch(
-    "${BASE_URL}${API_PREFIX}/scores/latest",
-    { headers }
-  )
-  if (!res.ok) {
-    const { error, code } = await res.json()
-    throw new Error(\`\${code}: \${error}\`)
-  }
-  return res.json()
-}
-
-getLatestScores().then(console.log)`}</CodeBlock>
-
-            <h3 className="text-base font-semibold text-[#0E1916] mt-6">Python (requests)</h3>
-            <CodeBlock language="python">{`import os
-import requests
-
-API_KEY = os.environ["AURALIS_API_KEY"]
-HEADERS = {"Authorization": f"Bearer {API_KEY}"}
-BASE   = "${BASE_URL}${API_PREFIX}"
-
-def get_latest_scores():
-    r = requests.get(f"{BASE}/scores/latest", headers=HEADERS, timeout=15)
-    r.raise_for_status()
-    return r.json()
-
-print(get_latest_scores())`}</CodeBlock>
-          </Section>
-
-          {/* Support */}
-          <Section id="support" title="Support">
-            <p>
-              Bei Fragen, Bug-Reports oder Feature-Requests zur API erreichst du das Halo-Team unter{" "}
-              <a href="mailto:support@entrenous.de" className="text-[#FA5935] hover:underline font-medium">
-                support@entrenous.de
-              </a>.
-            </p>
-            <p className="text-xs text-[#9A9089]">
-              Diese API ist als <strong>v1</strong> markiert. Breaking Changes werden in einer
-              neuen Version (<code className="bg-gray-100 px-1 rounded">/api/v2</code>) ausgeliefert;
-              v1 bleibt mindestens 12 Monate nach Release einer v2 verfügbar.
-            </p>
-          </Section>
-
-          {/* Footer */}
-          <footer className="pt-8 border-t border-[#E9E1D3] text-xs text-[#9A9089]">
-            <p>
-              Halo — AI Visibility Monitoring · Operated by Halo UG (haftungsbeschränkt) i. G. ·{" "}
-              <a href="/" className="hover:underline">Zurück zur Hauptseite</a>
-            </p>
-          </footer>
-        </main>
-      </div>
-    </div>
-  )
-}
-
-/* ─────────────────── Helper Components ─────────────────── */
-
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id: string
-  title: string
-  children: React.ReactNode
-}) {
-  return (
-    <section id={id} className="scroll-mt-6">
-      <h2 className="text-xl font-semibold text-[#0E1916] mb-3">{title}</h2>
-      <div className="space-y-3 text-sm text-[#5A5248] leading-relaxed">
-        {children}
-      </div>
-    </section>
-  )
-}
-
-function CodeBlock({ language, children }: { language?: string; children: string }) {
-  return (
-    <div className="relative rounded-lg bg-[#0E1916] overflow-hidden">
-      {language && (
-        <div className="absolute top-2 right-3 text-[10px] uppercase tracking-wider font-semibold text-[#6B625A]">
-          {language}
-        </div>
-      )}
-      <pre className="text-[12.5px] text-gray-100 px-4 py-3.5 overflow-x-auto leading-relaxed font-mono">
-        {children}
-      </pre>
-    </div>
-  )
-}
-
-function ErrorRow({ http, code, meaning }: { http: string; code: string; meaning: string }) {
-  return (
-    <tr>
-      <td className="py-2.5 px-3 text-sm font-mono text-[#0E1916] tabular-nums">{http}</td>
-      <td className="py-2.5 px-3">
-        <code className="text-xs bg-gray-100 px-1.5 py-0.5 rounded font-mono">{code}</code>
-      </td>
-      <td className="py-2.5 px-3 text-sm text-[#6B625A]">{meaning}</td>
-    </tr>
-  )
-}
-
-function Endpoint({
-  id,
-  method,
-  path,
-  description,
-  example,
-  response,
-  params,
-}: {
-  id: string
-  method: string
-  path: string
-  description: string
-  example: string
-  response: string
-  params?: { name: string; type: string; desc: string }[]
-}) {
-  return (
-    <section id={id} className="scroll-mt-6 rounded-2xl border border-[#E9E1D3] bg-white p-6 space-y-4">
-      <div className="flex items-center gap-3 flex-wrap">
-        <span className={`px-2 py-0.5 rounded-md border text-xs font-semibold font-mono ${
-          method === "POST"
-            ? "bg-amber-50 text-amber-700 border-amber-100"
-            : "bg-green-50 text-green-700 border-green-100"
-        }`}>
-          {method}
-        </span>
-        <code className="text-base font-mono font-semibold text-[#0E1916]">{API_PREFIX}{path}</code>
-      </div>
-      <p className="text-sm text-[#5A5248] leading-relaxed">{description}</p>
-
-      {params && params.length > 0 && (
-        <div>
-          <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
-            Query-Parameter
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-10 space-y-12">
+        <section>
+          <h1 className="font-[family-name:var(--font-display)] text-4xl text-[#0E1916]">Halo API</h1>
+          <p className="text-[#6B625A] mt-3 max-w-2xl">
+            Halo Score, Messungen, Themen und Belege per HTTP – für CRM, Reporting oder eigene Dashboards. Alle Antworten sind JSON.
           </p>
-          <table className="w-full text-xs border-collapse">
-            <tbody className="divide-y divide-gray-100">
-              {params.map(p => (
-                <tr key={p.name}>
-                  <td className="py-2 pr-3 align-top">
-                    <code className="font-mono font-semibold text-[#0E1916]">{p.name}</code>
-                    <span className="ml-2 text-[#9A9089]">{p.type}</span>
-                  </td>
-                  <td className="py-2 text-[#6B625A]">{p.desc}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+          <p className="text-sm text-[#6B625A] mt-4">
+            Basis-URL: <code className="rounded bg-white border border-[#E9E1D3] px-1.5 py-0.5">{BASE}</code>
+          </p>
+        </section>
 
-      <div>
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
-          Beispiel-Request
-        </p>
-        <CodeBlock language="bash">{example}</CodeBlock>
-      </div>
+        <section id="auth">
+          <h2 className="text-xl font-semibold text-[#0E1916]">Authentifizierung</h2>
+          <p className="text-sm text-[#6B625A] mt-2">
+            Schlüssel erstellst du im Tool unter <strong>Konto → API-Schlüssel</strong>. Er gehört zu deinem Konto und gibt Zugriff auf
+            alle Personen darin. Der Schlüssel wird nur einmal angezeigt; gespeichert wird nur sein Hash.
+          </p>
+          <Code>{`curl ${BASE}/account \\
+  -H "Authorization: Bearer aur_sk_…"`}</Code>
+        </section>
 
-      <div>
-        <p className="text-[10px] uppercase tracking-wider font-semibold text-[#9A9089] mb-2">
-          Beispiel-Response (200 OK)
-        </p>
-        <CodeBlock language="json">{response}</CodeBlock>
-      </div>
-    </section>
+        <section id="limits">
+          <h2 className="text-xl font-semibold text-[#0E1916]">Limits</h2>
+          <ul className="text-sm text-[#6B625A] mt-2 space-y-1 list-disc pl-5">
+            <li>1.000 Abfragen je Konto und Tag (Reset 00:00 UTC), danach 429 RATE_LIMITED.</li>
+            <li>Höchstens 5 aktive Themen je Person und 5 aktive Schlüssel je Konto.</li>
+            <li>Eine Messung kostet KI-Abfragen bei mehreren Anbietern – bitte nicht häufiger als nötig auslösen. Automatisch gemessen wird ohnehin im eingestellten Rhythmus.</li>
+          </ul>
+        </section>
+
+        <section id="endpoints" className="space-y-8">
+          <h2 className="text-xl font-semibold text-[#0E1916]">Endpunkte</h2>
+          {ENDPOINTS.map(e => (
+            <article key={e.id} id={e.id} className="rounded-2xl border border-[#E9E1D3] bg-white p-5">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`rounded-md px-2 py-0.5 text-xs font-semibold ${METHOD_COLOR[e.method]}`}>{e.method}</span>
+                <code className="text-sm text-[#0E1916]">{e.path}</code>
+              </div>
+              <p className="text-sm text-[#6B625A] mt-2">{e.text}</p>
+              {e.body && (
+                <>
+                  <span className="block text-xs font-medium text-[#6B625A] mt-3">Body</span>
+                  <Code>{e.body}</Code>
+                </>
+              )}
+              <span className="block text-xs font-medium text-[#6B625A] mt-3">Antwort</span>
+              <Code>{e.response}</Code>
+            </article>
+          ))}
+        </section>
+
+        <section id="example">
+          <h2 className="text-xl font-semibold text-[#0E1916]">Beispiel: messen und auf das Ergebnis warten</h2>
+          <Code>{`const headers = { Authorization: "Bearer " + process.env.HALO_API_KEY }
+const base = "${BASE}"
+
+const { jobs } = await fetch(\`\${base}/persons/\${personId}/measure\`, { method: "POST", headers }).then(r => r.json())
+
+for (const { job_id } of jobs) {
+  let job
+  do {
+    await new Promise(r => setTimeout(r, 5000))
+    job = (await fetch(\`\${base}/jobs/\${job_id}\`, { headers }).then(r => r.json())).job
+  } while (job.status === "queued" || job.status === "running")
+}
+
+const { halo } = await fetch(\`\${base}/persons/\${personId}\`, { headers }).then(r => r.json())
+console.log(halo.score, halo.band)`}</Code>
+        </section>
+
+        <section id="errors">
+          <h2 className="text-xl font-semibold text-[#0E1916]">Fehler</h2>
+          <p className="text-sm text-[#6B625A] mt-2">Fehler kommen als <code>{`{ "error": "…", "code": "…" }`}</code> mit passendem HTTP-Status.</p>
+          <div className="mt-3 overflow-x-auto rounded-2xl border border-[#E9E1D3] bg-white">
+            <table className="w-full text-sm">
+              <tbody className="divide-y divide-[#F0EAE0]">
+                {ERRORS.map(([code, status, text]) => (
+                  <tr key={code}>
+                    <td className="px-4 py-2.5"><code className="text-xs">{code}</code></td>
+                    <td className="px-4 py-2.5 tabular-nums text-[#6B625A]">{status}</td>
+                    <td className="px-4 py-2.5 text-[#6B625A]">{text}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+        <section id="versions">
+          <h2 className="text-xl font-semibold text-[#0E1916]">Versionen</h2>
+          <p className="text-sm text-[#6B625A] mt-2">
+            v2 ersetzt v1 (Profile und Sub-Accounts gibt es nicht mehr; Teams haben Personen). Aufrufe an /api/v1 antworten mit 410.
+            Neue Felder können in v2 jederzeit dazukommen; bestehende Felder bleiben stabil.
+          </p>
+          <p className="text-sm text-[#6B625A] mt-2">
+            Fragen: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">michael@linkedinconsulting.digital</a>
+          </p>
+        </section>
+      </main>
+    </div>
   )
 }

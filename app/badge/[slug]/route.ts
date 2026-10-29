@@ -8,9 +8,8 @@
  * auf fremden Websites nicht jedes Mal die DB hämmert.
  */
 
-import { createSupabaseServiceClient } from "@/lib/supabase/client"
-import { computeMasterScores } from "@/lib/auralis/master-scores"
-import type { VisibilityReport } from "@/lib/auralis/analyzer"
+import { createHaloServiceClient } from "@/lib/supabase/halo"
+import { loadHaloScore } from "@/lib/halo/load"
 
 export const dynamic = "force-dynamic"
 
@@ -80,15 +79,15 @@ export async function GET(
 ) {
   const { slug } = await ctx.params
 
-  const supabase = createSupabaseServiceClient()
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("id, full_name, public_slug, public_profile_enabled")
+  const db = createHaloServiceClient()
+  const { data: person } = await db
+    .from("persons")
+    .select("id, first_name, last_name")
     .eq("public_slug", slug)
     .eq("public_profile_enabled", true)
     .maybeSingle()
 
-  if (!profile) {
+  if (!person) {
     // Fallback: leeres Badge mit "Profil nicht gefunden"
     const svg = renderBadge({ name: "Profil nicht gefunden", score: null, band: null })
     return new Response(svg, {
@@ -97,21 +96,11 @@ export async function GET(
     })
   }
 
-  const { data: report } = await supabase
-    .from("visibility_reports")
-    .select("raw_data")
-    .eq("profile_id", profile.id)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .maybeSingle()
-
-  const rawReport = report?.raw_data as unknown as VisibilityReport | null
-  const masters = rawReport ? computeMasterScores(rawReport) : null
-
+  const halo = await loadHaloScore(db, person.id)
   const svg = renderBadge({
-    name: profile.full_name ?? slug,
-    score: masters?.aura.value ?? null,
-    band: masters?.aura.band.label ?? null,
+    name: `${person.first_name} ${person.last_name}`,
+    score: halo.score,
+    band: halo.band?.label ?? null,
   })
 
   return new Response(svg, {

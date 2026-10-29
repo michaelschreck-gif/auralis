@@ -44,9 +44,12 @@ export default async function PersonenPage() {
       <header className="bg-[#0E1916]">
         <div className="max-w-5xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
           <img src="/brand/combinationmark-white.svg" alt="Halo" className="h-[20px] w-auto" />
-          <form action="/auth/signout" method="post">
-            <button type="submit" className="text-sm text-[#D9D2C7] hover:text-white">Abmelden</button>
-          </form>
+          <div className="flex items-center gap-5">
+            <Link href="/konto" className="text-sm text-[#D9D2C7] hover:text-white">Konto</Link>
+            <form action="/auth/signout" method="post">
+              <button type="submit" className="text-sm text-[#D9D2C7] hover:text-white">Abmelden</button>
+            </form>
+          </div>
         </div>
       </header>
 

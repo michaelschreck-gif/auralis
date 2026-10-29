@@ -28,6 +28,7 @@ export default function PersonShell({
   personName,
   accountName,
   teamPersons,
+  isOwner,
   children,
 }: {
   personId: string
@@ -35,6 +36,8 @@ export default function PersonShell({
   accountName: string
   /** Nur bei Team-Ownern gefüllt. */
   teamPersons: { id: string; name: string }[]
+  /** Owner sehen den Link zum Konto (Name, API-Schlüssel). */
+  isOwner: boolean
   children: React.ReactNode
 }) {
   const pathname = usePathname()
@@ -104,6 +107,12 @@ export default function PersonShell({
           {icon("M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z")}
           Einstellungen
         </Link>
+        {isOwner && (
+          <Link href="/konto" className="flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[#D9D2C7] hover:text-white">
+            {icon("M3 7h18v13H3zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2")}
+            Konto
+          </Link>
+        )}
         <form action="/auth/signout" method="post">
           <button type="submit" className="w-full flex items-center gap-3 rounded-lg px-3 py-2 text-sm text-[#D9D2C7] hover:text-white">
             {icon("M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9")}

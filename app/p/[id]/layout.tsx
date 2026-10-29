@@ -27,6 +27,7 @@ export default async function PersonLayout({
       personName={personDisplayName(ctx.person)}
       accountName={ctx.account.name}
       teamPersons={ctx.teamPersons}
+      isOwner={ctx.role === "owner"}
     >
       {children}
     </PersonShell>

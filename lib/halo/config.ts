@@ -21,4 +21,8 @@ export const LIMITS = {
   topicsPerPerson: 5,
   /** Personen je Team-Konto (null = unbegrenzt). */
   personsPerTeam: null as number | null,
+  /** Öffentliche API: Abfragen je Konto und Tag (null = unbegrenzt). */
+  apiRequestsPerDay: 1000 as number | null,
+  /** Aktive API-Schlüssel je Konto. */
+  apiKeysPerAccount: 5,
 }

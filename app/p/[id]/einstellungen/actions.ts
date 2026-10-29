@@ -1,7 +1,8 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { createHaloServerClient } from "@/lib/supabase/halo"
+import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
+import { isValidSlug, MAX_SLUG_LENGTH, MIN_SLUG_LENGTH, slugify } from "@/lib/public-profile"
 import { LIMITS } from "@/lib/halo/config"
 import { MAX_NAME_LENGTH, MAX_TOPIC_LENGTH, normalizeTopics } from "@/lib/halo/onboarding"
 import type { FrequencyType, MarketId } from "@/lib/supabase/halo.types"
@@ -91,6 +92,35 @@ export async function updateTopic(
   const { error } = await client.from("topics").update(update).eq("id", topicId).eq("person_id", personId)
   if (error) return { ok: false, error: "Konnte nicht gespeichert werden." }
   revalidatePath(`/p/${personId}`, "layout")
+  return { ok: true }
+}
+
+/**
+ * Öffentliches Profil (digital-halo.de/u/<adresse>) und Badge ein- oder
+ * ausschalten. Die Adresse muss eindeutig sein; das prüft der Service-Client,
+ * weil RLS fremde Personen ausblendet.
+ */
+export async function setPublicProfile(personId: string, enabled: boolean, rawSlug: string): Promise<ActionResult> {
+  const slug = slugify(rawSlug)
+  if (enabled && !isValidSlug(slug)) {
+    return { ok: false, error: `Die Adresse braucht ${MIN_SLUG_LENGTH} bis ${MAX_SLUG_LENGTH} Zeichen (a–z, 0–9, Bindestrich).` }
+  }
+  const client = await db()
+  if (enabled) {
+    const { data: taken } = await createHaloServiceClient()
+      .from("persons")
+      .select("id")
+      .eq("public_slug", slug)
+      .neq("id", personId)
+      .maybeSingle()
+    if (taken) return { ok: false, error: "Diese Adresse ist schon vergeben." }
+  }
+  const { error } = await client
+    .from("persons")
+    .update({ public_profile_enabled: enabled, ...(enabled ? { public_slug: slug } : {}) })
+    .eq("id", personId)
+  if (error) return { ok: false, error: "Konnte nicht gespeichert werden." }
+  revalidatePath(`/p/${personId}/einstellungen`)
   return { ok: true }
 }
 
