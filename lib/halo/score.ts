@@ -171,38 +171,32 @@ export function haloHistory(
 }
 
 /**
- * Messungen innerhalb dieses Abstands zur jüngsten gelten als eine Messrunde.
- * Themen einer Runde laufen parallel und sind nach wenigen Minuten fertig;
- * ein erneutes „Neu messen“ kurz danach soll schon als neue Runde zählen.
- */
-export const RUN_WINDOW_MS = 10 * 60 * 1000
-
-/**
- * Veränderung durch die jüngste Messrunde: Score jetzt minus Score ohne die
- * Messungen dieser Runde. Auch bei mehreren Messungen am selben Tag sinnvoll.
- * null, wenn es vor der Runde noch keinen Score gab.
+ * Veränderung zur vorherigen Messung: Score aus der jüngsten Messung je Thema
+ * minus Score aus der jeweils vorherigen Messung je Thema (Themen mit nur
+ * einer Messung gehen in beide gleich ein). Unabhängig davon, wie dicht die
+ * Messungen zeitlich liegen. null, solange kein Thema zweimal gemessen wurde.
  */
 export function trendDelta(
   measurements: MeasurementPoint[],
   activeTopicIds: string[],
   google: number | null = null,
 ): number | null {
-  const active = new Set(activeTopicIds)
-  const relevant = measurements.filter(m => active.has(m.topicId))
-  if (relevant.length === 0) return null
-  const newest = Math.max(...relevant.map(m => Date.parse(m.measuredAt)))
-  const before = relevant.filter(m => Date.parse(m.measuredAt) < newest - RUN_WINDOW_MS)
-
-  const latestOf = (list: MeasurementPoint[]) => {
-    const latest = new Map<string, TopicMeasurement>()
-    for (const m of [...list].sort((a, b) => b.measuredAt.localeCompare(a.measuredAt))) {
-      if (!latest.has(m.topicId)) latest.set(m.topicId, m)
-    }
-    return [...latest.values()]
+  const now: TopicMeasurement[] = []
+  const prev: TopicMeasurement[] = []
+  let compared = false
+  for (const topicId of activeTopicIds) {
+    const own = measurements
+      .filter(m => m.topicId === topicId)
+      .sort((a, b) => b.measuredAt.localeCompare(a.measuredAt))
+    if (own.length === 0) continue
+    now.push(own[0])
+    prev.push(own[1] ?? own[0])
+    if (own.length > 1) compared = true
   }
-  const now = computeHaloScore({ topics: latestOf(relevant), google }).score
-  const prev = computeHaloScore({ topics: latestOf(before), google }).score
-  return now === null || prev === null ? null : now - prev
+  if (!compared) return null
+  const a = computeHaloScore({ topics: now, google }).score
+  const b = computeHaloScore({ topics: prev, google }).score
+  return a === null || b === null ? null : a - b
 }
 
 export type TopicChange = {

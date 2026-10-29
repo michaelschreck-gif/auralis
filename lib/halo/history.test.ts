@@ -38,17 +38,27 @@ test("Verlauf: inaktive Themen zählen nicht", () => {
   assert.deepEqual(h, [{ date: "2026-10-01", score: 40 }])
 })
 
-test("Trend: Veränderung durch die jüngste Messrunde, auch am selben Tag", () => {
+test("Trend: Veränderung zur vorherigen Messung, auch Minuten später", () => {
   assert.equal(trendDelta([], ["a"]), null)
   assert.equal(trendDelta([m("a", 50, null, "2026-10-29T10:00:00Z")], ["a"]), null)
-  // zwei Messungen am selben Tag, 20 Minuten auseinander (erneutes „Neu messen“)
+  // zwei Messungen knapp 10 Minuten auseinander (so auf Staging gesehen)
   assert.equal(
-    trendDelta([m("a", 50, null, "2026-10-29T10:00:00Z"), m("a", 56, null, "2026-10-29T10:20:00Z")], ["a"]),
+    trendDelta([m("a", 50, null, "2026-10-29T13:49:25Z"), m("a", 56, null, "2026-10-29T13:59:17Z")], ["a"]),
     6,
   )
 })
 
-test("Trend: Themen einer Runde (innerhalb 10 min) zählen zusammen", () => {
+test("Trend: Thema mit nur einer Messung geht in beide Stände gleich ein", () => {
+  const points = [
+    m("a", 40, null, "2026-10-01T08:00:00Z"),
+    m("a", 60, null, "2026-10-08T08:00:00Z"),
+    m("neu", 80, null, "2026-10-08T08:00:00Z"),
+  ]
+  // vorher (40+80)/2 = 60, jetzt (60+80)/2 = 70
+  assert.equal(trendDelta(points, ["a", "neu"]), 10)
+})
+
+test("Trend: mehrere Themen, jeweils vorherige Messung", () => {
   const points = [
     m("a", 40, null, "2026-10-01T08:00:00Z"),
     m("b", 60, null, "2026-10-01T08:01:00Z"),
