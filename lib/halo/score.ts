@@ -129,3 +129,86 @@ export function computeHaloScore(input: { topics: TopicMeasurement[]; google: nu
     measuredAt,
   }
 }
+
+// ─── Verlauf und Veränderungen ──────────────────────────────────────────────
+//
+// Nach jeder Messung wird der Score so berechnet, wie er zu diesem Zeitpunkt
+// aussah (jüngste Messung je Thema bis dahin). Ein Punkt je Tag.
+
+export type MeasurementPoint = {
+  topicId: string
+  ai: number | null
+  perception: number | null
+  modelsOk: number
+  modelsTotal: number
+  measuredAt: string
+}
+
+export type HistoryPoint = { date: string; score: number }
+
+/**
+ * Score-Verlauf über die Zeit. `activeTopicIds` begrenzt auf aktuelle Themen,
+ * damit gelöschte Themen den Verlauf nicht verzerren.
+ */
+export function haloHistory(
+  measurements: MeasurementPoint[],
+  activeTopicIds: string[],
+  google: number | null = null,
+): HistoryPoint[] {
+  const active = new Set(activeTopicIds)
+  const sorted = measurements
+    .filter(m => active.has(m.topicId))
+    .sort((a, b) => a.measuredAt.localeCompare(b.measuredAt))
+
+  const latest = new Map<string, TopicMeasurement>()
+  const byDay = new Map<string, number>()
+  for (const m of sorted) {
+    latest.set(m.topicId, { ...m })
+    const s = computeHaloScore({ topics: [...latest.values()], google }).score
+    if (s !== null) byDay.set(m.measuredAt.slice(0, 10), s)
+  }
+  return [...byDay.entries()].map(([date, score]) => ({ date, score }))
+}
+
+/** Veränderung zum vorherigen Tag mit Messung, null ohne Vergleich. */
+export function trendDelta(history: HistoryPoint[]): number | null {
+  if (history.length < 2) return null
+  return history[history.length - 1].score - history[history.length - 2].score
+}
+
+export type TopicChange = {
+  topicId: string
+  current: number
+  previous: number | null
+  delta: number | null
+  measuredAt: string
+}
+
+/**
+ * KI-Sichtbarkeit je Thema: jüngste Messung und Veränderung zur vorherigen.
+ * Sortiert: größte Veränderung zuerst, Themen ohne Vergleich zuletzt.
+ */
+export function topicChanges(measurements: MeasurementPoint[], activeTopicIds: string[]): TopicChange[] {
+  const out: TopicChange[] = []
+  for (const topicId of activeTopicIds) {
+    const own = measurements
+      .filter(m => m.topicId === topicId && m.ai !== null)
+      .sort((a, b) => b.measuredAt.localeCompare(a.measuredAt))
+    if (own.length === 0) continue
+    const current = own[0].ai as number
+    const previous = own.length > 1 ? (own[1].ai as number) : null
+    out.push({
+      topicId,
+      current,
+      previous,
+      delta: previous === null ? null : current - previous,
+      measuredAt: own[0].measuredAt,
+    })
+  }
+  return out.sort((a, b) => {
+    if (a.delta === null && b.delta === null) return 0
+    if (a.delta === null) return 1
+    if (b.delta === null) return -1
+    return Math.abs(b.delta) - Math.abs(a.delta)
+  })
+}
