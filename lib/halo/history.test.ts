@@ -41,14 +41,14 @@ test("Verlauf: inaktive Themen zählen nicht", () => {
 test("Trend: Veränderung durch die jüngste Messrunde, auch am selben Tag", () => {
   assert.equal(trendDelta([], ["a"]), null)
   assert.equal(trendDelta([m("a", 50, null, "2026-10-29T10:00:00Z")], ["a"]), null)
-  // zwei Messungen am selben Tag, 2 Stunden auseinander
+  // zwei Messungen am selben Tag, 20 Minuten auseinander (erneutes „Neu messen“)
   assert.equal(
-    trendDelta([m("a", 50, null, "2026-10-29T10:00:00Z"), m("a", 56, null, "2026-10-29T12:00:00Z")], ["a"]),
+    trendDelta([m("a", 50, null, "2026-10-29T10:00:00Z"), m("a", 56, null, "2026-10-29T10:20:00Z")], ["a"]),
     6,
   )
 })
 
-test("Trend: Themen einer Runde (innerhalb 30 min) zählen zusammen", () => {
+test("Trend: Themen einer Runde (innerhalb 10 min) zählen zusammen", () => {
   const points = [
     m("a", 40, null, "2026-10-01T08:00:00Z"),
     m("b", 60, null, "2026-10-01T08:01:00Z"),

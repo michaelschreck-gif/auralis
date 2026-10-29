@@ -170,8 +170,12 @@ export function haloHistory(
   return [...byDay.entries()].map(([date, score]) => ({ date, score }))
 }
 
-/** Messungen innerhalb dieses Abstands zur jüngsten gelten als eine Messrunde. */
-export const RUN_WINDOW_MS = 30 * 60 * 1000
+/**
+ * Messungen innerhalb dieses Abstands zur jüngsten gelten als eine Messrunde.
+ * Themen einer Runde laufen parallel und sind nach wenigen Minuten fertig;
+ * ein erneutes „Neu messen“ kurz danach soll schon als neue Runde zählen.
+ */
+export const RUN_WINDOW_MS = 10 * 60 * 1000
 
 /**
  * Veränderung durch die jüngste Messrunde: Score jetzt minus Score ohne die
