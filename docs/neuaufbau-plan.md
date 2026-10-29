@@ -60,6 +60,13 @@ KI-Sichtbarkeit 50 % · Google-Sichtbarkeit 30 % · Wahrnehmung 20 %, fehlende S
 
 Einzelperson-Konten landen nach dem Login direkt auf `/p/[id]`; `/personen` gibt es dort nicht.
 
+## Stand
+
+| Phase | Status |
+|---|---|
+| 0 | Teilweise: Staging-DB geleert, Arbeit auf `staging`. **Offen:** Supabase-Schlüssel (`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) für Preview/`staging` in Vercel |
+| 1 | **Fertig (2026-10-29):** `halo_v2` auf `halo-staging` eingespielt (18 Tabellen, alle mit RLS, 27 Policies); `access_rules.sql` bestanden; Typen in `lib/supabase/halo.types.ts` |
+
 ## Phasen
 
 Jede Phase endet mit Typecheck, Tests und einer Prüfung auf `staging.digital-halo.de`.
@@ -72,7 +79,7 @@ Jede Phase endet mit Typecheck, Tests und einer Prüfung auf `staging.digital-ha
 
 ### Phase 1 – Datenmodell und Zugriff
 - Migration mit allen neuen Tabellen, RLS über `can_access_person`
-- Typen neu generieren (`database.types.ts`)
+- Typen für das neue Schema (`lib/supabase/halo.types.ts`, neben dem alten `database.types.ts` bis Phase 8)
 - Tests für die Zugriffsregeln (Owner sieht alle, Member nur sich, Fremde nichts)
 - **Fertig, wenn:** Zugriffstests auf Staging grün sind.
 
