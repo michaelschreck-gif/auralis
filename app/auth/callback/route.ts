@@ -15,8 +15,11 @@ export async function GET(request: NextRequest) {
   if (error) {
     return NextResponse.redirect(`${origin}/login?error=${encodeURIComponent(error)}`)
   }
+  // Einladungen (auth.admin.inviteUserByEmail) liefern die Sitzung als
+  // #access_token-Fragment statt ?code. Der Browser behält das Fragment bei
+  // der Weiterleitung; /auth/einladung übernimmt es und lässt ein Passwort setzen.
   if (!code) {
-    return NextResponse.redirect(`${origin}/login`)
+    return NextResponse.redirect(`${origin}/auth/einladung`)
   }
 
   const supabase = await createHaloServerClient()

@@ -1,10 +1,9 @@
 "use server"
 
-import { after } from "next/server"
 import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { LIMITS } from "@/lib/halo/config"
-import { enqueueJob, executeJob } from "@/lib/halo/jobs"
 import { accountNameFor, validateStartInput } from "@/lib/halo/onboarding"
+import { createPersonWithTopics, ownedTeamAccount } from "@/lib/halo/people"
 
 export type StartResult =
   | { ok: true; personId: string; jobIds: string[] }
@@ -47,39 +46,24 @@ export async function completeStart(raw: Record<string, unknown>): Promise<Start
     accountId = created
   }
 
-  const { data: person, error: personError } = await db
-    .from("persons")
-    .insert({
-      account_id: accountId,
-      first_name: input.firstName,
-      last_name: input.lastName,
-      context: input.context || null,
-      market: input.market,
-    })
-    .select("id")
-    .single()
-  if (personError || !person) return { ok: false, error: "Person konnte nicht angelegt werden." }
+  return createPersonWithTopics(db, createHaloServiceClient(), accountId, input)
+}
 
-  const { data: topics, error: topicsError } = await db
-    .from("topics")
-    .insert(input.topics.map(name => ({ person_id: person.id, name })))
-    .select("id")
-  if (topicsError || !topics) return { ok: false, error: "Themen konnten nicht angelegt werden." }
+/** „Person hinzufügen“ im Team: wie der Assistent, nur in das bestehende Team-Konto. */
+export async function addPersonToTeam(raw: Record<string, unknown>): Promise<StartResult> {
+  const parsed = validateStartInput({ ...raw, accountType: "team" }, LIMITS.topicsPerPerson)
+  if (!parsed.ok) return parsed
 
-  // Erste Messung je Thema. next_run_at weiterschalten, damit der Cron nicht
-  // am selben Tag gleich noch einmal misst.
-  const service = createHaloServiceClient()
-  const jobIds: string[] = []
-  for (const t of topics) {
-    const jobId = await enqueueJob(service, {
-      personId: person.id,
-      topicId: t.id,
-      trigger: "manual",
-      advanceNextRun: true,
-    })
-    jobIds.push(jobId)
-    after(() => executeJob(service, jobId))
+  const db = await createHaloServerClient()
+  const { data: { user } } = await db.auth.getUser()
+  if (!user) return { ok: false, error: "Bitte melde dich erneut an." }
+
+  const team = await ownedTeamAccount(db, user.id)
+  if (!team) return { ok: false, error: "Personen hinzufügen geht nur in einem Team-Konto." }
+  if (LIMITS.personsPerTeam !== null) {
+    const { count } = await db.from("persons").select("id", { count: "exact", head: true }).eq("account_id", team.id)
+    if ((count ?? 0) >= LIMITS.personsPerTeam) return { ok: false, error: `Höchstens ${LIMITS.personsPerTeam} Personen je Team.` }
   }
 
-  return { ok: true, personId: person.id, jobIds }
+  return createPersonWithTopics(db, createHaloServiceClient(), team.id, parsed.value)
 }

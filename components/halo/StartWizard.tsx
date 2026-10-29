@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { completeStart } from "@/app/start/actions"
+import { addPersonToTeam, completeStart } from "@/app/start/actions"
 import type { HaloScore } from "@/lib/halo/score"
 import ScoreRing from "./ScoreRing"
 
@@ -31,13 +31,17 @@ export default function StartWizard({
   markets,
   suggestions,
   maxTopics,
+  mode = "start",
 }: {
   markets: Market[]
   suggestions: string[]
   maxTopics: number
+  /** "addPerson": weitere Person im Team – ohne Schritt „Für wen“. */
+  mode?: "start" | "addPerson"
 }) {
-  const [step, setStep] = useState(0)
-  const [accountType, setAccountType] = useState<AccountType | null>(null)
+  const firstStep = mode === "addPerson" ? 1 : 0
+  const [step, setStep] = useState(firstStep)
+  const [accountType, setAccountType] = useState<AccountType | null>(mode === "addPerson" ? "team" : null)
   const [teamName, setTeamName] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -80,7 +84,8 @@ export default function StartWizard({
     const finalTopics = topicDraft.trim() ? [...topics, topicDraft.trim()] : topics
     setSubmitting(true)
     setError(null)
-    const res = await completeStart({ accountType, teamName, firstName, lastName, context, market, topics: finalTopics })
+    const submitAction = mode === "addPerson" ? addPersonToTeam : completeStart
+    const res = await submitAction({ accountType, teamName, firstName, lastName, context, market, topics: finalTopics })
     setSubmitting(false)
     if (!res.ok) {
       setError(res.error)
@@ -206,7 +211,7 @@ export default function StartWizard({
   return (
     <Shell>
       <ol className="flex items-center gap-2 mb-8">
-        {STEPS.map((label, i) => (
+        {STEPS.map((label, i) => i < firstStep ? null : (
           <li key={label} className="flex-1">
             <div className={`h-1 rounded-full ${i <= step ? "bg-[#FA5935]" : "bg-[#F0EAE0]"}`} />
             <span className={`block text-[11px] mt-1.5 ${i === step ? "text-[#0E1916] font-medium" : "text-[#9A9089]"}`}>{label}</span>
@@ -248,7 +253,7 @@ export default function StartWizard({
       {step === 1 && (
         <section>
           <h2 className="font-[family-name:var(--font-display)] text-2xl text-[#0E1916]">
-            {accountType === "team" ? "Wen möchtest du zuerst messen?" : "Wer soll gemessen werden?"}
+            {mode === "addPerson" ? "Wen möchtest du hinzufügen?" : accountType === "team" ? "Wen möchtest du zuerst messen?" : "Wer soll gemessen werden?"}
           </h2>
           <p className="text-sm text-[#6B625A] mt-1">Wir prüfen, ob KI-Systeme diesen Namen nennen.</p>
           <div className="grid sm:grid-cols-2 gap-3 mt-6">
@@ -359,7 +364,7 @@ export default function StartWizard({
       )}
 
       <div className="flex items-center justify-between mt-8">
-        {step > 0 ? (
+        {step > firstStep ? (
           <button type="button" onClick={() => setStep(step - 1)} className={ghostBtn}>← Zurück</button>
         ) : <span />}
         {step < STEPS.length - 1 ? (
