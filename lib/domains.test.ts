@@ -47,6 +47,28 @@ test("App: Startseite → /weiter, Webseiten-Pfade → Webseite", () => {
   }
 })
 
+const withAdmin = domainConfigFromEnv({
+  NEXT_PUBLIC_SITE_URL: "https://digital-halo.de",
+  NEXT_PUBLIC_APP_URL: "https://app.digital-halo.de",
+  NEXT_PUBLIC_ADMIN_URL: "https://admin.digital-halo.de",
+})
+
+test("Admin-Domain: Startseite → /admin, Login/Auth/API bleiben, Rest auf Tool bzw. Webseite", () => {
+  assert.equal(crossDomainRedirect("admin.digital-halo.de", "/", "", withAdmin), "https://admin.digital-halo.de/admin")
+  for (const p of ["/admin", "/admin/nutzer", "/login", "/auth/callback", "/api/admin/calibration"]) {
+    assert.equal(crossDomainRedirect("admin.digital-halo.de", p, "", withAdmin), null, p)
+  }
+  assert.equal(crossDomainRedirect("admin.digital-halo.de", "/weiter", "", withAdmin), "https://app.digital-halo.de/weiter")
+  assert.equal(crossDomainRedirect("admin.digital-halo.de", "/legal/agb", "", withAdmin), "https://digital-halo.de/legal/agb")
+})
+
+test("Admin-Domain: /admin auf Tool oder Webseite geht zur Admin-Domain", () => {
+  assert.equal(crossDomainRedirect("app.digital-halo.de", "/admin/konten", "?q=x", withAdmin), "https://admin.digital-halo.de/admin/konten?q=x")
+  assert.equal(crossDomainRedirect("digital-halo.de", "/admin", "", withAdmin), "https://admin.digital-halo.de/admin")
+  // ohne Admin-Domain bleibt /admin im Tool
+  assert.equal(crossDomainRedirect("app.digital-halo.de", "/admin", "", cfg), null)
+})
+
 test("Andere Hosts (vercel.app, Previews, localhost) und fehlende Konfiguration: keine Umleitung", () => {
   assert.equal(crossDomainRedirect("auralis-plum.vercel.app", "/login", "", cfg), null)
   assert.equal(crossDomainRedirect("localhost:3000", "/", "", cfg), null)

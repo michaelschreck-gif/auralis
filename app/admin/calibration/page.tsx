@@ -1,8 +1,4 @@
-import { redirect } from "next/navigation"
-import type { SupabaseClient } from "@supabase/supabase-js"
-import { createSupabaseServerClient } from "@/lib/supabase/server"
-import { createSupabaseServiceClient } from "@/lib/supabase/client"
-import DashboardShell from "@/components/DashboardShell"
+import { requireAdminPage } from "@/lib/halo/admin"
 import {
   CALIBRATION_PANEL,
   NEGATIVE_MAX_SCORE,
@@ -11,11 +7,8 @@ import {
   type CalibrationRow,
   type CalibrationEntryView,
 } from "@/lib/auralis/calibration"
-import type { Database } from "@/lib/supabase/database.types"
 
 export const dynamic = "force-dynamic"
-
-type PlanType = Database["public"]["Enums"]["plan_type"]
 
 const FLAG_LABEL: Record<string, string> = {
   negative_control_hit: "Fehlalarm",
@@ -48,20 +41,11 @@ function Sparkline({ values, danger }: { values: number[]; danger: boolean }) {
 }
 
 export default async function AdminCalibrationPage() {
-  const session = await createSupabaseServerClient()
-  const { data: { user } } = await session.auth.getUser()
-  if (!user) redirect("/login")
-
-  const { data: me } = await session
-    .from("profiles")
-    .select("is_admin, full_name, plan")
-    .eq("id", user.id)
-    .single()
-  if (!me?.is_admin) redirect("/dashboard")
+  const { service } = await requireAdminPage()
 
   let rows: CalibrationRow[] = []
   let loadError: string | null = null
-  const { data, error } = await (createSupabaseServiceClient() as unknown as SupabaseClient)
+  const { data, error } = await service
     .from("calibration_runs")
     .select("entry_key, kind, person_name, topic, language, score, mention_rate, rounds, flag, flag_detail, measured_at")
     .order("measured_at", { ascending: false })
@@ -76,8 +60,8 @@ export default async function AdminCalibrationPage() {
   const lastRun = rows[0]?.measured_at ?? null
 
   return (
-    <DashboardShell userName={me.full_name ?? ""} plan={(me.plan ?? "free") as PlanType}>
-      <div className="p-4 md:p-8 max-w-5xl mx-auto space-y-6">
+    <>
+      <div className="space-y-6">
         <header>
           <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Admin</span>
           <h1 className="text-2xl sm:text-3xl tracking-tight text-[#0E1916] mt-2">Kalibrierung der Messmethode</h1>
@@ -144,7 +128,7 @@ export default async function AdminCalibrationPage() {
           </div>
         </section>
       </div>
-    </DashboardShell>
+    </>
   )
 }
 

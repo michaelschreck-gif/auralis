@@ -2,7 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { crossDomainRedirect, domainConfigFromEnv } from "@/lib/domains"
 
-const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/start", "/weiter", "/p", "/personen", "/konto"]
+const PROTECTED_PREFIXES = ["/dashboard", "/onboarding", "/start", "/weiter", "/p", "/personen", "/konto", "/admin"]
 
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
