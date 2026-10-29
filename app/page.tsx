@@ -318,7 +318,7 @@ export default async function Home() {
           </h2>
         </div>
         <div className="grid md:grid-cols-3 gap-5">
-          <PriceCard name="Free" price="€0" sub="Zum Reinschnuppern" feats={["1 Analyse / Monat", "1 Thema", "Halo Score + Sub-Scores", "Claude Sonnet 4.5"]} />
+          <PriceCard name="Free" price="€0" sub="Zum Reinschnuppern" feats={["1 Analyse / Monat", "1 Thema", "Halo Score + Sub-Scores", "Claude Sonnet 5.5"]} />
           <PriceCard name="Starter" price="€79" sub="Für aktive Personal Brands" feats={["Tägliche Analysen", "Unbegrenzte manuelle Analysen", "Bis zu 5 Themen", "GPT-4o + Perplexity", "Impulse"]} />
           <PriceCard name="Pro" price="€299" sub="Für Vielnutzer & Agenturen" featured feats={["Alle Starter-Funktionen", "Gemini + AI Overview", "Public-API-Zugang", "Empfehlungs-Quote", "Priorisierter Support"]} />
         </div>

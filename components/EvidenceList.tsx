@@ -20,6 +20,7 @@ export type EvidenceGroup = {
 const MODEL_LABELS: Record<string, string> = {
   "claude-sonnet": "Claude Sonnet",
   "claude-sonnet-4-5": "Claude Sonnet",
+  "claude-sonnet-5-5": "Claude Sonnet",
   "gpt-4o": "GPT-4o",
   "sonar": "Perplexity",
   "perplexity-sonar": "Perplexity",

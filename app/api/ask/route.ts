@@ -16,6 +16,7 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk"
+import { CLAUDE_MODEL } from "@/lib/auralis/providers"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { computeMasterScores } from "@/lib/auralis/master-scores"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
@@ -222,7 +223,7 @@ ${contextBlock}`
       const encoder = new TextEncoder()
       try {
         const anthropicStream = await client.messages.stream({
-          model: "claude-sonnet-4-5",
+          model: CLAUDE_MODEL,
           max_tokens: 1024,
           system,
           messages: messages.map(m => ({ role: m.role, content: m.content })),

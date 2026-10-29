@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { extractPersona } from "@/lib/auralis/persona"
+import { CLAUDE_MODEL } from "@/lib/auralis/providers"
 import type { Json } from "@/lib/supabase/database.types"
 
 // Ein Claude-Call über die gespeicherten Antworten — wenige Sekunden.
@@ -78,7 +79,7 @@ export async function POST() {
         report_id: reportId,
         roles: persona.roles as unknown as Json,
         summary: persona.summary,
-        model: "claude-sonnet-4-5",
+        model: CLAUDE_MODEL,
       })
       .select("id")
       .single()

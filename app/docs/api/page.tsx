@@ -333,7 +333,7 @@ export default function ApiDocsPage() {
   "average_position": 2.0,
   "per_model": [
     { "provider": "claude-sonnet", "label": "Claude Sonnet",
-      "model": "claude-sonnet-4-5", "score": 58, "mention_rate": 29,
+      "model": "claude-sonnet-5-5", "score": 58, "mention_rate": 29,
       "average_position": 2.0, "error": null }
   ],
   "providers_used": ["claude-sonnet"],
@@ -383,7 +383,7 @@ export default function ApiDocsPage() {
       "prompt": "Wer sind die führenden Experten für …?",
       "answers": [
         {
-          "model": "claude-sonnet-4-5",
+          "model": "claude-sonnet-5-5",
           "mentioned": true,
           "position": 2,
           "sentiment": "positive",

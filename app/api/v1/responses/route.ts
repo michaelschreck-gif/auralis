@@ -16,7 +16,7 @@
  *         "prompt": "Wer sind die führenden Experten …",
  *         "answers": [
  *           {
- *             "model": "claude-sonnet-4-5",
+ *             "model": "claude-sonnet-5-5",
  *             "mentioned": true,
  *             "position": 2,
  *             "sentiment": "positive",
