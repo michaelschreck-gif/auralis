@@ -64,10 +64,11 @@ Einzelperson-Konten landen nach dem Login direkt auf `/p/[id]`; `/personen` gibt
 
 | Phase | Status |
 |---|---|
-| 0 | Teilweise: Staging-DB geleert, Arbeit auf `staging`. **Offen:** Supabase-Schlüssel (`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) für Preview/`staging` in Vercel |
+| 0 | **Fertig:** Staging-DB geleert, Arbeit auf `staging`, Supabase-Variablen für Preview/`staging` in Vercel (Anon-Key als Config – Vercel lehnt `NEXT_PUBLIC_*` als Secret ab) |
 | 1 | **Fertig (2026-10-29):** `halo_v2` auf `halo-staging` eingespielt (18 Tabellen, alle mit RLS, 27 Policies); `access_rules.sql` bestanden; Typen in `lib/supabase/halo.types.ts` |
 | 2 | **Code fertig (2026-10-29), Live-Prüfung offen:** Messkern `measureTarget()` aus dem Runner gelöst; `lib/halo/` mit `measure.ts`, `jobs.ts`, `score.ts` (+ Tests), `load.ts`, `config.ts`; Cron, `run-job`, `POST /api/measure/[topicId]`, `GET /api/jobs/[id]` auf halo_v2. Echte Messung auf Staging erst mit den Staging-Schlüsseln möglich (Abnahme dann in Phase 3) |
-| 3 | **Code fertig (2026-10-29), Live-Prüfung offen:** `/registrieren` (offen auf Preview/lokal, in Production nur mit `SIGNUP_OPEN=true`), Assistent `/start` (Konto-Typ, Person, Region, Themen, erste Messung mit Fortschritt, Ergebnis), `/weiter` als Einstieg nach Login/Callback, vorläufige Seite `/p/[id]`; Proxy und Domain-Regeln um die neuen Pfade ergänzt |
+| 2+3 | **Live geprüft (2026-10-29):** Registrierung → Login → Assistent → erste Messung → Halo Score 66 in ca. 70 s (Testperson Sascha Lobo, Digitalisierung, DACH; Claude + GPT-4o je 14 vollständige Antworten, Gemini 429-Kontingent). Dabei gefunden und behoben: RLS ließ `INSERT … RETURNING` auf `persons` scheitern (`20261029130000_persons_owner_read.sql`, Test ergänzt). Testkonto-Zugang lokal in `.env.staging-test.local` (nicht im Repo); Supabase-Bestätigungsmails gehen nur an berechtigte Adressen, Testkonten daher per SQL bestätigen |
+| 3 | **Code fertig (2026-10-29):** `/registrieren` (offen auf Preview/lokal, in Production nur mit `SIGNUP_OPEN=true`), Assistent `/start` (Konto-Typ, Person, Region, Themen, erste Messung mit Fortschritt, Ergebnis), `/weiter` als Einstieg nach Login/Callback, vorläufige Seite `/p/[id]`; Proxy und Domain-Regeln um die neuen Pfade ergänzt |
 
 ## Phasen
 
