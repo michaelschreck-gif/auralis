@@ -66,6 +66,7 @@ Einzelperson-Konten landen nach dem Login direkt auf `/p/[id]`; `/personen` gibt
 |---|---|
 | 0 | Teilweise: Staging-DB geleert, Arbeit auf `staging`. **Offen:** Supabase-Schlüssel (`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) für Preview/`staging` in Vercel |
 | 1 | **Fertig (2026-10-29):** `halo_v2` auf `halo-staging` eingespielt (18 Tabellen, alle mit RLS, 27 Policies); `access_rules.sql` bestanden; Typen in `lib/supabase/halo.types.ts` |
+| 2 | **Code fertig (2026-10-29), Live-Prüfung offen:** Messkern `measureTarget()` aus dem Runner gelöst; `lib/halo/` mit `measure.ts`, `jobs.ts`, `score.ts` (+ Tests), `load.ts`, `config.ts`; Cron, `run-job`, `POST /api/measure/[topicId]`, `GET /api/jobs/[id]` auf halo_v2. Echte Messung auf Staging erst mit den Staging-Schlüsseln möglich (Abnahme dann in Phase 3) |
 
 ## Phasen
 
@@ -84,7 +85,8 @@ Jede Phase endet mit Typecheck, Tests und einer Prüfung auf `staging.digital-ha
 - **Fertig, wenn:** Zugriffstests auf Staging grün sind.
 
 ### Phase 2 – Messkern umhängen
-- `runner.ts` → `runMeasurement(topicId)`: lädt Person + Thema statt Profil + Schedule, Suchname = Vor- + Nachname (+ Kontext zur Abgrenzung)
+- `runner.ts` → `runMeasurement(topicId)`: lädt Person + Thema statt Profil + Schedule, Suchname = Vor- + Nachname. (Das Feld „Rolle/Unternehmen“ fließt noch nicht in die Erkennung ein: Die Fragen enthalten den Namen nicht, sie fragen nach Experten zum Thema. Es wird für Persona/Wahrnehmung genutzt.)
+- Säulen je Messung: KI-Sichtbarkeit = Erwähnung 60 % + Position 40 %; Wahrnehmung = Tonalität 60 % + Themenpassung 40 %, nur wenn die Person genannt wurde
 - Jobs und Cron auf `topics`/`jobs` umstellen
 - `lib/halo/score.ts` mit drei Säulen + Tests
 - **Fertig, wenn:** eine Messung auf Staging mit Claude und GPT-4o vollständige Antworten speichert und der Halo Score berechnet wird.

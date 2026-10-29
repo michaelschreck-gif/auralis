@@ -289,7 +289,7 @@ async function runProvider(
   return { queryResults: completeRounds.flat(), rounds: completeRounds }
 }
 
-type ProviderOutcome = {
+export type ProviderOutcome = {
   provider: LLMProvider
   queryResults: QueryResult[]
   /** Runden-Reports über alle Märkte (Mittel der Markt-Reports je Runde). */
@@ -537,95 +537,17 @@ export async function runAnalysisForSchedule(
   const measurement = options.background
     ? (markets.length > 3 ? { depth: "standard" as const, rounds: baseProfile.rounds } : baseProfile)
     : budgetForMarkets(baseProfile, markets.length)
-  const marketPlans = buildMarketPlans(markets, [schedule.query], measurement, `${schedule.id}-${Date.now()}`)
-  const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
-
-  // 4. Fan-out per provider (parallel), mehrere Runden und Märkte
-  const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
-    providers, marketPlans, targetName, [schedule.query], measurement.rounds,
-    options.background ? BACKGROUND_ROUND_BUDGET_MS : undefined,
-  )
-
-  const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
-  if (successfulProviders.length === 0) {
-    // Je Provider gekürzt, damit in analysis_jobs.error (500 Zeichen) alle Anbieter sichtbar bleiben.
-    const errors = providerOutcomes
-      .map(o => `${o.provider.id}: ${(o.error ?? "no report").slice(0, 110)}`)
-      .join("; ")
-    throw new Error(`All providers failed: ${errors}`)
-  }
-
-  // 5. Build per-model breakdown for raw_data
-  const perModelBreakdown: PerModelBreakdown[] = providerOutcomes.map(o => {
-    if (!o.report || o.error) {
-      return {
-        provider: o.provider.id,
-        label: o.provider.label,
-        modelTag: o.provider.modelTag,
-        overallScore: 0,
-        mentionRate: 0,
-        averagePosition: null,
-        scoreBreakdown: { presenceScore: 0, positionScore: 0, contextScore: 0, topicAlignmentScore: 0 },
-        successfulQueries: 0,
-        error: o.error ?? "no report",
-      }
-    }
-    return {
-      provider: o.provider.id,
-      label: o.provider.label,
-      modelTag: o.provider.modelTag,
-      overallScore: o.report.overallScore,
-      mentionRate: o.report.mentionRate,
-      averagePosition: o.report.averagePosition,
-      scoreBreakdown: o.report.scoreBreakdown,
-      successfulQueries: o.queryResults.length,
-    }
-  })
-
-  // 6. Aggregate across successful providers (mean of per-model scores)
-  const allQueryResults = providerOutcomes.flatMap(o => o.queryResults)
-  const providerWeights = normalizedWeights(successfulProviders.map(o => o.provider.id))
-  const aggregateReport = aggregateReports(
-    targetName,
-    [schedule.query],
-    successfulProviders.map(o => o.report!),
-    allQueryResults,
-    providerWeights,
-  )
-
-  // 7. Sentiment over all signals from all providers
-  const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
-
-  // 7b. Laufzeit-Invariante: Plausibilität prüfen, bevor gespeichert wird.
-  //     Nicht-blockierend — Verstöße werden geloggt (sichtbar in Vercel-Logs).
-  const integrity = validateReportIntegrity(aggregateReport, targetName)
-  if (!integrity.ok) {
-    console.error(
-      `[runner] INTEGRITY-WARNUNG für schedule ${schedule.id} (${targetName}):`,
-      JSON.stringify(integrity.violations),
-    )
-  }
-
-  // 8. Persist the consolidated report
-  const finalRawData: MultiModelVisibilityReport = {
-    ...aggregateReport,
-    perModelBreakdown,
-    providersUsed: successfulProviders.map(o => o.provider.id),
-    stability,
-    intentStats: computeIntentStats(
-      allQueryResults.map(r => ({ type: r.queryType, mentioned: r.signal.mentioned })),
-    ),
-    methodology: {
-      depth: measurement.depth,
-      rounds: stability?.rounds ?? 1,
-      queriesPerRound,
-      markets: markets.map(m => m.id),
-      modelWeights: Object.fromEntries(
-        successfulProviders.map((o, i) => [o.provider.id, Math.round(providerWeights[i] * 100) / 100]),
-      ),
-    },
-    marketResults: marketResults.length > 0 ? marketResults : undefined,
-  }
+  const { finalRawData, aggregateReport, sentiment, successfulProviders, providerOutcomes, allQueryResults } =
+    await measureTarget({
+      targetName,
+      topics: [schedule.query],
+      markets,
+      measurement,
+      providers,
+      background: !!options.background,
+      seedBase: schedule.id,
+      logLabel: `schedule ${schedule.id}`,
+    })
 
   const { data: savedReport, error: reportError } = await supabase
     .from("visibility_reports")
@@ -688,6 +610,134 @@ export async function runAnalysisForSchedule(
     queryCount: allQueryResults.length,
     providersUsed: successfulProviders.map(o => o.provider.id),
   }
+}
+
+// ─── Messkern (ohne DB) ──────────────────────────────────────────────────────
+
+export type MeasureTargetOptions = {
+  /** Name der gemessenen Person (Erkennung in den Antworten). */
+  targetName: string
+  topics: string[]
+  markets: Market[]
+  measurement: MeasurementProfile
+  providers: LLMProvider[]
+  /** Hintergrundlauf: größeres Zeitbudget für Folgerunden. */
+  background: boolean
+  /** Basis für den Fragen-Seed (z.B. Themen-ID). */
+  seedBase: string
+  /** Bezeichnung für Log-Ausgaben. */
+  logLabel: string
+}
+
+export type TargetMeasurement = {
+  finalRawData: MultiModelVisibilityReport
+  aggregateReport: VisibilityReport
+  sentiment: SentimentType | null
+  successfulProviders: ProviderOutcome[]
+  providerOutcomes: ProviderOutcome[]
+  allQueryResults: QueryResult[]
+}
+
+/**
+ * Misst eine Person zu Themen über alle Provider, Runden und Märkte und baut
+ * den Report. Schreibt nichts in die Datenbank (das machen die Aufrufer:
+ * runAnalysisForSchedule für das alte Schema, lib/halo/measure.ts für halo_v2).
+ * Wirft „All providers failed: …“, wenn kein Provider ein Ergebnis liefert.
+ */
+export async function measureTarget({
+  targetName, topics, markets, measurement, providers, background, seedBase, logLabel,
+}: MeasureTargetOptions): Promise<TargetMeasurement> {
+  const marketPlans = buildMarketPlans(markets, topics, measurement, `${seedBase}-${Date.now()}`)
+  const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
+
+  // 4. Fan-out per provider (parallel), mehrere Runden und Märkte
+  const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
+    providers, marketPlans, targetName, topics, measurement.rounds,
+    background ? BACKGROUND_ROUND_BUDGET_MS : undefined,
+  )
+
+  const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
+  if (successfulProviders.length === 0) {
+    // Je Provider gekürzt, damit in analysis_jobs.error (500 Zeichen) alle Anbieter sichtbar bleiben.
+    const errors = providerOutcomes
+      .map(o => `${o.provider.id}: ${(o.error ?? "no report").slice(0, 110)}`)
+      .join("; ")
+    throw new Error(`All providers failed: ${errors}`)
+  }
+
+  // 5. Build per-model breakdown for raw_data
+  const perModelBreakdown: PerModelBreakdown[] = providerOutcomes.map(o => {
+    if (!o.report || o.error) {
+      return {
+        provider: o.provider.id,
+        label: o.provider.label,
+        modelTag: o.provider.modelTag,
+        overallScore: 0,
+        mentionRate: 0,
+        averagePosition: null,
+        scoreBreakdown: { presenceScore: 0, positionScore: 0, contextScore: 0, topicAlignmentScore: 0 },
+        successfulQueries: 0,
+        error: o.error ?? "no report",
+      }
+    }
+    return {
+      provider: o.provider.id,
+      label: o.provider.label,
+      modelTag: o.provider.modelTag,
+      overallScore: o.report.overallScore,
+      mentionRate: o.report.mentionRate,
+      averagePosition: o.report.averagePosition,
+      scoreBreakdown: o.report.scoreBreakdown,
+      successfulQueries: o.queryResults.length,
+    }
+  })
+
+  // 6. Aggregate across successful providers (mean of per-model scores)
+  const allQueryResults = providerOutcomes.flatMap(o => o.queryResults)
+  const providerWeights = normalizedWeights(successfulProviders.map(o => o.provider.id))
+  const aggregateReport = aggregateReports(
+    targetName,
+    topics,
+    successfulProviders.map(o => o.report!),
+    allQueryResults,
+    providerWeights,
+  )
+
+  // 7. Sentiment over all signals from all providers
+  const sentiment = deriveSentiment(allQueryResults.map(r => r.signal.sentiment))
+
+  // 7b. Laufzeit-Invariante: Plausibilität prüfen, bevor gespeichert wird.
+  //     Nicht-blockierend — Verstöße werden geloggt (sichtbar in Vercel-Logs).
+  const integrity = validateReportIntegrity(aggregateReport, targetName)
+  if (!integrity.ok) {
+    console.error(
+      `[runner] INTEGRITY-WARNUNG für ${logLabel} (${targetName}):`,
+      JSON.stringify(integrity.violations),
+    )
+  }
+
+  // 8. Persist the consolidated report
+  const finalRawData: MultiModelVisibilityReport = {
+    ...aggregateReport,
+    perModelBreakdown,
+    providersUsed: successfulProviders.map(o => o.provider.id),
+    stability,
+    intentStats: computeIntentStats(
+      allQueryResults.map(r => ({ type: r.queryType, mentioned: r.signal.mentioned })),
+    ),
+    methodology: {
+      depth: measurement.depth,
+      rounds: stability?.rounds ?? 1,
+      queriesPerRound,
+      markets: markets.map(m => m.id),
+      modelWeights: Object.fromEntries(
+        successfulProviders.map((o, i) => [o.provider.id, Math.round(providerWeights[i] * 100) / 100]),
+      ),
+    },
+    marketResults: marketResults.length > 0 ? marketResults : undefined,
+  }
+
+  return { finalRawData, aggregateReport, sentiment, successfulProviders, providerOutcomes, allQueryResults }
 }
 
 // ─── Plan-Limit ───────────────────────────────────────────────────────────────

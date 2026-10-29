@@ -1,28 +1,16 @@
 /**
- * Daily cron entrypoint (Vercel Cron, configured in vercel.json with
- * "schedule": "0 6 * * *").
+ * Täglicher Cron (vercel.json, "0 6 * * *").
  *
- * Loads all due monitoring_schedules via the `get_due_schedules` SQL function
- * and delegates each one to runAnalysisForSchedule(), which handles:
- *   - Multi-Model fan-out (Claude + GPT-4o + Perplexity + Gemini, plan-gated)
- *   - per-Provider error tolerance
- *   - report persistence (visibility_reports + query_results)
- *   - schedule.last_run_at + next_run_at update (via advanceNextRunAt: true)
- *
- * Sprint 14 refactor: previously this file inlined the analyzer pipeline
- * (single Claude only). Now delegates to the shared runner so cron + manual
- * trigger + admin trigger share the same logic and the same multi-model code path.
+ * Holt alle fälligen Themen (get_due_topics) und startet je Thema einen Job
+ * in einer eigenen Funktionsinstanz (/api/internal/run-job), damit Themen
+ * parallel laufen und jeder Lauf die vollen 300 s hat. Schlägt der Start
+ * fehl, läuft der Job direkt hier.
  */
 
 import { NextRequest, NextResponse } from "next/server"
-import { createSupabaseServiceClient } from "@/lib/supabase/client"
-import { runAnalysisForSchedule } from "@/lib/auralis/runner"
-import { enqueueAnalysisJob, executeAnalysisJob, hasActiveJob } from "@/lib/auralis/jobs"
+import { createHaloServiceClient } from "@/lib/supabase/halo"
+import { activeJobId, enqueueJob, executeJob } from "@/lib/halo/jobs"
 
-// Multi-model runs can take 30-60s with all 4 providers.
-// Vercel cron functions on the Hobby plan are capped at 10s; on Pro/Enterprise
-// the cap is 300s. If you're on Hobby and have many schedules, consider
-// splitting into multiple cron jobs.
 export const maxDuration = 300
 
 export async function GET(request: NextRequest) {
@@ -30,75 +18,52 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const supabase = createSupabaseServiceClient()
-
-  const { data: schedules, error: schedulesError } = await supabase.rpc("get_due_schedules")
-  if (schedulesError) {
-    console.error("[cron] get_due_schedules error:", schedulesError)
-    return NextResponse.json({ error: schedulesError.message }, { status: 500 })
+  const service = createHaloServiceClient()
+  const { data: topics, error } = await service.rpc("get_due_topics")
+  if (error) {
+    console.error("[cron] get_due_topics error:", error)
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
-  const total = (schedules ?? []).length
-  let dispatched = 0
-  let failed = 0
-  const errors: { scheduleId: string; error: string }[] = []
-
-  // Je fälligem Thema einen Job anlegen und in einer EIGENEN Funktionsinstanz
-  // starten (/api/internal/run-job). So laufen die Themen parallel, und jeder
-  // Lauf hat die vollen 300 s statt sich die Zeit dieser Funktion zu teilen.
-  // Fehlt die Tabelle (Migration offen) oder schlägt der Start fehl, läuft das
-  // Thema direkt in dieser Funktion (alter Pfad).
   const origin = request.nextUrl.origin
-  for (const schedule of schedules ?? []) {
-    try {
-      if (await hasActiveJob(supabase, schedule.id)) continue
+  let dispatched = 0
+  let skipped = 0
+  const errors: { topicId: string; error: string }[] = []
 
-      const jobId = await enqueueAnalysisJob(supabase, {
-        profileId: schedule.profile_id,
-        scheduleId: schedule.id,
+  for (const topic of topics ?? []) {
+    try {
+      if (await activeJobId(service, topic.id)) {
+        skipped++
+        continue
+      }
+      const jobId = await enqueueJob(service, {
+        personId: topic.person_id,
+        topicId: topic.id,
         trigger: "scheduled",
-        advanceNextRunAt: true,
+        advanceNextRun: true,
       })
 
       let started = false
-      if (jobId) {
-        try {
-          const res = await fetch(`${origin}/api/internal/run-job`, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${process.env.CRON_SECRET}`,
-            },
-            body: JSON.stringify({ jobId }),
-            signal: AbortSignal.timeout(20_000),
-          })
-          started = res.status === 202
-          if (!started) console.error(`[cron] run-job returned ${res.status} for ${schedule.id}`)
-        } catch (e) {
-          console.error(`[cron] run-job dispatch failed for ${schedule.id}:`, e)
-        }
-      }
-
-      if (started) {
-        dispatched++
-      } else if (jobId) {
-        // Job direkt hier ausführen (Fallback), damit nichts liegen bleibt.
-        await executeAnalysisJob(supabase, jobId)
-        dispatched++
-      } else {
-        await runAnalysisForSchedule(schedule.id, supabase, {
-          trigger: "scheduled",
-          advanceNextRunAt: true,
+      try {
+        const res = await fetch(`${origin}/api/internal/run-job`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${process.env.CRON_SECRET}` },
+          body: JSON.stringify({ jobId }),
+          signal: AbortSignal.timeout(20_000),
         })
-        dispatched++
+        started = res.status === 202
+        if (!started) console.error(`[cron] run-job returned ${res.status} for ${topic.id}`)
+      } catch (e) {
+        console.error(`[cron] run-job dispatch failed for ${topic.id}:`, e)
       }
-    } catch (err) {
-      const message = err instanceof Error ? err.message : String(err)
-      console.error(`[cron] schedule ${schedule.id} failed:`, message)
-      errors.push({ scheduleId: schedule.id, error: message })
-      failed++
+      if (!started) await executeJob(service, jobId)
+      dispatched++
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e)
+      console.error(`[cron] topic ${topic.id} failed:`, message)
+      errors.push({ topicId: topic.id, error: message })
     }
   }
 
-  return NextResponse.json({ dispatched, failed, total, errors })
+  return NextResponse.json({ total: topics?.length ?? 0, dispatched, skipped, errors })
 }
