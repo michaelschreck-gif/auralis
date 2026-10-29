@@ -12,7 +12,7 @@
  */
 
 import Anthropic from "@anthropic-ai/sdk"
-import { CLAUDE_MODEL } from "@/lib/auralis/providers"
+import { CLAUDE_MODEL, CLAUDE_NO_THINKING } from "@/lib/auralis/providers"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { computeMasterScores } from "@/lib/auralis/master-scores"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
@@ -135,6 +135,7 @@ ${scoreLines.length > 0 ? scoreLines.join("\n") : "- Noch keine Score-Daten."}`
       try {
         const anthropicStream = client.messages.stream({
           model: CLAUDE_MODEL,
+          thinking: CLAUDE_NO_THINKING,
           max_tokens: 1024,
           system,
           messages: messages.map(m => ({ role: m.role, content: m.content })),
