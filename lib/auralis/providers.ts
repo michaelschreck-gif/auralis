@@ -181,6 +181,11 @@ export const geminiProvider: LLMProvider = {
         ],
         generationConfig: {
           maxOutputTokens: maxTokens,
+          // 2.5 Flash „denkt" standardmäßig, und die Denk-Tokens zählen gegen
+          // maxOutputTokens: bei 600 blieben nur ~110 Zeichen Antwort übrig,
+          // in denen nie ein Name vorkam. Ohne Denken bekommt die Antwort das
+          // ganze Budget.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       }),
     })

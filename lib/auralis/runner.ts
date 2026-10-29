@@ -548,7 +548,10 @@ export async function runAnalysisForSchedule(
 
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
   if (successfulProviders.length === 0) {
-    const errors = providerOutcomes.map(o => `${o.provider.id}: ${o.error ?? "no report"}`).join("; ")
+    // Je Provider gekürzt, damit in analysis_jobs.error (500 Zeichen) alle Anbieter sichtbar bleiben.
+    const errors = providerOutcomes
+      .map(o => `${o.provider.id}: ${(o.error ?? "no report").slice(0, 110)}`)
+      .join("; ")
     throw new Error(`All providers failed: ${errors}`)
   }
 
