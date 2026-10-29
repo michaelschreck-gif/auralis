@@ -136,7 +136,7 @@ export async function loadPersonOverview(db: HaloClient, personId: string): Prom
   return {
     halo: computeHaloScore({ topics: latestPerTopic(points, ids), google }),
     history,
-    trend: trendDelta(history),
+    trend: trendDelta(points, ids, google),
     topics: (topics ?? []).map(t => ({ ...t, change: changes.get(t.id) ?? null })),
     openActions: actions ?? [],
   }

@@ -101,7 +101,7 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
                   <ScoreHistoryChart history={history} />
                 ) : (
                   <p className="text-sm text-[#9A9089]">
-                    Der Verlauf erscheint ab der zweiten Messung. Gemessen wird automatisch jede Woche.
+                    Der Verlauf erscheint, sobald an zwei Tagen gemessen wurde. Gemessen wird automatisch jede Woche.
                   </p>
                 )}
               </div>

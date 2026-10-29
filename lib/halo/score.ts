@@ -170,10 +170,35 @@ export function haloHistory(
   return [...byDay.entries()].map(([date, score]) => ({ date, score }))
 }
 
-/** Veränderung zum vorherigen Tag mit Messung, null ohne Vergleich. */
-export function trendDelta(history: HistoryPoint[]): number | null {
-  if (history.length < 2) return null
-  return history[history.length - 1].score - history[history.length - 2].score
+/** Messungen innerhalb dieses Abstands zur jüngsten gelten als eine Messrunde. */
+export const RUN_WINDOW_MS = 30 * 60 * 1000
+
+/**
+ * Veränderung durch die jüngste Messrunde: Score jetzt minus Score ohne die
+ * Messungen dieser Runde. Auch bei mehreren Messungen am selben Tag sinnvoll.
+ * null, wenn es vor der Runde noch keinen Score gab.
+ */
+export function trendDelta(
+  measurements: MeasurementPoint[],
+  activeTopicIds: string[],
+  google: number | null = null,
+): number | null {
+  const active = new Set(activeTopicIds)
+  const relevant = measurements.filter(m => active.has(m.topicId))
+  if (relevant.length === 0) return null
+  const newest = Math.max(...relevant.map(m => Date.parse(m.measuredAt)))
+  const before = relevant.filter(m => Date.parse(m.measuredAt) < newest - RUN_WINDOW_MS)
+
+  const latestOf = (list: MeasurementPoint[]) => {
+    const latest = new Map<string, TopicMeasurement>()
+    for (const m of [...list].sort((a, b) => b.measuredAt.localeCompare(a.measuredAt))) {
+      if (!latest.has(m.topicId)) latest.set(m.topicId, m)
+    }
+    return [...latest.values()]
+  }
+  const now = computeHaloScore({ topics: latestOf(relevant), google }).score
+  const prev = computeHaloScore({ topics: latestOf(before), google }).score
+  return now === null || prev === null ? null : now - prev
 }
 
 export type TopicChange = {
