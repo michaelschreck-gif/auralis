@@ -14,7 +14,7 @@
 import { NextResponse } from "next/server"
 import { renderToBuffer } from "@react-pdf/renderer"
 import Anthropic from "@anthropic-ai/sdk"
-import { CLAUDE_MODEL } from "@/lib/auralis/providers"
+import { CLAUDE_MODEL, CLAUDE_NO_THINKING } from "@/lib/auralis/providers"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import { computeMasterScores } from "@/lib/auralis/master-scores"
 import type { VisibilityReport } from "@/lib/auralis/analyzer"
@@ -79,6 +79,7 @@ Regeln:
 
     const message = await client.messages.create({
       model: CLAUDE_MODEL,
+      thinking: CLAUDE_NO_THINKING,
       max_tokens: 1024,
       system,
       messages: [{ role: "user", content: prompt }],
