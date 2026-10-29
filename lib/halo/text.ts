@@ -41,6 +41,20 @@ export function countSourceDomains(responses: string[]): SourceCount[] {
     .sort((a, b) => b.answers - a.answers || b.count - a.count || a.domain.localeCompare(b.domain))
 }
 
+/**
+ * Markdown-Auszeichnung der KI-Antworten für die Anzeige entfernen
+ * (**fett**, __fett__, *kursiv*, # Überschriften, `Code`). Listen und
+ * Absätze bleiben erhalten.
+ */
+export function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/(^|[\s(])\*(?!\s)([^*\n]+?)\*(?=[\s).,;:!?]|$)/g, "$1$2")
+    .replace(/`([^`]+)`/g, "$1")
+}
+
 export type TextSegment = { text: string; match: boolean }
 
 /**

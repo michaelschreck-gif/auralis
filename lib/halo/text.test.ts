@@ -1,6 +1,15 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { countSourceDomains, domainOf, extractUrls, highlightName } from "./text.ts"
+import { countSourceDomains, domainOf, extractUrls, highlightName, stripMarkdown } from "./text.ts"
+
+test("Markdown: Auszeichnung weg, Listen bleiben", () => {
+  assert.equal(
+    stripMarkdown("## Stimmen\n- **Sascha Lobo** ist *sehr* sichtbar\n- `re:publica` und __Spiegel__"),
+    "Stimmen\n- Sascha Lobo ist sehr sichtbar\n- re:publica und Spiegel",
+  )
+  // Aufzählungs-Sternchen am Zeilenanfang bleiben
+  assert.equal(stripMarkdown("* Punkt eins\n* Punkt zwei"), "* Punkt eins\n* Punkt zwei")
+})
 
 test("URLs: Satzzeichen am Ende werden entfernt", () => {
   assert.deepEqual(extractUrls("Siehe https://www.saschalobo.com/blog. Und (https://spiegel.de/x)."), [

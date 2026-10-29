@@ -29,7 +29,7 @@ export function EmptyState({ title, text, action }: { title: string; text: strin
 
 export function Tabs({ base, current, tabs }: { base: string; current: string; tabs: { id: string; label: string }[] }) {
   return (
-    <nav className="flex gap-1 border-b border-[#E9E1D3] overflow-x-auto" aria-label="Bereiche">
+    <nav className="flex gap-1 border-b border-[#E9E1D3] overflow-x-auto overflow-y-hidden [scrollbar-width:none]" aria-label="Bereiche">
       {tabs.map(t => (
         <Link
           key={t.id}

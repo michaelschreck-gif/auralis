@@ -1,6 +1,6 @@
 import { createHaloServerClient } from "@/lib/supabase/halo"
 import { loadAnswers, loadLatestMeasurements, summarizeModels } from "@/lib/halo/details"
-import { countSourceDomains, highlightName } from "@/lib/halo/text"
+import { countSourceDomains, highlightName, stripMarkdown } from "@/lib/halo/text"
 import { QUERY_TYPE_LABELS } from "@/lib/auralis/gap-analysis"
 import MeasureNowButton from "@/components/halo/MeasureNowButton"
 import { EmptyState, PageHeader, Score, Tabs, card, formatDate } from "@/components/halo/ui"
@@ -207,7 +207,7 @@ async function EvidenceTab({
                     </span>
                   </div>
                   <p className="mt-2 text-sm text-[#3A3632] whitespace-pre-line leading-relaxed">
-                    {highlightName(a.response ?? "", firstName, lastName).map((s, i) =>
+                    {highlightName(stripMarkdown(a.response ?? ""), firstName, lastName).map((s, i) =>
                       s.match ? (
                         <mark key={i} className="bg-[#FDE7E0] text-[#0E1916] rounded px-0.5">{s.text}</mark>
                       ) : (
