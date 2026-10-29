@@ -58,8 +58,15 @@ begin
   if (select count(*) from public.account_members) <> 2 then raise exception 'FEHLER: Owner sieht nicht alle Mitglieder seines Kontos'; end if;
   if (select count(*) from public.accounts) <> 1 then raise exception 'FEHLER: Owner sieht fremde Konten'; end if;
 
-  insert into public.persons (account_id, first_name, last_name)
-  values ('00000000-0000-0000-0000-0000000000b1', 'Neu', 'Person');
+  -- Wie die App: anlegen und die ID sofort zurücklesen (RETURNING braucht die Leseregel).
+  declare new_id uuid;
+  begin
+    insert into public.persons (account_id, first_name, last_name)
+    values ('00000000-0000-0000-0000-0000000000b1', 'Neu', 'Person')
+    returning id into new_id;
+    if new_id is null then raise exception 'FEHLER: Owner bekommt die neue Person nicht zurück'; end if;
+    insert into public.topics (person_id, name) values (new_id, 'Neues Thema');
+  end;
 
   begin
     insert into public.persons (account_id, first_name, last_name)
