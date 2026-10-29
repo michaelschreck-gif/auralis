@@ -4,6 +4,7 @@
 // sowohl von der Server Action (Persistierung) als auch anderswo nutzbar ist.
 
 import Anthropic from "@anthropic-ai/sdk"
+import { CLAUDE_MODEL } from "./providers"
 import type { VisibilityReport } from "./analyzer"
 
 export type GeneratedRecommendation = {
@@ -110,7 +111,7 @@ Regeln:
 
   try {
     const message = await client.messages.create({
-      model: "claude-sonnet-4-5",
+      model: CLAUDE_MODEL,
       max_tokens: 1024,
       system,
       messages: [{ role: "user", content: prompt }],
