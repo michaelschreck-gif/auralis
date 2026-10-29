@@ -1,36 +1,49 @@
 # DigitalHalo (Repo: auralis)
 
-Misst, wie KI-Systeme (Claude, GPT-4o, Perplexity, Gemini) eine Person oder Marke wahrnehmen, und verdichtet das zum **Halo Score**.
-Live: Webseite https://digital-halo.de · Tool https://app.digital-halo.de · Admin https://admin.digital-halo.de (Repo admin-auralis) · Staging https://staging.digital-halo.de
+Misst, wie KI-Systeme (Claude, GPT-4o, Perplexity, Gemini) und Google eine Person wahrnehmen, und verdichtet das zum **Halo Score** (0–100).
+Live: Webseite https://digital-halo.de · Tool https://app.digital-halo.de · Admin https://admin.digital-halo.de (`/admin` dieser App) · Staging https://staging.digital-halo.de
 
 Die Aufteilung macht `proxy.ts` (Regeln in `lib/domains.ts`), aktiv sobald `NEXT_PUBLIC_SITE_URL` und
-`NEXT_PUBLIC_APP_URL` gesetzt sind (nur Production). `/api` und `/badge` laufen auf beiden Domains.
-DNS liegt bei Strato (`app` → CNAME auf Vercel), Funktionen laufen in `fra1`.
+`NEXT_PUBLIC_APP_URL` gesetzt sind (nur Production); mit `NEXT_PUBLIC_ADMIN_URL` zeigt die Admin-Domain auf `/admin`.
+`/api` und `/badge` laufen auf allen Domains. DNS liegt bei Strato, Funktionen laufen in `fra1`.
 
 ## Stack
 
-Next.js (App Router) · TypeScript · Tailwind v4 · Supabase (Auth + Postgres) · Vercel (Auto-Deploy bei Push auf `main`).
+Next.js 16 (App Router, `proxy.ts`) · TypeScript · Tailwind v4 · Supabase (Auth + Postgres) · Vercel (Auto-Deploy bei Push auf `main`).
 
-## Zwei Abläufe im Tool
+## Aufbau (seit Neuaufbau 2026-10, Plan: `docs/neuaufbau-plan.md`)
 
-Der Tarif (`profiles.plan`) entscheidet über die Oberfläche:
+**Konto** (wer verwaltet) und **Person** (wer gemessen wird) sind getrennt. Ein Konto ist *Einzelperson* oder *Team*;
+der Team-Owner verwaltet alle Personen, jede Person kann einen eigenen Login bekommen und sieht dann nur sich.
+Zugriff läuft in der Datenbank überall über `can_access_person(person_id)`.
 
-- **Free / Starter / Pro** – persönlicher Halo Score (`components/OwnDashboard.tsx`, `Cockpit.tsx`).
-- **Enterprise** – Team-Übersicht mit Personenliste (`app/dashboard/team`, `lib/team.ts`, `lib/sub-accounts.ts`).
+| Pfad | Inhalt |
+| --- | --- |
+| `/registrieren`, `/start` | Registrierung, Assistent (Konto-Typ → Name → Region → Themen → erste Messung) |
+| `/weiter` | Einstieg nach dem Login (Team-Owner → `/personen`, sonst eigene Person) |
+| `/personen` | Team: Personen, hinzufügen, Zugang einladen |
+| `/p/[id]` | Halo Score; Unterseiten `ki`, `google`, `wettbewerber`, `massnahmen`, `persona`, `einstellungen` |
+| `/konto` | Konto, API-Schlüssel |
+| `/admin` | Übersicht/Messbetrieb, Konten, Nutzer, Audit-Log, Kalibrierung (nur `app_users.is_admin`) |
+| `/api/v2` | Öffentliche API (Doku `/docs/api`); `/api/v1` antwortet mit 410 |
+| `/u/[slug]`, `/badge/[slug]` | Öffentliches Profil und Badge je Person |
 
-## So entsteht der Score (`lib/auralis/`)
+Alte Pfade (`/dashboard`, `/settings`, `/onboarding`) leiten auf `/weiter`.
+
+## So entsteht der Score
 
 | Baustein | Datei |
 | --- | --- |
-| Fragen-Matrix (Absicht × Rolle × Formulierung, feste Intent-Gewichte) | `query-matrix.ts` |
-| Zielmärkte (Sprache, Region, Standort-Hinweis; Tarif-Limits) | `markets.ts` |
-| Messlauf: Modelle × Märkte × Wiederholungen, Worker-Pool, Zeitbudget | `runner.ts` |
-| Hintergrund-Jobs (`analysis_jobs`, `after()`) | `jobs.ts`, `app/api/analyze`, `app/api/internal/run-job` |
-| Modell-Gewichtung nach Reichweite (Annahme, anpassbar) | `model-weights.ts` |
-| Schwankungsbreite über Messrunden | `stability.ts` |
-| Gleitender Durchschnitt (28 Tage) | `smoothing.ts` |
-| Kontrollpersonen / Drift-Erkennung (täglicher Cron) | `calibration.ts`, `app/api/cron/calibrate`, `/admin/calibration` |
-| Master-Scores (GEO, Thought Leadership, Digitale Autorität) | `master-scores.ts` |
+| Halo Score: KI 50 % · Google 30 % · Wahrnehmung 20 %, fehlende Säulen werden umgerechnet | `lib/halo/score.ts` |
+| Messung je Thema, Jobs (`after()`), Laden für die Seiten | `lib/halo/measure.ts`, `jobs.ts`, `load.ts`, `details.ts` |
+| Messdesign und Limits | `lib/halo/config.ts` |
+| Messkern: Modelle × Märkte × Runden, Worker-Pool, Zeitbudget | `lib/auralis/runner.ts` (`measureTarget`) |
+| Fragen-Matrix, Zielmärkte | `lib/auralis/query-matrix.ts`, `markets.ts` |
+| Namens-Erkennung, Report | `lib/auralis/analyzer.ts` |
+| Modell-Gewichtung, Schwankungsbreite | `lib/auralis/model-weights.ts`, `stability.ts` |
+| Anbieter (Claude, GPT-4o, Perplexity, Gemini) mit Neuversuch | `lib/auralis/providers.ts`, `http-retry.ts` |
+| Google-Sichtbarkeit (DataForSEO) | `lib/auralis/seo-providers.ts`, `seo-score.ts` |
+| Kontrollpersonen / Drift-Erkennung (täglicher Cron) | `lib/auralis/calibration.ts`, `app/api/cron/calibrate`, `/admin/calibration` |
 
 ## Entwicklung
 
@@ -38,14 +51,19 @@ Der Tarif (`profiles.plan`) entscheidet über die Oberfläche:
 npm install
 npm run dev     # lokal
 npm test        # Unit-Tests (lib/**/*.test.ts, ohne LLM-Aufrufe)
-npx tsc --noEmit && npx eslint app components lib
+npx tsc --noEmit
 ```
 
-Umgebungsvariablen: Supabase-Keys, `ANTHROPIC_API_KEY` (Pflicht), optional `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`, `GOOGLE_AI_API_KEY`, `CRON_SECRET`.
+Umgebungsvariablen: Supabase-Keys, `ANTHROPIC_API_KEY` (Pflicht), optional `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`,
+`GOOGLE_AI_API_KEY`, `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`, `ELEVENLABS_API_KEY`, `CRON_SECRET`,
+Domains `NEXT_PUBLIC_SITE_URL`/`NEXT_PUBLIC_APP_URL`/`NEXT_PUBLIC_ADMIN_URL`, `SIGNUP_OPEN=true` öffnet die Registrierung in Production.
 
 ## Datenbank
 
-Migrationen liegen in `supabase/migrations/` und bauen eine leere Datenbank vollständig auf. Gebündelte, mehrfach ausführbare Fassung offener Migrationen: `supabase/manual/`.
+`supabase/migrations/` baut eine leere Datenbank vollständig auf (`20261029120000_halo_v2.sql` + Folgemigrationen),
+Zugriffstests in `supabase/tests/access_rules.sql`. Die alten Migrationen liegen in `supabase/migrations-legacy/`.
+Typen von Hand gepflegt in `lib/supabase/halo.types.ts` (jede Tabelle braucht `Relationships`).
+Umschaltung von Production: `supabase/manual/cutover_production.sql` (archiviert das alte Schema nach `legacy_v1`).
 
 ## Staging
 
