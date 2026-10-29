@@ -1,7 +1,7 @@
 # DigitalHalo (Repo: auralis)
 
 Misst, wie KI-Systeme (Claude, GPT-4o, Perplexity, Gemini) eine Person oder Marke wahrnehmen, und verdichtet das zum **Halo Score**.
-Live: Webseite https://digital-halo.de · Tool https://app.digital-halo.de · Admin-App (separat): admin-auralis
+Live: Webseite https://digital-halo.de · Tool https://app.digital-halo.de · Admin https://admin.digital-halo.de (Repo admin-auralis) · Staging https://staging.digital-halo.de
 
 Die Aufteilung macht `proxy.ts` (Regeln in `lib/domains.ts`), aktiv sobald `NEXT_PUBLIC_SITE_URL` und
 `NEXT_PUBLIC_APP_URL` gesetzt sind (nur Production). `/api` und `/badge` laufen auf beiden Domains.
@@ -45,7 +45,15 @@ Umgebungsvariablen: Supabase-Keys, `ANTHROPIC_API_KEY` (Pflicht), optional `OPEN
 
 ## Datenbank
 
-Migrationen liegen in `supabase/migrations/`. Gebündelte, mehrfach ausführbare Fassung offener Migrationen: `supabase/manual/`.
+Migrationen liegen in `supabase/migrations/` und bauen eine leere Datenbank vollständig auf. Gebündelte, mehrfach ausführbare Fassung offener Migrationen: `supabase/manual/`.
+
+## Staging
+
+`staging.digital-halo.de` zeigt den Branch `staging` (Vercel Preview, Domain an den Branch gebunden) mit eigener
+Supabase-Datenbank `halo-staging` (`oidlxtliwwosjqfrlcmy`, Frankfurt). Die Supabase-Variablen sind in Vercel nur für
+Preview + Branch `staging` überschrieben; alle anderen Previews nutzen weiter die Produktions-Werte.
+Ablauf: Änderung auf `staging` pushen, prüfen, dann per PR nach `main`. Neue Migrationen auf beiden Datenbanken ausführen.
+Die LLM-Keys gelten auch für Staging (echte Kosten), Cron-Jobs laufen nur in Production.
 
 ## Cron (`vercel.json`)
 
