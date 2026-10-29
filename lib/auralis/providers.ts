@@ -13,10 +13,14 @@
  *
  * Jeder Provider ist optional: wenn der zugehörige API-Key fehlt, wird der
  * Provider gegenüber dem Runner als "nicht verfügbar" gemeldet und übersprungen.
+ *
+ * Kurzzeitige Fehler (429/5xx) werden wiederholt: die fetch-Provider über
+ * fetchWithRetry, Claude über die eingebauten Retries des Anthropic-SDK.
  */
 
 import Anthropic from "@anthropic-ai/sdk"
 import type { Database } from "@/lib/supabase/database.types"
+import { fetchWithRetry } from "./http-retry"
 
 type PlanType = Database["public"]["Enums"]["plan_type"]
 
@@ -85,7 +89,7 @@ export const openaiProvider: LLMProvider = {
   async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS) {
     const apiKey = process.env.OPENAI_API_KEY
     if (!apiKey) throw new Error("OPENAI_API_KEY missing")
-    const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    const res = await fetchWithRetry("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -123,7 +127,7 @@ export const perplexityProvider: LLMProvider = {
     if (!apiKey) throw new Error("PERPLEXITY_API_KEY missing")
 
     const send = (withLocation: boolean) =>
-      fetch("https://api.perplexity.ai/chat/completions", {
+      fetchWithRetry("https://api.perplexity.ai/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -169,7 +173,7 @@ export const geminiProvider: LLMProvider = {
     if (!apiKey) throw new Error("GOOGLE_AI_API_KEY missing")
     const url =
       `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${encodeURIComponent(apiKey)}`
-    const res = await fetch(url, {
+    const res = await fetchWithRetry(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
