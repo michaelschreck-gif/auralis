@@ -2,9 +2,8 @@
  * Datenbank-Typen für das neue Schema halo_v2
  * (supabase/migrations/20261029120000_halo_v2.sql).
  *
- * Steht neben database.types.ts (altes Schema), bis der alte Code in Phase 8
- * entfernt ist. Von Hand gepflegt: jede Tabelle braucht Row, Insert, Update
- * und Relationships, sonst wird der ganze Database-Typ zu `never`.
+ * Von Hand gepflegt: jede Tabelle braucht Row, Insert, Update und
+ * Relationships, sonst wird der ganze Database-Typ zu `never`.
  */
 
 export type Json =

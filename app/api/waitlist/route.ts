@@ -4,10 +4,10 @@
 // Direct self-service registration is disabled on the public site for now —
 // this is the only public entry point that writes a new record for a
 // visitor. Uses the service-role client since there is no anon INSERT
-// policy on waitlist_signups (see supabase/migrations/*_waitlist.sql).
+// policy on waitlist_signups (see supabase/migrations/20261029120000_halo_v2.sql).
 
 import { NextRequest, NextResponse } from "next/server"
-import { createSupabaseServiceClient } from "@/lib/supabase/client"
+import { createHaloServiceClient } from "@/lib/supabase/halo"
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
@@ -26,7 +26,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Bitte gib eine gültige E-Mail-Adresse ein." }, { status: 400 })
     }
 
-    const supabase = createSupabaseServiceClient()
+    const supabase = createHaloServiceClient()
 
     const { error } = await supabase
       .from("waitlist_signups")

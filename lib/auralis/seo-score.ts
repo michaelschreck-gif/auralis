@@ -9,13 +9,18 @@
  *   on-site (Search Console): Wie performt die EIGENE Domain für ihre Queries?
  *                         → Ø-Position, Klick-/Impressions-Engagement
  *
- * Diese Datei ist bewusst unabhängig von master-scores.ts (eigene Pipeline,
- * eigene Tabelle seo_reports). Sie verarbeitet auch TEILWEISE vorhandene
- * Signale: fehlt eine Quelle (z.B. nur SERP, keine Search Console), werden nur
- * die vorhandenen Gewichte genutzt und renormiert — der Score bleibt fair.
+ * Sie verarbeitet auch TEILWEISE vorhandene Signale: fehlt eine Quelle (z.B.
+ * nur SERP, keine Search Console), werden nur die vorhandenen Gewichte genutzt
+ * und renormiert — der Score bleibt fair.
  */
 
-import type { Band } from "./master-scores"
+export type Band = {
+  label: string
+  /** inklusive Untergrenze */
+  min: number
+  /** inklusive Obergrenze */
+  max: number
+}
 
 export type SeoFactorKey =
   | "serpPresence"   // Anteil der Themen, bei denen die Person in Google-Organic auftaucht

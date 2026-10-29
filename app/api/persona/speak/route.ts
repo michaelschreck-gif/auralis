@@ -9,7 +9,7 @@
  */
 
 import { NextResponse } from "next/server"
-import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { createHaloServerClient } from "@/lib/supabase/halo"
 import { synthesizeSpeech, isVoiceConfigured } from "@/lib/auralis/voice"
 
 export const runtime = "nodejs"
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
 
   let supabase
   try {
-    supabase = await createSupabaseServerClient()
+    supabase = await createHaloServerClient()
   } catch {
     return NextResponse.json({ error: "Auth client failed" }, { status: 500 })
   }

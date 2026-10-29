@@ -7,10 +7,12 @@
  * Läuft mit dem Service-Client; wer einen Job anlegen darf, prüft die Route.
  */
 
-import { JOB_STALE_MS } from "../auralis/jobs"
 import type { HaloClient } from "../supabase/halo"
 import type { TriggerType } from "../supabase/halo.types"
 import { runMeasurement } from "./measure"
+
+/** Jobs, die länger als das in queued/running hängen, gelten als abgestürzt. */
+const JOB_STALE_MS = 10 * 60 * 1000
 
 export async function enqueueJob(
   service: HaloClient,

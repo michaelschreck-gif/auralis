@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server"
+import { createHaloServerClient } from "@/lib/supabase/halo"
 import Link from "next/link"
 import type { Metadata } from "next"
 
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
 export default async function Home() {
   let isLoggedIn = false
   try {
-    const supabase = await createSupabaseServerClient()
+    const supabase = await createHaloServerClient()
     const { data: { user } } = await supabase.auth.getUser()
     isLoggedIn = !!user
   } catch {
@@ -26,7 +26,7 @@ export default async function Home() {
   }
   // Eigenständige Webseite: angemeldete Besucher bleiben hier und bekommen nur einen Link ins Tool.
   // Absolute URL, weil das Tool auf app.digital-halo.de läuft (lib/domains.ts); ohne Env relativ.
-  const toolHref = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}${isLoggedIn ? "/dashboard" : "/login"}`
+  const toolHref = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}${isLoggedIn ? "/weiter" : "/login"}`
 
   return (
     <div id="top" className="min-h-screen bg-white text-[#0E1916]">

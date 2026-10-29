@@ -1,19 +1,10 @@
 import { createBrowserClient } from "@supabase/ssr"
-import { createClient } from "@supabase/supabase-js"
-import type { Database } from "./database.types"
+import type { HaloDatabase } from "./halo.types"
 
+/** Supabase-Client im Browser (Login, Registrierung, Passwort setzen). */
 export function createSupabaseBrowserClient() {
-  return createBrowserClient<Database>(
+  return createBrowserClient<HaloDatabase>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  )
-}
-
-// Server-side only — uses service role key, bypasses RLS
-export function createSupabaseServiceClient() {
-  return createClient<Database>(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    { auth: { autoRefreshToken: false, persistSession: false } }
   )
 }
