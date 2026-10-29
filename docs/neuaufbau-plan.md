@@ -67,6 +67,7 @@ Einzelperson-Konten landen nach dem Login direkt auf `/p/[id]`; `/personen` gibt
 | 0 | Teilweise: Staging-DB geleert, Arbeit auf `staging`. **Offen:** Supabase-Schlüssel (`NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`) für Preview/`staging` in Vercel |
 | 1 | **Fertig (2026-10-29):** `halo_v2` auf `halo-staging` eingespielt (18 Tabellen, alle mit RLS, 27 Policies); `access_rules.sql` bestanden; Typen in `lib/supabase/halo.types.ts` |
 | 2 | **Code fertig (2026-10-29), Live-Prüfung offen:** Messkern `measureTarget()` aus dem Runner gelöst; `lib/halo/` mit `measure.ts`, `jobs.ts`, `score.ts` (+ Tests), `load.ts`, `config.ts`; Cron, `run-job`, `POST /api/measure/[topicId]`, `GET /api/jobs/[id]` auf halo_v2. Echte Messung auf Staging erst mit den Staging-Schlüsseln möglich (Abnahme dann in Phase 3) |
+| 3 | **Code fertig (2026-10-29), Live-Prüfung offen:** `/registrieren` (offen auf Preview/lokal, in Production nur mit `SIGNUP_OPEN=true`), Assistent `/start` (Konto-Typ, Person, Region, Themen, erste Messung mit Fortschritt, Ergebnis), `/weiter` als Einstieg nach Login/Callback, vorläufige Seite `/p/[id]`; Proxy und Domain-Regeln um die neuen Pfade ergänzt |
 
 ## Phasen
 

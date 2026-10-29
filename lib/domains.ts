@@ -1,7 +1,7 @@
 // lib/domains.ts
 // Aufteilung Webseite ↔ Tool auf zwei Domains:
 //   digital-halo.de      → Webseite (Landingpage, Warteliste, Kontakt, Legal, API-Doku, öffentliche Profile)
-//   app.digital-halo.de  → Tool (Login, Dashboard, Einstellungen, Onboarding, Admin)
+//   app.digital-halo.de  → Tool (Login, Registrierung, Assistent, Personen, Konto, Admin)
 // Aktiv nur, wenn NEXT_PUBLIC_SITE_URL und NEXT_PUBLIC_APP_URL gesetzt sind und die Anfrage
 // auf einem dieser beiden Hosts ankommt. *.vercel.app, Previews und localhost bleiben unverändert.
 // /api/* und /badge/* laufen auf beiden Domains (bestehende API-Integrationen und eingebettete Badges).
@@ -22,7 +22,10 @@ export function domainConfigFromEnv(env: Record<string, string | undefined> = pr
   }
 }
 
-const TOOL_PREFIXES = ["/dashboard", "/onboarding", "/settings", "/login", "/auth", "/admin"]
+const TOOL_PREFIXES = [
+  "/dashboard", "/onboarding", "/settings", "/login", "/auth", "/admin",
+  "/registrieren", "/start", "/weiter", "/p", "/personen", "/konto",
+]
 const SITE_PREFIXES = ["/warteliste", "/kontakt", "/legal", "/docs", "/u"]
 
 function matchesPrefix(pathname: string, prefixes: string[]): boolean {
@@ -45,7 +48,7 @@ export function crossDomainRedirect(host: string, pathname: string, search: stri
   const onApp = host === cfg.appHost
 
   if (onSite && isToolPath(pathname)) return cfg.appOrigin + pathname + search
-  if (onApp && pathname === "/") return cfg.appOrigin + "/dashboard" + search
+  if (onApp && pathname === "/") return cfg.appOrigin + "/weiter" + search
   if (onApp && isSitePath(pathname)) return cfg.siteOrigin + pathname + search
   return null
 }

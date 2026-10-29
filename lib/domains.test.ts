@@ -23,6 +23,11 @@ test("Webseite: Tool-Pfade gehen auf app-Domain, mit Query", () => {
   assert.equal(crossDomainRedirect("digital-halo.de", "/dashboard/geo", "?x=1", cfg), "https://app.digital-halo.de/dashboard/geo?x=1")
   assert.equal(crossDomainRedirect("www.digital-halo.de", "/settings", "", cfg), "https://app.digital-halo.de/settings")
   assert.equal(crossDomainRedirect("digital-halo.de", "/auth/callback", "?code=abc", cfg), "https://app.digital-halo.de/auth/callback?code=abc")
+  for (const p of ["/registrieren", "/start", "/weiter", "/p/123", "/personen", "/konto"]) {
+    assert.equal(crossDomainRedirect("digital-halo.de", p, "", cfg), `https://app.digital-halo.de${p}`, p)
+  }
+  // keine Präfix-Falle: /preise ist kein Tool-Pfad (beginnt nur mit /p)
+  assert.equal(crossDomainRedirect("digital-halo.de", "/preise", "", cfg), null)
 })
 
 test("Webseite: eigene Seiten, API und Badges bleiben", () => {
@@ -33,8 +38,8 @@ test("Webseite: eigene Seiten, API und Badges bleiben", () => {
   assert.equal(crossDomainRedirect("digital-halo.de", "/dashboarding", "", cfg), null)
 })
 
-test("App: Startseite → Dashboard, Webseiten-Pfade → Webseite", () => {
-  assert.equal(crossDomainRedirect("app.digital-halo.de", "/", "", cfg), "https://app.digital-halo.de/dashboard")
+test("App: Startseite → /weiter, Webseiten-Pfade → Webseite", () => {
+  assert.equal(crossDomainRedirect("app.digital-halo.de", "/", "", cfg), "https://app.digital-halo.de/weiter")
   assert.equal(crossDomainRedirect("app.digital-halo.de", "/warteliste", "", cfg), "https://digital-halo.de/warteliste")
   assert.equal(crossDomainRedirect("app.digital-halo.de", "/legal/agb", "", cfg), "https://digital-halo.de/legal/agb")
   for (const p of ["/dashboard", "/login", "/settings", "/api/v1/me", "/badge/x"]) {
