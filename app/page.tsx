@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation"
 import { createSupabaseServerClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import type { Metadata } from "next"
@@ -25,7 +24,9 @@ export default async function Home() {
   } catch {
     // build time
   }
-  if (isLoggedIn) redirect("/dashboard")
+  // Eigenständige Webseite: angemeldete Besucher bleiben hier und bekommen nur einen Link ins Tool.
+  // Absolute URL, weil das Tool auf app.digital-halo.de läuft (lib/domains.ts); ohne Env relativ.
+  const toolHref = `${process.env.NEXT_PUBLIC_APP_URL ?? ""}${isLoggedIn ? "/dashboard" : "/login"}`
 
   return (
     <div id="top" className="min-h-screen bg-white text-[#0E1916]">
@@ -44,9 +45,9 @@ export default async function Home() {
                 <a href="#faq" className="text-white/80 hover:text-white transition-colors">FAQ</a>
               </div>
               <div className="flex items-center gap-2.5">
-                <Link href="/login" className="text-sm px-3.5 py-2 rounded-full text-white hover:bg-white/10 transition-colors font-medium">
-                  Anmelden
-                </Link>
+                <a href={toolHref} className="text-sm px-3.5 py-2 rounded-full text-white hover:bg-white/10 transition-colors font-medium">
+                  {isLoggedIn ? "Zum Dashboard" : "Anmelden"}
+                </a>
                 <Link href="/warteliste" className="text-sm px-4 py-2 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] transition-colors font-semibold">
                   Warteliste
                 </Link>
