@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { requireAdminPage } from "@/lib/halo/admin"
 import { publicErrorMessage } from "@/lib/auralis/errors"
+import { measurementProviders } from "@/lib/halo/config"
 import { card, formatDate } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
@@ -54,6 +55,10 @@ export default async function AdminOverview() {
     e.len += l
     perModel.set(a.model, e)
   }
+  // Eingerichtete Modelle ohne Antwort ausdrücklich zeigen – sonst fällt ein Ausfall nicht auf.
+  for (const p of measurementProviders()) {
+    if (!perModel.has(p.modelTag)) perModel.set(p.modelTag, { total: 0, empty: 0, len: 0 })
+  }
   const lastCron = lastScheduled.data?.[0]
 
   return (
@@ -79,6 +84,14 @@ export default async function AdminOverview() {
               <table className="w-full text-sm mt-3">
                 <tbody className="divide-y divide-[#F0EAE0]">
                   {[...perModel.entries()].map(([model, e]) => {
+                    if (e.total === 0) {
+                      return (
+                        <tr key={model}>
+                          <td className="py-2 text-[#C8431F] font-medium">{model}</td>
+                          <td className="py-2 text-right text-[#C8431F] font-medium" colSpan={2}>keine Antworten – Anbieter prüfen</td>
+                        </tr>
+                      )
+                    }
                     const bad = e.empty / e.total > 0.2
                     return (
                       <tr key={model}>
