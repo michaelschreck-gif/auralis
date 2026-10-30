@@ -85,7 +85,8 @@ function History({ points }: { points: HistoryPoint[] }) {
 
 function delta(v: number | null) {
   if (v === null || v === 0) return null
-  return <Text style={{ color: v > 0 ? C.good : C.bad }}>{v > 0 ? `▲ +${v}` : `▼ ${v}`}</Text>
+  // Ohne Pfeile: die Standardschrift (Helvetica) kennt ▲/▼ nicht.
+  return <Text style={{ color: v > 0 ? C.good : C.bad }}>{v > 0 ? `+${v}` : `−${Math.abs(v)}`}</Text>
 }
 
 export function HaloReport(p: HaloReportProps) {
