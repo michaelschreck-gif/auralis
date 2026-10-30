@@ -211,6 +211,29 @@ export type AuditLogRow = {
   created_at: string
 }
 
+export type GoldSentiment = "positive" | "neutral" | "negative"
+
+/** Prüfset: echte Antwort + Bewertung von Hand (supabase/migrations/20261030120000_gold_answers.sql). */
+export type GoldAnswerRow = {
+  id: string
+  source: "measurement" | "legacy"
+  source_id: string
+  target_name: string
+  topic: string | null
+  model: string | null
+  query_type: string | null
+  prompt: string
+  response: string
+  label_mentioned: boolean | null
+  label_position: number | null
+  label_sentiment: GoldSentiment | null
+  label_note: string | null
+  excluded: boolean
+  labeled_by: string | null
+  labeled_at: string | null
+  created_at: string
+}
+
 export type CalibrationRunRow = {
   id: string
   entry_key: string
@@ -323,6 +346,14 @@ export type HaloDatabase = {
         WithOptional<CalibrationRunRow, "id" | "per_model" | "flag" | "flag_detail" | "measured_at">
       >
       waitlist_signups: Table<WaitlistSignupRow, WithOptional<WaitlistSignupRow, "id" | "source" | "created_at">>
+      gold_answers: Table<
+        GoldAnswerRow,
+        WithOptional<
+          GoldAnswerRow,
+          | "id" | "topic" | "model" | "query_type" | "label_mentioned" | "label_position" | "label_sentiment"
+          | "label_note" | "excluded" | "labeled_by" | "labeled_at" | "created_at"
+        >
+      >
     }
     Views: { [_ in never]: never }
     Functions: {
