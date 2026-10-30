@@ -146,3 +146,19 @@ test("Platz unter den organischen Treffern (rank_group), nicht auf der Seite (ra
   assert.equal(evaluateTopicSearch(items, lobo).position, 2)
   assert.deepEqual(evaluateNameSearch(items, lobo).results.map(r => r.rank), [1, 2])
 })
+
+test("KI-Übersicht: Name im verschachtelten Text oder in den Quellen zählt", () => {
+  const nested: SerpItem = {
+    type: "ai_overview",
+    items: [{ type: "ai_overview_element", text: "Bekannte Stimmen sind Sascha Lobo und andere." }],
+  } as unknown as SerpItem
+  assert.equal(evaluateNameSearch([nested], lobo).aiOverview, true)
+  const viaReference = {
+    type: "ai_overview",
+    items: [{ type: "ai_overview_element", text: "Digitalisierung verändert vieles." }],
+    references: [{ type: "ai_overview_reference", title: "Sascha Lobo über KI", domain: "spiegel.de" }],
+  } as unknown as SerpItem
+  assert.equal(evaluateTopicSearch([viaReference], lobo).aiOverview, true)
+  const other = { type: "ai_overview", items: [{ text: "Gunter Dueck" }] } as unknown as SerpItem
+  assert.equal(evaluateNameSearch([other], lobo).aiOverview, false)
+})
