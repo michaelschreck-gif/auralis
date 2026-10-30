@@ -17,7 +17,7 @@ export async function measureGoogle(personId: string): Promise<ActionResult> {
   if (!user) return { ok: false, error: "Bitte melde dich erneut an." }
 
   const [{ data: person }, { data: topics }] = await Promise.all([
-    db.from("persons").select("first_name, last_name, market, website_url").eq("id", personId).maybeSingle(),
+    db.from("persons").select("first_name, last_name, market, website_url, context").eq("id", personId).maybeSingle(),
     db.from("topics").select("name").eq("person_id", personId).eq("is_active", true),
   ])
   if (!person) return { ok: false, error: "Person nicht gefunden." }
@@ -27,6 +27,7 @@ export async function measureGoogle(personId: string): Promise<ActionResult> {
     targetName: personDisplayName(person),
     topics: topics.map(t => t.name),
     websiteUrl: person.website_url,
+    context: person.context,
     language: MARKETS[person.market].language,
   })
   if (outcome.sourcesUsed.length === 0) {

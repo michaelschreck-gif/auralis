@@ -19,7 +19,7 @@ import {
   evaluateNameSearch,
   evaluateTopicSearch,
   googleSignals,
-  hostOf,
+  personMatcher,
   type NameSearchResult,
   type SerpItem,
 } from "./seo-serp"
@@ -38,8 +38,10 @@ export type SeoRunInput = {
   targetName: string
   /** Themen aus monitoring_schedules.query. */
   topics: string[]
-  /** Eigene Domain (für GSC), falls vorhanden. */
+  /** Eigene Website – sicherstes Merkmal gegen Namensvettern. */
   websiteUrl?: string | null
+  /** Rolle/Unternehmen – unterscheidet von Namensvettern. */
+  context?: string | null
   /** Sprache für regionale Suche. */
   language?: string
 }
@@ -61,8 +63,21 @@ function localeFor(language?: string): { language_code: string; location_name: s
 
 type SerpCall = { ok: true; items: SerpItem[] } | { ok: false; error: string }
 
-/** Eine Google-Suche (erste Ergebnisseite). DataForSEO meldet Fehler auch bei HTTP 200 im Body. */
+/** Vorübergehende Fehler (Serverfehler bei DataForSEO oder Google), die ein Neuversuch lösen kann. */
+function isTransient(error: string): boolean {
+  return /^HTTP 5|internal|server error|timeout|temporar/i.test(error)
+}
+
+/** Eine Google-Suche mit einem Neuversuch bei vorübergehenden Fehlern. */
 async function searchGoogle(keyword: string, auth: string, locale: { language_code: string; location_name: string }): Promise<SerpCall> {
+  const first = await searchGoogleOnce(keyword, auth, locale)
+  if (first.ok || !isTransient(first.error)) return first
+  await new Promise(r => setTimeout(r, 1500))
+  return searchGoogleOnce(keyword, auth, locale)
+}
+
+/** Eine Google-Suche (erste Ergebnisseite). DataForSEO meldet Fehler auch bei HTTP 200 im Body. */
+async function searchGoogleOnce(keyword: string, auth: string, locale: { language_code: string; location_name: string }): Promise<SerpCall> {
   try {
     const res = await fetch("https://api.dataforseo.com/v3/serp/google/organic/live/advanced", {
       method: "POST",
@@ -101,11 +116,10 @@ export const serpProvider: SeoProvider = {
     if (!login || !password) return { ok: false, reason: "not_configured" }
 
     const name = sanitizeTargetName(input.targetName)
-    const nameLower = name.toLowerCase()
-    const ownHost = hostOf(input.websiteUrl)
+    const topics = input.topics.filter(Boolean)
+    const matcher = personMatcher({ name, websiteUrl: input.websiteUrl, context: input.context, topics })
     const locale = localeFor(input.language)
     const auth = "Basic " + Buffer.from(`${login}:${password}`).toString("base64")
-    const topics = input.topics.filter(Boolean)
 
     const [nameCall, ...topicCalls] = await Promise.all([
       searchGoogle(name, auth, locale),
@@ -113,7 +127,7 @@ export const serpProvider: SeoProvider = {
     ])
     if (!nameCall.ok) return { ok: false, reason: "error", message: `DataForSEO: ${nameCall.error}` }
 
-    const nameSearch = evaluateNameSearch(nameCall.items, nameLower, ownHost)
+    const nameSearch = evaluateNameSearch(nameCall.items, matcher)
     const perTopic: SeoTopicResult[] = []
     const answered: ReturnType<typeof evaluateTopicSearch>[] = []
     topics.forEach((topic, i) => {
@@ -122,7 +136,7 @@ export const serpProvider: SeoProvider = {
         perTopic.push({ topic, position: null, error: call.error })
         return
       }
-      const r = evaluateTopicSearch(call.items, nameLower, ownHost)
+      const r = evaluateTopicSearch(call.items, matcher)
       answered.push(r)
       perTopic.push({ topic, position: r.position, url: r.url })
     })
