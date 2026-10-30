@@ -3,7 +3,7 @@
 
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { extractPersons, buildImpulses, impulseScore, looksLikePersonName } from "./impulses.ts"
+import { extractPersons, buildImpulses, cleanContext, impulseScore, looksLikePersonName } from "./impulses.ts"
 
 const GEMINI_STYLE = `Hier sind einige führende Stimmen:
 
@@ -97,4 +97,22 @@ test("buildImpulses: Platz zählt die eigene Person mit, Sortierung nach Score",
   assert.equal(felix.topics[0].averagePosition, 1.7) // Plätze 3, 1, 1
   assert.equal(ben.topics[0].averagePosition, 2)
   assert.deepEqual(summary.people.map(p => p.name), ["Felix Plötz", "Ben Schulz"])
+})
+
+test("Beschreibung: Klammer-Zusatz weg, Satzmitte und Abgeschnittenes verworfen", () => {
+  assert.equal(cleanContext("(DFKI): einer der prägenden KI-Forscher"), null)
+  assert.equal(cleanContext("(Schweiz/Zürich): Futurist mit Fokus auf Technologie und Ethik."), "Futurist mit Fokus auf Technologie und Ethik.")
+  assert.equal(cleanContext("(Medien, KI) und Prof. Dr. Armin Grunwald sind oft zu hören."), null)
+  assert.equal(cleanContext("Der Investor und G"), null)
+})
+
+test("buildImpulses: unter 10 % der Antworten zu einem Thema fällt raus", () => {
+  const answers = Array.from({ length: 30 }, (_, i) => ({
+    prompt: `q${i}`,
+    response: i < 2 ? "1. **Gerd Leonhard** – Futurist\n2. **Miriam Meckel** – Professorin" : i < 11 ? "1. **Miriam Meckel** – Professorin" : "keine Namen",
+    topic: "Digitalisierung",
+  }))
+  const summary = buildImpulses(answers, "Sascha Lobo")
+  // Leonhard: 2 von 30 (< 3) → raus; Meckel: 11 von 30 → drin
+  assert.deepEqual(summary.people.map(p => p.name), ["Miriam Meckel"])
 })

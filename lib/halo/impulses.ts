@@ -226,9 +226,24 @@ export function detectPatterns(texts: string[]): PatternKey[] {
 }
 
 /**
+ * Beschreibung aufräumen: Klammer-Zusätze am Anfang („(DFKI): …“) und
+ * Satzzeichen entfernen. Liefert null, wenn kein ganzer Satz übrig bleibt
+ * (z.B. Satzmitte „und Prof. …“ oder abgeschnittene Antworten).
+ */
+export function cleanContext(raw: string): string | null {
+  const c = raw.replace(/^\s*\([^)]*\)\s*/, "").replace(/^[\s:,–—-]+/, "").trim()
+  if (c.length < 25 || !/^[A-ZÄÖÜ„"»]/.test(c)) return null
+  return c
+}
+
+/** Mindestanteil der Antworten zu einem Thema, in denen jemand genannt sein muss. */
+const MIN_SHARE = 0.1
+
+/**
  * Fasst alle KI-Antworten zu einer Liste von Impulsen zusammen, sortiert nach
- * Score. Nur Personen mit mindestens `minMentions` Nennungen – sonst hätte eine
- * einzelne Erwähnung auf Platz 1 schon einen hohen Positionsanteil.
+ * Score. Je Thema zählt nur, wer in mindestens 10 % der Antworten (und
+ * mindestens `minMentions`-mal) genannt wird – sonst hätte eine einzelne
+ * Erwähnung auf Platz 1 schon einen hohen Positionsanteil.
  */
 export function buildImpulses(
   sources: ImpulseSource[],
@@ -238,7 +253,7 @@ export function buildImpulses(
   const limit = options.limit ?? 20
   const minMentions = options.minMentions ?? 2
   const answersPerTopic = new Map<string, number>()
-  type Entry = { name: string; mentions: number; byTopic: Map<string, number[]>; contexts: string[] }
+  type Entry = { name: string; mentions: number; byTopic: Map<string, number[]>; contexts: string[]; rawContexts: string[] }
   const byKey = new Map<string, Entry>()
   let answersAnalyzed = 0
 
@@ -251,20 +266,21 @@ export function buildImpulses(
     extractPersons(src.response).forEach((p, index) => {
       if (isSelf(p.name, selfName)) return
       const key = p.name.toLowerCase()
-      const entry = byKey.get(key) ?? { name: p.name, mentions: 0, byTopic: new Map<string, number[]>(), contexts: [] }
+      const entry = byKey.get(key) ?? { name: p.name, mentions: 0, byTopic: new Map<string, number[]>(), contexts: [], rawContexts: [] }
+      if (p.context && entry.rawContexts.length < 4) entry.rawContexts.push(p.context)
       entry.mentions++
       const positions = entry.byTopic.get(topic) ?? []
       positions.push(index + 1)
       entry.byTopic.set(topic, positions)
-      if (p.context && entry.contexts.length < 2 && !entry.contexts.includes(p.context)) {
-        entry.contexts.push(p.context)
+      const context = cleanContext(p.context)
+      if (context && entry.contexts.length < 2 && !entry.contexts.includes(context)) {
+        entry.contexts.push(context)
       }
       byKey.set(key, entry)
     })
   }
 
   const people: Impulse[] = [...byKey.values()]
-    .filter(e => e.mentions >= minMentions)
     .map(e => {
       const topics = [...e.byTopic.entries()]
         .map(([topic, positions]) => {
@@ -272,6 +288,7 @@ export function buildImpulses(
           const averagePosition = Math.round((positions.reduce((a, b) => a + b, 0) / positions.length) * 10) / 10
           return { topic, score: impulseScore(positions.length, answers, averagePosition), mentions: positions.length, answers, averagePosition }
         })
+        .filter(t => t.mentions >= Math.max(minMentions, Math.ceil(t.answers * MIN_SHARE)))
         .sort((a, b) => b.score - a.score)
       return {
         name: e.name,
@@ -279,9 +296,10 @@ export function buildImpulses(
         mentions: e.mentions,
         topics,
         contexts: e.contexts,
-        patterns: detectPatterns(e.contexts),
+        patterns: detectPatterns(e.rawContexts),
       }
     })
+    .filter(p => p.topics.length > 0)
     .sort((a, b) => b.score - a.score || b.mentions - a.mentions || a.name.localeCompare(b.name, "de"))
     .slice(0, limit)
 

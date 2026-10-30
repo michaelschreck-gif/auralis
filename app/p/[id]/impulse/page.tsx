@@ -51,7 +51,7 @@ export default async function ImpulsePage({ params }: { params: Promise<{ id: st
           <section className={`${card} p-5 sm:p-6`}>
             <h2 className="text-sm font-semibold text-[#0E1916]">Stark genannt zu deinen Themen</h2>
             <p className="text-xs text-[#9A9089] mt-0.5">
-              Aus {view.answersAnalyzed} KI-Antworten deiner jüngsten Messungen, nur Personen mit mindestens zwei Nennungen.
+              Aus {view.answersAnalyzed} KI-Antworten deiner jüngsten Messungen. Aufgenommen wird, wer in mindestens 10 % der Antworten zu einem Thema genannt wird.
             </p>
             <ol className="mt-4 divide-y divide-[#F0EAE0]">
               {view.people.map((p, i) => (
