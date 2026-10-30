@@ -62,7 +62,12 @@ export type LLMProvider = {
   isConfigured(): boolean
 }
 
-const DEFAULT_MAX_TOKENS = 600
+/**
+ * Antwortlänge der Messung, gleich für alle Modelle. Bei 600 endeten alle
+ * Claude-Antworten genau am Limit (abgeschnittene Listen, Namen fehlten);
+ * GPT-4o kommt im Schnitt mit ~430 aus. Messung 2026-10-30, measurement_answers.output_tokens.
+ */
+const DEFAULT_MAX_TOKENS = 1000
 
 /**
  * Claude-Modell für Messung UND alle übrigen Claude-Aufrufe (Persona, Chat,
