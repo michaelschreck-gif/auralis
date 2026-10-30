@@ -85,6 +85,11 @@ export default async function GooglePage({ params }: { params: Promise<{ id: str
             Die ersten {nameSearch.total} Treffer bei der Suche nach deinem Namen – {nameSearch.aboutYou} davon handeln von dir.
             {nameSearch.knowledgePanel && " Google zeigt ein Knowledge Panel zu dir."}
           </p>
+          <p className="text-xs text-[#9A9089] mt-1">
+            {nameSearch.unambiguous
+              ? "Google ordnet deinen Namen eindeutig dir zu – jeder Treffer mit deinem Namen zählt."
+              : "Gibt es mehrere Personen mit deinem Namen, zählt ein Treffer nur, wenn auch deine Rolle, ein Thema oder deine Website passt. Trag deine Website in den Einstellungen ein, damit sie sicher erkannt wird."}
+          </p>
           <ol className="mt-4 divide-y divide-[#F0EAE0]">
             {nameSearch.results.map((r, i) => (
               <li key={`${r.url}-${i}`} className="py-2 flex items-start gap-3 text-sm">

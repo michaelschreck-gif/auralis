@@ -10,6 +10,10 @@
 //     – auf welchem Platz steht der erste Treffer über die Person
 //   KI-Übersicht (AI Overview) nennt die Person – in irgendeiner der Suchen
 //
+// Namensvettern: Ein Treffer zählt nur, wenn neben dem Namen ein zweites
+// Merkmal passt (eigene Website, Domain mit dem Namen, Wort aus Rolle/
+// Unternehmen oder Themen) – siehe isAboutPerson.
+//
 // Die Suche nach dem Thema allein misst das bewusst nicht: Dort stehen fast nur
 // Lexika, Behörden und Medien, kaum je eine Person (→ fast alle hätten 0).
 // Reine Funktionen, keine Imports – testbar via `npm test`.
@@ -25,6 +29,8 @@ export type SerpItem = {
   domain?: string
   /** Pfadzeile unter dem Treffer, z. B. „https://saschalobo.com › buecher“. */
   breadcrumb?: string
+  /** Knowledge Panel: Kurzbeschreibung („Deutscher Autor“). */
+  sub_title?: string
   description?: string
   text?: string
 }
@@ -76,18 +82,66 @@ function compactName(nameLower: string): string {
     .replace(/[^a-z0-9]/g, "")
 }
 
+/** Wer gesucht wird – und woran man sie von Namensvettern unterscheidet. */
+export type PersonMatcher = {
+  nameLower: string
+  ownHost: string | null
+  /** Wortstämme aus Rolle/Unternehmen und Themen (siehe personMatcher). */
+  keywords: string[]
+}
+
+const STOP_WORDS = new Set([
+  "und", "oder", "der", "die", "das", "den", "dem", "des", "ein", "eine", "einer", "für", "fuer", "mit", "bei",
+  "von", "vom", "zum", "zur", "auf", "aus", "and", "the", "for", "with", "gmbh", "inc", "ltd",
+])
+
 /**
- * Handelt ein organischer Treffer von der Person? Ja, wenn Titel/Beschreibung
- * den vollen Namen nennen, die Seite die eigene Website ist oder die Domain
- * den Namen enthält (saschalobo.com).
+ * Merkmale zum Unterscheiden von Namensvettern: Wörter ab 4 Buchstaben aus
+ * Rolle/Unternehmen und Themen, gekürzt auf 7 Zeichen, damit auch
+ * Wortformen passen („Digitalisierung“ ↔ „digitaler“, „Analyst“ ↔ „Analysten“).
  */
-export function isAboutPerson(item: SerpItem, nameLower: string, ownHost: string | null): boolean {
-  const hay = `${item.title ?? ""} ${item.description ?? ""}`.toLowerCase()
-  if (containsWholeName(hay, nameLower)) return true
-  const host = siteHost(item)
-  if (ownHost && host === ownHost) return true
+export function personMatcher(input: { name: string; websiteUrl?: string | null; context?: string | null; topics?: string[] }): PersonMatcher {
+  const words = [input.context ?? "", ...(input.topics ?? [])]
+    .join(" ")
+    .toLowerCase()
+    .split(/[^\p{L}\p{N}]+/u)
+    .filter(w => w.length >= 4 && !STOP_WORDS.has(w))
+  return {
+    nameLower: input.name.toLowerCase(),
+    ownHost: hostOf(input.websiteUrl),
+    keywords: [...new Set(words.map(w => w.slice(0, 7)))],
+  }
+}
+
+/** Domain enthält den Namen (saschalobo.com) – ab 8 Buchstaben, sonst zu unsicher. */
+function hostHasName(host: string | null, nameLower: string): boolean {
   const compact = compactName(nameLower)
   return !!host && compact.length >= 8 && host.replace(/[^a-z0-9]/g, "").includes(compact)
+}
+
+/**
+ * Passt ein Merkmal (Rolle, Thema) zum Text? Merkmale, die nur der
+ * Plattformname sind, zählen nicht – sonst wäre beim Thema „LinkedIn“ jedes
+ * fremde LinkedIn-Profil ein Treffer.
+ */
+function matchesKeyword(textLower: string, host: string | null, keywords: string[]): boolean {
+  const hostCompact = (host ?? "").replace(/[^a-z0-9]/g, "")
+  return keywords.some(k => !hostCompact.includes(k) && textLower.includes(k))
+}
+
+/**
+ * Handelt ein organischer Treffer von der Person – und nicht von einem
+ * Namensvetter? Ja bei der eigenen Website oder einer Domain mit dem Namen.
+ * Sonst muss der volle Name in Titel/Beschreibung stehen UND ein Merkmal aus
+ * Rolle/Unternehmen oder Themen. Ohne jedes Merkmal reicht der Name.
+ */
+export function isAboutPerson(item: SerpItem, m: PersonMatcher): boolean {
+  const host = siteHost(item)
+  if (m.ownHost && host === m.ownHost) return true
+  if (hostHasName(host, m.nameLower)) return true
+  const hay = `${item.title ?? ""} ${item.description ?? ""}`.toLowerCase()
+  if (!containsWholeName(hay, m.nameLower)) return false
+  return m.keywords.length === 0 || matchesKeyword(hay, host, m.keywords)
 }
 
 /** Platz unter den organischen Treffern (ohne Knowledge Panel & Co.). */
@@ -117,29 +171,54 @@ export type NameSearchResult = {
   /** Platz der eigenen Website, falls in den Top 10. */
   ownSiteRank: number | null
   knowledgePanel: boolean
+  /**
+   * Name eindeutig: Google zeigt ein passendes Knowledge Panel, ordnet den
+   * Namen also dieser Person zu. Dann reicht der Name (auch für „Name + Thema“);
+   * sonst braucht jeder Treffer ein zweites Merkmal (Namensvettern).
+   */
+  unambiguous: boolean
   aiOverview: boolean
   /** Die Top-Treffer zur Anzeige. */
   results: { rank: number | null; title: string; url: string | null; domain: string | null; aboutYou: boolean }[]
 }
 
-export function evaluateNameSearch(items: SerpItem[], nameLower: string, ownHost: string | null): NameSearchResult {
+/**
+ * Knowledge Panel zur Person: Titel = Name; hat das Panel eine Beschreibung,
+ * muss sie ein Merkmal enthalten (sonst Panel eines bekannten Namensvetters).
+ */
+function hasKnowledgePanel(items: SerpItem[], m: PersonMatcher): boolean {
+  return items.some(it => {
+    if (it.type !== "knowledge_graph" || !containsWholeName((it.title ?? "").toLowerCase(), m.nameLower)) return false
+    const about = `${it.sub_title ?? ""} ${it.description ?? ""}`.trim().toLowerCase()
+    return !about || m.keywords.length === 0 || matchesKeyword(about, null, m.keywords)
+  })
+}
+
+/** Matcher ohne Merkmale: der Name allein reicht (für eindeutige Namen). */
+export function nameOnly(m: PersonMatcher): PersonMatcher {
+  return { ...m, keywords: [] }
+}
+
+export function evaluateNameSearch(items: SerpItem[], m: PersonMatcher): NameSearchResult {
+  const knowledgePanel = hasKnowledgePanel(items, m)
+  const unambiguous = knowledgePanel && m.keywords.length > 0
+  const effective = unambiguous ? nameOnly(m) : m
   const top = organicTop(items)
   const results = top.map(it => ({
     rank: organicRank(it),
     title: it.title ?? "",
     url: it.url ?? null,
     domain: siteHost(it),
-    aboutYou: isAboutPerson(it, nameLower, ownHost),
+    aboutYou: isAboutPerson(it, effective),
   }))
-  const own = ownHost ? top.find(it => siteHost(it) === ownHost) : undefined
+  const own = m.ownHost ? top.find(it => siteHost(it) === m.ownHost) : undefined
   return {
     aboutYou: results.filter(r => r.aboutYou).length,
     total: results.length,
     ownSiteRank: own ? organicRank(own) : null,
-    knowledgePanel: items.some(
-      it => it.type === "knowledge_graph" && containsWholeName((it.title ?? "").toLowerCase(), nameLower),
-    ),
-    aiOverview: mentionsInAiOverview(items, nameLower),
+    knowledgePanel,
+    unambiguous,
+    aiOverview: mentionsInAiOverview(items, m.nameLower),
     results,
   }
 }
@@ -151,12 +230,12 @@ export type TopicSearchResult = {
   aiOverview: boolean
 }
 
-export function evaluateTopicSearch(items: SerpItem[], nameLower: string, ownHost: string | null): TopicSearchResult {
-  const hit = organicTop(items).find(it => isAboutPerson(it, nameLower, ownHost))
+export function evaluateTopicSearch(items: SerpItem[], m: PersonMatcher): TopicSearchResult {
+  const hit = organicTop(items).find(it => isAboutPerson(it, m))
   return {
     position: hit ? organicRank(hit) : null,
     url: hit?.url ?? null,
-    aiOverview: mentionsInAiOverview(items, nameLower),
+    aiOverview: mentionsInAiOverview(items, m.nameLower),
   }
 }
 
