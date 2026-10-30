@@ -4,24 +4,33 @@
  * Zwei Quellen, beide OPTIONAL (laufen nur, wenn der zugehörige Key/Token
  * gesetzt ist; sonst meldet der Provider sich als „nicht konfiguriert"):
  *
- *   serp  — Google-SERP via SERP-API (SerpApi ODER DataForSEO).
- *           Braucht SERPAPI_KEY oder DATAFORSEO_LOGIN/DATAFORSEO_PASSWORD.
- *   gsc   — Google Search Console (eigene Domain).
- *           Braucht GOOGLE_OAUTH-Setup + verbundene Domain pro User.
+ *   serp  — Google-Suche via DataForSEO (Namenssuche + „Name Thema“).
+ *           Braucht DATAFORSEO_LOGIN/DATAFORSEO_PASSWORD.
+ *   gsc   — Google Search Console (eigene Domain). Noch nicht angebunden.
  *
- * STAND: Gerüst. Die `run()`-Methoden sind als Stubs implementiert — die echte
- * API-Anbindung folgt, sobald die Keys gesetzt sind. Bis dahin liefern sie
- * sauber `{ ok: false, reason: "not_configured" }`, sodass UI + Runner nie
- * crashen, sondern ehrliche „noch nicht aktiv"-Zustände zeigen.
+ * Nicht konfigurierte Quellen liefern `{ ok: false, reason: "not_configured" }`,
+ * sodass UI und Messung ehrliche „noch nicht aktiv“-Zustände zeigen.
  */
 
 import type { SeoSignals } from "./seo-score"
 import { sanitizeTargetName } from "./analyzer"
+import {
+  TOP_RESULTS,
+  evaluateNameSearch,
+  evaluateTopicSearch,
+  googleSignals,
+  hostOf,
+  type NameSearchResult,
+  type SerpItem,
+} from "./seo-serp"
 
 export type SeoSource = "serp" | "gsc"
 
+/** Ergebnis der Suche „Name Thema“ je Thema. */
+export type SeoTopicResult = { topic: string; position: number | null; url?: string | null; error?: string }
+
 export type SeoProviderResult =
-  | { ok: true; signals: SeoSignals; perTopic?: { topic: string; position: number | null; url?: string | null }[] }
+  | { ok: true; signals: SeoSignals; perTopic?: SeoTopicResult[]; nameSearch?: NameSearchResult }
   | { ok: false; reason: "not_configured" | "error"; message?: string }
 
 export type SeoRunInput = {
@@ -42,28 +51,7 @@ export type SeoProvider = {
   run(input: SeoRunInput): Promise<SeoProviderResult>
 }
 
-// ─── off-site: Google SERP ────────────────────────────────────────────────────
-
-/** Rang → Punktwert: Platz 1 = 100, danach ca. −8 pro Position (Platz 10 ≈ 28). */
-function rankToScore(rank: number): number {
-  return Math.max(0, Math.min(100, Math.round(100 - (rank - 1) * 8)))
-}
-
-/** Ganzwort-Treffer (Unicode-bewusst), beide Argumente lower-case. */
-function containsWholeName(haystackLower: string, nameLower: string): boolean {
-  if (!nameLower) return false
-  const escaped = nameLower.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")
-  return new RegExp(`(?<![\\p{L}\\p{N}])${escaped}(?![\\p{L}\\p{N}])`, "u").test(haystackLower)
-}
-
-function hostOf(url: string | null | undefined): string | null {
-  if (!url) return null
-  try {
-    return new URL(url.startsWith("http") ? url : `https://${url}`).hostname.replace(/^www\./, "")
-  } catch {
-    return null
-  }
-}
+// ─── off-site: Google SERP (DataForSEO) ───────────────────────────────────────
 
 /** Sprache → DataForSEO language_code + location_name. */
 function localeFor(language?: string): { language_code: string; location_name: string } {
@@ -71,19 +59,39 @@ function localeFor(language?: string): { language_code: string; location_name: s
   return { language_code: "en", location_name: "United States" }
 }
 
-type DfsItem = {
-  type?: string
-  rank_absolute?: number
-  title?: string
-  url?: string
-  domain?: string
-  description?: string
-  text?: string
+type SerpCall = { ok: true; items: SerpItem[] } | { ok: false; error: string }
+
+/** Eine Google-Suche (erste Ergebnisseite). DataForSEO meldet Fehler auch bei HTTP 200 im Body. */
+async function searchGoogle(keyword: string, auth: string, locale: { language_code: string; location_name: string }): Promise<SerpCall> {
+  try {
+    const res = await fetch("https://api.dataforseo.com/v3/serp/google/organic/live/advanced", {
+      method: "POST",
+      headers: { Authorization: auth, "Content-Type": "application/json" },
+      // depth zählt auch Knowledge Panel, „Ähnliche Fragen“ usw. mit – doppelt anfragen,
+      // damit sicher 10 normale Treffer dabei sind.
+      body: JSON.stringify([{ keyword, ...locale, depth: TOP_RESULTS * 2 }]),
+    })
+    if (!res.ok) return { ok: false, error: `HTTP ${res.status}` }
+    const json = await res.json()
+    const task = json?.tasks?.[0]
+    if (json?.status_code !== 20000 || task?.status_code !== 20000) {
+      return { ok: false, error: task?.status_message ?? json?.status_message ?? "unbekannter Fehler" }
+    }
+    return { ok: true, items: task?.result?.[0]?.items ?? [] }
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) }
+  }
 }
 
+/**
+ * Was findet, wer die Person googelt? (Methode: seo-serp.ts)
+ *   1 Suche „Vorname Nachname“ + je Thema 1 Suche „Name Thema“.
+ * Ohne Namenssuche gibt es kein Ergebnis (statt eines stillen Scores 0);
+ * Themen, deren Suche scheitert, zählen nicht mit.
+ */
 export const serpProvider: SeoProvider = {
   source: "serp",
-  label: "Google-Suche (SERP)",
+  label: "Google-Suche (DataForSEO)",
   isConfigured() {
     return !!process.env.DATAFORSEO_LOGIN && !!process.env.DATAFORSEO_PASSWORD
   },
@@ -92,80 +100,34 @@ export const serpProvider: SeoProvider = {
     const password = process.env.DATAFORSEO_PASSWORD
     if (!login || !password) return { ok: false, reason: "not_configured" }
 
-    const topics = input.topics.filter(Boolean)
-    if (topics.length === 0) {
-      return { ok: false, reason: "error", message: "Keine Themen zum Abfragen." }
-    }
-
-    const name = sanitizeTargetName(input.targetName).toLowerCase()
+    const name = sanitizeTargetName(input.targetName)
+    const nameLower = name.toLowerCase()
     const ownHost = hostOf(input.websiteUrl)
-    const { language_code, location_name } = localeFor(input.language)
+    const locale = localeFor(input.language)
     const auth = "Basic " + Buffer.from(`${login}:${password}`).toString("base64")
+    const topics = input.topics.filter(Boolean)
 
-    const perTopic: { topic: string; position: number | null; url?: string | null }[] = []
-    const positionScores: number[] = []
-    let knowledgePanel = false
-    let aiOverview = false
+    const [nameCall, ...topicCalls] = await Promise.all([
+      searchGoogle(name, auth, locale),
+      ...topics.map(t => searchGoogle(`${name} ${t}`, auth, locale)),
+    ])
+    if (!nameCall.ok) return { ok: false, reason: "error", message: `DataForSEO: ${nameCall.error}` }
 
-    for (const topic of topics) {
-      try {
-        const res = await fetch(
-          "https://api.dataforseo.com/v3/serp/google/organic/live/advanced",
-          {
-            method: "POST",
-            headers: { Authorization: auth, "Content-Type": "application/json" },
-            body: JSON.stringify([{ keyword: topic, language_code, location_name, depth: 20 }]),
-          },
-        )
-        if (!res.ok) {
-          // Ein fehlgeschlagenes Thema soll den Lauf nicht killen.
-          perTopic.push({ topic, position: null })
-          continue
-        }
-        const json = await res.json()
-        const items: DfsItem[] = json?.tasks?.[0]?.result?.[0]?.items ?? []
-
-        // Position in den organischen Treffern: erster Treffer, dessen Titel/
-        // Beschreibung den Namen als ganzes Wort enthält ODER dessen Domain die
-        // eigene Website ist.
-        let foundRank: number | null = null
-        for (const it of items) {
-          if (it.type !== "organic") continue
-          const hay = `${it.title ?? ""} ${it.description ?? ""}`.toLowerCase()
-          const domainMatch = ownHost && hostOf(it.url ?? it.domain) === ownHost
-          if (containsWholeName(hay, name) || domainMatch) {
-            foundRank = typeof it.rank_absolute === "number" ? it.rank_absolute : null
-            perTopic.push({ topic, position: foundRank, url: it.url ?? null })
-            break
-          }
-        }
-        if (foundRank === null) perTopic.push({ topic, position: null })
-        else positionScores.push(rankToScore(foundRank))
-
-        // Knowledge Panel: knowledge_graph-Item, dessen Titel den Namen enthält.
-        if (items.some(it => it.type === "knowledge_graph" && containsWholeName((it.title ?? "").toLowerCase(), name))) {
-          knowledgePanel = true
-        }
-        // AI Overview: ai_overview-Item, dessen Text den Namen enthält.
-        if (items.some(it => it.type === "ai_overview" && containsWholeName(`${it.text ?? ""} ${it.title ?? ""}`.toLowerCase(), name))) {
-          aiOverview = true
-        }
-      } catch {
-        perTopic.push({ topic, position: null })
+    const nameSearch = evaluateNameSearch(nameCall.items, nameLower, ownHost)
+    const perTopic: SeoTopicResult[] = []
+    const answered: ReturnType<typeof evaluateTopicSearch>[] = []
+    topics.forEach((topic, i) => {
+      const call = topicCalls[i]
+      if (!call.ok) {
+        perTopic.push({ topic, position: null, error: call.error })
+        return
       }
-    }
+      const r = evaluateTopicSearch(call.items, nameLower, ownHost)
+      answered.push(r)
+      perTopic.push({ topic, position: r.position, url: r.url })
+    })
 
-    const foundCount = perTopic.filter(t => t.position !== null).length
-    const signals: SeoSignals = {
-      serpPresence: Math.round((foundCount / topics.length) * 100),
-      serpPosition: positionScores.length
-        ? Math.round(positionScores.reduce((a, b) => a + b, 0) / positionScores.length)
-        : 0,
-      knowledgePanel: knowledgePanel ? 100 : 0,
-      aiOverview: aiOverview ? 100 : 0,
-    }
-
-    return { ok: true, signals, perTopic }
+    return { ok: true, signals: googleSignals(nameSearch, answered), perTopic, nameSearch }
   },
 }
 
@@ -201,7 +163,9 @@ export type SeoRunOutcome = {
   sourcesUsed: SeoSource[]
   /** Pro Quelle der Status (für Diagnose/UI). */
   perSource: { source: SeoSource; ok: boolean; reason?: string; message?: string }[]
-  perTopic: { topic: string; position: number | null; url?: string | null }[]
+  perTopic: SeoTopicResult[]
+  /** Namenssuche (was findet, wer die Person googelt). */
+  nameSearch?: NameSearchResult
 }
 
 /**
@@ -222,12 +186,14 @@ export async function runSeoAnalysis(input: SeoRunInput): Promise<SeoRunOutcome>
   const sourcesUsed: SeoSource[] = []
   const perSource: SeoRunOutcome["perSource"] = []
   const perTopic: SeoRunOutcome["perTopic"] = []
+  let nameSearch: NameSearchResult | undefined
 
   for (const { provider, result } of results) {
     if (result.ok) {
       Object.assign(signals, result.signals)
       sourcesUsed.push(provider.source)
       if (result.perTopic) perTopic.push(...result.perTopic)
+      if (result.nameSearch) nameSearch = result.nameSearch
       perSource.push({ source: provider.source, ok: true })
     } else {
       perSource.push({
@@ -239,7 +205,7 @@ export async function runSeoAnalysis(input: SeoRunInput): Promise<SeoRunOutcome>
     }
   }
 
-  return { signals, sourcesUsed, perSource, perTopic }
+  return { signals, sourcesUsed, perSource, perTopic, nameSearch }
 }
 
 async function safeRun(p: SeoProvider, input: SeoRunInput): Promise<SeoProviderResult> {
