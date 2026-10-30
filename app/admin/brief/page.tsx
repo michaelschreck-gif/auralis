@@ -3,8 +3,7 @@ import { headers } from "next/headers"
 import { requireAdminPage } from "@/lib/halo/admin"
 import { briefLinks, briefSince, composeBrief } from "@/lib/halo/brief-run"
 import { isMailConfigured } from "@/lib/halo/mail"
-import { sendBriefTest } from "@/app/admin/actions"
-import AdminButton from "@/components/halo/admin/AdminButton"
+import BriefTestForm from "@/components/halo/admin/BriefTestForm"
 import { card } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
@@ -13,7 +12,7 @@ export const metadata = { title: "Wochenbrief · Admin · Halo" }
 const STATUS: Record<string, string> = { sent: "verschickt", skipped: "nichts Neues", failed: "Fehler", sending: "läuft" }
 
 export default async function AdminBrief({ searchParams }: { searchParams: Promise<{ user?: string }> }) {
-  const { service } = await requireAdminPage()
+  const { service, user: me } = await requireAdminPage()
   const selected = (await searchParams).user ?? null
 
   const [{ data: users }, { data: sends }] = await Promise.all([
@@ -69,7 +68,7 @@ export default async function AdminBrief({ searchParams }: { searchParams: Promi
                 {preview?.brief ? `Betreff: ${preview.brief.subject}` : "Diese Woche gäbe es für diesen Login keinen Brief (nichts gemessen oder nichts Neues)."}
               </p>
             </div>
-            {preview?.brief && <AdminButton action={sendBriefTest.bind(null, selected)} label="Test an mich senden" />}
+            {preview?.brief && <BriefTestForm key={selected} userId={selected} defaultTo={me.email ?? ""} />}
           </div>
           {preview?.brief && (
             <iframe title="Vorschau Wochenbrief" srcDoc={preview.brief.html} className="mt-4 w-full h-[720px] rounded-xl border border-[#E9E1D3] bg-[#FAF8F3]" />
