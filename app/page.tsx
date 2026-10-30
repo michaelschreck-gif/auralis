@@ -221,7 +221,7 @@ export default async function Home() {
             </h2>
             <p className="text-[#3D5252] mt-4 leading-relaxed">
               Hol dir Halo Score, Sub-Scores und Themen-Daten in dein CRM oder BI-Tool.
-              Bearer-Auth, REST, JSON. Enterprise-Tarif: unbegrenzte Abfragen &amp; Sub-Accounts.
+              Bearer-Auth, REST, JSON. Im Agentur-Tarif für alle betreuten Personen.
             </p>
             <a href="/docs/api" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-white border border-[#FBCBB8] text-[#C8431F] font-medium hover:bg-[#FDE7E0] transition-colors">
               API-Doku öffnen ↗
@@ -276,17 +276,17 @@ export default async function Home() {
               Über mehrere KI-Modelle hinweg.
             </h2>
             <p className="text-[#6B625A] mt-4 leading-relaxed">
-              DigitalHalo fragt deine Themen parallel bei den wichtigsten KI-Modellen ab — je nach
-              Tarif automatisch mit mehr Abdeckung.
+              DigitalHalo fragt deine Themen parallel bei den wichtigsten KI-Modellen ab — in jedem
+              Tarif, damit dein Score das ganze Bild zeigt.
             </p>
           </div>
           <div className="rounded-3xl border border-[#E9E1D3] bg-white shadow-[0_14px_50px_-18px_rgba(14,25,22,0.14)] p-2">
             {[
               { n: "Claude Sonnet", t: "Alle Tarife", tone: "coral" },
-              { n: "GPT-4o", t: "Ab Starter", tone: "teal" },
-              { n: "Perplexity", t: "Ab Starter", tone: "teal" },
-              { n: "Gemini", t: "Ab Pro", tone: "dark" },
-              { n: "Google AI Overview", t: "Ab Pro", tone: "dark" },
+              { n: "GPT-4o", t: "Alle Tarife", tone: "coral" },
+              { n: "Perplexity", t: "Alle Tarife", tone: "coral" },
+              { n: "Gemini", t: "Alle Tarife", tone: "coral" },
+              { n: "Google AI Overview", t: "Alle Tarife", tone: "coral" },
             ].map((m, i, arr) => (
               <div
                 key={m.n}
@@ -317,13 +317,40 @@ export default async function Home() {
             Einfach. Transparent. Fair.
           </h2>
         </div>
-        <div className="grid md:grid-cols-3 gap-5">
-          <PriceCard name="Free" price="€0" sub="Zum Reinschnuppern" feats={["1 Analyse / Monat", "1 Thema", "Halo Score + Sub-Scores", "Claude Sonnet 5.5"]} />
-          <PriceCard name="Starter" price="€79" sub="Für aktive Personal Brands" feats={["Tägliche Analysen", "Unbegrenzte manuelle Analysen", "Bis zu 5 Themen", "GPT-4o + Perplexity", "Impulse"]} />
-          <PriceCard name="Pro" price="€299" sub="Für Vielnutzer & Agenturen" featured feats={["Alle Starter-Funktionen", "Gemini + AI Overview", "Public-API-Zugang", "Empfehlungs-Quote", "Priorisierter Support"]} />
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
+          <PriceCard
+            name="Check"
+            price="€0"
+            unit=""
+            sub="Wo stehst du heute?"
+            feats={["1 Person, 1 Thema", "Volle Messung über alle KI-Modelle + Google", "Monatliche Nachmessung", "Monatlicher Brief per Mail"]}
+          />
+          <PriceCard
+            name="Solo"
+            price="€39"
+            sub="Für Selbstständige, Berater, Speaker"
+            feats={["1 Person, 3 Themen", "Wöchentliche Messung", "Wochenbrief mit Veränderungen", "Maßnahmen + Impulse", "PDF-Report"]}
+          />
+          <PriceCard
+            name="Pro"
+            price="€89"
+            sub="Für Führungskräfte und sichtbare Experten"
+            featured
+            feats={["1 Person, 5 Themen", "Messung zweimal pro Woche", "Alles aus Solo", "KI-Persona mit Stimme", "Verlauf über 12 Monate"]}
+          />
+          <PriceCard
+            name="Team"
+            price="€59"
+            unit="/Person/Monat"
+            sub="Ab 3 Personen, z. B. Geschäftsführung"
+            feats={["Je Person wie Solo", "Team-Übersicht für alle Personen", "Eigener Zugang je Person", "Sammel-Report"]}
+          />
         </div>
         <p className="text-sm text-[#6B625A] mt-6">
-          Enterprise mit unbegrenzter API, Sub-Accounts, SSO &amp; Onboarding —{" "}
+          Alle Tarife messen über alle KI-Modelle und Google. Preise zzgl. MwSt., bei jährlicher Zahlung zwei Monate gratis.
+        </p>
+        <p className="text-sm text-[#6B625A] mt-2">
+          <span className="font-medium text-[#0E1916]">Agentur</span> für PR-, Personal-Branding- und LinkedIn-Berater: viele Personen, API und Berichte für Kunden, ab €490/Monat —{" "}
           <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] font-medium hover:underline">auf Anfrage</a>.
         </p>
       </section>
@@ -342,7 +369,8 @@ export default async function Home() {
               { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
               { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Halo ist aktuell einem exklusiven Nutzerkreis vorbehalten — trag dich auf die Warteliste ein. Sobald ein Platz frei wird, startest du kostenlos mit einer Analyse, eine Kreditkarte brauchst du dafuer nicht." },
               { q: "Werden meine Daten an die KI-Anbieter verkauft?", a: "Nein. Wir senden nur die generierten Suchfragen an die KI-APIs. Deine Account-Daten bleiben in der EU. Wir verkaufen niemals Nutzerdaten." },
-              { q: "Kann ich DigitalHalo in eigene Tools integrieren?", a: "Ja, ab Tarif Pro über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
+              { q: "Kann ich DigitalHalo in eigene Tools integrieren?", a: "Ja, im Agentur-Tarif über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
+              { q: "Was kostet DigitalHalo?", a: "Der Check ist kostenlos. Solo kostet 39 € im Monat, Pro 89 €, Team 59 € je Person (ab 3 Personen), jeweils zzgl. MwSt. Für Agenturen gibt es ein Angebot auf Anfrage. Bei jährlicher Zahlung sind zwei Monate gratis." },
             ].map(f => (
               <details key={f.q} className="group rounded-2xl border border-[#E9E1D3] bg-white px-5 py-4">
                 <summary className="flex items-center justify-between cursor-pointer list-none font-medium text-[#0E1916]">
@@ -476,8 +504,8 @@ function DimCard({ tint, text, track, bar, name, val, desc }: {
   )
 }
 
-function PriceCard({ name, price, sub, feats, featured = false }: {
-  name: string; price: string; sub: string; feats: string[]; featured?: boolean
+function PriceCard({ name, price, unit = "/Monat", sub, feats, featured = false }: {
+  name: string; price: string; unit?: string; sub: string; feats: string[]; featured?: boolean
 }) {
   return (
     <div className={`rounded-3xl p-7 relative ${featured ? "border-2 border-[#FA5935] bg-gradient-to-br from-white to-[#FDE7E0]" : "border border-[#E9E1D3] bg-white"}`}>
@@ -488,7 +516,7 @@ function PriceCard({ name, price, sub, feats, featured = false }: {
       <div className="text-xs text-[#9A9089] mt-0.5">{sub}</div>
       <div className="mt-4 mb-5">
         <span className="text-4xl font-bold text-[#0E1916]">{price}</span>
-        <span className="text-sm text-[#9A9089]">/Monat</span>
+        {unit && <span className="text-sm text-[#9A9089]">{unit}</span>}
       </div>
       <ul className="space-y-2.5 mb-6">
         {feats.map(f => (

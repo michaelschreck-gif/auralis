@@ -48,7 +48,7 @@ export default function AgbPage() {
           (u.a. Claude, ChatGPT, Perplexity, Gemini, Google AI Overview) überwacht und analysiert wird.
         </p>
         <p>
-          Konkrete Leistungsmerkmale je Tarif (Free, Starter, Pro, Enterprise) ergeben sich aus der
+          Konkrete Leistungsmerkmale je Tarif (Check, Solo, Pro, Team, Agentur) ergeben sich aus der
           aktuellen <a href="/#preise" className="text-[#C8431F] hover:underline">Preisseite</a>.
           Der Anbieter ist berechtigt, den Leistungsumfang weiterzuentwickeln. Wesentliche Reduktionen
           werden mit angemessener Frist angekündigt.

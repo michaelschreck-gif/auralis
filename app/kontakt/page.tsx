@@ -27,7 +27,7 @@ export default function KontaktPage() {
           Wir freuen uns auf deine Nachricht.
         </h1>
         <p className="text-[#6B625A] mt-2.5 max-w-xl leading-relaxed">
-          Fragen zu Halo, zu deinem Tarif oder zu Enterprise &amp; API? Schreib uns – wir melden uns
+          Fragen zu Halo, zu deinem Tarif oder zu Agentur-Angeboten &amp; API? Schreib uns – wir melden uns
           in der Regel innerhalb eines Werktags.
         </p>
 
