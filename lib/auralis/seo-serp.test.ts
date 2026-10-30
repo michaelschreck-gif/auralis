@@ -40,11 +40,22 @@ test("Namenssuche: Treffer über die Person, eigene Website, Knowledge Panel, KI
   ]
   const r = evaluateNameSearch(items, lobo)
   assert.equal(r.total, 5)
-  assert.equal(r.aboutYou, 3) // Wikipedia (Autor), eigene Website, SPIEGEL (Digitalisierung)
-  assert.deepEqual(r.results.map(x => x.aboutYou), [true, true, true, false, false])
+  // Passendes Knowledge Panel („Autor“) → Name eindeutig → jeder Treffer mit vollem Namen zählt.
+  assert.equal(r.unambiguous, true)
+  assert.deepEqual(r.results.map(x => x.aboutYou), [true, true, true, false, true])
   assert.equal(r.ownSiteRank, 2)
   assert.equal(r.knowledgePanel, true)
   assert.equal(r.aiOverview, true)
+})
+
+test("Ohne Knowledge Panel braucht jeder Treffer ein zweites Merkmal", () => {
+  const items = [
+    organic(1, "Sascha Lobo – Wikipedia", "https://de.wikipedia.org/wiki/Sascha_Lobo", "deutscher Autor und Blogger"),
+    organic(2, "Sascha Lobo", undefined, "Ein anderer Sascha Lobo, Bäcker in Köln"),
+  ]
+  const r = evaluateNameSearch(items, lobo)
+  assert.equal(r.unambiguous, false)
+  assert.deepEqual(r.results.map(x => x.aboutYou), [true, false])
 })
 
 test("Namensvettern bei häufigem Namen zählen nicht (realer Fall Michael Schreck)", () => {

@@ -171,6 +171,12 @@ export type NameSearchResult = {
   /** Platz der eigenen Website, falls in den Top 10. */
   ownSiteRank: number | null
   knowledgePanel: boolean
+  /**
+   * Name eindeutig: Google zeigt ein passendes Knowledge Panel, ordnet den
+   * Namen also dieser Person zu. Dann reicht der Name (auch für „Name + Thema“);
+   * sonst braucht jeder Treffer ein zweites Merkmal (Namensvettern).
+   */
+  unambiguous: boolean
   aiOverview: boolean
   /** Die Top-Treffer zur Anzeige. */
   results: { rank: number | null; title: string; url: string | null; domain: string | null; aboutYou: boolean }[]
@@ -188,21 +194,30 @@ function hasKnowledgePanel(items: SerpItem[], m: PersonMatcher): boolean {
   })
 }
 
+/** Matcher ohne Merkmale: der Name allein reicht (für eindeutige Namen). */
+export function nameOnly(m: PersonMatcher): PersonMatcher {
+  return { ...m, keywords: [] }
+}
+
 export function evaluateNameSearch(items: SerpItem[], m: PersonMatcher): NameSearchResult {
+  const knowledgePanel = hasKnowledgePanel(items, m)
+  const unambiguous = knowledgePanel && m.keywords.length > 0
+  const effective = unambiguous ? nameOnly(m) : m
   const top = organicTop(items)
   const results = top.map(it => ({
     rank: organicRank(it),
     title: it.title ?? "",
     url: it.url ?? null,
     domain: siteHost(it),
-    aboutYou: isAboutPerson(it, m),
+    aboutYou: isAboutPerson(it, effective),
   }))
   const own = m.ownHost ? top.find(it => siteHost(it) === m.ownHost) : undefined
   return {
     aboutYou: results.filter(r => r.aboutYou).length,
     total: results.length,
     ownSiteRank: own ? organicRank(own) : null,
-    knowledgePanel: hasKnowledgePanel(items, m),
+    knowledgePanel,
+    unambiguous,
     aiOverview: mentionsInAiOverview(items, m.nameLower),
     results,
   }

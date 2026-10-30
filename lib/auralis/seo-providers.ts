@@ -19,6 +19,7 @@ import {
   evaluateNameSearch,
   evaluateTopicSearch,
   googleSignals,
+  nameOnly,
   personMatcher,
   type NameSearchResult,
   type SerpItem,
@@ -128,6 +129,8 @@ export const serpProvider: SeoProvider = {
     if (!nameCall.ok) return { ok: false, reason: "error", message: `DataForSEO: ${nameCall.error}` }
 
     const nameSearch = evaluateNameSearch(nameCall.items, matcher)
+    // Ordnet Google den Namen eindeutig dieser Person zu, reicht der Name auch bei „Name + Thema“.
+    const topicMatcher = nameSearch.unambiguous ? nameOnly(matcher) : matcher
     const perTopic: SeoTopicResult[] = []
     const answered: ReturnType<typeof evaluateTopicSearch>[] = []
     topics.forEach((topic, i) => {
@@ -136,7 +139,7 @@ export const serpProvider: SeoProvider = {
         perTopic.push({ topic, position: null, error: call.error })
         return
       }
-      const r = evaluateTopicSearch(call.items, matcher)
+      const r = evaluateTopicSearch(call.items, topicMatcher)
       answered.push(r)
       perTopic.push({ topic, position: r.position, url: r.url })
     })
