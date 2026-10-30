@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useTransition } from "react"
-import { convertToTeam, createApiKey, renameAccount, revokeApiKey } from "@/app/konto/actions"
+import { convertToTeam, createApiKey, renameAccount, revokeApiKey, setWeeklyBrief } from "@/app/konto/actions"
 import { card, formatDate, inputCls, primaryBtn, secondaryBtn } from "./ui"
 
 export function AccountForm({ name, type, personCount }: { name: string; type: "individual" | "team"; personCount: number }) {
@@ -51,6 +51,41 @@ export function AccountForm({ name, type, personCount }: { name: string; type: "
         </div>
       )}
       {msg && <p className={`text-xs mt-3 ${msg.ok ? "text-[#1F6B3A]" : "text-red-600"}`}>{msg.text}</p>}
+    </section>
+  )
+}
+
+export function WeeklyBriefSetting({ on, email }: { on: boolean; email: string | null }) {
+  const [pending, start] = useTransition()
+  const [value, setValue] = useState(on)
+  const [error, setError] = useState<string | null>(null)
+  return (
+    <section className={`${card} p-5 sm:p-6`}>
+      <h2 className="text-sm font-semibold text-[#0E1916]">Wochenbrief</h2>
+      <label className="mt-3 flex items-start gap-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={value}
+          disabled={pending}
+          className="mt-1 accent-[#FA5935]"
+          onChange={e => {
+            const next = e.target.checked
+            setValue(next)
+            setError(null)
+            start(async () => {
+              const r = await setWeeklyBrief(next)
+              if (!r.ok) {
+                setValue(!next)
+                setError(r.error)
+              }
+            })
+          }}
+        />
+        <span className="text-sm text-[#6B625A]">
+          Jeden Montag per Mail{email ? ` an ${email}` : ""}: Halo Score, was sich verändert hat und der nächste Schritt.
+        </span>
+      </label>
+      {error && <p className="text-xs text-red-600 mt-2">{error}</p>}
     </section>
   )
 }

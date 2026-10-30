@@ -19,6 +19,8 @@ export interface QueryResult {
   rawResponse: string
   signal: MentionSignal
   weight: number
+  /** Tokenverbrauch des Aufrufs, sofern der Anbieter ihn meldet (Kostenrechnung). */
+  usage?: { input: number; output: number }
 }
 
 export interface VisibilityReport {

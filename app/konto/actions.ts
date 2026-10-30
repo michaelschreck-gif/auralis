@@ -1,7 +1,7 @@
 "use server"
 
 import { revalidatePath } from "next/cache"
-import { createHaloServerClient } from "@/lib/supabase/halo"
+import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { generateApiKey } from "@/lib/halo/api"
 import { LIMITS } from "@/lib/halo/config"
 
@@ -73,6 +73,17 @@ export async function revokeApiKey(keyId: string): Promise<ActionResult> {
     .eq("id", keyId)
     .eq("account_id", o.accountId)
   if (error) return { ok: false, error: "Konnte nicht widerrufen werden." }
+  revalidatePath("/konto")
+  return { ok: true }
+}
+
+/** Wochenbrief für den eigenen Login an/aus (app_users ist per RLS nur lesbar). */
+export async function setWeeklyBrief(on: boolean): Promise<ActionResult> {
+  const db = await createHaloServerClient()
+  const { data: { user } } = await db.auth.getUser()
+  if (!user) return { ok: false, error: "Bitte melde dich an." }
+  const { error } = await createHaloServiceClient().from("app_users").update({ weekly_brief: on }).eq("id", user.id)
+  if (error) return { ok: false, error: "Konnte nicht gespeichert werden." }
   revalidatePath("/konto")
   return { ok: true }
 }

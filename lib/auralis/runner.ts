@@ -27,6 +27,7 @@ import {
   providersForPlan,
   type LLMProvider,
   type ProviderId,
+  type TokenUsage,
 } from "./providers"
 import type { FrequencyType, SentimentType } from "@/lib/supabase/halo.types"
 import type { HaloClient } from "@/lib/supabase/halo"
@@ -228,13 +229,14 @@ async function runProvider(
       if (task.round > 0 && Date.now() - startedAt > roundBudgetMs) continue
       const query = queries[task.index]
       try {
+        let usage: TokenUsage | undefined
         const rawResponse = await provider.call(
           query.prompt,
           AI_SIMULATION_SYSTEM_PROMPT + query.systemSuffix,
           undefined,
-          { country: query.country },
+          { country: query.country, onUsage: u => { usage = u } },
         )
-        slots[task.round][task.index] = extractMentionSignal(
+        const result = extractMentionSignal(
           rawResponse,
           targetName,
           query.id,
@@ -242,6 +244,7 @@ async function runProvider(
           query.prompt,
           query.type,
         )
+        slots[task.round][task.index] = usage ? { ...result, usage } : result
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e)
         if (!firstError) firstError = message

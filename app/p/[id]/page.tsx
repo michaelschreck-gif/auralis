@@ -1,6 +1,7 @@
 import Link from "next/link"
 import { createHaloServerClient } from "@/lib/supabase/halo"
 import { loadPersonOverview } from "@/lib/halo/load"
+import { loadRecentChanges } from "@/lib/halo/changes-db"
 import { personDisplayName } from "@/lib/halo/measure"
 import type { PillarKey } from "@/lib/halo/score"
 import ScoreRing from "@/components/halo/ScoreRing"
@@ -31,6 +32,10 @@ const PILLAR_INFO: Record<PillarKey, { text: string; href: string; missing: stri
 
 const card = "rounded-2xl border border-[#E9E1D3] bg-white"
 
+/** Veränderungen der letzten 30 Tage auf der Startseite einer Person. */
+const CHANGES_DAYS = 30
+const CHANGES_SHOWN = 5
+
 function formatDate(iso: string | null): string {
   if (!iso) return "–"
   return new Date(iso).toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric" })
@@ -54,9 +59,10 @@ function Delta({ value }: { value: number | null }) {
 export default async function HaloScorePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const db = await createHaloServerClient()
-  const [{ data: person }, overview] = await Promise.all([
+  const [{ data: person }, overview, changes] = await Promise.all([
     db.from("persons").select("first_name, last_name, context").eq("id", id).single(),
     loadPersonOverview(db, id),
+    loadRecentChanges(db, id, CHANGES_DAYS),
   ])
   const { halo, history, trend, topics, openActions } = overview
   const topicIds = topics.map(t => t.id)
@@ -135,6 +141,30 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
             })}
           </section>
         </>
+      )}
+
+      {halo.score !== null && (
+        <section className={`${card} mt-6 p-5`}>
+          <h2 className="text-sm font-semibold text-[#0E1916]">Was sich verändert hat</h2>
+          <p className="text-xs text-[#9A9089] mt-0.5">Jüngste gegenüber vorheriger Messung, letzte {CHANGES_DAYS} Tage</p>
+          {changes.length === 0 ? (
+            <p className="text-sm text-[#6B625A] mt-4">
+              Noch keine größeren Veränderungen. Sobald ein Thema zweimal gemessen ist, siehst du hier, was sich bewegt hat.
+            </p>
+          ) : (
+            <ul className="mt-4 space-y-2">
+              {changes.slice(0, CHANGES_SHOWN).map((c, i) => (
+                <li key={i} className="flex items-start gap-3 text-sm">
+                  <span className={`mt-0.5 w-5 text-center font-semibold ${c.tone === "good" ? "text-[#1F6B3A]" : "text-[#C8431F]"}`} aria-hidden>
+                    {c.tone === "good" ? "↑" : "↓"}
+                  </span>
+                  <span className="flex-1 text-[#0E1916]">{c.text}</span>
+                  <span className="text-[11px] text-[#9A9089] shrink-0">{formatDate(c.at)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
       )}
 
       <div className="mt-6 grid lg:grid-cols-2 gap-4">
