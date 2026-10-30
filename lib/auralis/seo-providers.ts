@@ -106,6 +106,8 @@ export const serpProvider: SeoProvider = {
     const positionScores: number[] = []
     let knowledgePanel = false
     let aiOverview = false
+    // Fehler je Thema; schlagen alle Themen fehl, gibt es kein Ergebnis (statt still 0).
+    const failures: string[] = []
 
     for (const topic of topics) {
       try {
@@ -119,11 +121,17 @@ export const serpProvider: SeoProvider = {
         )
         if (!res.ok) {
           // Ein fehlgeschlagenes Thema soll den Lauf nicht killen.
-          perTopic.push({ topic, position: null })
+          failures.push(`HTTP ${res.status}`)
           continue
         }
         const json = await res.json()
-        const items: DfsItem[] = json?.tasks?.[0]?.result?.[0]?.items ?? []
+        // DataForSEO meldet Fehler (Login, Guthaben …) auch bei HTTP 200 im Body.
+        const task = json?.tasks?.[0]
+        if (json?.status_code !== 20000 || task?.status_code !== 20000) {
+          failures.push(task?.status_message ?? json?.status_message ?? "unbekannter Fehler")
+          continue
+        }
+        const items: DfsItem[] = task?.result?.[0]?.items ?? []
 
         // Position in den organischen Treffern: erster Treffer, dessen Titel/
         // Beschreibung den Namen als ganzes Wort enthält ODER dessen Domain die
@@ -150,14 +158,19 @@ export const serpProvider: SeoProvider = {
         if (items.some(it => it.type === "ai_overview" && containsWholeName(`${it.text ?? ""} ${it.title ?? ""}`.toLowerCase(), name))) {
           aiOverview = true
         }
-      } catch {
-        perTopic.push({ topic, position: null })
+      } catch (e) {
+        failures.push(e instanceof Error ? e.message : String(e))
       }
     }
 
+    if (failures.length === topics.length) {
+      return { ok: false, reason: "error", message: `DataForSEO: ${failures[0]}` }
+    }
+    // Score nur aus den Themen, die tatsächlich abgefragt werden konnten.
+    const answered = topics.length - failures.length
     const foundCount = perTopic.filter(t => t.position !== null).length
     const signals: SeoSignals = {
-      serpPresence: Math.round((foundCount / topics.length) * 100),
+      serpPresence: Math.round((foundCount / answered) * 100),
       serpPosition: positionScores.length
         ? Math.round(positionScores.reduce((a, b) => a + b, 0) / positionScores.length)
         : 0,
