@@ -89,8 +89,9 @@ export default async function GooglePage({ params }: { params: Promise<{ id: str
             {nameSearch.results.map((r, i) => (
               <li key={`${r.url}-${i}`} className="py-2 flex items-start gap-3 text-sm">
                 <span className="w-6 shrink-0 tabular-nums text-[#9A9089]">{r.rank ?? i + 1}.</span>
-                <span className={`min-w-0 flex-1 truncate ${r.aboutYou ? "text-[#0E1916]" : "text-[#9A9089]"}`} title={r.url ?? undefined}>
-                  {r.title || r.url}
+                <span className="min-w-0 flex-1">
+                  <span className={`block truncate ${r.aboutYou ? "text-[#0E1916]" : "text-[#9A9089]"}`}>{r.title || r.domain}</span>
+                  {r.domain && <span className="block truncate text-[11px] text-[#9A9089]">{r.domain}</span>}
                 </span>
                 {r.aboutYou && <span className="shrink-0 text-[11px] rounded-full bg-[#E3F1E8] text-[#1F6B3A] px-2 py-0.5">über dich</span>}
               </li>

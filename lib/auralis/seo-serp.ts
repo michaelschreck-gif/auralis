@@ -23,8 +23,24 @@ export type SerpItem = {
   title?: string
   url?: string
   domain?: string
+  /** Pfadzeile unter dem Treffer, z. B. „https://saschalobo.com › buecher“. */
+  breadcrumb?: string
   description?: string
   text?: string
+}
+
+/**
+ * Domain der Seite hinter einem Treffer. DataForSEO liefert url teils als
+ * Google-Weiterleitung (google.com/goto?url=…); dann zählt die erste
+ * Angabe, die nicht auf Google zeigt (domain, Pfadzeile, url).
+ */
+export function siteHost(item: SerpItem): string | null {
+  const candidates = [item.domain, item.breadcrumb?.split(/\s|›/)[0], item.url]
+  for (const c of candidates) {
+    const h = hostOf(c)
+    if (h && !/(^|\.)google\.[a-z.]+$/.test(h)) return h
+  }
+  return null
 }
 
 /** Wie viele organische Treffer ausgewertet werden (erste Ergebnisseite). */
@@ -67,7 +83,7 @@ function compactName(nameLower: string): string {
 export function isAboutPerson(item: SerpItem, nameLower: string, ownHost: string | null): boolean {
   const hay = `${item.title ?? ""} ${item.description ?? ""}`.toLowerCase()
   if (containsWholeName(hay, nameLower)) return true
-  const host = hostOf(item.domain ?? item.url)
+  const host = siteHost(item)
   if (ownHost && host === ownHost) return true
   const compact = compactName(nameLower)
   return !!host && compact.length >= 8 && host.replace(/[^a-z0-9]/g, "").includes(compact)
@@ -102,7 +118,7 @@ export type NameSearchResult = {
   knowledgePanel: boolean
   aiOverview: boolean
   /** Die Top-Treffer zur Anzeige. */
-  results: { rank: number | null; title: string; url: string | null; aboutYou: boolean }[]
+  results: { rank: number | null; title: string; url: string | null; domain: string | null; aboutYou: boolean }[]
 }
 
 export function evaluateNameSearch(items: SerpItem[], nameLower: string, ownHost: string | null): NameSearchResult {
@@ -111,9 +127,10 @@ export function evaluateNameSearch(items: SerpItem[], nameLower: string, ownHost
     rank: organicRank(it),
     title: it.title ?? "",
     url: it.url ?? null,
+    domain: siteHost(it),
     aboutYou: isAboutPerson(it, nameLower, ownHost),
   }))
-  const own = ownHost ? top.find(it => hostOf(it.domain ?? it.url) === ownHost) : undefined
+  const own = ownHost ? top.find(it => siteHost(it) === ownHost) : undefined
   return {
     aboutYou: results.filter(r => r.aboutYou).length,
     total: results.length,
