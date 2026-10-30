@@ -5,7 +5,7 @@
  */
 
 import type { HaloClient } from "../supabase/halo"
-import { personChanges, type Change, type GoogleSnapshot, type PersonChangeInput, type TopicSnapshot } from "./changes"
+import { personChanges, type Change, type Subject, type GoogleSnapshot, type PersonChangeInput, type TopicSnapshot } from "./changes"
 
 export async function loadChangeInput(db: HaloClient, personId: string): Promise<PersonChangeInput> {
   const [{ data: topics }, { data: measurements }, { data: google }] = await Promise.all([
@@ -59,8 +59,13 @@ export async function loadChangeInput(db: HaloClient, personId: string): Promise
   }
 }
 
-export async function loadPersonChanges(db: HaloClient, personId: string, since: string | null = null): Promise<Change[]> {
-  return personChanges(await loadChangeInput(db, personId), since)
+export async function loadPersonChanges(
+  db: HaloClient,
+  personId: string,
+  since: string | null = null,
+  who?: Subject,
+): Promise<Change[]> {
+  return personChanges(await loadChangeInput(db, personId), since, who)
 }
 
 /** Veränderungen der letzten `days` Tage (für die Personen-Seite). */

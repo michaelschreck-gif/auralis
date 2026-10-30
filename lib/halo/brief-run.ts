@@ -11,6 +11,7 @@
 
 import type { HaloClient } from "../supabase/halo"
 import { buildBrief, isoWeek, scoreAt, type Brief, type BriefPerson } from "./brief"
+import { subjectFor, YOU } from "./changes"
 import { loadPersonChanges } from "./changes-db"
 import { loadPersonOverview } from "./load"
 import { isMailConfigured, sendMail, unsubscribeToken } from "./mail"
@@ -61,7 +62,8 @@ export async function composeBrief(db: HaloClient, userId: string, links: BriefL
 
   const briefPersons: BriefPerson[] = await Promise.all(
     persons.map(async p => {
-      const [overview, changes] = await Promise.all([loadPersonOverview(db, p.id), loadPersonChanges(db, p.id, since)])
+      const who = self ? YOU : subjectFor(personDisplayName(p))
+      const [overview, changes] = await Promise.all([loadPersonOverview(db, p.id), loadPersonChanges(db, p.id, since, who)])
       const before = scoreAt(overview.history, since)
       const score = overview.halo.score
       const action = overview.openActions[0]

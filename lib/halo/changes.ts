@@ -61,6 +61,17 @@ export type GoogleSnapshot = {
   measuredAt: string
 }
 
+/**
+ * Wer gemeint ist: „dich“ für die Person selbst, sonst ihr Name (Team-Brief an den Owner).
+ */
+export type Subject = { acc: string; gen: string }
+
+export const YOU: Subject = { acc: "dich", gen: "deinem Namen" }
+
+export function subjectFor(name: string): Subject {
+  return { acc: name, gen: `„${name}“` }
+}
+
 /** Ab dieser Veränderung (Punkte) gilt ein Score als deutlich gestiegen/gefallen. */
 export const JUMP = 8
 
@@ -91,7 +102,12 @@ function byModel(answers: AnswerSignal[]): Map<string, ModelStats> {
 }
 
 /** Veränderungen eines Themas zwischen vorheriger und jüngster Messung. */
-export function topicChangesBetween(topic: { id: string; name: string }, prev: TopicSnapshot, curr: TopicSnapshot): Change[] {
+export function topicChangesBetween(
+  topic: { id: string; name: string },
+  prev: TopicSnapshot,
+  curr: TopicSnapshot,
+  who: Subject = YOU,
+): Change[] {
   const out: Change[] = []
   const base = { topicId: topic.id, at: curr.measuredAt }
   const before = byModel(prev.answers)
@@ -103,12 +119,12 @@ export function topicChangesBetween(topic: { id: string; name: string }, prev: T
     if (!was) continue
     const name = modelLabel(model)
     if (was.mentions === 0 && now.mentions > 0) {
-      out.push({ ...base, kind: "model_new", tone: "good", weight: 80, text: `${name} nennt dich jetzt bei „${topic.name}“` })
+      out.push({ ...base, kind: "model_new", tone: "good", weight: 80, text: `${name} nennt ${who.acc} jetzt bei „${topic.name}“` })
     } else if (was.mentions > 0 && now.mentions === 0) {
-      out.push({ ...base, kind: "model_lost", tone: "bad", weight: 70, text: `${name} nennt dich bei „${topic.name}“ nicht mehr` })
+      out.push({ ...base, kind: "model_lost", tone: "bad", weight: 70, text: `${name} nennt ${who.acc} bei „${topic.name}“ nicht mehr` })
     }
     if (now.best === 1 && was.best !== 1) {
-      out.push({ ...base, kind: "first_place", tone: "good", weight: 90, text: `${name} nennt dich bei „${topic.name}“ auf Platz 1` })
+      out.push({ ...base, kind: "first_place", tone: "good", weight: 90, text: `${name} nennt ${who.acc} bei „${topic.name}“ auf Platz 1` })
     }
     if (now.negative > was.negative) {
       out.push({
@@ -116,7 +132,7 @@ export function topicChangesBetween(topic: { id: string; name: string }, prev: T
         kind: "negative_tone",
         tone: "bad",
         weight: 75,
-        text: `${name} spricht bei „${topic.name}“ häufiger kritisch über dich`,
+        text: `${name} spricht bei „${topic.name}“ häufiger kritisch über ${who.acc}`,
       })
     }
   }
@@ -138,24 +154,24 @@ function flag(s: GoogleSnapshot, key: string): boolean | null {
 }
 
 /** Veränderungen der Google-Messung. */
-export function googleChangesBetween(prev: GoogleSnapshot, curr: GoogleSnapshot): Change[] {
+export function googleChangesBetween(prev: GoogleSnapshot, curr: GoogleSnapshot, who: Subject = YOU): Change[] {
   const out: Change[] = []
   const base = { topicId: null, at: curr.measuredAt }
 
   const kpBefore = flag(prev, "knowledgePanel")
   const kpNow = flag(curr, "knowledgePanel")
   if (kpBefore === false && kpNow === true) {
-    out.push({ ...base, kind: "knowledge_panel_new", tone: "good", weight: 85, text: "Google zeigt bei deinem Namen jetzt ein Knowledge Panel" })
+    out.push({ ...base, kind: "knowledge_panel_new", tone: "good", weight: 85, text: `Google zeigt bei ${who.gen} jetzt ein Knowledge Panel` })
   } else if (kpBefore === true && kpNow === false) {
-    out.push({ ...base, kind: "knowledge_panel_lost", tone: "bad", weight: 70, text: "Google zeigt bei deinem Namen kein Knowledge Panel mehr" })
+    out.push({ ...base, kind: "knowledge_panel_lost", tone: "bad", weight: 70, text: `Google zeigt bei ${who.gen} kein Knowledge Panel mehr` })
   }
 
   const aoBefore = flag(prev, "aiOverview")
   const aoNow = flag(curr, "aiOverview")
   if (aoBefore === false && aoNow === true) {
-    out.push({ ...base, kind: "ai_overview_new", tone: "good", weight: 85, text: "Die Google-KI-Übersicht nennt dich jetzt" })
+    out.push({ ...base, kind: "ai_overview_new", tone: "good", weight: 85, text: `Die Google-KI-Übersicht nennt ${who.acc} jetzt` })
   } else if (aoBefore === true && aoNow === false) {
-    out.push({ ...base, kind: "ai_overview_lost", tone: "bad", weight: 65, text: "Die Google-KI-Übersicht nennt dich nicht mehr" })
+    out.push({ ...base, kind: "ai_overview_lost", tone: "bad", weight: 65, text: `Die Google-KI-Übersicht nennt ${who.acc} nicht mehr` })
   }
 
   if (prev.score !== null && curr.score !== null) {
@@ -175,12 +191,12 @@ export type PersonChangeInput = {
  * Alle Veränderungen einer Person, wichtigste zuerst.
  * `since`: nur Veränderungen, deren jüngere Messung danach liegt (z. B. letzter Brief).
  */
-export function personChanges(input: PersonChangeInput, since: string | null = null): Change[] {
+export function personChanges(input: PersonChangeInput, since: string | null = null, who: Subject = YOU): Change[] {
   const all: Change[] = []
   for (const t of input.topics) {
-    if (t.prev && t.curr) all.push(...topicChangesBetween(t, t.prev, t.curr))
+    if (t.prev && t.curr) all.push(...topicChangesBetween(t, t.prev, t.curr, who))
   }
-  if (input.google.prev && input.google.curr) all.push(...googleChangesBetween(input.google.prev, input.google.curr))
+  if (input.google.prev && input.google.curr) all.push(...googleChangesBetween(input.google.prev, input.google.curr, who))
   return all
     .filter(c => since === null || Date.parse(c.at) > Date.parse(since))
     .sort((a, b) => b.weight - a.weight || b.at.localeCompare(a.at))

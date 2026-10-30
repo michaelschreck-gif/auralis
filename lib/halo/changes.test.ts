@@ -3,7 +3,7 @@
 
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { googleChangesBetween, modelLabel, personChanges, topicChangesBetween, type AnswerSignal, type TopicSnapshot } from "./changes.ts"
+import { googleChangesBetween, modelLabel, personChanges, subjectFor, topicChangesBetween, type AnswerSignal, type TopicSnapshot } from "./changes.ts"
 
 const TOPIC = { id: "t1", name: "Personal Branding" }
 
@@ -79,4 +79,17 @@ test("personChanges: wichtigste zuerst, `since` filtert alte Veränderungen", ()
   }
   assert.deepEqual(personChanges(input).map(c => c.kind), ["first_place", "model_new", "topic_up"])
   assert.deepEqual(personChanges(input, "2026-10-25T00:00:00.000Z").map(c => c.kind), ["model_new", "topic_up"])
+})
+
+test("Team-Brief: Name statt „dich“", () => {
+  const who = subjectFor("Sascha Lobo")
+  const prev = snap([a("sonar", true, 3)])
+  const curr = snap([a("sonar", true, 1)])
+  assert.equal(topicChangesBetween(TOPIC, prev, curr, who)[0].text, "Perplexity nennt Sascha Lobo bei „Personal Branding“ auf Platz 1")
+  const g = googleChangesBetween(
+    { score: 20, signals: { knowledgePanel: 0 }, measuredAt: "2026-10-23T06:00:00Z" },
+    { score: 20, signals: { knowledgePanel: 100 }, measuredAt: "2026-10-30T06:00:00Z" },
+    who,
+  )
+  assert.equal(g[0].text, "Google zeigt bei „Sascha Lobo“ jetzt ein Knowledge Panel")
 })
