@@ -58,9 +58,10 @@ export async function inviteUser(rawEmail: string): Promise<ActionResult> {
   if (!admin) return NO_ADMIN
   const email = rawEmail.trim().toLowerCase()
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return { ok: false, error: "Bitte eine gültige E-Mail-Adresse angeben." }
+  // Eingeladene landen im Tool, nicht auf der Admin-Domain (dort hätten sie keine Sitzung fürs Tool).
   const h = await headers()
   const host = h.get("x-forwarded-host") ?? h.get("host")
-  const origin = host ? `${h.get("x-forwarded-proto") ?? "https"}://${host}` : process.env.NEXT_PUBLIC_APP_URL ?? ""
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? (host ? `${h.get("x-forwarded-proto") ?? "https"}://${host}` : "")
   const { data, error } = await admin.service.auth.admin.inviteUserByEmail(email, { redirectTo: `${origin}/auth/callback` })
   if (error) return { ok: false, error: error.message }
   await logAudit(admin, "user.invite", { type: "user", id: data.user?.id ?? null }, { email })

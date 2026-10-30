@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { createSupabaseBrowserClient } from "@/lib/supabase/client"
+import { safeNextPath } from "@/lib/halo/onboarding"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -37,7 +38,7 @@ export default function LoginPage() {
       return
     }
 
-    window.location.href = "/weiter"
+    window.location.href = safeNextPath(new URLSearchParams(window.location.search).get("next"), "/weiter")
   }
 
   if (sent) {
