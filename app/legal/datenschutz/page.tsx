@@ -88,6 +88,14 @@ export default function DatenschutzPage() {
             betrieben. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und f DSGVO. Zur Sitzungsverwaltung werden
             technisch notwendige Cookies gesetzt.
           </li>
+          <li>
+            <strong className="text-[#0E1916]">Resend</strong> (Resend, Inc., USA; Versand über die EU-Region) —
+            Versand von E-Mails, insbesondere des Wochenbriefs mit Ihrem Halo Score, den Veränderungen seit der
+            letzten Messung und Ihrem nächsten Schritt. Übermittelt werden Ihre E-Mail-Adresse und der Inhalt der
+            Mail. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Information zu Ihrem Konto) bzw. lit. f DSGVO; die
+            Übermittlung in die USA wird auf die EU-Standardvertragsklauseln gestützt. Den Wochenbrief können Sie
+            jederzeit im Konto oder über den Link in jeder Mail abbestellen.
+          </li>
         </ul>
       </Section>
 
