@@ -10,12 +10,12 @@
 import crypto from "node:crypto"
 import { NextResponse } from "next/server"
 import { createHaloServiceClient, type HaloClient } from "../supabase/halo"
-import type { AccountType, PersonRow } from "../supabase/halo.types"
+import type { AccountType, PersonRow, PlanType } from "../supabase/halo.types"
 import { LIMITS } from "./config"
 
 export type ApiContext = {
   db: HaloClient
-  account: { id: string; name: string; type: AccountType }
+  account: { id: string; name: string; type: AccountType; plan: PlanType }
   apiKeyId: string
 }
 
@@ -55,7 +55,7 @@ export async function authenticate(req: Request): Promise<{ ok: true; ctx: ApiCo
   if (!key) return { ok: false, response: apiError("Unbekannter Schlüssel.", "INVALID_TOKEN", 401) }
   if (key.revoked_at) return { ok: false, response: apiError("Dieser Schlüssel wurde widerrufen.", "TOKEN_REVOKED", 401) }
 
-  const { data: account } = await db.from("accounts").select("id, name, type").eq("id", key.account_id).maybeSingle()
+  const { data: account } = await db.from("accounts").select("id, name, type, plan").eq("id", key.account_id).maybeSingle()
   if (!account) return { ok: false, response: apiError("Konto nicht gefunden.", "INVALID_TOKEN", 401) }
 
   const limit = LIMITS.apiRequestsPerDay

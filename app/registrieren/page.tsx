@@ -4,15 +4,11 @@ export const metadata = { title: "Registrieren · Halo" }
 export const dynamic = "force-dynamic"
 
 /**
- * Selbst-Registrierung ist in Production bewusst aus (Warteliste/Einladung),
- * bis SIGNUP_OPEN=true gesetzt wird. Auf Staging (Vercel Preview) und lokal offen.
+ * Selbst-Registrierung für den kostenlosen Check (neue Konten im Tarif „free“).
+ * Offen, solange nicht SIGNUP_OPEN=false gesetzt ist (Notbremse, z. B. bei Missbrauch).
  */
 function signupOpen(): boolean {
-  return (
-    process.env.SIGNUP_OPEN === "true" ||
-    process.env.VERCEL_ENV === "preview" ||
-    process.env.NODE_ENV === "development"
-  )
+  return process.env.SIGNUP_OPEN !== "false"
 }
 
 export default function RegistrierenPage() {

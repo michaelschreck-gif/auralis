@@ -14,4 +14,6 @@ export const AUDIT_LABELS: Record<string, string> = {
   "person.measure": "Messung gestartet",
   "gold.sample.add": "Prüfset ergänzt",
   "brief.test": "Test-Wochenbrief gesendet",
+  "leads.export": "Leads exportiert",
+  "account.plan": "Tarif geändert",
 }

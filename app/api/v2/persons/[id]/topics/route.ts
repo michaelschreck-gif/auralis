@@ -5,7 +5,7 @@
 
 import { NextResponse } from "next/server"
 import { apiError, authenticate, personOf } from "@/lib/halo/api"
-import { LIMITS } from "@/lib/halo/config"
+import { allowedFrequency, planLimits } from "@/lib/halo/plans"
 import { normalizeTopics } from "@/lib/halo/onboarding"
 import type { FrequencyType } from "@/lib/supabase/halo.types"
 
@@ -36,11 +36,12 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
   const body = (await req.json().catch(() => null)) as { name?: unknown; frequency?: unknown } | null
   const [name] = normalizeTopics([body?.name], 1)
   if (!name) return apiError("Feld „name“ fehlt.", "INVALID_INPUT", 400)
-  const frequency = FREQUENCIES.find(f => f === body?.frequency) ?? "weekly"
+  const limits = planLimits(auth.ctx.account.plan)
+  const frequency = allowedFrequency(auth.ctx.account.plan, FREQUENCIES.find(f => f === body?.frequency) ?? limits.frequency)
 
   const { data: existing } = await auth.ctx.db.from("topics").select("name, is_active").eq("person_id", p.person.id)
-  if ((existing ?? []).filter(t => t.is_active).length >= LIMITS.topicsPerPerson) {
-    return apiError(`Höchstens ${LIMITS.topicsPerPerson} aktive Themen.`, "LIMIT_REACHED", 403)
+  if ((existing ?? []).filter(t => t.is_active).length >= limits.topicsPerPerson) {
+    return apiError(`Höchstens ${limits.topicsPerPerson} aktive Themen im Tarif ${limits.label}.`, "LIMIT_REACHED", 403)
   }
   if ((existing ?? []).some(t => t.name.toLowerCase() === name.toLowerCase())) {
     return apiError("Dieses Thema gibt es schon.", "DUPLICATE", 409)

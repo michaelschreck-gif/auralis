@@ -6,6 +6,7 @@
 import { NextResponse, after } from "next/server"
 import { apiError, authenticate, personOf } from "@/lib/halo/api"
 import { activeJobId, enqueueJob, executeJob } from "@/lib/halo/jobs"
+import { checkManualMeasure } from "@/lib/halo/plan-db"
 
 export const dynamic = "force-dynamic"
 export const maxDuration = 300
@@ -19,6 +20,8 @@ export async function POST(req: Request, ctx: { params: Promise<{ id: string }> 
 
   const { data: topics } = await db.from("topics").select("id").eq("person_id", p.person.id).eq("is_active", true)
   if (!topics || topics.length === 0) return apiError("Die Person hat keine aktiven Themen.", "NO_TOPICS", 400)
+  const allowed = await checkManualMeasure(db, p.person.id)
+  if (!allowed.ok) return apiError(allowed.error, "PLAN_LIMIT", 402)
 
   const jobs: { topic_id: string; job_id: string; already_running: boolean }[] = []
   for (const t of topics) {

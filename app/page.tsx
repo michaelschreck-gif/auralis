@@ -48,8 +48,8 @@ export default async function Home() {
                 <a href={toolHref} className="text-sm px-3.5 py-2 rounded-full text-white hover:bg-white/10 transition-colors font-medium">
                   {isLoggedIn ? "Zum Dashboard" : "Anmelden"}
                 </a>
-                <Link href="/warteliste" className="text-sm px-4 py-2 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] transition-colors font-semibold">
-                  Warteliste
+                <Link href="/registrieren" className="text-sm px-4 py-2 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] transition-colors font-semibold">
+                  Kostenloser Check
                 </Link>
               </div>
             </div>
@@ -65,8 +65,8 @@ export default async function Home() {
                 — mit <span className="text-white font-semibold">Halo Score™</span>, Impulsen von sichtbaren Personen und konkreten Empfehlungen.
               </p>
               <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 mt-8">
-                <Link href="/warteliste" className="text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors text-center">
-                  Jetzt vormerken →
+                <Link href="/registrieren" className="text-sm px-7 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors text-center">
+                  Kostenlos checken →
                 </Link>
                 <a href="#ablauf" className="text-sm px-6 py-3.5 rounded-full border border-white/55 text-white font-medium hover:border-white/85 transition-colors text-center">
                   So funktioniert&apos;s →
@@ -152,8 +152,8 @@ export default async function Home() {
               Der Halo Score™ kombiniert vier Dimensionen — GEO, SEO, Thought Leadership und Digitale
               Autorität — zu einem Wert von 0 bis 100.
             </p>
-            <Link href="/warteliste" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors">
-              Jetzt vormerken →
+            <Link href="/registrieren" className="inline-block mt-7 text-sm px-6 py-3 rounded-full bg-[#FA5935] hover:bg-[#C8431F] text-white font-semibold transition-colors">
+              Kostenlos checken →
             </Link>
           </div>
           <div className="flex justify-center">
@@ -323,6 +323,7 @@ export default async function Home() {
             price="€0"
             unit=""
             sub="Wo stehst du heute?"
+            cta={{ href: "/registrieren", label: "Kostenlos starten" }}
             feats={["1 Person, 1 Thema", "Volle Messung über alle KI-Modelle + Google", "Monatliche Nachmessung", "Monatlicher Brief per Mail"]}
           />
           <PriceCard
@@ -367,7 +368,7 @@ export default async function Home() {
               { q: "Was ist DigitalHalo?", a: "DigitalHalo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen, wie oft und in welchem Kontext du in KI-Antworten (ChatGPT, Claude, Perplexity, Gemini, Google AI Overviews) erwähnt wirst — und liefern Score, Trends und Tipps." },
               { q: "Wie unterscheidet sich DigitalHalo von klassischem SEO?", a: "Klassisches SEO misst dein Google-Ranking. DigitalHalo misst, ob KI-Assistenten dich nennen, wenn sie Antworten generieren. Mit dem SEO Score deckt DigitalHalo beides ab." },
               { q: "Wie funktioniert die Messung technisch?", a: "Wir generieren 7 typische Suchfragen zu deinen Themen, schicken sie an die KI-Modelle und extrahieren strukturierte Signale: Wurdest du genannt? An welcher Position? Mit welcher Tonalität? Daraus entsteht der Halo Score™." },
-              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Halo ist aktuell einem exklusiven Nutzerkreis vorbehalten — trag dich auf die Warteliste ein. Sobald ein Platz frei wird, startest du kostenlos mit einer Analyse, eine Kreditkarte brauchst du dafuer nicht." },
+              { q: "Brauche ich eine Kreditkarte zum Testen?", a: "Nein. Der Check ist kostenlos: Konto anlegen, Name und Thema eingeben, und nach wenigen Minuten siehst du deinen Halo Score. Eine Kreditkarte brauchst du dafür nicht." },
               { q: "Werden meine Daten an die KI-Anbieter verkauft?", a: "Nein. Wir senden nur die generierten Suchfragen an die KI-APIs. Deine Account-Daten bleiben in der EU. Wir verkaufen niemals Nutzerdaten." },
               { q: "Kann ich DigitalHalo in eigene Tools integrieren?", a: "Ja, im Agentur-Tarif über unsere REST-API mit Bearer-Token. Doku unter /docs/api." },
               { q: "Was kostet DigitalHalo?", a: "Der Check ist kostenlos. Solo kostet 39 € im Monat, Pro 89 €, Team 59 € je Person (ab 3 Personen), jeweils zzgl. MwSt. Für Agenturen gibt es ein Angebot auf Anfrage. Bei jährlicher Zahlung sind zwei Monate gratis." },
@@ -392,10 +393,10 @@ export default async function Home() {
               Mehr Reputation. Weniger Rätselraten.
             </h2>
             <p className="text-white/85 mt-5 max-w-md leading-relaxed">
-              Trag dich auf die Warteliste ein und sei unter den Ersten, die ihren Halo Score sehen. Kostenlos, keine Kreditkarte.
+              Finde in zwei Minuten heraus, wie KI und Google dich sehen. Kostenlos, keine Kreditkarte.
             </p>
-            <Link href="/warteliste" className="inline-block mt-9 text-sm px-8 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
-              Jetzt vormerken →
+            <Link href="/registrieren" className="inline-block mt-9 text-sm px-8 py-3.5 rounded-full bg-white hover:bg-[#FDE7E0] text-[#C8431F] font-semibold transition-colors">
+              Kostenlos checken →
             </Link>
           </div>
         </div>
@@ -504,8 +505,10 @@ function DimCard({ tint, text, track, bar, name, val, desc }: {
   )
 }
 
-function PriceCard({ name, price, unit = "/Monat", sub, feats, featured = false }: {
+function PriceCard({ name, price, unit = "/Monat", sub, feats, featured = false, cta }: {
   name: string; price: string; unit?: string; sub: string; feats: string[]; featured?: boolean
+  /** Knopf; Standard: Warteliste („Vormerken“). */
+  cta?: { href: string; label: string }
 }) {
   return (
     <div className={`rounded-3xl p-7 relative ${featured ? "border-2 border-[#FA5935] bg-gradient-to-br from-white to-[#FDE7E0]" : "border border-[#E9E1D3] bg-white"}`}>
@@ -523,8 +526,8 @@ function PriceCard({ name, price, unit = "/Monat", sub, feats, featured = false 
           <li key={f} className="flex gap-2.5 text-sm text-[#3D3A35]"><span className="text-[#8CAAAB] font-bold">✓</span>{f}</li>
         ))}
       </ul>
-      <Link href="/warteliste" className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#FDE7E0]"}`}>
-        Vormerken
+      <Link href={cta?.href ?? "/warteliste"} className={`block text-center text-sm px-4 py-2.5 rounded-full font-semibold transition-colors ${featured ? "bg-[#FA5935] hover:bg-[#C8431F] text-white" : "bg-white border border-[#FBCBB8] text-[#C8431F] hover:bg-[#FDE7E0]"}`}>
+        {cta?.label ?? "Vormerken"}
       </Link>
     </div>
   )

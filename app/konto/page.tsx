@@ -4,6 +4,7 @@ import { createHaloServerClient } from "@/lib/supabase/halo"
 import { homePath } from "@/lib/halo/home"
 import { AccountForm, ApiKeys, WeeklyBriefSetting } from "@/components/halo/AccountControls"
 import { card } from "@/components/halo/ui"
+import { planLimits } from "@/lib/halo/plans"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Konto · Halo" }
@@ -25,7 +26,7 @@ export default async function KontoPage() {
   if (!accountId) redirect("/weiter")
 
   const [{ data: account }, { count }, { data: keys }, back, { data: me }] = await Promise.all([
-    db.from("accounts").select("id, name, type, created_at").eq("id", accountId).single(),
+    db.from("accounts").select("id, name, type, plan, created_at").eq("id", accountId).single(),
     db.from("persons").select("id", { count: "exact", head: true }).eq("account_id", accountId),
     db.from("api_keys").select("id, name, key_prefix, created_at, last_used_at, revoked_at").eq("account_id", accountId).order("created_at", { ascending: false }),
     homePath(db, user.id),
@@ -52,7 +53,16 @@ export default async function KontoPage() {
         <AccountForm name={account.name} type={account.type} personCount={count ?? 0} />
         <section className={`${card} p-5 sm:p-6`}>
           <h2 className="text-sm font-semibold text-[#0E1916]">Tarif</h2>
-          <p className="text-sm text-[#6B625A] mt-2">Das Preismodell folgt. Bis dahin sind alle Funktionen freigeschaltet.</p>
+          <p className="text-sm text-[#6B625A] mt-2">
+            Dein Tarif: <span className="font-medium text-[#0E1916]">{planLimits(account.plan).label}</span>
+            {account.plan === "free" && " – ein Thema, monatliche Messung und monatlicher Brief."}
+          </p>
+          {account.plan === "free" && (
+            <p className="text-sm text-[#6B625A] mt-2">
+              Mehr Themen, wöchentliche Messung und Wochenbrief mit Solo (39 €) oder Pro (89 €):{" "}
+              <a href="mailto:michael@linkedinconsulting.digital?subject=Halo%20Upgrade" className="text-[#C8431F] font-medium hover:underline">jetzt anfragen</a>.
+            </p>
+          )}
         </section>
         <WeeklyBriefSetting on={me?.weekly_brief ?? true} email={user.email ?? null} />
         <ApiKeys keys={keys ?? []} />

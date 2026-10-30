@@ -16,6 +16,7 @@ import { loadPersonChanges } from "./changes-db"
 import { loadPersonOverview } from "./load"
 import { isMailConfigured, sendMail, unsubscribeToken } from "./mail"
 import { personDisplayName } from "./measure"
+import { isMonthlyBriefDay } from "./plans"
 
 const WEEK_MS = 7 * 24 * 60 * 60 * 1000
 
@@ -101,6 +102,22 @@ export async function briefSince(db: HaloClient, userId: string, now: Date): Pro
   return data?.[0]?.created_at ?? new Date(now.getTime() - WEEK_MS).toISOString()
 }
 
+/** Logins, deren Konten alle im Check (plan free) sind. */
+async function checkOnlyUsers(db: HaloClient): Promise<Set<string>> {
+  const [{ data: members }, { data: accounts }] = await Promise.all([
+    db.from("account_members").select("user_id, account_id"),
+    db.from("accounts").select("id, plan"),
+  ])
+  const planOf = new Map((accounts ?? []).map(a => [a.id, a.plan]))
+  const paid = new Set<string>()
+  const all = new Set<string>()
+  for (const m of members ?? []) {
+    all.add(m.user_id)
+    if (planOf.get(m.account_id) !== "free") paid.add(m.user_id)
+  }
+  return new Set([...all].filter(id => !paid.has(id)))
+}
+
 export type BriefRunResult =
   | { configured: false }
   | { configured: true; week: string; recipients: number; sent: number; skipped: number; failed: { userId: string; error: string }[] }
@@ -119,8 +136,12 @@ export async function runWeeklyBriefs(
   let skipped = 0
   const failed: { userId: string; error: string }[] = []
 
+  // Konten nur im kostenlosen Check bekommen nur den ersten Brief des Monats.
+  const checkOnly = isMonthlyBriefDay(now) ? new Set<string>() : await checkOnlyUsers(db)
+
   for (const u of users ?? []) {
     if (Date.now() > opts.deadline) break
+    if (checkOnly.has(u.id)) continue
     // Platzhalter zuerst: die Eindeutigkeit (user_id, week) verhindert doppelte Mails.
     const { data: claim, error: claimError } = await db.from("brief_sends").insert({ user_id: u.id, week }).select("id").maybeSingle()
     if (claimError || !claim) continue

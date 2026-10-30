@@ -5,6 +5,7 @@
 
 import { after } from "next/server"
 import type { HaloClient } from "../supabase/halo"
+import type { FrequencyType } from "../supabase/halo.types"
 import { enqueueJob, executeJob } from "./jobs"
 import type { StartInput } from "./onboarding"
 
@@ -17,6 +18,8 @@ export async function createPersonWithTopics(
   service: HaloClient,
   accountId: string,
   input: Pick<StartInput, "firstName" | "lastName" | "context" | "market" | "topics">,
+  /** Messrhythmus der Themen laut Tarif (lib/halo/plans.ts). */
+  frequency: FrequencyType = "weekly",
 ): Promise<{ ok: true; personId: string; jobIds: string[] } | { ok: false; error: string }> {
   const { data: person, error: personError } = await db
     .from("persons")
@@ -33,7 +36,7 @@ export async function createPersonWithTopics(
 
   const { data: topics, error: topicsError } = await db
     .from("topics")
-    .insert(input.topics.map(name => ({ person_id: person.id, name })))
+    .insert(input.topics.map(name => ({ person_id: person.id, name, frequency })))
     .select("id")
   if (topicsError || !topics) return { ok: false, error: "Themen konnten nicht angelegt werden." }
 

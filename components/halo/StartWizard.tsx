@@ -32,16 +32,22 @@ export default function StartWizard({
   suggestions,
   maxTopics,
   mode = "start",
+  teamAllowed = true,
 }: {
   markets: Market[]
   suggestions: string[]
   maxTopics: number
   /** "addPerson": weitere Person im Team – ohne Schritt „Für wen“. */
   mode?: "start" | "addPerson"
+  /** false (kostenloser Check): kein Schritt „Für wen“, immer Einzelperson. */
+  teamAllowed?: boolean
 }) {
-  const firstStep = mode === "addPerson" ? 1 : 0
+  const skipTypeStep = mode === "addPerson" || !teamAllowed
+  const firstStep = skipTypeStep ? 1 : 0
   const [step, setStep] = useState(firstStep)
-  const [accountType, setAccountType] = useState<AccountType | null>(mode === "addPerson" ? "team" : null)
+  const [accountType, setAccountType] = useState<AccountType | null>(
+    mode === "addPerson" ? "team" : teamAllowed ? null : "individual",
+  )
   const [teamName, setTeamName] = useState("")
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
@@ -307,7 +313,8 @@ export default function StartWizard({
         <section>
           <h2 className="font-[family-name:var(--font-display)] text-2xl text-[#0E1916]">Zu welchen Themen?</h2>
           <p className="text-sm text-[#6B625A] mt-1">
-            Wofür möchtest du als Expertin oder Experte genannt werden? Bis zu {maxTopics} Themen.
+            Wofür möchtest du als Expertin oder Experte genannt werden?{" "}
+            {maxTopics === 1 ? "Im kostenlosen Check misst Halo ein Thema." : `Bis zu ${maxTopics} Themen.`}
           </p>
           <div className="flex flex-wrap gap-2 mt-6">
             {topics.map(t => (

@@ -1,7 +1,8 @@
 import { redirect } from "next/navigation"
 import { createHaloServerClient } from "@/lib/supabase/halo"
 import { homePath } from "@/lib/halo/home"
-import { LIMITS } from "@/lib/halo/config"
+import { planOfOwner } from "@/lib/halo/plan-db"
+import { planLimits } from "@/lib/halo/plans"
 import { TOPIC_SUGGESTIONS } from "@/lib/halo/onboarding"
 import { MARKET_LIST } from "@/lib/auralis/markets"
 import StartWizard from "@/components/halo/StartWizard"
@@ -20,11 +21,15 @@ export default async function StartPage() {
   const home = await homePath(db, user.id)
   if (home !== "/start") redirect(home)
 
+  // Neue Konten starten im kostenlosen Check (plan free).
+  const limits = planLimits(await planOfOwner(db, user.id))
+
   return (
     <StartWizard
       markets={MARKET_LIST.map(m => ({ id: m.id, label: m.label, flag: m.flag, language: m.language }))}
       suggestions={TOPIC_SUGGESTIONS}
-      maxTopics={LIMITS.topicsPerPerson}
+      maxTopics={limits.topicsPerPerson}
+      teamAllowed={limits.teamAllowed}
     />
   )
 }

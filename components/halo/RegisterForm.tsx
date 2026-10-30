@@ -11,6 +11,7 @@ export default function RegisterForm({ open }: { open: boolean }) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [password2, setPassword2] = useState("")
+  const [consent, setConsent] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [confirmSent, setConfirmSent] = useState(false)
@@ -27,7 +28,11 @@ export default function RegisterForm({ open }: { open: boolean }) {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/start` },
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=/start`,
+        // Optionale Marketing-Einwilligung (lib/halo/leads.ts); ohne Haken nur Kontakt zum Check.
+        data: consent ? { marketing_consent: true, marketing_consent_at: new Date().toISOString() } : { marketing_consent: false },
+      },
     })
     setLoading(false)
     if (error) {
@@ -66,8 +71,10 @@ export default function RegisterForm({ open }: { open: boolean }) {
           </>
         ) : (
           <>
-            <h1 className="font-[family-name:var(--font-display)] text-2xl text-[#0E1916]">Konto anlegen</h1>
-            <p className="text-sm text-[#6B625A] mt-1">In zwei Minuten zu deinem ersten Halo Score.</p>
+            <h1 className="font-[family-name:var(--font-display)] text-2xl text-[#0E1916]">Kostenloser Check</h1>
+            <p className="text-sm text-[#6B625A] mt-1">
+              In zwei Minuten zu deinem Halo Score: wie ChatGPT, Claude, Gemini und Google dich sehen. Kostenlos, ohne Kreditkarte.
+            </p>
             <form onSubmit={handleSubmit} className="space-y-3 mt-6">
               <div className="space-y-1.5">
                 <label className="text-xs text-[#6B625A] font-medium" htmlFor="email">E-Mail</label>
@@ -81,6 +88,18 @@ export default function RegisterForm({ open }: { open: boolean }) {
                 <label className="text-xs text-[#6B625A] font-medium" htmlFor="password2">Passwort wiederholen</label>
                 <input id="password2" type="password" value={password2} onChange={e => setPassword2(e.target.value)} required className={inputCls} />
               </div>
+              <label className="flex items-start gap-2.5 pt-1 cursor-pointer">
+                <input type="checkbox" checked={consent} onChange={e => setConsent(e.target.checked)} className="mt-0.5 accent-[#FA5935]" />
+                <span className="text-xs text-[#6B625A] leading-relaxed">
+                  Halo darf mich per E-Mail zu Angeboten und Neuigkeiten kontaktieren (optional, jederzeit widerrufbar).
+                </span>
+              </label>
+              <p className="text-[11px] text-[#9A9089] leading-relaxed">
+                Mit dem Anlegen akzeptierst du die{" "}
+                <a href="/legal/agb" target="_blank" className="underline hover:text-[#0E1916]">AGB</a>. Wie wir deine Daten
+                verarbeiten, steht in der{" "}
+                <a href="/legal/datenschutz" target="_blank" className="underline hover:text-[#0E1916]">Datenschutzerklärung</a>.
+              </p>
               {error && (
                 <div className="rounded-lg bg-red-50 border border-red-100 px-4 py-3">
                   <p className="text-xs text-red-600">{error}</p>
@@ -91,7 +110,7 @@ export default function RegisterForm({ open }: { open: boolean }) {
                 disabled={loading}
                 className="w-full py-2.5 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors disabled:opacity-40"
               >
-                {loading ? "Wird angelegt …" : "Konto anlegen →"}
+                {loading ? "Wird angelegt …" : "Kostenlos starten →"}
               </button>
             </form>
             <p className="text-center text-xs text-[#6B625A] mt-6">
