@@ -11,6 +11,7 @@ const ITEMS = [
   { href: "/admin/audit", label: "Audit-Log" },
   { href: "/admin/calibration", label: "Kalibrierung" },
   { href: "/admin/pruefset", label: "Prüfset" },
+  { href: "/admin/brief", label: "Wochenbrief" },
 ]
 
 export default function AdminNav() {

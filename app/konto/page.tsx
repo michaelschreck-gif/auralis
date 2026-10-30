@@ -2,7 +2,7 @@ import Link from "next/link"
 import { redirect } from "next/navigation"
 import { createHaloServerClient } from "@/lib/supabase/halo"
 import { homePath } from "@/lib/halo/home"
-import { AccountForm, ApiKeys } from "@/components/halo/AccountControls"
+import { AccountForm, ApiKeys, WeeklyBriefSetting } from "@/components/halo/AccountControls"
 import { card } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
@@ -24,11 +24,12 @@ export default async function KontoPage() {
   // Mitglieder ohne eigenes Konto haben hier nichts zu verwalten.
   if (!accountId) redirect("/weiter")
 
-  const [{ data: account }, { count }, { data: keys }, back] = await Promise.all([
+  const [{ data: account }, { count }, { data: keys }, back, { data: me }] = await Promise.all([
     db.from("accounts").select("id, name, type, created_at").eq("id", accountId).single(),
     db.from("persons").select("id", { count: "exact", head: true }).eq("account_id", accountId),
     db.from("api_keys").select("id, name, key_prefix, created_at, last_used_at, revoked_at").eq("account_id", accountId).order("created_at", { ascending: false }),
     homePath(db, user.id),
+    db.from("app_users").select("weekly_brief").eq("id", user.id).maybeSingle(),
   ])
   if (!account) redirect("/weiter")
 
@@ -53,6 +54,7 @@ export default async function KontoPage() {
           <h2 className="text-sm font-semibold text-[#0E1916]">Tarif</h2>
           <p className="text-sm text-[#6B625A] mt-2">Das Preismodell folgt. Bis dahin sind alle Funktionen freigeschaltet.</p>
         </section>
+        <WeeklyBriefSetting on={me?.weekly_brief ?? true} email={user.email ?? null} />
         <ApiKeys keys={keys ?? []} />
       </main>
     </div>

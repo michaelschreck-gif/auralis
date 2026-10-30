@@ -5,6 +5,8 @@ import { revalidatePath } from "next/cache"
 import { getAdmin, logAudit } from "@/lib/halo/admin"
 import { activeJobId, enqueueJob, executeJob } from "@/lib/halo/jobs"
 import { after } from "next/server"
+import { briefLinks, briefSince, composeBrief } from "@/lib/halo/brief-run"
+import { isMailConfigured, sendMail } from "@/lib/halo/mail"
 
 export type ActionResult = { ok: true; message?: string } | { ok: false; error: string }
 
@@ -146,4 +148,19 @@ export async function measurePerson(personId: string): Promise<ActionResult> {
   }
   await logAudit(admin, "person.measure", { type: "person", id: personId }, { topics: started })
   return { ok: true, message: started ? `${started} Messung(en) gestartet.` : "Läuft bereits." }
+}
+
+/** Wochenbrief eines Logins als Test an die eigene Admin-Adresse (wird nicht als verschickt gezählt). */
+export async function sendBriefTest(userId: string): Promise<ActionResult> {
+  const admin = await getAdmin()
+  if (!admin) return NO_ADMIN
+  if (!admin.user.email) return { ok: false, error: "Dein Login hat keine E-Mail-Adresse." }
+  if (!isMailConfigured()) return { ok: false, error: "Mailversand ist nicht eingerichtet (RESEND_API_KEY, MAIL_FROM)." }
+  const links = briefLinks(await appOrigin())
+  const composed = await composeBrief(admin.service, userId, links, await briefSince(admin.service, userId, new Date()))
+  if (!composed?.brief) return { ok: false, error: "Für diesen Login gäbe es diese Woche keinen Brief." }
+  const r = await sendMail({ to: admin.user.email, ...composed.brief, subject: `[Test] ${composed.brief.subject}` })
+  if (!r.ok) return { ok: false, error: r.error }
+  await logAudit(admin, "brief.test", { type: "user", id: userId }, { to: admin.user.email })
+  return { ok: true, message: `Test an ${admin.user.email} verschickt.` }
 }

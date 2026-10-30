@@ -39,6 +39,17 @@ export type AppUserRow = {
   email: string | null
   is_admin: boolean
   banned_at: string | null
+  weekly_brief: boolean
+  created_at: string
+}
+
+export type BriefSendRow = {
+  id: string
+  user_id: string
+  week: string
+  status: "sending" | "sent" | "skipped" | "failed"
+  error: string | null
+  payload: Json | null
   created_at: string
 }
 
@@ -261,7 +272,7 @@ export type WaitlistSignupRow = {
 export type HaloDatabase = {
   public: {
     Tables: {
-      app_users: Table<AppUserRow, WithOptional<AppUserRow, "email" | "is_admin" | "banned_at" | "created_at">>
+      app_users: Table<AppUserRow, WithOptional<AppUserRow, "email" | "is_admin" | "banned_at" | "weekly_brief" | "created_at">>
       accounts: Table<AccountRow, WithOptional<AccountRow, "id" | "plan" | "created_at">>
       account_members: Table<AccountMemberRow, WithOptional<AccountMemberRow, "person_id" | "created_at">>
       persons: Table<
@@ -354,6 +365,7 @@ export type HaloDatabase = {
           | "label_note" | "excluded" | "labeled_by" | "labeled_at" | "created_at"
         >
       >
+      brief_sends: Table<BriefSendRow, WithOptional<BriefSendRow, "id" | "status" | "error" | "payload" | "created_at">>
     }
     Views: { [_ in never]: never }
     Functions: {

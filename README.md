@@ -22,9 +22,10 @@ Zugriff läuft in der Datenbank überall über `can_access_person(person_id)`.
 | `/registrieren`, `/start` | Registrierung, Assistent (Konto-Typ → Name → Region → Themen → erste Messung) |
 | `/weiter` | Einstieg nach dem Login (Team-Owner → `/personen`, sonst eigene Person) |
 | `/personen` | Team: Personen, hinzufügen, Zugang einladen |
-| `/p/[id]` | Halo Score; Unterseiten `ki`, `google`, `wettbewerber`, `massnahmen`, `persona`, `einstellungen` |
-| `/konto` | Konto, API-Schlüssel |
-| `/admin` | Übersicht/Messbetrieb, Konten, Nutzer, Audit-Log, Kalibrierung (nur `app_users.is_admin`) |
+| `/p/[id]` | Halo Score; Unterseiten `ki`, `google`, `impulse`, `massnahmen`, `persona`, `einstellungen` |
+| `/konto` | Konto, Wochenbrief an/aus, API-Schlüssel |
+| `/brief/abmelden` | Wochenbrief abbestellen (signierter Link aus der Mail, ohne Login) |
+| `/admin` | Übersicht/Messbetrieb, Konten, Nutzer, Check, Audit-Log, Kalibrierung, Prüfset, Wochenbrief-Vorschau (nur `app_users.is_admin`) |
 | `/api/v2` | Öffentliche API (Doku `/docs/api`); `/api/v1` antwortet mit 410 |
 | `/u/[slug]`, `/badge/[slug]` | Öffentliches Profil und Badge je Person |
 
@@ -56,6 +57,7 @@ npx tsc --noEmit
 
 Umgebungsvariablen: Supabase-Keys, `ANTHROPIC_API_KEY` (Pflicht), optional `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`,
 `GOOGLE_AI_API_KEY`, `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`, `ELEVENLABS_API_KEY`, `CRON_SECRET`,
+Wochenbrief `RESEND_API_KEY` + `MAIL_FROM` (z. B. `Halo <brief@digital-halo.de>`, ohne beide kein Versand), optional `BRIEF_SECRET` (sonst `CRON_SECRET`),
 Domains `NEXT_PUBLIC_SITE_URL`/`NEXT_PUBLIC_APP_URL`/`NEXT_PUBLIC_ADMIN_URL`, `SIGNUP_OPEN=true` öffnet die Registrierung in Production.
 
 ## Datenbank
@@ -75,5 +77,6 @@ Die LLM-Keys gelten auch für Staging (echte Kosten), Cron-Jobs laufen nur in Pr
 
 ## Cron (`vercel.json`)
 
-- `0 6 * * *` – fällige Themen als Jobs verteilen (`/api/cron/run-scheduled-checks`)
+- `0 6 * * *` – fällige Themen als Jobs verteilen (`/api/cron/run-scheduled-checks`), montags danach der
+  Wochenbrief (`lib/halo/brief-run.ts`, dienstags Nachzügler, `?brief=1` erzwingt ihn), dann Google wöchentlich
 - `0 4 * * *` – Kalibrierung (`/api/cron/calibrate`)

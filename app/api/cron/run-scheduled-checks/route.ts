@@ -4,13 +4,16 @@
  * Holt alle fälligen Themen (get_due_topics) und startet je Thema einen Job
  * in einer eigenen Funktionsinstanz (/api/internal/run-job), damit Themen
  * parallel laufen und jeder Lauf die vollen 300 s hat. Schlägt der Start
- * fehl, läuft der Job direkt hier. Danach: Google-Messung je Person, wöchentlich.
+ * fehl, läuft der Job direkt hier. Danach: montags der Wochenbrief per Mail,
+ * dann Google-Messung je Person, wöchentlich.
  */
 
 import { NextRequest, NextResponse } from "next/server"
 import { createHaloServiceClient } from "@/lib/supabase/halo"
 import { activeJobId, enqueueJob, executeJob } from "@/lib/halo/jobs"
 import { isGoogleConfigured, personsDueForGoogle, runGoogleMeasurement } from "@/lib/halo/google"
+import { isBriefDay } from "@/lib/halo/brief"
+import { runWeeklyBriefs } from "@/lib/halo/brief-run"
 
 export const maxDuration = 300
 
@@ -67,9 +70,21 @@ export async function GET(request: NextRequest) {
     }
   }
 
+  // Wochenbrief montags; dienstags holt nach, was am Montag nicht ins Zeitbudget passte
+  // (brief_sends verhindert doppelte Mails). ?brief=1 erzwingt ihn, z. B. zum Testen auf Staging.
+  const now = new Date()
+  const briefDue = isBriefDay(now) || isBriefDay(new Date(now.getTime() - 86_400_000))
+  const brief = briefDue || request.nextUrl.searchParams.get("brief") === "1"
+    ? await runWeeklyBriefs(service, { fallbackOrigin: origin, deadline: startedAt + BRIEF_BUDGET_MS })
+    : null
+  if (brief?.configured && brief.failed.length) console.error("[cron] brief failed:", JSON.stringify(brief.failed))
+
   const google = await runDueGoogle(service, startedAt)
-  return NextResponse.json({ total: topics?.length ?? 0, dispatched, skipped, errors, google })
+  return NextResponse.json({ total: topics?.length ?? 0, dispatched, skipped, errors, brief, google })
 }
+
+/** Zeitbudget für den Wochenbrief (ab Start des Laufs). */
+const BRIEF_BUDGET_MS = 90_000
 
 /** Zeitbudget für Google-Messungen in diesem Lauf (Funktion läuft bis 300 s). */
 const GOOGLE_BUDGET_MS = 240_000
