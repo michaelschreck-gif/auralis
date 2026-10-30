@@ -63,11 +63,13 @@ export type LLMProvider = {
 }
 
 /**
- * Antwortlänge der Messung, gleich für alle Modelle. Bei 600 endeten alle
- * Claude-Antworten genau am Limit (abgeschnittene Listen, Namen fehlten);
- * GPT-4o kommt im Schnitt mit ~430 aus. Messung 2026-10-30, measurement_answers.output_tokens.
+ * Antwortlänge der Messung, gleich für alle Modelle. Bei 600 und bei 1000
+ * endeten alle Claude-Antworten genau am Limit, mitten im Satz; weiter unten
+ * gelistete Personen fielen heraus (Testperson: bei 600 nie genannt, bei 1000
+ * auf Platz 8/9). GPT-4o kommt im Schnitt mit ~370 aus.
+ * Messungen 2026-10-30, measurement_answers.output_tokens.
  */
-const DEFAULT_MAX_TOKENS = 1000
+const DEFAULT_MAX_TOKENS = 2000
 
 /**
  * Claude-Modell für Messung UND alle übrigen Claude-Aufrufe (Persona, Chat,
