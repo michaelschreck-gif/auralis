@@ -68,6 +68,35 @@ function findWholeWord(haystackLower: string, needleLower: string): number {
   return m ? m.index : -1
 }
 
+/** Listenpunkt am Zeilenanfang: „1.“, „2)“, „-“, „*“, „•“ – auch nach „## “. */
+const LIST_ITEM = /^([ \t]*)(?:#{1,6}[ \t]*)?(\d{1,2}[.)]|[-*•])[ \t]+/gm
+
+/**
+ * Platz der Nennung in einer Aufzählung (1 = erster Listenpunkt).
+ * Gezählt werden nur Listenpunkte am Zeilenanfang bis einschließlich dem, in
+ * dem der Name steht – und nur die oberste Ebene: Gibt es nummerierte Punkte,
+ * zählen nur diese (Spiegelstriche darunter sind meist Beschreibungen), sonst
+ * die Punkte mit der geringsten Einrückung. Ohne Aufzählung vor dem Namen: 1.
+ * Weiter hinten als Platz 20 → null (nicht aussagekräftig).
+ *
+ * Früher wurde jedes „1.“ irgendwo im Text vor dem Namen gezählt plus 1 –
+ * damit stand jede Person in Listen einen Platz zu weit hinten (Prüfset).
+ */
+export function listPosition(response: string, matchIndex: number): number | null {
+  const items = [...response.matchAll(LIST_ITEM)].map(m => ({
+    index: m.index ?? 0,
+    indent: m[1].replace(/\t/g, "  ").length,
+    numbered: /\d/.test(m[2]),
+  }))
+  if (items.length === 0) return 1
+  const numbered = items.filter(i => i.numbered)
+  const pool = numbered.length > 0 ? numbered : items
+  const minIndent = Math.min(...pool.map(i => i.indent))
+  const top = pool.filter(i => i.indent === minIndent)
+  const position = Math.max(1, top.filter(i => i.index <= matchIndex).length)
+  return position > 20 ? null : position
+}
+
 /**
  * Parses a single AI response to extract mention signals for a target person.
  * Uses simple but robust string matching — no AI needed for this step.
@@ -104,16 +133,7 @@ export function extractMentionSignal(
   const mentioned = fullNameIndex !== -1 || lastNameIndex !== -1
   const matchIndex = fullNameIndex !== -1 ? fullNameIndex : lastNameIndex
 
-  // Estimate position in a list (count how many names appear before this one)
-  let position: number | null = null
-  if (mentioned && matchIndex !== -1) {
-    // Heuristic: count numbered list items or bullet points before the match
-    const beforeMatch = response.substring(0, matchIndex)
-    const listItemsBefore = (beforeMatch.match(/\d+\.|^-|\n-|\n\*/gm) ?? []).length
-    position = listItemsBefore + 1
-    if (position < 1) position = 1
-    if (position > 20) position = null // too far down to be meaningful
-  }
+  const position = mentioned && matchIndex !== -1 ? listPosition(response, matchIndex) : null
 
   // Extract context snippet (2 sentences around the mention)
   let contextSnippet: string | null = null
