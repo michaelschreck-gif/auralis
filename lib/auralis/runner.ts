@@ -2,7 +2,6 @@
  * Messkern – misst eine Person zu Themen über alle konfigurierten KI-Modelle.
  * Genutzt von:
  *   - lib/halo/measure.ts (Messung je Thema: Cron, „Jetzt messen“, API)
- *   - der Wettbewerber-Messung (/p/[id]/wettbewerber)
  *   - der Kalibrierung (runCalibrationEntry, täglicher Cron)
  *
  * Jeder Lauf fragt N Provider parallel (siehe providers.ts); der Score ist der
@@ -411,7 +410,7 @@ export type TargetMeasurement = {
 /**
  * Misst eine Person zu Themen über alle Provider, Runden und Märkte und baut
  * den Report. Schreibt nichts in die Datenbank (das machen die Aufrufer:
- * lib/halo/measure.ts und die Wettbewerber-Messung).
+ * lib/halo/measure.ts).
  * Wirft „All providers failed: …“, wenn kein Provider ein Ergebnis liefert.
  */
 export async function measureTarget({

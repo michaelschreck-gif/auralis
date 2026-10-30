@@ -1,5 +1,5 @@
 /**
- * Daten für die Detailseiten (KI-Sichtbarkeit, Wettbewerber, Maßnahmen, Persona).
+ * Daten für die Detailseiten (KI-Sichtbarkeit, Impulse, Maßnahmen, Persona).
  * Mit der Sitzung des Nutzers aufrufen – RLS begrenzt auf erlaubte Personen.
  */
 
@@ -7,6 +7,7 @@ import type { VisibilityReport } from "../auralis/analyzer"
 import type { MultiModelVisibilityReport } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
 import type { MeasurementAnswerRow } from "../supabase/halo.types"
+import { buildImpulses, type ImpulseSummary } from "./impulses"
 import { pillarsFromReport } from "./score"
 
 export type LatestMeasurement = {
@@ -122,4 +123,22 @@ export async function loadAnswers(
 export function asVisibilityReport(raw: unknown): VisibilityReport | null {
   const r = raw as VisibilityReport | null
   return r && Array.isArray(r.queryResults) && r.scoreBreakdown ? r : null
+}
+
+export type ImpulsesView = ImpulseSummary & {
+  /** Eigene KI-Sichtbarkeit je Thema zum Vergleich. */
+  own: { topic: string; ai: number | null }[]
+}
+
+/** Impulse aus den Antworten der jüngsten Messungen (ohne zusätzliche KI-Aufrufe). */
+export async function loadImpulses(db: HaloClient, personId: string, selfName: string): Promise<ImpulsesView | null> {
+  const latest = await loadLatestMeasurements(db, personId)
+  if (latest.length === 0) return null
+  const topicOf = new Map(latest.map(m => [m.id, m.topicName]))
+  const answers = await loadAnswers(db, latest.map(m => m.id))
+  const summary = buildImpulses(
+    answers.map(a => ({ prompt: a.prompt, response: a.response, topic: topicOf.get(a.measurement_id) ?? null })),
+    selfName,
+  )
+  return { ...summary, own: latest.map(m => ({ topic: m.topicName, ai: m.aiScore })) }
 }

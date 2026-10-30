@@ -17,7 +17,7 @@ function navFor(base: string): NavItem[] {
     { href: base, label: "Halo Score", icon: icon("M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5") },
     { href: `${base}/ki`, label: "KI-Sichtbarkeit", icon: icon("M4 6h16M4 12h10M4 18h7M18 15l3 3-3 3") },
     { href: `${base}/google`, label: "Google-Sichtbarkeit", icon: icon("M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3") },
-    { href: `${base}/wettbewerber`, label: "Wettbewerber", icon: icon("M4 20V10M10 20V4M16 20v-7M22 20H2") },
+    { href: `${base}/impulse`, label: "Impulse", icon: icon("M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z") },
     { href: `${base}/massnahmen`, label: "Maßnahmen", icon: icon("M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9") },
     { href: `${base}/persona`, label: "Wie die KI dich sieht", icon: icon("M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0") },
   ]
