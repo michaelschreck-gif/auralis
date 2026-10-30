@@ -25,7 +25,7 @@ export default async function GooglePage({ params }: { params: Promise<{ id: str
     <PageHeader
       eyebrow="Google-Sichtbarkeit"
       title="Wie du in der Google-Suche dastehst"
-      text="Ob du bei deinen Themen in den Google-Treffern auftauchst, wie weit oben, ob es ein Knowledge Panel gibt und ob dich Googles KI-Übersicht nennt. Zählt mit 30 % in den Halo Score."
+      text="Was jemand findet, der dich googelt: Wie viele der ersten Treffer zu deinem Namen von dir handeln, wo du bei „Name + Thema“ stehst, ob es ein Knowledge Panel gibt und ob dich Googles KI-Übersicht nennt. Zählt mit 30 % in den Halo Score."
       action={configured ? <GoogleMeasureButton personId={id} /> : undefined}
     />
   )
@@ -47,7 +47,9 @@ export default async function GooglePage({ params }: { params: Promise<{ id: str
   }
 
   const signals = (latest.signals ?? {}) as SeoSignals
-  const perTopic = ((latest.raw as unknown as SeoRunOutcome | null)?.perTopic ?? []) as SeoRunOutcome["perTopic"]
+  const raw = latest.raw as unknown as SeoRunOutcome | null
+  const perTopic = raw?.perTopic ?? []
+  const nameSearch = raw?.nameSearch
   const factors = (Object.keys(SEO_FACTOR_META) as SeoFactorKey[]).filter(k => typeof signals[k] === "number")
 
   return (
@@ -76,14 +78,38 @@ export default async function GooglePage({ params }: { params: Promise<{ id: str
         </ul>
       </section>
 
+      {nameSearch && (
+        <section className={`${card} p-5 sm:p-6`}>
+          <h2 className="text-sm font-semibold text-[#0E1916]">Was man findet, wenn man dich googelt</h2>
+          <p className="text-xs text-[#9A9089] mt-0.5">
+            Die ersten {nameSearch.total} Treffer bei der Suche nach deinem Namen – {nameSearch.aboutYou} davon handeln von dir.
+            {nameSearch.knowledgePanel && " Google zeigt ein Knowledge Panel zu dir."}
+          </p>
+          <ol className="mt-4 divide-y divide-[#F0EAE0]">
+            {nameSearch.results.map((r, i) => (
+              <li key={`${r.url}-${i}`} className="py-2 flex items-start gap-3 text-sm">
+                <span className="w-6 shrink-0 tabular-nums text-[#9A9089]">{r.rank ?? i + 1}.</span>
+                <span className={`min-w-0 flex-1 truncate ${r.aboutYou ? "text-[#0E1916]" : "text-[#9A9089]"}`} title={r.url ?? undefined}>
+                  {r.title || r.url}
+                </span>
+                {r.aboutYou && <span className="shrink-0 text-[11px] rounded-full bg-[#E3F1E8] text-[#1F6B3A] px-2 py-0.5">über dich</span>}
+              </li>
+            ))}
+          </ol>
+        </section>
+      )}
+
       {perTopic.length > 0 && (
         <section className={`${card} p-5 sm:p-6`}>
-          <h2 className="text-sm font-semibold text-[#0E1916]">Position je Thema</h2>
+          <h2 className="text-sm font-semibold text-[#0E1916]">Name + Thema</h2>
+          <p className="text-xs text-[#9A9089] mt-0.5">Platz des ersten Treffers über dich, wenn jemand deinen Namen mit dem Thema sucht.</p>
           <ul className="mt-4 divide-y divide-[#F0EAE0]">
             {perTopic.map(t => (
-              <li key={t.topic} className="py-2.5 flex justify-between text-sm">
+              <li key={t.topic} className="py-2.5 flex justify-between gap-3 text-sm">
                 <span className="text-[#0E1916]">{t.topic}</span>
-                <span className="text-[#6B625A]">{t.position ? `Platz ${t.position}` : "nicht in den Top-Treffern"}</span>
+                <span className={t.error ? "text-[#C8431F]" : "text-[#6B625A]"}>
+                  {t.error ? "Abfrage fehlgeschlagen – zählt nicht mit" : t.position ? `Platz ${t.position}` : "nicht in den Top 10"}
+                </span>
               </li>
             ))}
           </ul>

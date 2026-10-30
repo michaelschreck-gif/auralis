@@ -23,10 +23,10 @@ export type Band = {
 }
 
 export type SeoFactorKey =
-  | "serpPresence"   // Anteil der Themen, bei denen die Person in Google-Organic auftaucht
-  | "serpPosition"   // Ø-Position in den organischen Treffern (umgerechnet auf 0–100)
-  | "knowledgePanel" // Knowledge-Panel / Knowledge-Graph vorhanden (0 oder 100)
-  | "aiOverview"     // Präsenz in Google AI Overviews (0–100)
+  | "serpPresence"   // Namenssuche: Anteil der Top-10-Treffer über die Person (seo-serp.ts)
+  | "serpPosition"   // „Name + Thema“: Ø Punktwert des Platzes (0–100)
+  | "knowledgePanel" // Knowledge Panel bei der Namenssuche (0 oder 100)
+  | "aiOverview"     // Nennung in einer Google-KI-Übersicht (0 oder 100)
   | "gscPosition"    // Ø-Position der eigenen Domain (Search Console), 0–100
   | "gscEngagement"  // Klick-/Impressions-Stärke der eigenen Domain (0–100)
 
@@ -70,32 +70,32 @@ export const SEO_FACTOR_META: Record<
   { label: string; color: string; weight: number; description: string }
 > = {
   serpPresence: {
-    label: "Ranking-Präsenz",
+    label: "Treffer über dich",
     color: COLOR_AMBER,
     weight: 0.3,
     description:
-      "Bei wie vielen deiner Themen du in den organischen Google-Top-Treffern überhaupt auftauchst.",
+      "Wie viele der ersten 10 Google-Treffer bei der Suche nach deinem Namen von dir handeln (z. B. deine Website, Profile, Interviews).",
   },
   serpPosition: {
-    label: "Ø-Position",
+    label: "Name + Thema",
     color: COLOR_DARK,
     weight: 0.25,
     description:
-      "Wie weit oben du in den Google-Ergebnissen stehst. Platz 1 = 100, jeder weitere Rang zieht Punkte ab.",
+      "Wie weit oben ein Treffer über dich steht, wenn jemand deinen Namen zusammen mit deinem Thema sucht. Platz 1 = 100, jeder weitere Platz zieht Punkte ab; nicht in den Top 10 = 0.",
   },
   knowledgePanel: {
     label: "Knowledge Panel",
     color: COLOR_TEAL,
     weight: 0.15,
     description:
-      "Ob Google rechts ein Knowledge Panel zu dir zeigt — ein starkes Signal für etablierte Entitäten.",
+      "Ob Google bei der Suche nach deinem Namen ein Knowledge Panel zu dir zeigt – ein starkes Signal für bekannte Personen.",
   },
   aiOverview: {
-    label: "AI Overview",
+    label: "KI-Übersicht",
     color: COLOR_CORAL,
     weight: 0.1,
     description:
-      "Ob du in Googles KI-Zusammenfassungen (AI Overviews) oben in den Suchergebnissen genannt wirst.",
+      "Ob Googles KI-Übersicht (AI Overview) dich in einer dieser Suchen nennt.",
   },
   gscPosition: {
     label: "Eigene Domain – Position",
@@ -170,7 +170,7 @@ export const SEO_DEFINITION: SeoScoreDefinition = {
   title: "SEO Score",
   subtitle: "Sichtbarkeit in der klassischen Google-Suche",
   what:
-    "Wie sichtbar du in der klassischen Google-Suche bist — das Gegenstück zum GEO Score (KI-Suche). Er kombiniert deine Auffindbarkeit in den organischen Google-Treffern für deine Themen (Ranking-Präsenz, Position, Knowledge Panel, AI Overview) mit der Performance deiner eigenen Website (Google Search Console).",
+    "Was jemand findet, der dich googelt: Treffer über dich bei der Suche nach deinem Namen, dein Platz bei „Name + Thema“, Knowledge Panel und Nennung in Googles KI-Übersicht – optional ergänzt um die Performance deiner eigenen Website (Google Search Console).",
   weights: ALL_FACTORS.map(k => ({
     label: SEO_FACTOR_META[k].label,
     value: Math.round(SEO_FACTOR_META[k].weight * 100),
