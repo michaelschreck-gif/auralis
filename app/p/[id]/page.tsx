@@ -17,7 +17,7 @@ const PILLAR_INFO: Record<PillarKey, { text: string; href: string; missing: stri
     missing: "Noch keine Messung.",
   },
   google: {
-    text: "Rankings, Knowledge Panel und AI Overview in der Google-Suche.",
+    text: "Was man findet, wenn man dich googelt: Treffer über dich, Name + Thema, Knowledge Panel.",
     href: "google",
     missing: "Die Google-Messung ist noch nicht angebunden.",
   },
