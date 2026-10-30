@@ -11,8 +11,11 @@ export function AccountForm({ name, type, personCount }: { name: string; type: "
   return (
     <section className={`${card} p-5 sm:p-6`}>
       <h2 className="text-sm font-semibold text-[#0E1916]">Konto</h2>
+      <label htmlFor="account-name" className="block text-xs font-medium text-[#6B625A] mt-4">
+        {type === "team" ? "Teamname" : "Kontoname"}
+      </label>
       <form
-        className="mt-4 flex flex-col sm:flex-row gap-2"
+        className="mt-1.5 flex flex-col sm:flex-row gap-2"
         action={() =>
           start(async () => {
             const r = await renameAccount(value)
@@ -20,7 +23,7 @@ export function AccountForm({ name, type, personCount }: { name: string; type: "
           })
         }
       >
-        <input value={value} onChange={e => setValue(e.target.value)} aria-label="Kontoname" className={inputCls} />
+        <input id="account-name" value={value} onChange={e => setValue(e.target.value)} maxLength={60} className={inputCls} />
         <button type="submit" disabled={pending} className={primaryBtn}>Speichern</button>
       </form>
       <p className="text-sm text-[#6B625A] mt-4">
