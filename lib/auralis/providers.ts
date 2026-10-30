@@ -26,10 +26,19 @@ import { fetchWithRetry } from "./http-retry"
 
 export type ProviderId = "claude-sonnet" | "gpt-4o" | "perplexity-sonar" | "gemini-flash"
 
+/** Tokenverbrauch eines Aufrufs laut Anbieter. */
+export type TokenUsage = { input: number; output: number }
+
 /** Optionale Messkontext-Angaben für einen Aufruf. */
 export type CallOptions = {
   /** ISO-3166-Alpha-2: Standort für Anbieter mit Websuche (aktuell Perplexity). */
   country?: string
+  /** Erhält den Tokenverbrauch, wenn der Anbieter ihn meldet (für die Kostenrechnung). */
+  onUsage?: (usage: TokenUsage) => void
+}
+
+function reportUsage(options: CallOptions | undefined, input: number | undefined, output: number | undefined) {
+  if (options?.onUsage && typeof input === "number" && typeof output === "number") options.onUsage({ input, output })
 }
 
 export type LLMProvider = {
@@ -77,7 +86,7 @@ export const claudeProvider: LLMProvider = {
   label: "Claude Sonnet",
   modelTag: CLAUDE_MODEL,
   isConfigured: () => !!process.env.ANTHROPIC_API_KEY,
-  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS) {
+  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS, options) {
     const apiKey = process.env.ANTHROPIC_API_KEY
     if (!apiKey) throw new Error("ANTHROPIC_API_KEY missing")
     const client = new Anthropic({ apiKey })
@@ -88,6 +97,7 @@ export const claudeProvider: LLMProvider = {
       system: systemPrompt,
       messages: [{ role: "user", content: prompt }],
     })
+    reportUsage(options, message.usage?.input_tokens, message.usage?.output_tokens)
     return message.content
       .filter(b => b.type === "text")
       .map(b => (b as { type: "text"; text: string }).text)
@@ -102,7 +112,7 @@ export const openaiProvider: LLMProvider = {
   label: "GPT-4o",
   modelTag: "gpt-4o",
   isConfigured: () => !!process.env.OPENAI_API_KEY,
-  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS) {
+  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS, options) {
     const apiKey = process.env.OPENAI_API_KEY
     if (!apiKey) throw new Error("OPENAI_API_KEY missing")
     const res = await fetchWithRetry("https://api.openai.com/v1/chat/completions", {
@@ -126,7 +136,9 @@ export const openaiProvider: LLMProvider = {
     }
     const json = await res.json() as {
       choices?: { message?: { content?: string } }[]
+      usage?: { prompt_tokens?: number; completion_tokens?: number }
     }
+    reportUsage(options, json.usage?.prompt_tokens, json.usage?.completion_tokens)
     return json.choices?.[0]?.message?.content ?? ""
   },
 }
@@ -172,7 +184,9 @@ export const perplexityProvider: LLMProvider = {
     }
     const json = await res.json() as {
       choices?: { message?: { content?: string } }[]
+      usage?: { prompt_tokens?: number; completion_tokens?: number }
     }
+    reportUsage(options, json.usage?.prompt_tokens, json.usage?.completion_tokens)
     return json.choices?.[0]?.message?.content ?? ""
   },
 }
@@ -184,7 +198,7 @@ export const geminiProvider: LLMProvider = {
   label: "Gemini",
   modelTag: "gemini-2.5-flash",
   isConfigured: () => !!process.env.GOOGLE_AI_API_KEY,
-  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS) {
+  async call(prompt, systemPrompt, maxTokens = DEFAULT_MAX_TOKENS, options) {
     const apiKey = process.env.GOOGLE_AI_API_KEY
     if (!apiKey) throw new Error("GOOGLE_AI_API_KEY missing")
     const url =
@@ -217,7 +231,12 @@ export const geminiProvider: LLMProvider = {
       candidates?: {
         content?: { parts?: { text?: string }[] }
       }[]
+      usageMetadata?: { promptTokenCount?: number; candidatesTokenCount?: number; thoughtsTokenCount?: number }
     }
+    // Denk-Tokens werden wie Ausgabe abgerechnet (hier abgeschaltet, aber mitgezählt, falls doch).
+    const u = json.usageMetadata
+    const output = u?.candidatesTokenCount === undefined ? undefined : u.candidatesTokenCount + (u.thoughtsTokenCount ?? 0)
+    reportUsage(options, u?.promptTokenCount, output)
     return json.candidates?.[0]?.content?.parts?.map(p => p.text ?? "").join("\n") ?? ""
   },
 }

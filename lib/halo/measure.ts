@@ -85,6 +85,9 @@ export async function runMeasurement(
       mentioned: r.signal.mentioned,
       position: r.signal.position,
       sentiment: r.signal.sentiment === "not_mentioned" ? null : (r.signal.sentiment as SentimentType),
+      input_tokens: r.usage?.input ?? null,
+      output_tokens: r.usage?.output ?? null,
+      tokens_used: r.usage ? r.usage.input + r.usage.output : null,
     })),
   )
   if (answers.length > 0) {

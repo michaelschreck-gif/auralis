@@ -124,6 +124,8 @@ export type MeasurementAnswerRow = {
   sentiment: SentimentType | null
   latency_ms: number | null
   tokens_used: number | null
+  input_tokens: number | null
+  output_tokens: number | null
   created_at: string
 }
 
@@ -307,7 +309,8 @@ export type HaloDatabase = {
         MeasurementAnswerRow,
         WithOptional<
           MeasurementAnswerRow,
-          "id" | "query_type" | "response" | "mentioned" | "position" | "sentiment" | "latency_ms" | "tokens_used" | "created_at"
+          | "id" | "query_type" | "response" | "mentioned" | "position" | "sentiment" | "latency_ms" | "tokens_used"
+          | "input_tokens" | "output_tokens" | "created_at"
         >
       >
       google_measurements: Table<
