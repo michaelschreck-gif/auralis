@@ -155,7 +155,7 @@ export async function sendBriefTest(userId: string, rawTo: string): Promise<Acti
   const admin = await getAdmin()
   if (!admin) return NO_ADMIN
   const to = (rawTo.trim() || admin.user.email || "").toLowerCase()
-  if (!/^[^s@]+@[^s@]+.[^s@]+$/.test(to)) return { ok: false, error: "Bitte eine gültige E-Mail-Adresse angeben." }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(to)) return { ok: false, error: "Bitte eine gültige E-Mail-Adresse angeben." }
   if (!isMailConfigured()) return { ok: false, error: "Mailversand ist nicht eingerichtet (RESEND_API_KEY, MAIL_FROM)." }
   const links = briefLinks(await appOrigin())
   const composed = await composeBrief(admin.service, userId, links, await briefSince(admin.service, userId, new Date()))
