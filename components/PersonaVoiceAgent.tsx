@@ -44,7 +44,14 @@ function getRecognitionCtor(): SpeechRecognitionCtor | null {
   return w.SpeechRecognition ?? w.webkitSpeechRecognition ?? null
 }
 
-export default function PersonaVoiceAgent({ name }: { name: string }) {
+export default function PersonaVoiceAgent({
+  name,
+  chatUrl = "/api/persona/chat",
+}: {
+  name: string
+  /** Chat-Endpunkt (Streaming, Body { messages }). */
+  chatUrl?: string
+}) {
   void name
   const [phase, setPhase] = useState<Phase>("idle")
   const [partial, setPartial] = useState("")
@@ -127,7 +134,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
     setPhase("thinking")
 
     try {
-      const res = await fetch("/api/persona/chat", {
+      const res = await fetch(chatUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: next }),
@@ -153,7 +160,7 @@ export default function PersonaVoiceAgent({ name }: { name: string }) {
       setError(e instanceof Error ? e.message : "Netzwerkfehler.")
       setPhase("idle")
     }
-  }, [speak])
+  }, [speak, chatUrl])
 
   const startListening = useCallback(() => {
     setError(null)

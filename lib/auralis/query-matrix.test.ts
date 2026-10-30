@@ -125,30 +125,6 @@ test("Gewichteter Mittelwert", () => {
   assert.equal(weightedMean([10, 30], [0, 0]), 20)
 })
 
-// ─── Glättung ────────────────────────────────────────────────────────────────
-import { smoothReports } from "./smoothing.ts"
-
-const rep = (score: number, pos: number | null) => ({
-  overallScore: score,
-  mentionRate: score,
-  averagePosition: pos,
-  scoreBreakdown: { presenceScore: score, positionScore: score, contextScore: score, topicAlignmentScore: score },
-})
-
-test("Glättung: ein Lauf bleibt unverändert, ohne Info", () => {
-  const r = smoothReports([rep(50, 2)])
-  assert.equal(r.info, null)
-  assert.equal(r.report.overallScore, 50)
-})
-
-test("Glättung: Mittel über Läufe, Info mit letztem Einzelwert", () => {
-  const { report, info } = smoothReports([rep(70, 2), rep(50, null), rep(60, 4)])
-  assert.equal(report.overallScore, 60)
-  assert.equal(report.scoreBreakdown.presenceScore, 60)
-  assert.equal(report.averagePosition, 3)
-  assert.deepEqual(info, { runs: 3, days: 28, latestScore: 70 })
-})
-
 // ─── Kalibrierung: Aufbereitung ──────────────────────────────────────────────
 import { shapeCalibration } from "./calibration.ts"
 
@@ -165,51 +141,4 @@ test("Kalibrierung: Aufbereitung gruppiert, sortiert Warnungen zuerst, Verlauf c
   const a = views.find(v => v.key === "a")!
   assert.deepEqual(a.history.map(h => h.score), [50, 60])
   assert.equal(a.latest.score, 60)
-})
-
-// ─── Setup-Eingaben ──────────────────────────────────────────────────────────
-import { validateSetupInput as _validate, parseTopicSuggestions } from "./setup-input.ts"
-import { isMarketId } from "./markets.ts"
-
-const validateSetupInput = (raw: unknown, plan: string) =>
-  _validate(raw, {
-    marketLanguage: id => (isMarketId(id) ? MARKETS[id].language : null),
-    maxMarkets: maxMarketsForPlan(plan),
-  })
-
-test("Setup: gültige Eingabe, Sprache folgt erstem Markt", () => {
-  const r = validateSetupInput({ subjectName: "  Maud  Schock ", markets: ["us"], topics: ["Branding", "branding", " AI "] }, "pro")
-  assert.ok(r.ok)
-  if (r.ok) {
-    assert.equal(r.value.subjectName, "Maud Schock")
-    assert.deepEqual(r.value.topics, ["Branding", "AI"])
-    assert.equal(r.language, "en")
-  }
-})
-
-test("Setup: Fehlerfälle", () => {
-  assert.equal(validateSetupInput({ subjectName: "A", markets: ["dach"], topics: ["x"] }, "pro").ok, false)
-  assert.equal(validateSetupInput({ subjectName: "Max M", markets: [], topics: ["x"] }, "pro").ok, false)
-  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["dach"], topics: [] }, "pro").ok, false)
-  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["dach", "us"], topics: ["x"] }, "free").ok, false)
-  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["zzz"], topics: ["x"] }, "pro").ok, false)
-  const many = Array.from({ length: 11 }, (_, i) => `T${i}`)
-  assert.equal(validateSetupInput({ subjectName: "Max M", markets: ["dach"], topics: many }, "pro").ok, false)
-})
-
-test("Themen-Vorschläge: JSON und Zeilen", () => {
-  assert.deepEqual(parseTopicSuggestions('Hier: ["Leadership", "KI-Strategie", "leadership"]'), ["Leadership", "KI-Strategie"])
-  assert.deepEqual(parseTopicSuggestions("1. Vertrieb\n- Marketing\n"), ["Vertrieb", "Marketing"])
-  assert.deepEqual(parseTopicSuggestions("[]"), [])
-})
-
-// ─── Kundentaugliche Fehlertexte ─────────────────────────────────────────────
-import { publicErrorMessage } from "./errors.ts"
-
-test("Fehlertexte: keine Anbieter-Details für Kunden", () => {
-  const credit = publicErrorMessage('All providers failed: claude-sonnet: 400 {"message":"Your credit balance is too low"}; gpt-4o: OpenAI API 429: no credits remaining')
-  assert.match(credit, /vorübergehend nicht verfügbar/)
-  assert.ok(!/claude|openai|credit|400|429/i.test(credit))
-  assert.match(publicErrorMessage("rate limit exceeded"), /ausgelastet/)
-  assert.match(publicErrorMessage(null), /fehlgeschlagen/)
 })

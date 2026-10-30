@@ -19,10 +19,8 @@ export default function LoginPage() {
   // client only when the user actually clicks a button guarantees we're in
   // a real browser context where the inlined env vars are present.
 
-  // Direct self-service registration (signup form + Google OAuth) is
-  // deliberately not offered here. The public site only offers the
-  // waitlist (/warteliste) for new visitors; this page signs in accounts
-  // that already exist.
+  // Registrierung läuft über /registrieren; dort ist sie in Production
+  // aus (Warteliste), bis SIGNUP_OPEN=true gesetzt wird.
   async function handleSignIn(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
@@ -39,7 +37,7 @@ export default function LoginPage() {
       return
     }
 
-    window.location.href = "/dashboard"
+    window.location.href = "/weiter"
   }
 
   if (sent) {
@@ -197,8 +195,8 @@ export default function LoginPage() {
 
           <p className="text-center text-xs text-[#6B625A]">
             Noch kein Konto?{" "}
-            <Link href="/warteliste" className="text-[#C8431F] hover:underline font-medium">
-              Auf die Warteliste eintragen
+            <Link href="/registrieren" className="text-[#C8431F] hover:underline font-medium">
+              Konto anlegen
             </Link>
           </p>
         </div>

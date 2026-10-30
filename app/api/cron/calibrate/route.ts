@@ -8,8 +8,7 @@
  */
 
 import { NextRequest, NextResponse } from "next/server"
-import type { SupabaseClient } from "@supabase/supabase-js"
-import { createSupabaseServiceClient } from "@/lib/supabase/client"
+import { createHaloServiceClient } from "@/lib/supabase/halo"
 import { runCalibrationEntry } from "@/lib/auralis/runner"
 import { CALIBRATION_PANEL, pickStalestEntries } from "@/lib/auralis/calibration"
 
@@ -23,10 +22,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  const supabase = createSupabaseServiceClient()
-  const untyped = supabase as unknown as SupabaseClient
+  const supabase = createHaloServiceClient()
 
-  const { data: rows, error } = await untyped
+  const { data: rows, error } = await supabase
     .from("calibration_runs")
     .select("entry_key, measured_at")
     .order("measured_at", { ascending: false })
@@ -36,7 +34,7 @@ export async function GET(request: NextRequest) {
   }
 
   const last: Record<string, string> = {}
-  for (const r of (rows ?? []) as { entry_key: string; measured_at: string }[]) {
+  for (const r of rows ?? []) {
     if (!last[r.entry_key]) last[r.entry_key] = r.measured_at
   }
 

@@ -1,44 +1,36 @@
 /**
- * Analysis Runner – shared logic for triggering a visibility analysis on a single
- * schedule. Used by:
- *   - the daily cron (`trigger: "scheduled"`, advanceNextRunAt: true)
- *   - the user-facing manual trigger at /dashboard/analyze (`trigger: "manual"`)
- *   - the admin's "Analyse jetzt triggern" button (`trigger: "manual"`)
+ * Messkern – misst eine Person zu Themen über alle konfigurierten KI-Modelle.
+ * Genutzt von:
+ *   - lib/halo/measure.ts (Messung je Thema: Cron, „Jetzt messen“, API)
+ *   - der Wettbewerber-Messung (/p/[id]/wettbewerber)
+ *   - der Kalibrierung (runCalibrationEntry, täglicher Cron)
  *
- * Sprint 14 — Multi-Model: jeder Lauf fragt N Provider parallel (siehe providers.ts).
- * Der visibility_reports.visibility_score ist der Mean über alle Provider-Reports.
- * raw_data.perModelBreakdown enthält die per-Provider-Details für UI-Rendering.
+ * Jeder Lauf fragt N Provider parallel (siehe providers.ts); der Score ist der
+ * gewichtete Mittelwert, raw.perModelBreakdown enthält die Details je Modell.
  *
  * NOTE: keep this file logic-only (no Next.js imports) so it stays usable from
  * cron, API routes, server actions, and edge functions alike.
  */
 
-import type { SupabaseClient } from "@supabase/supabase-js"
 import { generateQueryMatrix, type MatrixDepth, type MatrixQuery } from "./query-matrix"
 import { normalizedWeights, weightedMean } from "./model-weights"
 import { CALIBRATION_PANEL, calibrationSeed, evaluateCalibration, type CalibrationEntry, type CalibrationVerdict } from "./calibration"
-import { MARKETS, resolveMarkets, locationSystemSuffix, type Market, type MarketId } from "./markets"
+import { MARKETS, locationSystemSuffix, type Market, type MarketId } from "./markets"
 import { computeStability, computeIntentStats, type ScoreStability, type IntentStat } from "./stability"
 import {
   extractMentionSignal,
   buildVisibilityReport,
-  sanitizeTargetName,
   validateReportIntegrity,
   type QueryResult,
   type VisibilityReport,
 } from "./analyzer"
 import {
   providersForPlan,
-  claudeProvider,
   type LLMProvider,
   type ProviderId,
 } from "./providers"
-import type { Database, Json } from "@/lib/supabase/database.types"
-
-type SentimentType = Database["public"]["Enums"]["sentiment_type"]
-type FrequencyType = Database["public"]["Enums"]["frequency_type"]
-type TriggerType = Database["public"]["Enums"]["trigger_type"]
-type PlanType = Database["public"]["Enums"]["plan_type"]
+import type { FrequencyType, SentimentType } from "@/lib/supabase/halo.types"
+import type { HaloClient } from "@/lib/supabase/halo"
 
 const AI_SIMULATION_SYSTEM_PROMPT = `You are a helpful AI assistant with broad knowledge about professionals, thought leaders, and experts across industries. When asked about experts in a field, you draw on your training knowledge to provide balanced, informative answers. You mention real people you have knowledge about. You respond naturally and helpfully, as you normally would to any user question. Do not add caveats about your knowledge cutoff unless directly relevant. Respond in the same language as the question.`
 
@@ -160,22 +152,10 @@ function aggregateReports(
   }
 }
 
-// ─── Messdesign je Tarif ─────────────────────────────────────────────────────
+// ─── Messdesign ──────────────────────────────────────────────────────────────
 
+/** Wie gründlich gemessen wird (siehe MEASUREMENT in lib/halo/config.ts). */
 export type MeasurementProfile = { depth: MatrixDepth; rounds: number }
-
-/**
- * Wie gründlich gemessen wird. Mehr Runden = stabilerer Score + Schwankungsbreite,
- * kostet aber proportional mehr API-Aufrufe.
- */
-export function measurementProfileForPlan(plan: PlanType): MeasurementProfile {
-  switch (plan) {
-    case "enterprise": return { depth: "extended", rounds: 3 }
-    case "pro":        return { depth: "extended", rounds: 2 }
-    case "starter":    return { depth: "standard", rounds: 2 }
-    default:           return { depth: "standard", rounds: 1 }
-  }
-}
 
 /** Max. gleichzeitige Aufrufe je Provider (Rate-Limits schonen). */
 const PROVIDER_CONCURRENCY = 10
@@ -289,7 +269,7 @@ async function runProvider(
   return { queryResults: completeRounds.flat(), rounds: completeRounds }
 }
 
-type ProviderOutcome = {
+export type ProviderOutcome = {
   provider: LLMProvider
   queryResults: QueryResult[]
   /** Runden-Reports über alle Märkte (Mittel der Markt-Reports je Runde). */
@@ -387,59 +367,6 @@ async function measureAllProviders(
   return { outcomes, stability, marketResults }
 }
 
-/** Festgelegter Name der bewerteten Person; fehlende Spalte/Migration → null. */
-async function loadSubjectName(
-  supabase: SupabaseClient<Database>,
-  profileId: string,
-): Promise<string | null> {
-  try {
-    const { data, error } = await (supabase as SupabaseClient)
-      .from("profiles")
-      .select("subject_name")
-      .eq("id", profileId)
-      .single()
-    if (error) return null
-    const v = (data as { subject_name?: string | null } | null)?.subject_name
-    return v && v.trim() ? v.trim() : null
-  } catch {
-    return null
-  }
-}
-
-/** Zielmärkte des Profils laden; fehlende Spalte/Migration → Standardmarkt. */
-async function loadTargetMarkets(
-  supabase: SupabaseClient<Database>,
-  profileId: string,
-  plan: PlanType,
-  language: "de" | "en",
-): Promise<Market[]> {
-  let selected: unknown = null
-  try {
-    const { data, error } = await (supabase as SupabaseClient)
-      .from("profiles")
-      .select("target_markets")
-      .eq("id", profileId)
-      .single()
-    if (!error) selected = (data as { target_markets?: unknown } | null)?.target_markets ?? null
-  } catch {
-    // Spalte existiert (noch) nicht → Fallback
-  }
-  return resolveMarkets(selected, plan, language)
-}
-
-/**
- * Budget je Markt: Mit mehreren Märkten teilen sich diese die Aufrufe.
- * Mehr als ein Markt → Standardtiefe (7 Fragen) und Runden so, dass das
- * Gesamtbudget des Tarifs ungefähr gehalten wird.
- */
-function budgetForMarkets(profile: MeasurementProfile, marketCount: number): MeasurementProfile {
-  if (marketCount <= 1) return profile
-  const base = profile.depth === "extended" ? 12 : 7
-  const total = base * profile.rounds
-  const rounds = Math.min(profile.rounds, Math.max(1, Math.floor(total / (7 * marketCount))))
-  return { depth: "standard", rounds }
-}
-
 function buildMarketPlans(
   markets: Market[],
   topics: string[],
@@ -455,100 +382,53 @@ function buildMarketPlans(
   }))
 }
 
-export type RunAnalysisResult = {
-  reportId: string
-  score: number
-  sentiment: SentimentType | null
-  mentionRate: number
-  queryCount: number
-  providersUsed: ProviderId[]
+// ─── Messkern (ohne DB) ──────────────────────────────────────────────────────
+
+export type MeasureTargetOptions = {
+  /** Name der gemessenen Person (Erkennung in den Antworten). */
+  targetName: string
+  topics: string[]
+  markets: Market[]
+  measurement: MeasurementProfile
+  providers: LLMProvider[]
+  /** Hintergrundlauf: größeres Zeitbudget für Folgerunden. */
+  background: boolean
+  /** Basis für den Fragen-Seed (z.B. Themen-ID). */
+  seedBase: string
+  /** Bezeichnung für Log-Ausgaben. */
+  logLabel: string
 }
 
-export type RunAnalysisOptions = {
-  /** "scheduled" (cron) or "manual" (admin or user trigger) */
-  trigger: TriggerType
-  /** When true, also advance `next_run_at` after successful run (cron-only). */
-  advanceNextRunAt?: boolean
-  /**
-   * Hintergrundlauf (Job): volles Messdesign des Tarifs ohne Budget-Kürzung bei
-   * mehreren Märkten, großzügigeres Zeitbudget (Funktion läuft bis 300 s).
-   */
-  background?: boolean
-  /** Optional override of which providers to use. Defaults to providersForPlan(profile.plan). */
-  providerOverride?: LLMProvider[]
+export type TargetMeasurement = {
+  finalRawData: MultiModelVisibilityReport
+  aggregateReport: VisibilityReport
+  sentiment: SentimentType | null
+  successfulProviders: ProviderOutcome[]
+  providerOutcomes: ProviderOutcome[]
+  allQueryResults: QueryResult[]
 }
 
 /**
- * Runs a single visibility analysis for the given schedule across all enabled providers.
- * Writes one `visibility_reports` row (with per-model breakdown in raw_data) and
- * N×M `query_results` rows (where N=queries, M=providers).
- *
- * Throws on any failure that prevents persisting at all — provider-level failures
- * are absorbed and reported via perModelBreakdown.error.
+ * Misst eine Person zu Themen über alle Provider, Runden und Märkte und baut
+ * den Report. Schreibt nichts in die Datenbank (das machen die Aufrufer:
+ * lib/halo/measure.ts und die Wettbewerber-Messung).
+ * Wirft „All providers failed: …“, wenn kein Provider ein Ergebnis liefert.
  */
-export async function runAnalysisForSchedule(
-  scheduleId: string,
-  supabase: SupabaseClient<Database>,
-  options: RunAnalysisOptions,
-): Promise<RunAnalysisResult> {
-  // 1. Load the schedule + owning profile (to determine plan + provider set)
-  const { data: schedule, error: scheduleError } = await supabase
-    .from("monitoring_schedules")
-    .select("*")
-    .eq("id", scheduleId)
-    .single()
-  if (scheduleError || !schedule) {
-    throw new Error(`Schedule ${scheduleId} not found: ${scheduleError?.message ?? "unknown"}`)
-  }
-
-  const { data: profile } = await supabase
-    .from("profiles")
-    .select("plan, full_name")
-    .eq("id", schedule.profile_id)
-    .single()
-  const plan = (profile?.plan ?? "free") as PlanType
-
-  // WICHTIG: Such-Target ist der PROFILNAME, nicht schedule.name.
-  // schedule.name enthält oft einen Themen-Suffix („Maud Schock — Personal
-  // Branding"). Würde man den durchreichen, würde die Namens-Erkennung auf dem
-  // generischen Themenwort („Branding") anschlagen und JEDE Antwort als Treffer
-  // werten → falsche 100/100. Fallback: bereinigter schedule.name.
-  // Setup: ausdrücklich festgelegter Name der bewerteten Person hat Vorrang.
-  const subjectName = await loadSubjectName(supabase, schedule.profile_id)
-  const targetName =
-    subjectName ||
-    (profile?.full_name && profile.full_name.trim()) ||
-    sanitizeTargetName(schedule.name)
-
-  // 2. Pick providers (plan-gated, env-var-gated)
-  const providers = options.providerOverride ?? providersForPlan(plan)
-  if (providers.length === 0) {
-    throw new Error("No LLM providers configured. Set ANTHROPIC_API_KEY at minimum.")
-  }
-
-  // 3. Fragen-Matrix: ausgewogene Stichprobe aus dem Pool (Messdesign je Tarif)
-  const markets = await loadTargetMarkets(
-    supabase,
-    schedule.profile_id,
-    plan,
-    schedule.language === "en" ? "en" : "de",
-  )
-  const baseProfile = measurementProfileForPlan(plan)
-  const measurement = options.background
-    ? (markets.length > 3 ? { depth: "standard" as const, rounds: baseProfile.rounds } : baseProfile)
-    : budgetForMarkets(baseProfile, markets.length)
-  const marketPlans = buildMarketPlans(markets, [schedule.query], measurement, `${schedule.id}-${Date.now()}`)
+export async function measureTarget({
+  targetName, topics, markets, measurement, providers, background, seedBase, logLabel,
+}: MeasureTargetOptions): Promise<TargetMeasurement> {
+  const marketPlans = buildMarketPlans(markets, topics, measurement, `${seedBase}-${Date.now()}`)
   const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
 
   // 4. Fan-out per provider (parallel), mehrere Runden und Märkte
   const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
-    providers, marketPlans, targetName, [schedule.query], measurement.rounds,
-    options.background ? BACKGROUND_ROUND_BUDGET_MS : undefined,
+    providers, marketPlans, targetName, topics, measurement.rounds,
+    background ? BACKGROUND_ROUND_BUDGET_MS : undefined,
   )
 
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)
   if (successfulProviders.length === 0) {
-    // Je Provider gekürzt, damit in analysis_jobs.error (500 Zeichen) alle Anbieter sichtbar bleiben.
+    // Je Provider gekürzt, damit in jobs.error (500 Zeichen) alle Anbieter sichtbar bleiben.
     const errors = providerOutcomes
       .map(o => `${o.provider.id}: ${(o.error ?? "no report").slice(0, 110)}`)
       .join("; ")
@@ -587,7 +467,7 @@ export async function runAnalysisForSchedule(
   const providerWeights = normalizedWeights(successfulProviders.map(o => o.provider.id))
   const aggregateReport = aggregateReports(
     targetName,
-    [schedule.query],
+    topics,
     successfulProviders.map(o => o.report!),
     allQueryResults,
     providerWeights,
@@ -601,7 +481,7 @@ export async function runAnalysisForSchedule(
   const integrity = validateReportIntegrity(aggregateReport, targetName)
   if (!integrity.ok) {
     console.error(
-      `[runner] INTEGRITY-WARNUNG für schedule ${schedule.id} (${targetName}):`,
+      `[runner] INTEGRITY-WARNUNG für ${logLabel} (${targetName}):`,
       JSON.stringify(integrity.violations),
     )
   }
@@ -627,131 +507,8 @@ export async function runAnalysisForSchedule(
     marketResults: marketResults.length > 0 ? marketResults : undefined,
   }
 
-  const { data: savedReport, error: reportError } = await supabase
-    .from("visibility_reports")
-    .insert({
-      profile_id: schedule.profile_id,
-      schedule_id: schedule.id,
-      trigger: options.trigger,
-      visibility_score: aggregateReport.overallScore,
-      sentiment,
-      summary: `Score: ${aggregateReport.overallScore}/100 (Mean über ${successfulProviders.length} Modelle). Erwähnt in ${aggregateReport.mentionRate}% der Abfragen.`,
-      raw_data: finalRawData as unknown as Json,
-    })
-    .select("id")
-    .single()
-
-  if (reportError || !savedReport) {
-    throw new Error(`Report save failed: ${reportError?.message ?? "unknown"}`)
-  }
-
-  // 9. Persist granular query_results (one row per (query × provider))
-  if (allQueryResults.length > 0) {
-    const queryResultRows = providerOutcomes.flatMap(o =>
-      o.queryResults.map(r => ({
-        profile_id: schedule.profile_id,
-        report_id: savedReport.id,
-        model: o.provider.modelTag,
-        prompt: r.prompt,
-        response: r.rawResponse,
-        brand_mentioned: r.signal.mentioned,
-        sentiment:
-          r.signal.sentiment === "not_mentioned"
-            ? null
-            : (r.signal.sentiment as SentimentType),
-        position: r.signal.position,
-      })),
-    )
-    const { error: qrError } = await supabase.from("query_results").insert(queryResultRows)
-    if (qrError) {
-      console.error("query_results insert failed:", qrError)
-    }
-  }
-
-  // 10. Touch schedule timestamps
-  const scheduleUpdate: Database["public"]["Tables"]["monitoring_schedules"]["Update"] = {
-    last_run_at: new Date().toISOString(),
-  }
-  if (options.advanceNextRunAt) {
-    scheduleUpdate.next_run_at = calcNextRunAt(schedule.frequency)
-  }
-  await supabase
-    .from("monitoring_schedules")
-    .update(scheduleUpdate)
-    .eq("id", schedule.id)
-
-  return {
-    reportId: savedReport.id,
-    score: aggregateReport.overallScore,
-    sentiment,
-    mentionRate: aggregateReport.mentionRate,
-    queryCount: allQueryResults.length,
-    providersUsed: successfulProviders.map(o => o.provider.id),
-  }
+  return { finalRawData, aggregateReport, sentiment, successfulProviders, providerOutcomes, allQueryResults }
 }
-
-// ─── Plan-Limit ───────────────────────────────────────────────────────────────
-
-export { type PlanType }
-
-/** How many manual analyses each plan can trigger per rolling 30-day window. */
-export const MANUAL_LIMIT_PER_30D: Record<PlanType, number | null> = {
-  free:       1,
-  starter:    null, // unlimited
-  pro:        null,
-  enterprise: null,
-}
-
-export type LimitCheckResult =
-  | { allowed: true; remaining: number | null }
-  | { allowed: false; reason: string; resetAt: string | null }
-
-export async function checkManualAnalysisLimit(
-  profileId: string,
-  plan: PlanType,
-  supabase: SupabaseClient<Database>,
-): Promise<LimitCheckResult> {
-  const limit = MANUAL_LIMIT_PER_30D[plan]
-  if (limit === null) {
-    return { allowed: true, remaining: null }
-  }
-
-  const since = new Date()
-  since.setDate(since.getDate() - 30)
-
-  const { data, error } = await supabase
-    .from("visibility_reports")
-    .select("created_at")
-    .eq("profile_id", profileId)
-    .eq("trigger", "manual")
-    .gte("created_at", since.toISOString())
-    .order("created_at", { ascending: true })
-
-  if (error) {
-    console.error("limit check failed:", error)
-    return { allowed: true, remaining: null }
-  }
-
-  const used = data?.length ?? 0
-  if (used < limit) {
-    return { allowed: true, remaining: limit - used }
-  }
-
-  const oldest = data?.[0]?.created_at
-  const resetAt = oldest
-    ? new Date(new Date(oldest).getTime() + 30 * 24 * 60 * 60 * 1000).toISOString()
-    : null
-
-  return {
-    allowed: false,
-    reason: `Free-Tarif: ${limit} manuelle Analyse pro 30 Tage. Upgrade für unbegrenzt.`,
-    resetAt,
-  }
-}
-
-// Re-exports for backward-compatibility with old imports
-export { claudeProvider }
-
 
 // ─── Kalibrierung ────────────────────────────────────────────────────────────
 
@@ -770,7 +527,7 @@ export type CalibrationRunResult = {
  */
 export async function runCalibrationEntry(
   entry: CalibrationEntry,
-  supabase: SupabaseClient<Database>,
+  supabase: HaloClient,
   options: { providerOverride?: LLMProvider[]; roundBudgetMs?: number } = {},
 ): Promise<CalibrationRunResult> {
   const providers = options.providerOverride ?? providersForPlan("enterprise")
@@ -800,17 +557,16 @@ export async function runCalibrationEntry(
   const rounds = stability?.rounds ?? 1
 
   // Vorherigen Wert desselben Eintrags für die Drift-Prüfung laden.
-  const untyped = supabase as unknown as SupabaseClient
-  const { data: prev } = await untyped
+  const { data: prev } = await supabase
     .from("calibration_runs")
     .select("score")
     .eq("entry_key", entry.key)
     .order("measured_at", { ascending: false })
     .limit(1)
-  const previousScore = (prev?.[0] as { score?: number } | undefined)?.score ?? null
+  const previousScore = prev?.[0]?.score ?? null
   const verdict = evaluateCalibration(entry, score, previousScore)
 
-  const { error } = await untyped.from("calibration_runs").insert({
+  const { error } = await supabase.from("calibration_runs").insert({
     entry_key: entry.key,
     kind: entry.kind,
     person_name: entry.personName,

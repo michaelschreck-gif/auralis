@@ -1,14 +1,13 @@
 /**
- * POST /api/internal/run-job — startet einen bereits angelegten Analyse-Job
+ * POST /api/internal/run-job — startet einen bereits angelegten Mess-Job
  * in einer eigenen Funktionsinstanz (eigene 300 s). Wird vom Cron je fälligem
- * Thema aufgerufen, damit mehrere Themen parallel statt nacheinander in EINER
- * Funktion laufen. Antwortet sofort (202), der Lauf geschieht in after().
+ * Thema aufgerufen. Antwortet sofort (202), der Lauf geschieht in after().
  * Auth: Bearer CRON_SECRET.
  */
 
 import { NextRequest, NextResponse, after } from "next/server"
-import { createSupabaseServiceClient } from "@/lib/supabase/client"
-import { executeAnalysisJob } from "@/lib/auralis/jobs"
+import { createHaloServiceClient } from "@/lib/supabase/halo"
+import { executeJob } from "@/lib/halo/jobs"
 
 export const maxDuration = 300
 
@@ -20,7 +19,7 @@ export async function POST(request: NextRequest) {
   if (!body?.jobId) {
     return NextResponse.json({ error: "jobId fehlt" }, { status: 400 })
   }
-  const service = createSupabaseServiceClient()
-  after(() => executeAnalysisJob(service, body.jobId!))
+  const service = createHaloServiceClient()
+  after(() => executeJob(service, body.jobId!))
   return NextResponse.json({ accepted: true }, { status: 202 })
 }

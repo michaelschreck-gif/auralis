@@ -2,6 +2,8 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { crossDomainRedirect, domainConfigFromEnv } from "@/lib/domains"
 
+const PROTECTED_PREFIXES = ["/start", "/weiter", "/p", "/personen", "/konto", "/admin"]
+
 export async function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl
 
@@ -10,8 +12,8 @@ export async function proxy(request: NextRequest) {
   const target = crossDomainRedirect(host, pathname, search, domainConfigFromEnv())
   if (target) return NextResponse.redirect(target, 308)
 
-  const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/onboarding") || pathname === "/settings"
-  const isAuthPage = pathname === "/login"
+  const isProtected = PROTECTED_PREFIXES.some(p => pathname === p || pathname.startsWith(p + "/"))
+  const isAuthPage = pathname === "/login" || pathname === "/registrieren"
   if (!isProtected && !isAuthPage) return NextResponse.next()
 
   let supabaseResponse = NextResponse.next({ request })
@@ -42,7 +44,7 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && isAuthPage) {
-    return NextResponse.redirect(new URL("/dashboard", request.url))
+    return NextResponse.redirect(new URL("/weiter", request.url))
   }
 
   return supabaseResponse
@@ -50,7 +52,8 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/", "/dashboard/:path*", "/onboarding/:path*", "/settings/:path*", "/login",
+    "/", "/login", "/registrieren",
+    "/start", "/weiter", "/p/:path*", "/personen/:path*", "/konto/:path*",
     "/auth/:path*", "/admin/:path*",
     "/warteliste", "/kontakt", "/legal/:path*", "/docs/:path*", "/u/:path*",
   ],

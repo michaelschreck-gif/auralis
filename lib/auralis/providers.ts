@@ -20,10 +20,9 @@
 
 import Anthropic from "@anthropic-ai/sdk"
 import type { ThinkingConfigParam } from "@anthropic-ai/sdk/resources/messages"
-import type { Database } from "@/lib/supabase/database.types"
+import type { PlanType } from "@/lib/supabase/halo.types"
 import { fetchWithRetry } from "./http-retry"
 
-type PlanType = Database["public"]["Enums"]["plan_type"]
 
 export type ProviderId = "claude-sonnet" | "gpt-4o" | "perplexity-sonar" | "gemini-flash"
 
