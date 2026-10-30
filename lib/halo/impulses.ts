@@ -233,6 +233,8 @@ export function detectPatterns(texts: string[]): PatternKey[] {
 export function cleanContext(raw: string): string | null {
   const c = raw.replace(/^\s*\([^)]*\)\s*/, "").replace(/^[\s:,–—-]+/, "").trim()
   if (c.length < 25 || !/^[A-ZÄÖÜ„"»]/.test(c)) return null
+  // Reine Namensliste („Satya Nadella, Jensen Huang, …“) ist keine Beschreibung.
+  if ((c.match(/(^|\s)[a-zäöüß]/g) ?? []).length < 2) return null
   return c
 }
 

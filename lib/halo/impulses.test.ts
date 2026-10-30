@@ -104,6 +104,7 @@ test("Beschreibung: Klammer-Zusatz weg, Satzmitte und Abgeschnittenes verworfen"
   assert.equal(cleanContext("(Schweiz/Zürich): Futurist mit Fokus auf Technologie und Ethik."), "Futurist mit Fokus auf Technologie und Ethik.")
   assert.equal(cleanContext("(Medien, KI) und Prof. Dr. Armin Grunwald sind oft zu hören."), null)
   assert.equal(cleanContext("Der Investor und G"), null)
+  assert.equal(cleanContext("Satya Nadella, Jensen Huang, Je"), null)
 })
 
 test("buildImpulses: unter 10 % der Antworten zu einem Thema fällt raus", () => {
