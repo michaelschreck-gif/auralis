@@ -104,6 +104,21 @@ export async function resendInvite(userId: string): Promise<ActionResult> {
   return { ok: true, message: `Einladung erneut an ${email} verschickt.` }
 }
 
+/** Konto- bzw. Teamnamen ändern. */
+export async function renameAccountAdmin(accountId: string, rawName: string): Promise<ActionResult> {
+  const admin = await getAdmin()
+  if (!admin) return NO_ADMIN
+  const name = rawName.replace(/\s+/g, " ").trim().slice(0, 60)
+  if (!name) return { ok: false, error: "Bitte einen Namen angeben." }
+  const { data: before } = await admin.service.from("accounts").select("name").eq("id", accountId).maybeSingle()
+  if (!before) return { ok: false, error: "Konto nicht gefunden." }
+  const { error } = await admin.service.from("accounts").update({ name }).eq("id", accountId)
+  if (error) return { ok: false, error: error.message }
+  await logAudit(admin, "account.rename", { type: "account", id: accountId }, { from: before.name, to: name })
+  revalidatePath("/", "layout")
+  return { ok: true, message: "Gespeichert." }
+}
+
 /** Konto mit allen Personen, Messungen und Zugängen löschen (Logins bleiben). */
 export async function deleteAccount(accountId: string): Promise<ActionResult> {
   const admin = await getAdmin()

@@ -30,7 +30,8 @@ export async function renameAccount(name: string): Promise<ActionResult> {
   if (!o) return { ok: false, error: "Nur der Owner kann das Konto ändern." }
   const { error } = await o.db.from("accounts").update({ name: clean }).eq("id", o.accountId)
   if (error) return { ok: false, error: "Konnte nicht gespeichert werden." }
-  revalidatePath("/konto")
+  // Name erscheint auch auf /personen und in der Seitenleiste jeder Person.
+  revalidatePath("/", "layout")
   return { ok: true }
 }
 

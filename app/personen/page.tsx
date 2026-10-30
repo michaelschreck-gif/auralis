@@ -58,7 +58,10 @@ export default async function PersonenPage() {
           <div>
             <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Team</span>
             <h1 className="font-[family-name:var(--font-display)] text-3xl text-[#0E1916] mt-1">{team.name}</h1>
-            <p className="text-sm text-[#6B625A] mt-1">{persons.length} {persons.length === 1 ? "Person" : "Personen"}</p>
+            <p className="text-sm text-[#6B625A] mt-1">
+              {persons.length} {persons.length === 1 ? "Person" : "Personen"} ·{" "}
+              <Link href="/konto" className="text-[#C8431F] hover:underline">Teamname ändern</Link>
+            </p>
           </div>
           <Link href="/personen/neu" className={primaryBtn}>+ Person hinzufügen</Link>
         </div>

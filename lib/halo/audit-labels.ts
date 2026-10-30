@@ -10,6 +10,7 @@ export const AUDIT_LABELS: Record<string, string> = {
   "user.password_reset": "Passwort-Mail gesendet",
   "users.export": "Nutzerliste exportiert",
   "account.delete": "Konto gelöscht",
+  "account.rename": "Konto umbenannt",
   "person.measure": "Messung gestartet",
   "gold.sample.add": "Prüfset ergänzt",
 }

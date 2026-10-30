@@ -4,6 +4,7 @@ import { requireAdminPage } from "@/lib/halo/admin"
 import { loadPersonOverview } from "@/lib/halo/load"
 import { deleteAccount, measurePerson } from "@/app/admin/actions"
 import AdminButton from "@/components/halo/admin/AdminButton"
+import RenameAccountForm from "@/components/halo/admin/RenameAccountForm"
 import { card, formatDate } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
@@ -39,6 +40,9 @@ export default async function AdminKonto({ params }: { params: Promise<{ id: str
         <p className="text-sm text-[#6B625A] mt-1">
           {account.type === "team" ? "Team" : "Einzelperson"} · Owner {emailOf.get(account.owner_user_id) ?? "–"} · angelegt {formatDate(account.created_at)}
         </p>
+        <div className="mt-3">
+          <RenameAccountForm key={account.name} accountId={account.id} name={account.name} />
+        </div>
       </div>
 
       <section className="space-y-3">
