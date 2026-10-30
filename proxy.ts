@@ -1,6 +1,7 @@
 import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { crossDomainRedirect, domainConfigFromEnv } from "@/lib/domains"
+import { safeNextPath } from "@/lib/halo/onboarding"
 
 const PROTECTED_PREFIXES = ["/start", "/weiter", "/p", "/personen", "/konto", "/admin"]
 
@@ -39,12 +40,16 @@ export async function proxy(request: NextRequest) {
 
   const { data: { user } } = await supabase.auth.getUser()
 
+  // Ziel nach dem Login mitgeben – auf admin.digital-halo.de sonst /weiter → Tool-Domain ohne Sitzung.
   if (!user && isProtected) {
-    return NextResponse.redirect(new URL("/login", request.url))
+    const login = new URL("/login", request.url)
+    login.searchParams.set("next", pathname + search)
+    return NextResponse.redirect(login)
   }
 
   if (user && isAuthPage) {
-    return NextResponse.redirect(new URL("/weiter", request.url))
+    const next = safeNextPath(request.nextUrl.searchParams.get("next"), "/weiter")
+    return NextResponse.redirect(new URL(next, request.url))
   }
 
   return supabaseResponse
