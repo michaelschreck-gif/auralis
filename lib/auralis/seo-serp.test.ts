@@ -67,6 +67,8 @@ test("Domain mit dem Namen zählt als Treffer über die Person, auch ohne hinter
   const viaCrumb = evaluateNameSearch([{ type: "organic", rank_group: 1, title: "Bücher", url: "https://google.com/goto?url=abc", domain: "google.com", breadcrumb: "https://saschalobo.com › buecher" }], "sascha lobo", null)
   assert.equal(viaCrumb.aboutYou, 1)
   assert.equal(viaCrumb.results[0].domain, "saschalobo.com")
+  // Gekürzte Pfadzeile ergibt keine Domain
+  assert.equal(evaluateNameSearch([{ type: "organic", rank_group: 1, title: "x", url: "https://google.com/goto?url=a", breadcrumb: "ca. › x" }], "sascha lobo", null).results[0].domain, null)
   // Zu kurze Namen nicht über die Domain (Fehltreffer-Gefahr)
   assert.equal(evaluateNameSearch([organic(1, "Seite", "https://anna-li.de/")], "anna li", null).aboutYou, 0)
 })

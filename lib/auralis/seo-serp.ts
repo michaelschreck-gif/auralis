@@ -38,7 +38,8 @@ export function siteHost(item: SerpItem): string | null {
   const candidates = [item.domain, item.breadcrumb?.split(/\s|›/)[0], item.url]
   for (const c of candidates) {
     const h = hostOf(c)
-    if (h && !/(^|\.)google\.[a-z.]+$/.test(h)) return h
+    // Nur vollständige Domains (Pfadzeilen sind teils gekürzt, z. B. „ca.“).
+    if (h && /\.[a-z]{2,}$/.test(h) && !/(^|\.)google\.[a-z.]+$/.test(h)) return h
   }
   return null
 }
