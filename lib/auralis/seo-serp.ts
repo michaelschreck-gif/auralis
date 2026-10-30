@@ -157,10 +157,13 @@ function organicTop(items: SerpItem[]): SerpItem[] {
     .slice(0, TOP_RESULTS)
 }
 
+/**
+ * Nennt Googles KI-Übersicht die Person? Der Text steckt verschachtelt in
+ * items[].text/markdown, Tabellen und references – daher das ganze Element
+ * durchsuchen (eine zitierte Quelle über die Person zählt mit).
+ */
 function mentionsInAiOverview(items: SerpItem[], nameLower: string): boolean {
-  return items.some(
-    it => it.type === "ai_overview" && containsWholeName(`${it.title ?? ""} ${it.text ?? ""}`.toLowerCase(), nameLower),
-  )
+  return items.some(it => it.type === "ai_overview" && containsWholeName(JSON.stringify(it).toLowerCase(), nameLower))
 }
 
 export type NameSearchResult = {

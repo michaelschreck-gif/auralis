@@ -11,6 +11,7 @@ import { test } from "node:test"
 import assert from "node:assert/strict"
 import {
   extractMentionSignal,
+  listPosition,
   sanitizeTargetName,
   buildVisibilityReport,
   validateReportIntegrity,
@@ -174,4 +175,32 @@ test("Integrität: leerer Report (keine Treffer) ist konsistent → ok", () => {
   const report = buildVisibilityReport("Maud Schock", ["Personal Branding"], qr)
   const res = validateReportIntegrity(report, "Maud Schock")
   assert.equal(res.ok, true, JSON.stringify(res.violations))
+})
+
+// ─── Platz in der Aufzählung (Fund aus dem Prüfset, 2026-10-30) ─────────────
+
+const pos = (text: string, name: string) => listPosition(text, text.indexOf(name))
+
+test("Platz: „1. Name“ ist Platz 1, nicht 2", () => {
+  assert.equal(pos("Experten:\n\n1. Sascha Lobo: Publizist\n2. Gunter Dueck: Autor", "Sascha Lobo"), 1)
+  assert.equal(pos("Experten:\n\n1. Sascha Lobo: Publizist\n2. Gunter Dueck: Autor", "Gunter Dueck"), 2)
+})
+
+test("Platz: Überschriften-Listen, Fett, Klammer-Nummern", () => {
+  assert.equal(pos(BEN_SCHULZ_ANSWER, "Felix Plötz"), 2)
+  assert.equal(pos("1) **Anna**\n2) **Ben**\n3) **Cleo**", "Cleo"), 3)
+})
+
+test("Platz: Spiegelstriche unter nummerierten Punkten zählen nicht", () => {
+  const text = "1. **Ben Schulz**\n   - Bücher\n   - Podcast\n2. **Felix Plötz**\n   - Keynotes"
+  assert.equal(pos(text, "Felix Plötz"), 2)
+})
+
+test("Platz: Jahreszahlen und Versionen im Fließtext zählen nicht", () => {
+  const text = "Seit 2018. und Version 2.0 gilt:\n\n- Anna Muster: Expertin\n- Ben Schulz: Berater"
+  assert.equal(pos(text, "Ben Schulz"), 2)
+})
+
+test("Platz: Nennung im Fließtext ohne Liste davor ist Platz 1", () => {
+  assert.equal(pos("Sascha Lobo ist bekannt. Danach:\n1. Anna\n2. Ben", "Sascha Lobo"), 1)
 })

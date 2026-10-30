@@ -85,7 +85,9 @@ async function searchGoogleOnce(keyword: string, auth: string, locale: { languag
       headers: { Authorization: auth, "Content-Type": "application/json" },
       // depth zählt auch Knowledge Panel, „Ähnliche Fragen“ usw. mit – doppelt anfragen,
       // damit sicher 10 normale Treffer dabei sind.
-      body: JSON.stringify([{ keyword, ...locale, depth: TOP_RESULTS * 2 }]),
+      // KI-Übersichten lädt Google meist nachträglich; ohne load_async_ai_overview kämen sie nur aus
+      // dem Cache. Kostet 0,2 Cent extra, nur wenn eine solche Übersicht da ist.
+      body: JSON.stringify([{ keyword, ...locale, depth: TOP_RESULTS * 2, load_async_ai_overview: true }]),
     })
     if (!res.ok) return { ok: false, error: `HTTP ${res.status}` }
     const json = await res.json()

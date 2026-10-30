@@ -2,6 +2,7 @@ import { createHaloServerClient } from "@/lib/supabase/halo"
 import { serpProvider, type SeoRunOutcome } from "@/lib/auralis/seo-providers"
 import { SEO_FACTOR_META, type SeoFactorKey, type SeoSignals } from "@/lib/auralis/seo-score"
 import { bandFor } from "@/lib/halo/score"
+import { GOOGLE_INTERVAL_DAYS } from "@/lib/halo/google"
 import GoogleMeasureButton from "@/components/halo/GoogleMeasureButton"
 import { EmptyState, PageHeader, card, formatDate } from "@/components/halo/ui"
 
@@ -59,7 +60,9 @@ export default async function GooglePage({ params }: { params: Promise<{ id: str
         <span className="text-5xl font-semibold tabular-nums text-[#0E1916]">{latest.score ?? "–"}</span>
         <div>
           {latest.score !== null && <span className="block text-lg font-semibold text-[#0E1916]">{bandFor(latest.score).label}</span>}
-          <span className="block text-sm text-[#6B625A]">Gemessen am {formatDate(latest.created_at)}</span>
+          <span className="block text-sm text-[#6B625A]">
+            Gemessen am {formatDate(latest.created_at)} · wird automatisch alle {GOOGLE_INTERVAL_DAYS} Tage neu gemessen
+          </span>
         </div>
       </section>
 

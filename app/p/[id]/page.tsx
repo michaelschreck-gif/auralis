@@ -6,6 +6,7 @@ import type { PillarKey } from "@/lib/halo/score"
 import ScoreRing from "@/components/halo/ScoreRing"
 import ScoreHistoryChart from "@/components/halo/ScoreHistoryChart"
 import MeasureNowButton from "@/components/halo/MeasureNowButton"
+import { secondaryBtn } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Halo Score · Halo" }
@@ -70,7 +71,14 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
           </h1>
           {person?.context && <p className="text-sm text-[#6B625A] mt-1">{person.context}</p>}
         </div>
-        <MeasureNowButton topicIds={topicIds} />
+        <div className="flex flex-wrap items-start gap-2">
+          {halo.score !== null && (
+            <a href={`/api/persons/${id}/pdf`} className={secondaryBtn} download>
+              PDF-Report
+            </a>
+          )}
+          <MeasureNowButton topicIds={topicIds} />
+        </div>
       </div>
 
       {halo.score === null ? (
