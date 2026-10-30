@@ -9,6 +9,7 @@ const ITEMS = [
   { href: "/admin/nutzer", label: "Nutzer" },
   { href: "/admin/audit", label: "Audit-Log" },
   { href: "/admin/calibration", label: "Kalibrierung" },
+  { href: "/admin/pruefset", label: "Prüfset" },
 ]
 
 export default function AdminNav() {
