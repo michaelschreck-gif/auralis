@@ -16,6 +16,9 @@
 
 export type SerpItem = {
   type?: string
+  /** Platz unter den Treffern desselben Typs (organisch: 1–10 auf Seite 1). */
+  rank_group?: number
+  /** Platz auf der Seite inkl. Knowledge Panel, „Ähnliche Fragen“ usw. */
   rank_absolute?: number
   title?: string
   url?: string
@@ -48,17 +51,38 @@ export function rankToScore(rank: number): number {
   return Math.max(0, Math.min(100, Math.round(100 - (rank - 1) * 8)))
 }
 
-/** Handelt ein organischer Treffer von der Person? */
+/** Name ohne Leer- und Sonderzeichen, Umlaute ausgeschrieben („Jörg Müller“ → „joergmueller“). */
+function compactName(nameLower: string): string {
+  return nameLower
+    .replace(/ä/g, "ae").replace(/ö/g, "oe").replace(/ü/g, "ue").replace(/ß/g, "ss")
+    .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]/g, "")
+}
+
+/**
+ * Handelt ein organischer Treffer von der Person? Ja, wenn Titel/Beschreibung
+ * den vollen Namen nennen, die Seite die eigene Website ist oder die Domain
+ * den Namen enthält (saschalobo.com).
+ */
 export function isAboutPerson(item: SerpItem, nameLower: string, ownHost: string | null): boolean {
   const hay = `${item.title ?? ""} ${item.description ?? ""}`.toLowerCase()
   if (containsWholeName(hay, nameLower)) return true
-  return !!ownHost && hostOf(item.url ?? item.domain) === ownHost
+  const host = hostOf(item.url ?? item.domain)
+  if (ownHost && host === ownHost) return true
+  const compact = compactName(nameLower)
+  return !!host && compact.length >= 8 && host.replace(/[^a-z0-9]/g, "").includes(compact)
+}
+
+/** Platz unter den organischen Treffern (ohne Knowledge Panel & Co.). */
+function organicRank(item: SerpItem): number | null {
+  const r = item.rank_group ?? item.rank_absolute
+  return typeof r === "number" ? r : null
 }
 
 function organicTop(items: SerpItem[]): SerpItem[] {
   return items
     .filter(it => it.type === "organic")
-    .sort((a, b) => (a.rank_absolute ?? 99) - (b.rank_absolute ?? 99))
+    .sort((a, b) => (organicRank(a) ?? 99) - (organicRank(b) ?? 99))
     .slice(0, TOP_RESULTS)
 }
 
@@ -84,7 +108,7 @@ export type NameSearchResult = {
 export function evaluateNameSearch(items: SerpItem[], nameLower: string, ownHost: string | null): NameSearchResult {
   const top = organicTop(items)
   const results = top.map(it => ({
-    rank: typeof it.rank_absolute === "number" ? it.rank_absolute : null,
+    rank: organicRank(it),
     title: it.title ?? "",
     url: it.url ?? null,
     aboutYou: isAboutPerson(it, nameLower, ownHost),
@@ -93,7 +117,7 @@ export function evaluateNameSearch(items: SerpItem[], nameLower: string, ownHost
   return {
     aboutYou: results.filter(r => r.aboutYou).length,
     total: results.length,
-    ownSiteRank: own && typeof own.rank_absolute === "number" ? own.rank_absolute : null,
+    ownSiteRank: own ? organicRank(own) : null,
     knowledgePanel: items.some(
       it => it.type === "knowledge_graph" && containsWholeName((it.title ?? "").toLowerCase(), nameLower),
     ),
@@ -112,7 +136,7 @@ export type TopicSearchResult = {
 export function evaluateTopicSearch(items: SerpItem[], nameLower: string, ownHost: string | null): TopicSearchResult {
   const hit = organicTop(items).find(it => isAboutPerson(it, nameLower, ownHost))
   return {
-    position: hit && typeof hit.rank_absolute === "number" ? hit.rank_absolute : null,
+    position: hit ? organicRank(hit) : null,
     url: hit?.url ?? null,
     aiOverview: mentionsInAiOverview(items, nameLower),
   }

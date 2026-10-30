@@ -56,3 +56,20 @@ test("Signale ohne Treffer: alles 0", () => {
   const name = evaluateNameSearch([organic(1, "anderes")], "ben schulz", null)
   assert.deepEqual(googleSignals(name, []), { serpPresence: 0, serpPosition: 0, knowledgePanel: 0, aiOverview: 0 })
 })
+
+test("Domain mit dem Namen zählt als Treffer über die Person, auch ohne hinterlegte Website", () => {
+  const items = [organic(1, "saschalobo.com", "https://saschalobo.com/"), organic(2, "Startseite", "https://joergmueller-coaching.de/")]
+  assert.equal(evaluateNameSearch(items, "sascha lobo", null).aboutYou, 1)
+  assert.equal(evaluateNameSearch(items, "jörg müller", null).aboutYou, 1)
+  // Zu kurze Namen nicht über die Domain (Fehltreffer-Gefahr)
+  assert.equal(evaluateNameSearch([organic(1, "Seite", "https://anna-li.de/")], "anna li", null).aboutYou, 0)
+})
+
+test("Platz unter den organischen Treffern (rank_group), nicht auf der Seite (rank_absolute)", () => {
+  const items: SerpItem[] = [
+    { type: "organic", rank_group: 1, rank_absolute: 3, title: "Digitalisierung" },
+    { type: "organic", rank_group: 2, rank_absolute: 6, title: "Sascha Lobo zur Digitalisierung" },
+  ]
+  assert.equal(evaluateTopicSearch(items, "sascha lobo", null).position, 2)
+  assert.deepEqual(evaluateNameSearch(items, "sascha lobo", null).results.map(r => r.rank), [1, 2])
+})
