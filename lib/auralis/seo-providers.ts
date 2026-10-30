@@ -67,7 +67,9 @@ async function searchGoogle(keyword: string, auth: string, locale: { language_co
     const res = await fetch("https://api.dataforseo.com/v3/serp/google/organic/live/advanced", {
       method: "POST",
       headers: { Authorization: auth, "Content-Type": "application/json" },
-      body: JSON.stringify([{ keyword, ...locale, depth: TOP_RESULTS }]),
+      // depth zählt auch Knowledge Panel, „Ähnliche Fragen“ usw. mit – doppelt anfragen,
+      // damit sicher 10 normale Treffer dabei sind.
+      body: JSON.stringify([{ keyword, ...locale, depth: TOP_RESULTS * 2 }]),
     })
     if (!res.ok) return { ok: false, error: `HTTP ${res.status}` }
     const json = await res.json()

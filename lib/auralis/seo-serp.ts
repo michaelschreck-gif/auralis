@@ -67,7 +67,7 @@ function compactName(nameLower: string): string {
 export function isAboutPerson(item: SerpItem, nameLower: string, ownHost: string | null): boolean {
   const hay = `${item.title ?? ""} ${item.description ?? ""}`.toLowerCase()
   if (containsWholeName(hay, nameLower)) return true
-  const host = hostOf(item.url ?? item.domain)
+  const host = hostOf(item.domain ?? item.url)
   if (ownHost && host === ownHost) return true
   const compact = compactName(nameLower)
   return !!host && compact.length >= 8 && host.replace(/[^a-z0-9]/g, "").includes(compact)
@@ -113,7 +113,7 @@ export function evaluateNameSearch(items: SerpItem[], nameLower: string, ownHost
     url: it.url ?? null,
     aboutYou: isAboutPerson(it, nameLower, ownHost),
   }))
-  const own = ownHost ? top.find(it => hostOf(it.url ?? it.domain) === ownHost) : undefined
+  const own = ownHost ? top.find(it => hostOf(it.domain ?? it.url) === ownHost) : undefined
   return {
     aboutYou: results.filter(r => r.aboutYou).length,
     total: results.length,
