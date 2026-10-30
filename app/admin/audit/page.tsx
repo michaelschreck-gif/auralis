@@ -1,18 +1,8 @@
 import { requireAdminPage } from "@/lib/halo/admin"
 import { card } from "@/components/halo/ui"
+import { AUDIT_LABELS as LABELS } from "@/lib/halo/audit-labels"
 
 export const dynamic = "force-dynamic"
-
-const LABELS: Record<string, string> = {
-  "user.admin.grant": "Admin-Recht gegeben",
-  "user.admin.revoke": "Admin-Recht entzogen",
-  "user.ban": "Nutzer gesperrt",
-  "user.unban": "Nutzer entsperrt",
-  "user.delete": "Nutzer gelöscht",
-  "user.invite": "Nutzer eingeladen",
-  "account.delete": "Konto gelöscht",
-  "person.measure": "Messung gestartet",
-}
 
 export default async function AdminAudit({ searchParams }: { searchParams: Promise<{ action?: string }> }) {
   const { service: db } = await requireAdminPage()
