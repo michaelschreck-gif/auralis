@@ -123,11 +123,13 @@ const ENDPOINTS: Endpoint[] = [
   "prompt": "Wer sind die führenden …", "response": "…", "mentioned": true, "position": 2 } ] }`,
   },
   {
-    id: "competitors",
+    id: "impulses",
     method: "GET",
-    path: "/persons/{id}/competitors",
-    text: "Wettbewerber mit ihrer jüngsten KI-Sichtbarkeit.",
-    response: `{ "competitors": [ { "id": "…", "name": "…", "ai_score": 46, "measured_at": "…" } ] }`,
+    path: "/persons/{id}/impulses",
+    text: "Impulse: Personen, die die KI-Antworten zu den Themen der Person stark nennen – mit Score je Thema (wie die KI-Sichtbarkeit: Nennungsanteil 60 %, Platz 40 %). Nur Personen mit mindestens zwei Nennungen.",
+    response: `{ "answers_analyzed": 28, "impulses": [ { "name": "…", "score": 72, "mentions": 9,
+  "topics": [ { "topic": "…", "score": 72, "mentions": 9, "answers": 14, "average_position": 1.8 } ],
+  "patterns": ["books", "stage"], "context": "…" } ] }`,
   },
   {
     id: "actions",
