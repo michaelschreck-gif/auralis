@@ -17,6 +17,17 @@ export function isMailConfigured(): boolean {
 
 export type MailResult = { ok: true; id: string | null } | { ok: false; error: string }
 
+/**
+ * Fehlertexte landen im Admin und in brief_sends. Ein ungültiger Schlüssel
+ * (z. B. falscher Inhalt der Zwischenablage) taucht sonst in der Meldung von
+ * fetch auf („Headers.append: "Bearer …" is an invalid header value“).
+ */
+export function redactMailError(message: string, key = process.env.RESEND_API_KEY): string {
+  let out = message
+  if (key) out = out.split(key).join("***")
+  return out.replace(/Bearer\s+[\s\S]*/, "Bearer ***")
+}
+
 export async function sendMail(input: {
   to: string
   subject: string
@@ -26,6 +37,9 @@ export async function sendMail(input: {
   unsubscribePostUrl?: string
 }): Promise<MailResult> {
   if (!isMailConfigured()) return { ok: false, error: "Mailversand ist nicht eingerichtet." }
+  if (!/^re_[A-Za-z0-9_]+$/.test(process.env.RESEND_API_KEY!.trim())) {
+    return { ok: false, error: "RESEND_API_KEY hat kein gültiges Format (erwartet: re_…)." }
+  }
   const headers: Record<string, string> = {}
   if (input.unsubscribePostUrl) {
     // RFC 8058: Abmelden mit einem Klick direkt im Mailprogramm.
@@ -35,7 +49,7 @@ export async function sendMail(input: {
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, "Content-Type": "application/json" },
+      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY!.trim()}`, "Content-Type": "application/json" },
       body: JSON.stringify({
         from: process.env.MAIL_FROM,
         to: [input.to],
@@ -47,10 +61,10 @@ export async function sendMail(input: {
       signal: AbortSignal.timeout(15_000),
     })
     const body = (await res.json().catch(() => null)) as { id?: string; message?: string } | null
-    if (!res.ok) return { ok: false, error: `Resend ${res.status}: ${body?.message ?? "unbekannter Fehler"}` }
+    if (!res.ok) return { ok: false, error: redactMailError(`Resend ${res.status}: ${body?.message ?? "unbekannter Fehler"}`) }
     return { ok: true, id: body?.id ?? null }
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : String(e) }
+    return { ok: false, error: redactMailError(e instanceof Error ? e.message : String(e)) }
   }
 }
 
