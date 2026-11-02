@@ -59,7 +59,7 @@ export default async function KontoPage() {
           </p>
           {account.plan === "free" && (
             <p className="text-sm text-[#6B625A] mt-2">
-              Mehr Themen, wöchentliche Messung und Wochenbrief mit Solo (39 €) oder Pro (89 €):{" "}
+              Mehr Themen, wöchentliche Messung und Wochenbrief mit Solo (39 €) oder Pro (89 €), jeweils zzgl. MwSt.:{" "}
               <a href="mailto:michael@linkedinconsulting.digital?subject=Halo%20Upgrade" className="text-[#C8431F] font-medium hover:underline">jetzt anfragen</a>.
             </p>
           )}
