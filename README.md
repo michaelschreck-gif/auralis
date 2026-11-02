@@ -25,7 +25,7 @@ Zugriff läuft in der Datenbank überall über `can_access_person(person_id)`.
 | `/p/[id]` | Halo Score; Unterseiten `ki`, `google`, `impulse`, `massnahmen`, `persona`, `einstellungen` |
 | `/konto` | Konto, Wochenbrief an/aus, API-Schlüssel |
 | `/brief/abmelden` | Wochenbrief abbestellen (signierter Link aus der Mail, ohne Login) |
-| `/admin` | Übersicht/Messbetrieb, Konten, Nutzer, Check, Audit-Log, Kalibrierung, Prüfset, Wochenbrief-Vorschau (nur `app_users.is_admin`) |
+| `/admin` | Übersicht/Messbetrieb, Konten (mit Tarif), Nutzer, Leads, Check, Audit-Log, Kalibrierung, Prüfset, Wochenbrief-Vorschau (nur `app_users.is_admin`) |
 | `/api/v2` | Öffentliche API (Doku `/docs/api`); `/api/v1` antwortet mit 410 |
 | `/u/[slug]`, `/badge/[slug]` | Öffentliches Profil und Badge je Person |
 
@@ -58,7 +58,8 @@ npx tsc --noEmit
 Umgebungsvariablen: Supabase-Keys, `ANTHROPIC_API_KEY` (Pflicht), optional `OPENAI_API_KEY`, `PERPLEXITY_API_KEY`,
 `GOOGLE_AI_API_KEY`, `DATAFORSEO_LOGIN`/`DATAFORSEO_PASSWORD`, `ELEVENLABS_API_KEY`, `CRON_SECRET`,
 Wochenbrief `RESEND_API_KEY` + `MAIL_FROM` (z. B. `Halo <brief@digital-halo.de>`, ohne beide kein Versand), optional `BRIEF_SECRET` (sonst `CRON_SECRET`),
-Domains `NEXT_PUBLIC_SITE_URL`/`NEXT_PUBLIC_APP_URL`/`NEXT_PUBLIC_ADMIN_URL`, `SIGNUP_OPEN=true` öffnet die Registrierung in Production.
+Domains `NEXT_PUBLIC_SITE_URL`/`NEXT_PUBLIC_APP_URL`/`NEXT_PUBLIC_ADMIN_URL`, Registrierung (kostenloser Check, Tarif `free`) ist offen; `SIGNUP_OPEN=false` schließt sie. Neue Leads per Mail an `LEAD_NOTIFY_EMAIL`.
+Tarife und Grenzen: `lib/halo/plans.ts` (Check/Solo/Pro/Team), Tarif ändern nur im Admin (Trigger `protect_account_plan`).
 
 ## Datenbank
 

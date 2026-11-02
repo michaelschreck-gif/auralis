@@ -9,6 +9,7 @@
 import { NextResponse, after } from "next/server"
 import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { activeJobId, enqueueJob, executeJob } from "@/lib/halo/jobs"
+import { checkManualMeasure } from "@/lib/halo/plan-db"
 
 export const maxDuration = 300
 
@@ -28,6 +29,8 @@ export async function POST(_req: Request, ctx: { params: Promise<{ topicId: stri
   if (running) {
     return NextResponse.json({ error: "Für dieses Thema läuft bereits eine Messung.", jobId: running }, { status: 409 })
   }
+  const allowed = await checkManualMeasure(service, topic.person_id)
+  if (!allowed.ok) return NextResponse.json({ error: allowed.error, code: "PLAN_LIMIT" }, { status: 402 })
 
   const jobId = await enqueueJob(service, {
     personId: topic.person_id,

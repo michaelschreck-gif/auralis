@@ -1,5 +1,6 @@
 import { createHaloServerClient } from "@/lib/supabase/halo"
-import { LIMITS } from "@/lib/halo/config"
+import { planOfPerson } from "@/lib/halo/plan-db"
+import { planLimits } from "@/lib/halo/plans"
 import { MARKET_LIST } from "@/lib/auralis/markets"
 import { slugify } from "@/lib/public-profile"
 import PersonSettings from "@/components/halo/PersonSettings"
@@ -12,13 +13,14 @@ export const metadata = { title: "Einstellungen · Halo" }
 export default async function EinstellungenPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const db = await createHaloServerClient()
-  const [{ data: person }, { data: topics }] = await Promise.all([
+  const [{ data: person }, { data: topics }, plan] = await Promise.all([
     db
       .from("persons")
       .select("id, first_name, last_name, context, market, website_url, public_slug, public_profile_enabled")
       .eq("id", id)
       .single(),
     db.from("topics").select("id, name, frequency, is_active, last_run_at").eq("person_id", id).order("created_at", { ascending: true }),
+    planOfPerson(db, id),
   ])
   if (!person) return null
 
@@ -32,7 +34,7 @@ export default async function EinstellungenPage({ params }: { params: Promise<{ 
         person={person}
         topics={topics ?? []}
         markets={MARKET_LIST.map(m => ({ id: m.id, label: m.label }))}
-        maxTopics={LIMITS.topicsPerPerson}
+        maxTopics={planLimits(plan).topicsPerPerson}
       />
       <PublicProfileSettings
         personId={person.id}

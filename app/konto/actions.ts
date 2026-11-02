@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache"
 import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { generateApiKey } from "@/lib/halo/api"
 import { LIMITS } from "@/lib/halo/config"
+import { planOfAccount } from "@/lib/halo/plan-db"
+import { planLimits } from "@/lib/halo/plans"
 
 export type ActionResult = { ok: true; key?: string } | { ok: false; error: string }
 
@@ -39,6 +41,9 @@ export async function renameAccount(name: string): Promise<ActionResult> {
 export async function convertToTeam(): Promise<ActionResult> {
   const o = await ownerAccount()
   if (!o) return { ok: false, error: "Nur der Owner kann das Konto ändern." }
+  if (!planLimits(await planOfAccount(o.db, o.accountId)).teamAllowed) {
+    return { ok: false, error: "Teams gibt es im Tarif Team. Schreib uns, wir stellen dein Konto um." }
+  }
   const { error } = await o.db.from("accounts").update({ type: "team" }).eq("id", o.accountId)
   if (error) return { ok: false, error: "Konnte nicht umgestellt werden." }
   revalidatePath("/", "layout")

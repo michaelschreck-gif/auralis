@@ -94,7 +94,9 @@ export default function DatenschutzPage() {
             letzten Messung und Ihrem nächsten Schritt. Übermittelt werden Ihre E-Mail-Adresse und der Inhalt der
             Mail. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO (Information zu Ihrem Konto) bzw. lit. f DSGVO; die
             Übermittlung in die USA wird auf die EU-Standardvertragsklauseln gestützt. Den Wochenbrief können Sie
-            jederzeit im Konto oder über den Link in jeder Mail abbestellen.
+            jederzeit im Konto oder über den Link in jeder Mail abbestellen. Haben Sie bei der Registrierung
+            zusätzlich eingewilligt, nutzen wir Ihre E-Mail-Adresse auch für Informationen zu unseren Angeboten
+            (Art. 6 Abs. 1 lit. a DSGVO); diese Einwilligung können Sie jederzeit per E-Mail an uns widerrufen.
           </li>
         </ul>
       </Section>

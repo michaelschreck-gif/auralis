@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server"
 import { apiError, authenticate, personJson } from "@/lib/halo/api"
 import { LIMITS } from "@/lib/halo/config"
+import { planLimits } from "@/lib/halo/plans"
 import { validateStartInput } from "@/lib/halo/onboarding"
 import { createPersonWithTopics } from "@/lib/halo/people"
 
@@ -28,7 +29,7 @@ export async function POST(req: Request) {
   const auth = await authenticate(req)
   if (!auth.ok) return auth.response
   const { db, account } = auth.ctx
-  if (account.type !== "team") return apiError("Personen anlegen geht nur in Team-Konten.", "TEAM_REQUIRED", 403)
+  if (account.type !== "team" || !planLimits(account.plan).teamAllowed) return apiError("Personen anlegen geht nur in Team-Konten.", "TEAM_REQUIRED", 403)
 
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null
   const parsed = validateStartInput(
@@ -40,7 +41,7 @@ export async function POST(req: Request) {
       market: body?.market ?? "dach",
       topics: body?.topics,
     },
-    LIMITS.topicsPerPerson,
+    planLimits(account.plan).topicsPerPerson,
   )
   if (!parsed.ok) return apiError(parsed.error, "INVALID_INPUT", 400)
 
@@ -49,7 +50,7 @@ export async function POST(req: Request) {
     if ((count ?? 0) >= LIMITS.personsPerTeam) return apiError("Personen-Limit erreicht.", "LIMIT_REACHED", 403)
   }
 
-  const created = await createPersonWithTopics(db, db, account.id, parsed.value)
+  const created = await createPersonWithTopics(db, db, account.id, parsed.value, planLimits(account.plan).frequency)
   if (!created.ok) return apiError(created.error, "INTERNAL", 500)
   const { data: person } = await db.from("persons").select("*").eq("id", created.personId).single()
   return NextResponse.json({ person: person ? personJson(person) : { id: created.personId }, job_ids: created.jobIds }, { status: 201 })

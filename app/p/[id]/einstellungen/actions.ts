@@ -3,7 +3,8 @@
 import { revalidatePath } from "next/cache"
 import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { isValidSlug, MAX_SLUG_LENGTH, MIN_SLUG_LENGTH, slugify } from "@/lib/public-profile"
-import { LIMITS } from "@/lib/halo/config"
+import { planOfPerson } from "@/lib/halo/plan-db"
+import { allowedFrequency, planLimits } from "@/lib/halo/plans"
 import { MAX_NAME_LENGTH, MAX_TOPIC_LENGTH, normalizeTopics } from "@/lib/halo/onboarding"
 import type { FrequencyType, MarketId } from "@/lib/supabase/halo.types"
 
@@ -11,6 +12,13 @@ export type ActionResult = { ok: true } | { ok: false; error: string }
 
 const MARKETS: MarketId[] = ["dach", "us", "uk", "eu", "ca", "au", "global"]
 const FREQUENCIES: FrequencyType[] = ["daily", "weekly", "monthly"]
+const FREQUENCY_LABEL: Record<FrequencyType, string> = { daily: "täglich", weekly: "wöchentlich", monthly: "monatlich" }
+
+function topicLimitError(limits: { label: string; topicsPerPerson: number }): string {
+  return limits.topicsPerPerson === 1
+    ? "Im kostenlosen Check misst Halo ein Thema. Mehr Themen gibt es mit Solo oder Pro."
+    : `Höchstens ${limits.topicsPerPerson} aktive Themen im Tarif ${limits.label}.`
+}
 
 function clean(v: FormDataEntryValue | null, max: number): string {
   return typeof v === "string" ? v.replace(/\s+/g, " ").trim().slice(0, max) : ""
@@ -56,14 +64,16 @@ export async function addTopic(personId: string, name: string): Promise<ActionRe
   const [topic] = normalizeTopics([name], 1)
   if (!topic) return { ok: false, error: "Bitte gib ein Thema ein." }
   const client = await db()
+  const plan = await planOfPerson(client, personId)
+  const limits = planLimits(plan)
   const { data: existing } = await client.from("topics").select("name, is_active").eq("person_id", personId)
-  if ((existing ?? []).filter(t => t.is_active).length >= LIMITS.topicsPerPerson) {
-    return { ok: false, error: `Höchstens ${LIMITS.topicsPerPerson} aktive Themen.` }
+  if ((existing ?? []).filter(t => t.is_active).length >= limits.topicsPerPerson) {
+    return { ok: false, error: topicLimitError(limits) }
   }
   if ((existing ?? []).some(t => t.name.toLowerCase() === topic.toLowerCase())) {
     return { ok: false, error: "Dieses Thema gibt es schon." }
   }
-  const { error } = await client.from("topics").insert({ person_id: personId, name: topic.slice(0, MAX_TOPIC_LENGTH) })
+  const { error } = await client.from("topics").insert({ person_id: personId, name: topic.slice(0, MAX_TOPIC_LENGTH), frequency: limits.frequency })
   if (error) return { ok: false, error: "Thema konnte nicht angelegt werden." }
   revalidatePath(`/p/${personId}`, "layout")
   return { ok: true }
@@ -81,13 +91,18 @@ export async function updateTopic(
   if (Object.keys(update).length === 0) return { ok: false, error: "Nichts zu ändern." }
 
   const client = await db()
+  const plan = await planOfPerson(client, personId)
+  const limits = planLimits(plan)
+  if (update.frequency && allowedFrequency(plan, update.frequency) !== update.frequency) {
+    return { ok: false, error: `Im Tarif ${limits.label} wird höchstens ${FREQUENCY_LABEL[limits.frequency]} gemessen.` }
+  }
   if (update.is_active) {
     const { count } = await client
       .from("topics")
       .select("id", { count: "exact", head: true })
       .eq("person_id", personId)
       .eq("is_active", true)
-    if ((count ?? 0) >= LIMITS.topicsPerPerson) return { ok: false, error: `Höchstens ${LIMITS.topicsPerPerson} aktive Themen.` }
+    if ((count ?? 0) >= limits.topicsPerPerson) return { ok: false, error: topicLimitError(limits) }
   }
   const { error } = await client.from("topics").update(update).eq("id", topicId).eq("person_id", personId)
   if (error) return { ok: false, error: "Konnte nicht gespeichert werden." }

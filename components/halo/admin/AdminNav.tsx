@@ -7,6 +7,7 @@ const ITEMS = [
   { href: "/admin", label: "Übersicht" },
   { href: "/admin/konten", label: "Konten" },
   { href: "/admin/nutzer", label: "Nutzer" },
+  { href: "/admin/leads", label: "Leads" },
   { href: "/admin/check", label: "Check" },
   { href: "/admin/audit", label: "Audit-Log" },
   { href: "/admin/calibration", label: "Kalibrierung" },

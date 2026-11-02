@@ -7,6 +7,7 @@ import { activeJobId, enqueueJob, executeJob } from "@/lib/halo/jobs"
 import { after } from "next/server"
 import { briefLinks, briefSince, composeBrief } from "@/lib/halo/brief-run"
 import { isMailConfigured, sendMail } from "@/lib/halo/mail"
+import { PLAN_LIMITS, PLANS } from "@/lib/halo/plans"
 
 export type ActionResult = { ok: true; message?: string } | { ok: false; error: string }
 
@@ -164,4 +165,19 @@ export async function sendBriefTest(userId: string, rawTo: string): Promise<Acti
   if (!r.ok) return { ok: false, error: r.error }
   await logAudit(admin, "brief.test", { type: "user", id: userId }, { to })
   return { ok: true, message: `Test an ${to} verschickt.` }
+}
+
+/** Tarif eines Kontos ändern (nur Admin; der Datenbank-Trigger lässt es nur dem Service-Client zu). */
+export async function setAccountPlan(accountId: string, rawPlan: string): Promise<ActionResult> {
+  const admin = await getAdmin()
+  if (!admin) return NO_ADMIN
+  const plan = PLANS.find(p => p === rawPlan)
+  if (!plan) return { ok: false, error: "Unbekannter Tarif." }
+  const { data: before } = await admin.service.from("accounts").select("plan").eq("id", accountId).maybeSingle()
+  if (!before) return { ok: false, error: "Konto nicht gefunden." }
+  const { error } = await admin.service.from("accounts").update({ plan }).eq("id", accountId)
+  if (error) return { ok: false, error: error.message }
+  await logAudit(admin, "account.plan", { type: "account", id: accountId }, { from: before.plan, to: plan })
+  revalidatePath("/admin", "layout")
+  return { ok: true, message: `Tarif: ${PLAN_LIMITS[plan].label}.` }
 }
