@@ -16,7 +16,7 @@ export default async function AdminKonto({ params }: { params: Promise<{ id: str
   const { id } = await params
   const { service: db } = await requireAdminPage()
 
-  const { data: account } = await db.from("accounts").select("id, name, type, plan, owner_user_id, created_at").eq("id", id).maybeSingle()
+  const { data: account } = await db.from("accounts").select("id, name, type, plan, owner_user_id, created_at, stripe_customer_id, stripe_subscription_id, subscription_status, billing_interval, seats, current_period_end, cancel_at_period_end").eq("id", id).maybeSingle()
   if (!account) notFound()
 
   const [{ data: persons }, { data: members }, { data: jobs }] = await Promise.all([
@@ -45,6 +45,24 @@ export default async function AdminKonto({ params }: { params: Promise<{ id: str
           <RenameAccountForm key={account.name} accountId={account.id} name={account.name} />
           <PlanSelect key={account.plan} accountId={account.id} plan={account.plan} />
         </div>
+        {account.stripe_subscription_id && (
+          <p className="text-xs text-[#6B625A] mt-2">
+            Stripe-Abo: {account.subscription_status ?? "–"}
+            {account.billing_interval && ` · ${account.billing_interval === "year" ? "jährlich" : "monatlich"}`}
+            {account.seats && ` · ${account.seats} Plätze`}
+            {account.current_period_end && ` · ${account.cancel_at_period_end ? "endet" : "verlängert"} ${formatDate(account.current_period_end)}`}
+            {" · "}
+            <a
+              href={`https://dashboard.stripe.com/customers/${account.stripe_customer_id}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-[#C8431F] hover:underline"
+            >
+              in Stripe öffnen
+            </a>
+            {" "}(Tarif ändert der Webhook; eine Änderung hier wird beim nächsten Abo-Ereignis überschrieben)
+          </p>
+        )}
       </div>
 
       <section className="space-y-3">

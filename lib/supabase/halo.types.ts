@@ -59,7 +59,21 @@ export type AccountRow = {
   name: string
   owner_user_id: string
   plan: PlanType
+  stripe_customer_id: string | null
+  stripe_subscription_id: string | null
+  subscription_status: string | null
+  billing_interval: "month" | "year" | null
+  seats: number | null
+  current_period_end: string | null
+  cancel_at_period_end: boolean
   created_at: string
+}
+
+export type StripeEventRow = {
+  id: string
+  type: string
+  account_id: string | null
+  received_at: string
 }
 
 export type AccountMemberRow = {
@@ -89,6 +103,7 @@ export type TopicRow = {
   person_id: string
   name: string
   is_active: boolean
+  paused_by_plan: boolean
   frequency: FrequencyType
   next_run_at: string
   last_run_at: string | null
@@ -275,7 +290,23 @@ export type HaloDatabase = {
   public: {
     Tables: {
       app_users: Table<AppUserRow, WithOptional<AppUserRow, "email" | "is_admin" | "banned_at" | "weekly_brief" | "created_at">>
-      accounts: Table<AccountRow, WithOptional<AccountRow, "id" | "plan" | "created_at">>
+      accounts: Table<
+        AccountRow,
+        WithOptional<
+          AccountRow,
+          | "id"
+          | "plan"
+          | "stripe_customer_id"
+          | "stripe_subscription_id"
+          | "subscription_status"
+          | "billing_interval"
+          | "seats"
+          | "current_period_end"
+          | "cancel_at_period_end"
+          | "created_at"
+        >
+      >
+      stripe_events: Table<StripeEventRow, WithOptional<StripeEventRow, "account_id" | "received_at">>
       account_members: Table<AccountMemberRow, WithOptional<AccountMemberRow, "person_id" | "created_at">>
       persons: Table<
         PersonRow,
@@ -286,7 +317,7 @@ export type HaloDatabase = {
       >
       topics: Table<
         TopicRow,
-        WithOptional<TopicRow, "id" | "is_active" | "frequency" | "next_run_at" | "last_run_at" | "created_at">
+        WithOptional<TopicRow, "id" | "is_active" | "paused_by_plan" | "frequency" | "next_run_at" | "last_run_at" | "created_at">
       >
       measurements: Table<
         MeasurementRow,

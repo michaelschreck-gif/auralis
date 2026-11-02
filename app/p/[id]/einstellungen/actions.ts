@@ -16,7 +16,7 @@ const FREQUENCY_LABEL: Record<FrequencyType, string> = { daily: "täglich", week
 
 function topicLimitError(limits: { label: string; topicsPerPerson: number }): string {
   return limits.topicsPerPerson === 1
-    ? "Im kostenlosen Check misst Halo ein Thema. Mehr Themen gibt es mit Solo oder Pro."
+    ? "Im kostenlosen Check misst Halo ein Thema. Mehr Themen gibt es mit Solo oder Pro – buchbar unter Konto."
     : `Höchstens ${limits.topicsPerPerson} aktive Themen im Tarif ${limits.label}.`
 }
 

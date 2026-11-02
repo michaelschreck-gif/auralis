@@ -98,6 +98,14 @@ export default function DatenschutzPage() {
             zusätzlich eingewilligt, nutzen wir Ihre E-Mail-Adresse auch für Informationen zu unseren Angeboten
             (Art. 6 Abs. 1 lit. a DSGVO); diese Einwilligung können Sie jederzeit per E-Mail an uns widerrufen.
           </li>
+          <li>
+            <strong className="text-[#0E1916]">Stripe</strong> (Stripe Payments Europe, Ltd., Irland) — Abwicklung der
+            Zahlungen für kostenpflichtige Tarife, Rechnungsstellung und Kundenportal. Verarbeitet werden Name bzw.
+            Firma, E-Mail-Adresse, Rechnungsadresse, ggf. USt-IdNr. sowie Zahlungsdaten; Kartendaten erhalten wir
+            nicht, sie liegen nur bei Stripe. Rechtsgrundlage: Art. 6 Abs. 1 lit. b und c DSGVO (Vertrag,
+            steuerliche Aufbewahrung). Stripe kann Daten an die Stripe, Inc. (USA) übermitteln; dies wird auf die
+            EU-Standardvertragsklauseln gestützt.
+          </li>
         </ul>
       </Section>
 

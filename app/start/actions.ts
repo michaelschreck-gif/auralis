@@ -6,7 +6,7 @@ import { LIMITS } from "@/lib/halo/config"
 import { notifyNewLead } from "@/lib/halo/leads"
 import { accountNameFor, validateStartInput } from "@/lib/halo/onboarding"
 import { createPersonWithTopics, ownedTeamAccount } from "@/lib/halo/people"
-import { planOfAccount, planOfOwner } from "@/lib/halo/plan-db"
+import { checkTeamSeat, planOfAccount, planOfOwner } from "@/lib/halo/plan-db"
 import { planLimits } from "@/lib/halo/plans"
 
 export type StartResult =
@@ -76,6 +76,8 @@ export async function addPersonToTeam(raw: Record<string, unknown>): Promise<Sta
     const { count } = await db.from("persons").select("id", { count: "exact", head: true }).eq("account_id", team.id)
     if ((count ?? 0) >= LIMITS.personsPerTeam) return { ok: false, error: `Höchstens ${LIMITS.personsPerTeam} Personen je Team.` }
   }
+  const seat = await checkTeamSeat(db, team.id)
+  if (!seat.ok) return seat
 
   return createPersonWithTopics(db, createHaloServiceClient(), team.id, parsed.value, limits.frequency)
 }
