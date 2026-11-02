@@ -95,7 +95,7 @@ export default function RegisterForm({ open }: { open: boolean }) {
                 </span>
               </label>
               <p className="text-[11px] text-[#9A9089] leading-relaxed">
-                Mit dem Anlegen akzeptierst du die{" "}
+                Halo ist für die berufliche Nutzung. Mit dem Anlegen bestätigst du das und akzeptierst die{" "}
                 <a href="/legal/agb" target="_blank" className="underline hover:text-[#0E1916]">AGB</a>. Wie wir deine Daten
                 verarbeiten, steht in der{" "}
                 <a href="/legal/datenschutz" target="_blank" className="underline hover:text-[#0E1916]">Datenschutzerklärung</a>.

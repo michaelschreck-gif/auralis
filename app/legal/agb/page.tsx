@@ -24,6 +24,11 @@ export default function AgbPage() {
           (sowie etwaigen Folge-Domains) erreichbaren Plattform „Halo“.
         </p>
         <p>
+          Das Angebot richtet sich ausschließlich an Unternehmer im Sinne von § 14 BGB, also an
+          Selbstständige, Freiberufler und Unternehmen, die Halo für ihre berufliche oder gewerbliche
+          Tätigkeit nutzen. Mit der Registrierung bestätigt der Kunde, in dieser Eigenschaft zu handeln.
+        </p>
+        <p>
           Abweichende Geschäftsbedingungen des Kunden gelten nur, soweit der Anbieter ihnen ausdrücklich
           schriftlich zustimmt.
         </p>

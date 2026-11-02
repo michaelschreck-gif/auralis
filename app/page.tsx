@@ -348,7 +348,7 @@ export default async function Home() {
           />
         </div>
         <p className="text-sm text-[#6B625A] mt-6">
-          Alle Tarife messen über alle KI-Modelle und Google. Preise zzgl. MwSt., bei jährlicher Zahlung zwei Monate gratis.
+          Alle Tarife messen über alle KI-Modelle und Google. Alle Preise netto zzgl. MwSt. – das Angebot richtet sich an Selbstständige und Unternehmen. Bei jährlicher Zahlung zwei Monate gratis.
         </p>
         <p className="text-sm text-[#6B625A] mt-2">
           <span className="font-medium text-[#0E1916]">Agentur</span> für PR-, Personal-Branding- und LinkedIn-Berater: viele Personen, API und Berichte für Kunden, ab €490/Monat —{" "}
