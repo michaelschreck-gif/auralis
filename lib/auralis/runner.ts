@@ -164,6 +164,16 @@ const ROUND_START_BUDGET_MS = 32_000
 /** Zeitbudget für Hintergrundläufe (Funktion hat 300 s; Reserve für Speichern). */
 const BACKGROUND_ROUND_BUDGET_MS = 120_000
 
+/**
+ * Fortschritt während einer Messung, je Aufruf gemeldet (für die Live-Anzeige,
+ * lib/halo/progress.ts). „skipped“ = Folgerunde wegen Zeitbudget nicht gestartet.
+ */
+export type MeasureProgressEvent =
+  | { type: "start"; providers: { id: string; label: string }[]; queriesPerRound: number; rounds: number }
+  | { type: "answer"; providerId: string; round: number; prompt: string; mentioned: boolean; position: number | null }
+  | { type: "failed"; providerId: string; round: number }
+  | { type: "skipped"; providerId: string; round: number }
+
 /** Eine konkrete Frage inkl. Markt-Kontext. IDs sind `${marketId}::${queryId}`. */
 type RunQuery = MatrixQuery & {
   market: MarketId
@@ -204,7 +214,7 @@ async function runProvider(
   provider: LLMProvider,
   queries: RunQuery[],
   targetName: string,
-  opts: { rounds?: number; startedAt?: number; roundBudgetMs?: number } = {},
+  opts: { rounds?: number; startedAt?: number; roundBudgetMs?: number; onProgress?: (e: MeasureProgressEvent) => void } = {},
 ): Promise<{ queryResults: QueryResult[]; rounds: QueryResult[][]; error?: string }> {
   const rounds = Math.max(1, opts.rounds ?? 1)
   const roundBudgetMs = opts.roundBudgetMs ?? ROUND_START_BUDGET_MS
@@ -221,12 +231,21 @@ async function runProvider(
   )
   let cursor = 0
   let firstError: string | undefined
+  // Ein Fehler in der Anzeige darf die Messung nie stören.
+  const report = (e: MeasureProgressEvent) => {
+    try {
+      opts.onProgress?.(e)
+    } catch {}
+  }
 
   async function worker() {
     while (true) {
       const task = tasks[cursor++]
       if (!task) return
-      if (task.round > 0 && Date.now() - startedAt > roundBudgetMs) continue
+      if (task.round > 0 && Date.now() - startedAt > roundBudgetMs) {
+        report({ type: "skipped", providerId: provider.id, round: task.round })
+        continue
+      }
       const query = queries[task.index]
       try {
         let usage: TokenUsage | undefined
@@ -245,10 +264,19 @@ async function runProvider(
           query.type,
         )
         slots[task.round][task.index] = usage ? { ...result, usage } : result
+        report({
+          type: "answer",
+          providerId: provider.id,
+          round: task.round,
+          prompt: query.prompt,
+          mentioned: result.signal.mentioned,
+          position: result.signal.position,
+        })
       } catch (e) {
         const message = e instanceof Error ? e.message : String(e)
         if (!firstError) firstError = message
         console.error(`[runner] provider ${provider.id} call failed:`, message)
+        report({ type: "failed", providerId: provider.id, round: task.round })
       }
     }
   }
@@ -300,6 +328,7 @@ async function measureAllProviders(
   topics: string[],
   rounds: number,
   roundBudgetMs?: number,
+  onProgress?: (e: MeasureProgressEvent) => void,
 ): Promise<Measurement> {
   const startedAt = Date.now()
   const runQueries = toRunQueries(plans)
@@ -307,7 +336,7 @@ async function measureAllProviders(
   const outcomes: ProviderOutcome[] = await Promise.all(
     providers.map(async (provider) => {
       const { queryResults, rounds: roundResults, error } = await runProvider(
-        provider, runQueries, targetName, { rounds, startedAt, roundBudgetMs },
+        provider, runQueries, targetName, { rounds, startedAt, roundBudgetMs, onProgress },
       )
       if (error || roundResults.length === 0) {
         return { provider, queryResults: [], roundReports: [], marketRounds: {}, report: null, error: error ?? "no report" }
@@ -399,6 +428,8 @@ export type MeasureTargetOptions = {
   seedBase: string
   /** Bezeichnung für Log-Ausgaben. */
   logLabel: string
+  /** Wird je Aufruf mit dem Fortschritt aufgerufen (Live-Anzeige). */
+  onProgress?: (e: MeasureProgressEvent) => void
 }
 
 export type TargetMeasurement = {
@@ -417,15 +448,25 @@ export type TargetMeasurement = {
  * Wirft „All providers failed: …“, wenn kein Provider ein Ergebnis liefert.
  */
 export async function measureTarget({
-  targetName, topics, markets, measurement, providers, background, seedBase, logLabel,
+  targetName, topics, markets, measurement, providers, background, seedBase, logLabel, onProgress,
 }: MeasureTargetOptions): Promise<TargetMeasurement> {
   const marketPlans = buildMarketPlans(markets, topics, measurement, `${seedBase}-${Date.now()}`)
   const queriesPerRound = marketPlans.reduce((a, m) => a + m.queries.length, 0)
+
+  try {
+    onProgress?.({
+      type: "start",
+      providers: providers.map(p => ({ id: p.id, label: p.label })),
+      queriesPerRound,
+      rounds: Math.max(1, measurement.rounds),
+    })
+  } catch {}
 
   // 4. Fan-out per provider (parallel), mehrere Runden und Märkte
   const { outcomes: providerOutcomes, stability, marketResults } = await measureAllProviders(
     providers, marketPlans, targetName, topics, measurement.rounds,
     background ? BACKGROUND_ROUND_BUDGET_MS : undefined,
+    onProgress,
   )
 
   const successfulProviders = providerOutcomes.filter(o => o.report !== null && !o.error)

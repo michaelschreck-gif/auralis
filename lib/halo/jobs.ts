@@ -7,12 +7,55 @@
  * Läuft mit dem Service-Client; wer einen Job anlegen darf, prüft die Route.
  */
 
+import type { MeasureProgressEvent } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
-import type { TriggerType } from "../supabase/halo.types"
+import type { Json, TriggerType } from "../supabase/halo.types"
 import { runMeasurement } from "./measure"
+import { applyProgress, emptyProgress } from "./progress"
 
 /** Jobs, die länger als das in queued/running hängen, gelten als abgestürzt. */
 const JOB_STALE_MS = 10 * 60 * 1000
+/** Höchstens so oft wird der Fortschritt in jobs.progress geschrieben. */
+const PROGRESS_WRITE_MS = 1500
+
+/**
+ * Sammelt die Fortschritts-Ereignisse eines Jobs und schreibt den Stand
+ * gedrosselt in jobs.progress. Schreibfehler (z. B. Spalte fehlt noch) werden
+ * nur geloggt, die Messung läuft weiter.
+ */
+function progressWriter(service: HaloClient, jobId: string) {
+  let state = emptyProgress()
+  let lastWrite = 0
+  let timer: ReturnType<typeof setTimeout> | null = null
+  let chain: Promise<void> = Promise.resolve()
+
+  const write = () => {
+    timer = null
+    lastWrite = Date.now()
+    const snapshot = state as unknown as Json
+    chain = chain.then(async () => {
+      const { error } = await service.from("jobs").update({ progress: snapshot }).eq("id", jobId)
+      if (error) console.error("[halo/jobs] progress write failed:", jobId, error.message)
+    })
+  }
+
+  return {
+    onProgress(e: MeasureProgressEvent) {
+      state = applyProgress(state, e)
+      if (timer) return
+      const wait = Math.max(0, PROGRESS_WRITE_MS - (Date.now() - lastWrite))
+      timer = setTimeout(write, wait)
+    },
+    /** Letzten Stand schreiben und warten, bis alles gespeichert ist. */
+    async flush() {
+      if (timer) {
+        clearTimeout(timer)
+        write()
+      }
+      await chain
+    },
+  }
+}
 
 export async function enqueueJob(
   service: HaloClient,
@@ -56,11 +99,14 @@ export async function executeJob(service: HaloClient, jobId: string): Promise<vo
 
   await service.from("jobs").update({ status: "running", started_at: new Date().toISOString() }).eq("id", jobId)
 
+  const progress = progressWriter(service, jobId)
   try {
     const result = await runMeasurement(job.topic_id, service, {
       trigger: job.trigger,
       advanceNextRunAt: job.advance_next_run,
+      onProgress: progress.onProgress,
     })
+    await progress.flush()
     await service
       .from("jobs")
       .update({ status: "done", measurement_id: result.measurementId, finished_at: new Date().toISOString() })
@@ -68,6 +114,7 @@ export async function executeJob(service: HaloClient, jobId: string): Promise<vo
   } catch (e) {
     const message = e instanceof Error ? e.message : String(e)
     console.error("[halo/jobs] job failed:", jobId, message)
+    await progress.flush()
     await service
       .from("jobs")
       .update({ status: "failed", error: message.slice(0, 500), finished_at: new Date().toISOString() })

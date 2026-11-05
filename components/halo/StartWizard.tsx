@@ -2,23 +2,16 @@
 
 import { useEffect, useRef, useState } from "react"
 import { addPersonToTeam, completeStart } from "@/app/start/actions"
+import type { JobProgress } from "@/lib/halo/progress"
 import type { HaloScore } from "@/lib/halo/score"
+import MeasureProgress from "./MeasureProgress"
 import ScoreRing from "./ScoreRing"
 
 type Market = { id: string; label: string; flag: string; language: "de" | "en" }
 type AccountType = "individual" | "team"
-type JobState = { status: string; error: string | null }
+type JobState = { status: string; error: string | null; progress: JobProgress | null }
 
 const STEPS = ["Für wen", "Person", "Region", "Themen"]
-
-const MEASURE_MESSAGES = [
-  "Stelle Fragen an Claude …",
-  "Frage ChatGPT nach Experten zu deinen Themen …",
-  "Frage Gemini, wen es empfehlen würde …",
-  "Prüfe, ob und wo du genannt wirst …",
-  "Wiederhole die Fragen für ein stabiles Ergebnis …",
-  "Berechne deinen Halo Score …",
-]
 
 const card = "rounded-3xl border border-[#E9E1D3] bg-white shadow-[0_24px_70px_-30px_rgba(14,25,22,0.18)]"
 const inputCls =
@@ -62,7 +55,7 @@ export default function StartWizard({
   const [personId, setPersonId] = useState<string | null>(null)
   const [jobs, setJobs] = useState<Record<string, JobState>>({})
   const [score, setScore] = useState<HaloScore | null>(null)
-  const [messageIdx, setMessageIdx] = useState(0)
+  const [measuredTopics, setMeasuredTopics] = useState<string[]>([])
   const [elapsed, setElapsed] = useState(0)
   const startedAt = useRef<number>(0)
 
@@ -98,8 +91,9 @@ export default function StartWizard({
       return
     }
     startedAt.current = Date.now()
+    setMeasuredTopics(finalTopics)
     setPersonId(res.personId)
-    setJobs(Object.fromEntries(res.jobIds.map(id => [id, { status: "queued", error: null }])))
+    setJobs(Object.fromEntries(res.jobIds.map(id => [id, { status: "queued", error: null, progress: null }])))
   }
 
   // Fortschritt abfragen, solange Messungen laufen. Die Jobliste liegt in
@@ -119,16 +113,15 @@ export default function StartWizard({
           const r = await fetch(`/api/jobs/${id}`, { cache: "no-store" }).catch(() => null)
           if (r?.ok) {
             const j = await r.json()
-            updates[id] = { status: j.status, error: j.error }
+            updates[id] = { status: j.status, error: j.error, progress: j.progress ?? current[id].progress }
           }
         }),
       )
       if (Object.keys(updates).length) setJobs(prev => ({ ...prev, ...updates }))
-    }, 3000)
+    }, 2000)
     const tick = setInterval(() => {
       setElapsed(Math.round((Date.now() - startedAt.current) / 1000))
-      setMessageIdx(i => (i + 1) % MEASURE_MESSAGES.length)
-    }, 4000)
+    }, 1000)
     return () => {
       clearInterval(poll)
       clearInterval(tick)
@@ -152,22 +145,12 @@ export default function StartWizard({
     return (
       <Shell>
         {!allFinished ? (
-          <div className="text-center py-6">
-            <div className="w-12 h-12 mx-auto rounded-full border-2 border-[#FBCBB8] border-t-[#FA5935] animate-spin" />
-            <h2 className="font-[family-name:var(--font-display)] text-2xl text-[#0E1916] mt-6">Deine erste Messung läuft</h2>
-            <p className="text-sm text-[#6B625A] mt-2 min-h-[1.25rem]">{MEASURE_MESSAGES[messageIdx]}</p>
-            <div className="mt-6 h-1.5 rounded-full bg-[#F0EAE0] overflow-hidden max-w-xs mx-auto">
-              <div
-                className="h-full bg-[#FA5935] transition-all duration-700"
-                style={{ width: `${Math.max(8, (finished.length / jobIds.length) * 100)}%` }}
-              />
-            </div>
-            <p className="text-xs text-[#9A9089] mt-3">
-              {finished.length} von {jobIds.length} {jobIds.length === 1 ? "Thema" : "Themen"} fertig · {elapsed} s
-              <br />
-              Das dauert meist ein bis zwei Minuten. Du kannst die Seite offen lassen.
-            </p>
-          </div>
+          <MeasureProgress
+            progress={jobIds.map(id => jobs[id].progress).filter((p): p is JobProgress => p !== null)}
+            topics={measuredTopics}
+            marketLabel={markets.find(m => m.id === market)?.label ?? null}
+            elapsed={elapsed}
+          />
         ) : (
           <div className="text-center py-4">
             {score && score.score !== null ? (

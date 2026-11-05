@@ -163,6 +163,8 @@ export type JobRow = {
   status: JobStatus
   measurement_id: string | null
   error: string | null
+  /** Live-Fortschritt der Messung (lib/halo/progress.ts), null bei älteren Jobs. */
+  progress: Json | null
   created_at: string
   started_at: string | null
   finished_at: string | null
@@ -352,7 +354,7 @@ export type HaloDatabase = {
         JobRow,
         WithOptional<
           JobRow,
-          "id" | "advance_next_run" | "status" | "measurement_id" | "error" | "created_at" | "started_at" | "finished_at"
+          "id" | "advance_next_run" | "status" | "measurement_id" | "error" | "progress" | "created_at" | "started_at" | "finished_at"
         >
       >
       competitors: Table<CompetitorRow, WithOptional<CompetitorRow, "id" | "topics" | "market" | "created_at">>
