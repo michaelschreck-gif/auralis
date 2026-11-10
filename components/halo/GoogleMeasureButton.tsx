@@ -23,7 +23,7 @@ export default function GoogleMeasureButton({ personId }: { personId: string }) 
       >
         {pending ? "Google wird gemessen …" : "Google messen"}
       </button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      {error && <span className="text-xs text-[var(--h-error)]">{error}</span>}
     </div>
   )
 }

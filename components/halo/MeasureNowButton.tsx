@@ -74,13 +74,13 @@ export default function MeasureNowButton({ topicIds, label = "Neu messen" }: { t
         type="button"
         onClick={start}
         disabled={running || topicIds.length === 0}
-        className="inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors disabled:opacity-60"
+        className="h-btn h-btn--primary inline-flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-[#FA5935] hover:bg-[#C8431F] text-white transition-colors disabled:opacity-60"
       >
-        {running && <span className="w-3.5 h-3.5 border border-[#FBCBB8] border-t-white rounded-full animate-spin" />}
+        {running && <span className="w-3.5 h-3.5 border border-[var(--h-hover-line)] border-t-white rounded-full animate-spin" />}
         {running ? `Messung läuft … ${finished}/${jobIds.length || topicIds.length}` : label}
       </button>
-      {running && <span className="text-xs text-[#9A9089]">Dauert meist ein bis zwei Minuten.</span>}
-      {message && <span className={`text-xs ${status === "error" ? "text-red-600" : "text-[#C8431F]"}`}>{message}</span>}
+      {running && <span className="text-xs text-[var(--h-dim)]">Dauert meist ein bis zwei Minuten.</span>}
+      {message && <span className={`text-xs ${status === "error" ? "text-[var(--h-error)]" : "text-[var(--h-link)]"}`}>{message}</span>}
     </div>
   )
 }
