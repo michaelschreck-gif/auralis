@@ -46,12 +46,12 @@ export default function DatenschutzPage() {
           Verantwortliche Stelle für die Datenverarbeitung auf dieser Website und in der Anwendung ist:
         </p>
         <p>
-          <strong className="text-[#0E1916]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
-          Vertreten durch die Geschäftsführer Maud Schock und Michael Schreck<br />
+          <strong className="text-[#0E1916]">Leadesk UG (haftungsbeschränkt)</strong><br />
+          Vertreten durch die Geschäftsführer Michael Schreck und Julian Wolf<br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
           Telefon: <a href="tel:+4915563664275" className="text-[#C8431F] hover:underline">+49 155 63664275</a><br />
-          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">michael@linkedinconsulting.digital</a>
+          E-Mail: <a href="mailto:info@leadesk.de" className="text-[#C8431F] hover:underline">info@leadesk.de</a>
         </p>
         <p>
           Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit
