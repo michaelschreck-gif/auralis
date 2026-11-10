@@ -307,7 +307,7 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-20 flex max-w-[1320px] flex-col gap-2 px-5 pb-8 text-[12px] text-[var(--lx-dim)] sm:flex-row sm:justify-between sm:px-8">
-        <span>© {new Date().getFullYear()} DigitalHalo · DigitalHalo UG (haftungsbeschränkt) i. G.</span>
+        <span>© {new Date().getFullYear()} DigitalHalo · ein Produkt der Leadesk UG (haftungsbeschränkt)</span>
         <span>Gehostet in der EU</span>
       </div>
       {/* Riesige Wortmarke als Abschluss */}
