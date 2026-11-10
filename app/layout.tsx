@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
-import { Inter, Fraunces, Manrope } from "next/font/google"
+import { Inter, Manrope } from "next/font/google"
+import localFont from "next/font/local"
 import "./globals.css"
 
 const inter = Inter({
@@ -14,12 +15,16 @@ const manrope = Manrope({
   weight: ["400", "500", "600", "700", "800"],
 })
 
-const fraunces = Fraunces({
+// Fraunces wird lokal ausgeliefert (variable Schrift, normal + kursiv, Achsen wght + opsz).
+// Grund: Der Google-Fonts-Download beim Vercel-Build scheiterte sporadisch, seit auch die Kursive geladen wird.
+// Lizenz: SIL Open Font License, siehe app/fonts/Fraunces-OFL.txt.
+const fraunces = localFont({
   variable: "--font-fraunces",
-  subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  // Kursiv für die Betonungen der Startseite (sonst rechnet der Browser eine unschöne Schräglage).
-  style: ["normal", "italic"],
+  display: "swap",
+  src: [
+    { path: "./fonts/fraunces-latin-standard-normal.woff2", style: "normal", weight: "100 900" },
+    { path: "./fonts/fraunces-latin-standard-italic.woff2", style: "italic", weight: "100 900" },
+  ],
 })
 
 export const metadata: Metadata = {
