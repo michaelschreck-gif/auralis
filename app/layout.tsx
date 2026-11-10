@@ -18,7 +18,8 @@ const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   weight: ["300", "400", "500"],
-  style: ["normal"],
+  // Kursiv für die Betonungen der Startseite (sonst rechnet der Browser eine unschöne Schräglage).
+  style: ["normal", "italic"],
 })
 
 export const metadata: Metadata = {
@@ -32,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${fraunces.variable} ${manrope.variable} h-full antialiased`}>
+    <html lang="de" className={`${inter.variable} ${fraunces.variable} ${manrope.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
     </html>
   )
