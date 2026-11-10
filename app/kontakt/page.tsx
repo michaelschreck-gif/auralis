@@ -76,7 +76,7 @@ export default function KontaktPage() {
         <section className="mt-6 rounded-3xl bg-white border border-[#E9E1D3] p-6">
           <div className="text-[11px] uppercase tracking-wider font-semibold text-[#9A9089] mb-3">Anbieter</div>
           <p className="text-sm text-[#0E1916] leading-relaxed">
-            <strong>Halo UG (haftungsbeschränkt) i. G.</strong><br />
+            <strong>Leadesk UG (haftungsbeschränkt)</strong><br />
             Goldbacher Straße 100<br />
             63741 Aschaffenburg<br />
             Deutschland
