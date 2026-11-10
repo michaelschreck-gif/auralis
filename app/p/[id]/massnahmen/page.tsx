@@ -22,7 +22,7 @@ export default async function MassnahmenPage({ params }: { params: Promise<{ id:
   ])
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="h-stage max-w-4xl space-y-6">
       <PageHeader
         eyebrow="Maßnahmen"
         title="Was du als Nächstes tun kannst"
