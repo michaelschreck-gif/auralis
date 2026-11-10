@@ -128,7 +128,6 @@ function TrendVisual() {
         </defs>
         <path d={`${path} L${w},${h + 6} L0,${h + 6} Z`} fill="url(#lx-trend)" style={{ opacity: on ? 1 : 0, transition: "opacity 1.2s ease .9s" }} />
         <path d={path} fill="none" stroke="#fa5935" strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinecap="round" strokeLinejoin="round" pathLength={1} strokeDasharray="1" strokeDashoffset={on ? 0 : 1} style={{ transition: "stroke-dashoffset 2.2s cubic-bezier(.16,1,.3,1) .2s" }} />
-        <circle cx={w} cy={h - (67 / 80) * h} r="4" fill="#fa5935" className="hidden" style={{ opacity: on ? 1 : 0, transition: "opacity .4s ease 2.2s" }} />
       </svg>
       <p className="mt-1 text-[10px] text-[var(--lx-dim)]">Beispielverlauf</p>
     </div>
