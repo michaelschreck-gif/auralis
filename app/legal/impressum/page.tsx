@@ -16,39 +16,38 @@ export default function ImpressumPage() {
 
       <Section title="Anbieter">
         <p>
-          <strong className="text-[#0E1916]">Halo UG (haftungsbeschränkt) i. G.</strong><br />
+          <strong className="text-[#0E1916]">Leadesk UG (haftungsbeschränkt)</strong><br />
           Goldbacher Straße 100<br />
           63741 Aschaffenburg<br />
           Deutschland
         </p>
+        <p>DigitalHalo ist ein Produkt der Leadesk UG (haftungsbeschränkt).</p>
       </Section>
 
       <Section title="Vertreten durch">
         <p>
-          Geschäftsführerin: Maud Schock<br />
-          Geschäftsführer: Michael Schreck
+          Geschäftsführer: Michael Schreck, Julian Wolf
         </p>
       </Section>
 
-      <Section title="Handelsregister">
+      <Section title="Registereintrag">
         <p>
-          Die Gesellschaft befindet sich derzeit in Gründung („i. G."). Die Eintragung in das
-          Handelsregister ist beantragt bzw. steht noch aus. Registergericht und Registernummer
-          werden nach erfolgter Eintragung ergänzt.
+          Registergericht: Amtsgericht Aschaffenburg<br />
+          Handelsregisternummer: HRB 18617
         </p>
       </Section>
 
       <Section title="Kontakt">
         <p>
           Telefon: <a href="tel:+4915563664275" className="text-[#C8431F] hover:underline">0155-63664275</a><br />
-          E-Mail: <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">michael@linkedinconsulting.digital</a>
+          E-Mail: <a href="mailto:info@leadesk.de" className="text-[#C8431F] hover:underline">info@leadesk.de</a>
         </p>
       </Section>
 
       <Section title="Umsatzsteuer-Identifikationsnummer">
         <p>
           Umsatzsteuer-Identifikationsnummer gemäß § 27a Umsatzsteuergesetz:<br />
-          DE292683364
+          DE463982100
         </p>
       </Section>
 
