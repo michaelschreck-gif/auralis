@@ -121,7 +121,7 @@ export default function LoginPage() {
           </div>
 
           <p className="text-[#FBCBB8]/70 text-xs">
-            © {new Date().getFullYear()} Halo · Halo UG (haftungsbeschränkt) i. G.
+            © {new Date().getFullYear()} DigitalHalo · ein Produkt der Leadesk UG (haftungsbeschränkt)
           </p>
         </div>
 
