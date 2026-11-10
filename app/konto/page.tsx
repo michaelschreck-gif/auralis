@@ -7,6 +7,7 @@ import { BillingSection } from "@/components/halo/BillingSection"
 import { isBillingConfigured } from "@/lib/halo/billing"
 import { hasRunningSubscription } from "@/lib/halo/billing-stripe"
 import { planLimits } from "@/lib/halo/plans"
+import { HaloDark } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Konto · Halo" }
@@ -42,20 +43,20 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
   if (!account) redirect("/weiter")
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3]">
-      <header className="bg-[#0E1916]">
+    <HaloDark>
+      <header className="sticky top-0 z-30 border-b border-white/[0.07] bg-[#060b0a]/70 backdrop-blur-xl">
         <div className="max-w-3xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
-          <Link href={back}><img src="/brand/combinationmark-white.svg" alt="Halo" className="h-[20px] w-auto" /></Link>
+          <Link href={back}><img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-[20px] w-auto" /></Link>
           <form action="/auth/signout" method="post">
-            <button type="submit" className="text-sm text-[#D9D2C7] hover:text-white">Abmelden</button>
+            <button type="submit" className="text-sm text-[var(--h-side-text)] hover:text-white transition-colors">Abmelden</button>
           </form>
         </div>
       </header>
-      <main className="max-w-3xl mx-auto px-4 md:px-8 py-8 md:py-10 space-y-6">
+      <main className="h-stage max-w-3xl mx-auto px-4 md:px-8 py-10 md:py-14 space-y-6">
         <div>
-          <Link href={back} className="text-xs text-[#6B625A] hover:text-[#0E1916]">← Zurück</Link>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[#0E1916] mt-2">Konto</h1>
-          <p className="text-sm text-[#6B625A] mt-1">Angemeldet als {user.email}</p>
+          <Link href={back} className="text-xs text-[var(--h-muted)] hover:text-[var(--h-text)]">← Zurück</Link>
+          <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-[2.6rem] text-[var(--h-text)] mt-3">Dein <span className="h-em">Konto</span></h1>
+          <p className="text-sm text-[var(--h-muted)] mt-2">Angemeldet als {user.email}</p>
         </div>
         <BillingSection
           planLabel={planLimits(account.plan).label}
@@ -74,6 +75,6 @@ export default async function KontoPage({ searchParams }: { searchParams: Promis
         <WeeklyBriefSetting on={me?.weekly_brief ?? true} email={user.email ?? null} />
         <ApiKeys keys={keys ?? []} />
       </main>
-    </div>
+    </HaloDark>
   )
 }
