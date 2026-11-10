@@ -5,7 +5,7 @@ import { loadPersonOverview } from "@/lib/halo/load"
 import { ownedTeamAccount } from "@/lib/halo/people"
 import ScoreRing from "@/components/halo/ScoreRing"
 import { AccessPanel, DeletePersonButton } from "@/components/halo/TeamControls"
-import { card, formatDate, primaryBtn } from "@/components/halo/ui"
+import { HaloDark, card, formatDate, primaryBtn } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Personen · Halo" }
@@ -40,33 +40,33 @@ export default async function PersonenPage() {
   const overviews = await Promise.all(persons.map(p => loadPersonOverview(db, p.id)))
 
   return (
-    <div className="min-h-screen bg-[#FAF8F3]">
-      <header className="bg-[#0E1916]">
+    <HaloDark>
+      <header className="sticky top-0 z-30 border-b border-white/[0.07] bg-[#060b0a]/70 backdrop-blur-xl">
         <div className="max-w-5xl mx-auto px-4 md:px-8 py-4 flex items-center justify-between">
-          <img src="/brand/combinationmark-white.svg" alt="Halo" className="h-[20px] w-auto" />
+          <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-[20px] w-auto" />
           <div className="flex items-center gap-5">
-            <Link href="/konto" className="text-sm text-[#D9D2C7] hover:text-white">Konto</Link>
+            <Link href="/konto" className="text-sm text-[var(--h-side-text)] hover:text-white transition-colors">Konto</Link>
             <form action="/auth/signout" method="post">
-              <button type="submit" className="text-sm text-[#D9D2C7] hover:text-white">Abmelden</button>
+              <button type="submit" className="text-sm text-[var(--h-side-text)] hover:text-white transition-colors">Abmelden</button>
             </form>
           </div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-4 md:px-8 py-8 md:py-10">
+      <main className="h-stage max-w-5xl mx-auto px-4 md:px-8 py-10 md:py-14">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
           <div>
-            <span className="text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Team</span>
-            <h1 className="font-[family-name:var(--font-display)] text-3xl text-[#0E1916] mt-1">{team.name}</h1>
-            <p className="text-sm text-[#6B625A] mt-1">
+            <span className="h-eyebrow text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Team</span>
+            <h1 className="font-[family-name:var(--font-display)] text-3xl md:text-[2.6rem] text-[var(--h-text)] mt-2">{team.name}</h1>
+            <p className="text-sm text-[var(--h-muted)] mt-1">
               {persons.length} {persons.length === 1 ? "Person" : "Personen"} ·{" "}
-              <Link href="/konto" className="text-[#C8431F] hover:underline">Teamname ändern</Link>
+              <Link href="/konto" className="text-[var(--h-link)] hover:underline">Teamname ändern</Link>
             </p>
           </div>
           <Link href="/personen/neu" className={primaryBtn}>+ Person hinzufügen</Link>
         </div>
 
-        <ul className="mt-8 grid md:grid-cols-2 gap-4">
+        <ul className="h-stage mt-10 grid md:grid-cols-2 gap-4">
           {persons.map((p, i) => {
             const o = overviews[i]
             const name = `${p.first_name} ${p.last_name}`
@@ -78,7 +78,7 @@ export default async function PersonenPage() {
                 <div className="flex items-start gap-4">
                   <div className="shrink-0">
                     {o.halo.score === null ? (
-                      <div className="w-[72px] h-[72px] rounded-full border-[6px] border-[#F0EAE0] flex items-center justify-center text-xs text-[#9A9089]">
+                      <div className="w-[72px] h-[72px] rounded-full border-[6px] border-[var(--h-fill)] flex items-center justify-center text-xs text-[var(--h-dim)]">
                         –
                       </div>
                     ) : (
@@ -86,12 +86,12 @@ export default async function PersonenPage() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <Link href={`/p/${p.id}`} className="font-medium text-[#0E1916] hover:text-[#C8431F]">{name}</Link>
-                    {p.context && <p className="text-xs text-[#6B625A] truncate">{p.context}</p>}
-                    <p className="text-xs text-[#9A9089] mt-1">
+                    <Link href={`/p/${p.id}`} className="font-[family-name:var(--font-display)] text-xl text-[var(--h-text)] hover:text-[var(--h-link)] transition-colors">{name}</Link>
+                    {p.context && <p className="text-xs text-[var(--h-muted)] truncate">{p.context}</p>}
+                    <p className="text-xs text-[var(--h-dim)] mt-1">
                       {o.halo.band ? o.halo.band.label : "Noch keine Messung"}
                       {o.trend !== null && o.trend !== 0 && (
-                        <span className={o.trend > 0 ? "text-[#1F6B3A]" : "text-[#C8431F]"}>
+                        <span className={o.trend > 0 ? "text-[var(--h-good)]" : "text-[var(--h-link)]"}>
                           {" "}· {o.trend > 0 ? "▲ +" : "▼ "}{o.trend}
                         </span>
                       )}
@@ -99,7 +99,7 @@ export default async function PersonenPage() {
                       {o.halo.measuredAt && ` · ${formatDate(o.halo.measuredAt)}`}
                     </p>
                     <div className="mt-2 flex items-center gap-4">
-                      <Link href={`/p/${p.id}`} className="text-xs font-medium text-[#C8431F] hover:underline">Öffnen →</Link>
+                      <Link href={`/p/${p.id}`} className="text-xs font-medium text-[var(--h-link)] hover:underline">Öffnen →</Link>
                       <DeletePersonButton personId={p.id} name={name} />
                     </div>
                   </div>
@@ -110,6 +110,6 @@ export default async function PersonenPage() {
           })}
         </ul>
       </main>
-    </div>
+    </HaloDark>
   )
 }

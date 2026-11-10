@@ -47,36 +47,36 @@ export function BillingSection(p: Props) {
 
   return (
     <section className={`${card} p-5 sm:p-6`}>
-      <h2 className="text-sm font-semibold text-[#0E1916]">Tarif</h2>
-      <p className="text-sm text-[#6B625A] mt-2">
-        Dein Tarif: <span className="font-medium text-[#0E1916]">{p.planLabel}</span>
+      <h2 className="text-sm font-semibold text-[var(--h-text)]">Tarif</h2>
+      <p className="text-sm text-[var(--h-muted)] mt-2">
+        Dein Tarif: <span className="font-medium text-[var(--h-text)]">{p.planLabel}</span>
         {p.plan === "free" && " – ein Thema, monatliche Messung und monatlicher Brief."}
         {p.running && p.seats && ` · ${p.seats} Plätze`}
         {p.running && p.interval && ` · ${p.interval === "year" ? "jährlich" : "monatlich"}`}
       </p>
 
       {p.justPaid && !p.running && (
-        <p className="text-sm text-[#1F6B3A] mt-2">Danke! Die Zahlung ist eingegangen, dein Tarif wird gerade umgestellt – lade die Seite gleich neu.</p>
+        <p className="text-sm text-[var(--h-good)] mt-2">Danke! Die Zahlung ist eingegangen, dein Tarif wird gerade umgestellt – lade die Seite gleich neu.</p>
       )}
       {p.running && p.status === "past_due" && (
-        <p className="text-sm text-[#8A5A00] mt-2">Die letzte Zahlung ist fehlgeschlagen. Bitte hinterlege unter „Abo verwalten“ eine gültige Zahlungsart.</p>
+        <p className="text-sm text-[var(--h-warn)] mt-2">Die letzte Zahlung ist fehlgeschlagen. Bitte hinterlege unter „Abo verwalten“ eine gültige Zahlungsart.</p>
       )}
       {p.running && p.periodEnd && (
-        <p className="text-sm text-[#6B625A] mt-1">
+        <p className="text-sm text-[var(--h-muted)] mt-1">
           {p.cancelAtPeriodEnd ? `Gekündigt, läuft bis ${formatDate(p.periodEnd)}. Danach gilt wieder der kostenlose Check.` : `Verlängert sich am ${formatDate(p.periodEnd)}.`}
         </p>
       )}
-      {managedByHalo && <p className="text-sm text-[#6B625A] mt-1">Dieser Tarif wurde von Halo eingerichtet. Fragen dazu: michael@linkedinconsulting.digital</p>}
+      {managedByHalo && <p className="text-sm text-[var(--h-muted)] mt-1">Dieser Tarif wurde von Halo eingerichtet. Fragen dazu: michael@linkedinconsulting.digital</p>}
 
       {showOffers && (
         <>
-          <div className="mt-4 inline-flex rounded-full border border-[#E9E1D3] p-0.5 text-xs">
+          <div className="mt-4 inline-flex rounded-full border border-[var(--h-line)] p-0.5 text-xs">
             {(["month", "year"] as Interval[]).map(i => (
               <button
                 key={i}
                 type="button"
                 onClick={() => setInterval(i)}
-                className={`px-3 py-1 rounded-full ${interval === i ? "bg-[#0E1916] text-white" : "text-[#6B625A]"}`}
+                className={`px-3 py-1 rounded-full ${interval === i ? "bg-[var(--h-toggle)] text-white" : "text-[var(--h-muted)]"}`}
               >
                 {i === "month" ? "Monatlich" : "Jährlich – 2 Monate gratis"}
               </button>
@@ -84,29 +84,29 @@ export function BillingSection(p: Props) {
           </div>
           <div className="mt-3 grid gap-3 sm:grid-cols-3">
             {CARDS.filter(c => RANK[PLAN_OF[c.offer]] > RANK[p.plan]).map(c => (
-              <div key={c.offer} className="rounded-xl border border-[#E9E1D3] p-4 flex flex-col">
-                <div className="text-sm font-semibold text-[#0E1916]">{c.label}</div>
-                <div className="mt-1 text-2xl font-semibold text-[#0E1916]">
+              <div key={c.offer} className="rounded-xl border border-[var(--h-line)] p-4 flex flex-col">
+                <div className="text-sm font-semibold text-[var(--h-text)]">{c.label}</div>
+                <div className="mt-1 text-2xl font-semibold text-[var(--h-text)]">
                   {interval === "month" ? c.month : c.year} €
-                  <span className="text-xs font-normal text-[#6B625A]">
+                  <span className="text-xs font-normal text-[var(--h-muted)]">
                     {c.perPerson ? " je Person" : ""} / {interval === "month" ? "Monat" : "Jahr"}
                   </span>
                 </div>
-                <p className="text-xs text-[#6B625A] mt-1 flex-1">{c.text}</p>
+                <p className="text-xs text-[var(--h-muted)] mt-1 flex-1">{c.text}</p>
                 <button type="button" disabled={pending} className={`${primaryBtn} mt-3`} onClick={() => go(() => startCheckout(c.offer, interval))}>
                   {c.label} wählen
                 </button>
               </div>
             ))}
           </div>
-          <p className="text-xs text-[#9A9089] mt-2">Preise netto zzgl. MwSt. Bezahlung über Stripe, monatlich bzw. jährlich kündbar zum Ende des Zeitraums.</p>
+          <p className="text-xs text-[var(--h-dim)] mt-2">Preise netto zzgl. MwSt. Bezahlung über Stripe, monatlich bzw. jährlich kündbar zum Ende des Zeitraums.</p>
         </>
       )}
 
       {!p.configured && p.plan === "free" && (
-        <p className="text-sm text-[#6B625A] mt-2">
+        <p className="text-sm text-[var(--h-muted)] mt-2">
           Mehr Themen, wöchentliche Messung und Wochenbrief mit Solo (39 €) oder Pro (89 €), jeweils zzgl. MwSt.:{" "}
-          <a href="mailto:michael@linkedinconsulting.digital?subject=Halo%20Upgrade" className="text-[#C8431F] font-medium hover:underline">jetzt anfragen</a>.
+          <a href="mailto:michael@linkedinconsulting.digital?subject=Halo%20Upgrade" className="text-[var(--h-link)] font-medium hover:underline">jetzt anfragen</a>.
         </p>
       )}
 
@@ -115,10 +115,10 @@ export function BillingSection(p: Props) {
           <button type="button" disabled={pending} className={secondaryBtn} onClick={() => go(openBillingPortal)}>
             Abo verwalten
           </button>
-          <p className="text-xs text-[#9A9089] mt-1.5">Rechnungen, Zahlungsart, Tarif oder Personenzahl ändern, kündigen.</p>
+          <p className="text-xs text-[var(--h-dim)] mt-1.5">Rechnungen, Zahlungsart, Tarif oder Personenzahl ändern, kündigen.</p>
         </div>
       )}
-      {error && <p className="text-xs text-red-600 mt-3">{error}</p>}
+      {error && <p className="text-xs text-[var(--h-error)] mt-3">{error}</p>}
     </section>
   )
 }

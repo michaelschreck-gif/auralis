@@ -45,7 +45,7 @@ export default async function KiPage({
 
   if (latest.length === 0) {
     return (
-      <div className="max-w-5xl space-y-8">
+      <div className="h-stage max-w-5xl space-y-8">
         {header}
         <EmptyState title="Noch keine Messung" text="Starte eine Messung, dann erscheinen hier die Ergebnisse je Modell und Thema." />
       </div>
@@ -53,7 +53,7 @@ export default async function KiPage({
   }
 
   return (
-    <div className="max-w-5xl space-y-6">
+    <div className="h-stage max-w-5xl space-y-6">
       {header}
       <Tabs base={`/p/${id}/ki`} current={tab} tabs={TABS} />
 
@@ -72,7 +72,7 @@ function ModelsTab({ latest }: { latest: Awaited<ReturnType<typeof loadLatestMea
   return (
     <section className={`${card} overflow-hidden`}>
       <table className="w-full text-sm">
-        <thead className="bg-[#FAF8F3] text-left text-xs text-[#6B625A]">
+        <thead className="bg-[var(--h-fill)] text-left text-xs text-[var(--h-muted)]">
           <tr>
             <th className="px-5 py-3 font-medium">Modell</th>
             <th className="px-3 py-3 font-medium text-right">KI-Sichtbarkeit</th>
@@ -80,25 +80,25 @@ function ModelsTab({ latest }: { latest: Awaited<ReturnType<typeof loadLatestMea
             <th className="px-5 py-3 font-medium text-right hidden sm:table-cell">Ø Position</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#F0EAE0]">
+        <tbody className="divide-y divide-[var(--h-line-soft)]">
           {models.map(m => (
             <tr key={m.provider}>
               <td className="px-5 py-3">
-                <span className="font-medium text-[#0E1916]">{m.label}</span>
+                <span className="font-medium text-[var(--h-text)]">{m.label}</span>
                 {m.error ? (
-                  <span className="block text-xs text-[#C8431F] mt-0.5">Hat nicht geantwortet: {shortError(m.error)}</span>
+                  <span className="block text-xs text-[var(--h-link)] mt-0.5">Hat nicht geantwortet: {shortError(m.error)}</span>
                 ) : m.topicsOk < m.topicsTotal ? (
-                  <span className="block text-xs text-[#9A9089] mt-0.5">{m.topicsOk} von {m.topicsTotal} Themen</span>
+                  <span className="block text-xs text-[var(--h-dim)] mt-0.5">{m.topicsOk} von {m.topicsTotal} Themen</span>
                 ) : null}
               </td>
               <td className="px-3 py-3 text-right"><Score value={m.ai} muted="nicht gemessen" /></td>
-              <td className="px-3 py-3 text-right tabular-nums text-[#6B625A] hidden sm:table-cell">{m.mentionRate === null ? "–" : `${m.mentionRate} %`}</td>
-              <td className="px-5 py-3 text-right tabular-nums text-[#6B625A] hidden sm:table-cell">{m.averagePosition === null ? "–" : `Platz ${m.averagePosition}`}</td>
+              <td className="px-3 py-3 text-right tabular-nums text-[var(--h-muted)] hidden sm:table-cell">{m.mentionRate === null ? "–" : `${m.mentionRate} %`}</td>
+              <td className="px-5 py-3 text-right tabular-nums text-[var(--h-muted)] hidden sm:table-cell">{m.averagePosition === null ? "–" : `Platz ${m.averagePosition}`}</td>
             </tr>
           ))}
         </tbody>
       </table>
-      <p className="px-5 py-3 text-xs text-[#9A9089] border-t border-[#F0EAE0]">
+      <p className="px-5 py-3 text-xs text-[var(--h-dim)] border-t border-[var(--h-line-soft)]">
         „genannt in“ = Anteil der Antworten mit deinem Namen. Position = Platz in Aufzählungen, 1 ist ganz oben.
       </p>
     </section>
@@ -121,8 +121,8 @@ function TopicsTab({ latest }: { latest: Awaited<ReturnType<typeof loadLatestMea
           <section key={m.id} className={`${card} p-5`}>
             <div className="flex items-start justify-between gap-4">
               <div>
-                <h2 className="font-medium text-[#0E1916]">{m.topicName}</h2>
-                <p className="text-xs text-[#9A9089] mt-0.5">
+                <h2 className="font-medium text-[var(--h-text)]">{m.topicName}</h2>
+                <p className="text-xs text-[var(--h-dim)] mt-0.5">
                   Gemessen am {formatDate(m.createdAt)} · {m.modelsOk} von {m.modelsTotal} Modellen
                   {m.report ? ` · genannt in ${m.report.mentionRate} % der Antworten` : ""}
                 </p>
@@ -133,8 +133,8 @@ function TopicsTab({ latest }: { latest: Awaited<ReturnType<typeof loadLatestMea
               <ul className="mt-4 grid sm:grid-cols-2 gap-x-6 gap-y-2">
                 {intents.map(s => (
                   <li key={s.type} className="flex items-center justify-between text-sm">
-                    <span className="text-[#6B625A]">{QUERY_TYPE_LABELS[s.type] ?? s.type}</span>
-                    <span className="tabular-nums text-[#0E1916]">
+                    <span className="text-[var(--h-muted)]">{QUERY_TYPE_LABELS[s.type] ?? s.type}</span>
+                    <span className="tabular-nums text-[var(--h-text)]">
                       {s.mentioned} von {s.total}
                     </span>
                   </li>
@@ -144,7 +144,7 @@ function TopicsTab({ latest }: { latest: Awaited<ReturnType<typeof loadLatestMea
           </section>
         )
       })}
-      <p className="text-xs text-[#9A9089]">Pro Fragetyp: in wie vielen Antworten du genannt wurdest.</p>
+      <p className="text-xs text-[var(--h-dim)]">Pro Fragetyp: in wie vielen Antworten du genannt wurdest.</p>
     </div>
   )
 }
@@ -173,15 +173,15 @@ async function EvidenceTab({
     <div className="space-y-4">
       {latest.length > 1 && (
         <div className="flex flex-wrap gap-2 text-xs">
-          <a href={base} className={`rounded-full px-3 py-1 border ${!topicFilter ? "border-[#FA5935] text-[#0E1916]" : "border-[#E9E1D3] text-[#6B625A]"}`}>Alle Themen</a>
+          <a href={base} className={`rounded-full px-3 py-1 border ${!topicFilter ? "border-[#FA5935] text-[var(--h-text)]" : "border-[var(--h-line)] text-[var(--h-muted)]"}`}>Alle Themen</a>
           {latest.map(m => (
-            <a key={m.topicId} href={`${base}&thema=${m.topicId}`} className={`rounded-full px-3 py-1 border ${topicFilter === m.topicId ? "border-[#FA5935] text-[#0E1916]" : "border-[#E9E1D3] text-[#6B625A]"}`}>
+            <a key={m.topicId} href={`${base}&thema=${m.topicId}`} className={`rounded-full px-3 py-1 border ${topicFilter === m.topicId ? "border-[#FA5935] text-[var(--h-text)]" : "border-[var(--h-line)] text-[var(--h-muted)]"}`}>
               {m.topicName}
             </a>
           ))}
         </div>
       )}
-      <p className="text-xs text-[#9A9089]">
+      <p className="text-xs text-[var(--h-dim)]">
         Die echten Antworten der letzten Messung. Dein Name ist hervorgehoben. Gefragt wurde jeweils, ohne deinen Namen zu nennen.
       </p>
       {[...byPrompt.entries()].map(([prompt, list]) => {
@@ -190,26 +190,26 @@ async function EvidenceTab({
           <details key={prompt} className={`${card} p-5 group`}>
             <summary className="cursor-pointer list-none flex items-start justify-between gap-4">
               <div>
-                <span className="block text-sm font-medium text-[#0E1916]">{prompt}</span>
-                <span className="block text-xs text-[#9A9089] mt-0.5">
+                <span className="block text-sm font-medium text-[var(--h-text)]">{prompt}</span>
+                <span className="block text-xs text-[var(--h-dim)] mt-0.5">
                   {QUERY_TYPE_LABELS[list[0].query_type ?? ""] ?? "Frage"} · genannt in {hits} von {list.length} Antworten
                 </span>
               </div>
-              <span className="text-[#9A9089] text-xs mt-0.5 group-open:rotate-180 transition-transform">▾</span>
+              <span className="text-[var(--h-dim)] text-xs mt-0.5 group-open:rotate-180 transition-transform">▾</span>
             </summary>
             <div className="mt-4 space-y-4">
               {list.map(a => (
-                <div key={a.id} className="rounded-xl bg-[#FAF8F3] p-4">
+                <div key={a.id} className="rounded-xl bg-[var(--h-inset)] p-4">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-medium text-[#0E1916]">{a.model}</span>
-                    <span className={a.mentioned ? "text-[#1F6B3A]" : "text-[#9A9089]"}>
+                    <span className="font-medium text-[var(--h-text)]">{a.model}</span>
+                    <span className={a.mentioned ? "text-[var(--h-good)]" : "text-[var(--h-dim)]"}>
                       {a.mentioned ? (a.position ? `genannt · Platz ${a.position}` : "genannt") : "nicht genannt"}
                     </span>
                   </div>
-                  <p className="mt-2 text-sm text-[#3A3632] whitespace-pre-line leading-relaxed">
+                  <p className="mt-2 text-sm text-[var(--h-text-2)] whitespace-pre-line leading-relaxed">
                     {highlightName(stripMarkdown(a.response ?? ""), firstName, lastName).map((s, i) =>
                       s.match ? (
-                        <mark key={i} className="bg-[#FDE7E0] text-[#0E1916] rounded px-0.5">{s.text}</mark>
+                        <mark key={i} className="bg-[var(--h-bad-bg)] text-[var(--h-text)] rounded px-0.5">{s.text}</mark>
                       ) : (
                         <span key={i}>{s.text}</span>
                       ),
@@ -245,17 +245,17 @@ async function SourcesTab({
   return (
     <section className={`${card} overflow-hidden`}>
       <table className="w-full text-sm">
-        <thead className="bg-[#FAF8F3] text-left text-xs text-[#6B625A]">
+        <thead className="bg-[var(--h-fill)] text-left text-xs text-[var(--h-muted)]">
           <tr>
             <th className="px-5 py-3 font-medium">Quelle</th>
             <th className="px-5 py-3 font-medium text-right">in Antworten</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#F0EAE0]">
+        <tbody className="divide-y divide-[var(--h-line-soft)]">
           {sources.slice(0, 30).map(s => (
             <tr key={s.domain}>
-              <td className="px-5 py-2.5 text-[#0E1916]">{s.domain}</td>
-              <td className="px-5 py-2.5 text-right tabular-nums text-[#6B625A]">{s.answers}</td>
+              <td className="px-5 py-2.5 text-[var(--h-text)]">{s.domain}</td>
+              <td className="px-5 py-2.5 text-right tabular-nums text-[var(--h-muted)]">{s.answers}</td>
             </tr>
           ))}
         </tbody>

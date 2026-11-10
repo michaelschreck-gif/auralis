@@ -28,7 +28,7 @@ export default async function PersonaPage({ params }: { params: Promise<{ id: st
   const roles = ((snapshot?.roles ?? []) as Role[]).filter(r => r && typeof r.label === "string")
 
   return (
-    <div className="max-w-4xl space-y-6">
+    <div className="h-stage max-w-4xl space-y-6">
       <PageHeader
         eyebrow="Wie die KI dich sieht"
         title="Dein Bild in den KI-Antworten"
@@ -47,7 +47,8 @@ export default async function PersonaPage({ params }: { params: Promise<{ id: st
         />
       ) : (
         <>
-          <section className="rounded-2xl bg-[#0E1916] p-6 sm:p-8 text-white">
+          <section className="h-card relative overflow-hidden isolate rounded-2xl border border-[var(--h-hover-line)] bg-[var(--h-ink)] p-6 sm:p-8 text-white">
+            <div className="pointer-events-none absolute -z-10 -right-20 -top-24 h-64 w-64 rounded-full bg-[#FA5935]/20 blur-3xl" aria-hidden />
             <span className="text-[11px] uppercase tracking-wider text-[#F7B49B]">So fasst KI {name} zusammen</span>
             <p className="font-[family-name:var(--font-display)] text-xl sm:text-2xl leading-snug mt-3">
               {snapshot.summary || "Die KI beschreibt dich bisher kaum."}
@@ -56,18 +57,18 @@ export default async function PersonaPage({ params }: { params: Promise<{ id: st
           </section>
 
           <section className={`${card} p-5 sm:p-6`}>
-            <h2 className="text-sm font-semibold text-[#0E1916]">Wahrgenommene Rollen</h2>
+            <h2 className="text-sm font-semibold text-[var(--h-text)]">Wahrgenommene Rollen</h2>
             {roles.length === 0 ? (
-              <p className="text-sm text-[#6B625A] mt-3">In den Antworten wird dir noch keine klare Rolle zugeschrieben.</p>
+              <p className="text-sm text-[var(--h-muted)] mt-3">In den Antworten wird dir noch keine klare Rolle zugeschrieben.</p>
             ) : (
               <ul className="mt-4 space-y-3">
                 {roles.map(r => (
                   <li key={r.label}>
                     <div className="flex justify-between text-sm">
-                      <span className="text-[#0E1916]">{r.label}</span>
-                      <span className="tabular-nums text-[#6B625A]">{r.weight} %</span>
+                      <span className="text-[var(--h-text)]">{r.label}</span>
+                      <span className="tabular-nums text-[var(--h-muted)]">{r.weight} %</span>
                     </div>
-                    <div className="mt-1.5 h-1.5 rounded-full bg-[#F0EAE0] overflow-hidden">
+                    <div className="mt-1.5 h-1.5 rounded-full bg-[var(--h-fill)] overflow-hidden">
                       <div className="h-full bg-[#FA5935]" style={{ width: `${Math.max(2, Math.min(100, r.weight))}%` }} />
                     </div>
                   </li>
@@ -77,8 +78,8 @@ export default async function PersonaPage({ params }: { params: Promise<{ id: st
           </section>
 
           <section className={`${card} p-5 sm:p-6`}>
-            <h2 className="text-sm font-semibold text-[#0E1916]">Sprich mit deinem KI-Ich</h2>
-            <p className="text-xs text-[#9A9089] mt-0.5">
+            <h2 className="text-sm font-semibold text-[var(--h-text)]">Sprich mit deinem KI-Ich</h2>
+            <p className="text-xs text-[var(--h-dim)] mt-0.5">
               Frag dein KI-Spiegelbild, wie es dich sieht. Es antwortet nur auf Basis der Messdaten.
             </p>
             <div className="mt-4">
