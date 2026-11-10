@@ -32,6 +32,20 @@ export async function planOfOwner(db: HaloClient, userId: string): Promise<PlanT
 }
 
 /**
+ * Ist im Team noch ein gebuchter Platz frei? seats = null (vom Admin gesetzter
+ * Tarif, Agentur) heißt: keine Grenze.
+ */
+export async function checkTeamSeat(db: HaloClient, accountId: string): Promise<{ ok: true } | { ok: false; error: string }> {
+  const [{ data: account }, { count }] = await Promise.all([
+    db.from("accounts").select("seats").eq("id", accountId).maybeSingle(),
+    db.from("persons").select("id", { count: "exact", head: true }).eq("account_id", accountId),
+  ])
+  const seats = account?.seats ?? null
+  if (seats === null || (count ?? 0) < seats) return { ok: true }
+  return { ok: false, error: `Alle ${seats} gebuchten Plätze sind belegt. Weitere Plätze unter Konto → Abo verwalten.` }
+}
+
+/**
  * Darf für die Person jetzt manuell gemessen werden? Im Check höchstens alle
  * 30 Tage; gezählt werden manuelle Jobs, die nicht fehlgeschlagen sind
  * (auch die erste Messung aus dem Assistenten).
@@ -49,5 +63,5 @@ export async function checkManualMeasure(db: HaloClient, personId: string): Prom
   const next = nextManualAllowedAt(plan, data?.[0]?.created_at ?? null)
   if (!next) return { ok: true }
   const date = next.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" })
-  return { ok: false, error: `Im kostenlosen Check misst Halo einmal im Monat automatisch. Die nächste Messung ist ab ${date} möglich – oder sofort mit Solo oder Pro.` }
+  return { ok: false, error: `Im kostenlosen Check misst Halo einmal im Monat automatisch. Die nächste Messung ist ab ${date} möglich – oder sofort mit Solo oder Pro (buchbar unter Konto).` }
 }

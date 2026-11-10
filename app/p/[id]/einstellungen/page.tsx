@@ -28,7 +28,7 @@ export default async function EinstellungenPage({ params }: { params: Promise<{ 
   const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL ?? ""
 
   return (
-    <div className="max-w-3xl space-y-6">
+    <div className="h-stage max-w-3xl space-y-6">
       <PageHeader eyebrow="Einstellungen" title="Person und Themen" text="Änderungen an Name und Region wirken ab der nächsten Messung." />
       <PersonSettings
         person={person}

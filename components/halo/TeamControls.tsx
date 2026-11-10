@@ -16,15 +16,15 @@ export function AccessPanel({
   const [msg, setMsg] = useState<{ ok: boolean; text: string } | null>(null)
 
   return (
-    <div className="mt-4 border-t border-[#F0EAE0] pt-4">
-      <span className="text-xs font-medium text-[#6B625A]">Eigener Zugang</span>
+    <div className="mt-4 border-t border-[var(--h-line-soft)] pt-4">
+      <span className="text-xs font-medium text-[var(--h-muted)]">Eigener Zugang</span>
       {members.length === 0 ? (
-        <p className="text-xs text-[#9A9089] mt-1">Noch niemand. Mit eigenem Zugang sieht die Person nur ihre eigenen Ergebnisse.</p>
+        <p className="text-xs text-[var(--h-dim)] mt-1">Noch niemand. Mit eigenem Zugang sieht die Person nur ihre eigenen Ergebnisse.</p>
       ) : (
         <ul className="mt-1.5 space-y-1">
           {members.map(m => (
             <li key={m.userId} className="flex items-center justify-between text-sm">
-              <span className="text-[#0E1916] truncate">{m.email}</span>
+              <span className="text-[var(--h-text)] truncate">{m.email}</span>
               <button
                 type="button"
                 disabled={pending}
@@ -34,7 +34,7 @@ export function AccessPanel({
                     setMsg(r.ok ? null : { ok: false, text: r.error })
                   })
                 }
-                className="text-xs text-[#9A9089] hover:text-[#C8431F]"
+                className="text-xs text-[var(--h-dim)] hover:text-[var(--h-link)]"
               >
                 Entfernen
               </button>
@@ -65,7 +65,7 @@ export function AccessPanel({
         />
         <button type="submit" disabled={pending || !email.trim()} className={secondaryBtn}>Einladen</button>
       </form>
-      {msg && <p className={`text-xs mt-1.5 ${msg.ok ? "text-[#1F6B3A]" : "text-red-600"}`}>{msg.text}</p>}
+      {msg && <p className={`text-xs mt-1.5 ${msg.ok ? "text-[var(--h-good)]" : "text-[var(--h-error)]"}`}>{msg.text}</p>}
     </div>
   )
 }
@@ -85,11 +85,11 @@ export function DeletePersonButton({ personId, name }: { personId: string; name:
             if (!r.ok) setError(r.error)
           })
         }}
-        className="text-xs text-[#9A9089] hover:text-[#C8431F]"
+        className="text-xs text-[var(--h-dim)] hover:text-[var(--h-link)]"
       >
         {pending ? "Wird gelöscht …" : "Person löschen"}
       </button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      {error && <span className="text-xs text-[var(--h-error)]">{error}</span>}
     </span>
   )
 }

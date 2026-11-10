@@ -66,8 +66,11 @@ export default function AgbPage() {
           zzgl. der gesetzlichen Umsatzsteuer.
         </p>
         <p>
-          Die Bezahlung erfolgt im Voraus per <span className="text-[#9A9089]">[Stripe / SEPA-Lastschrift / Kreditkarte — bitte Zahlungsanbieter einsetzen]</span>.
-          Der Kunde erhält automatisch eine Rechnung per E-Mail nach jeder Belastung.
+          Der kostenlose Check ist unentgeltlich. Kostenpflichtige Tarife werden im Voraus für den
+          gewählten Zeitraum (Monat oder Jahr) über den Zahlungsdienstleister Stripe bezahlt
+          (Kreditkarte, SEPA-Lastschrift oder andere dort angebotene Zahlungsarten). Der Kunde erhält
+          nach jeder Belastung automatisch eine Rechnung per E-Mail; Rechnungen sind zudem im
+          Kundenportal abrufbar.
         </p>
         <p>
           Bei Zahlungsverzug ist der Anbieter berechtigt, den Zugang nach vorheriger Mahnung
@@ -77,12 +80,13 @@ export default function AgbPage() {
 
       <Section title="§ 5 Laufzeit und Kündigung">
         <p>
-          Verträge laufen monatlich und können jederzeit zum Ende des laufenden Abrechnungszeitraums
-          gekündigt werden. Bei Jahrestarifen beträgt die Kündigungsfrist eine Woche zum Ende
-          der jeweiligen Vertragsperiode.
+          Kostenpflichtige Tarife laufen je nach Wahl einen Monat oder ein Jahr und verlängern sich
+          automatisch um denselben Zeitraum, wenn sie nicht bis zum Ende des laufenden Zeitraums
+          gekündigt werden. Nach dem Ende gilt wieder der kostenlose Check; Daten bleiben erhalten,
+          Themen über dessen Grenzen werden pausiert.
         </p>
         <p>
-          Die Kündigung erfolgt direkt im Tool unter „Einstellungen“ oder formlos per E-Mail an{" "}
+          Die Kündigung erfolgt im Tool unter „Konto“ → „Abo verwalten“ oder formlos per E-Mail an{" "}
           <a href="mailto:michael@linkedinconsulting.digital" className="text-[#C8431F] hover:underline">
             michael@linkedinconsulting.digital
           </a>.

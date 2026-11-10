@@ -18,23 +18,23 @@ export default function BriefToggle({ userId, token }: { userId: string; token: 
   if (state === "off") {
     return (
       <div className="mt-3">
-        <p className="text-sm text-[#6B625A]">Du bekommst keinen Wochenbrief mehr.</p>
+        <p className="text-sm text-[var(--h-muted)]">Du bekommst keinen Wochenbrief mehr.</p>
         <button type="button" disabled={pending} onClick={() => run(true)} className={`${secondaryBtn} mt-5`}>
           Doch wieder bekommen
         </button>
       </div>
     )
   }
-  if (state === "on") return <p className="text-sm text-[#6B625A] mt-3">Der Wochenbrief kommt wieder jeden Montag.</p>
+  if (state === "on") return <p className="text-sm text-[var(--h-muted)] mt-3">Der Wochenbrief kommt wieder jeden Montag.</p>
   return (
     <div className="mt-3">
-      <p className="text-sm text-[#6B625A]">
+      <p className="text-sm text-[var(--h-muted)]">
         Jeden Montag: dein Halo Score, was sich verändert hat und dein nächster Schritt. Möchtest du ihn abbestellen?
       </p>
       <button type="button" disabled={pending} onClick={() => run(false)} className={`${primaryBtn} mt-5`}>
         Wochenbrief abbestellen
       </button>
-      {state === "error" && <p className="text-xs text-red-600 mt-3">Das hat nicht geklappt. Der Link ist ungültig.</p>}
+      {state === "error" && <p className="text-xs text-[var(--h-error)] mt-3">Das hat nicht geklappt. Der Link ist ungültig.</p>}
     </div>
   )
 }

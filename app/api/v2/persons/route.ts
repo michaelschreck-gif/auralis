@@ -7,6 +7,7 @@
 import { NextResponse } from "next/server"
 import { apiError, authenticate, personJson } from "@/lib/halo/api"
 import { LIMITS } from "@/lib/halo/config"
+import { checkTeamSeat } from "@/lib/halo/plan-db"
 import { planLimits } from "@/lib/halo/plans"
 import { validateStartInput } from "@/lib/halo/onboarding"
 import { createPersonWithTopics } from "@/lib/halo/people"
@@ -49,6 +50,8 @@ export async function POST(req: Request) {
     const { count } = await db.from("persons").select("id", { count: "exact", head: true }).eq("account_id", account.id)
     if ((count ?? 0) >= LIMITS.personsPerTeam) return apiError("Personen-Limit erreicht.", "LIMIT_REACHED", 403)
   }
+  const seat = await checkTeamSeat(db, account.id)
+  if (!seat.ok) return apiError(seat.error, "LIMIT_REACHED", 403)
 
   const created = await createPersonWithTopics(db, db, account.id, parsed.value, planLimits(account.plan).frequency)
   if (!created.ok) return apiError(created.error, "INTERNAL", 500)

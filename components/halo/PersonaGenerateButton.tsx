@@ -23,7 +23,7 @@ export default function PersonaGenerateButton({ personId, again }: { personId: s
       >
         {pending ? "Wird erstellt …" : again ? "Neu erstellen" : "KI-Bild erstellen"}
       </button>
-      {error && <span className="text-xs text-red-600">{error}</span>}
+      {error && <span className="text-xs text-[var(--h-error)]">{error}</span>}
     </div>
   )
 }

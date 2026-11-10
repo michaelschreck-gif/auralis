@@ -214,10 +214,10 @@ export default function PersonaVoiceAgent({
     : "Tippe auf das Mikrofon und frag mich z. B. „Als was werde ich wahrgenommen?“"
 
   return (
-    <section className="bg-white rounded-3xl border border-[#E9E1D3] overflow-hidden">
-      <div className="px-5 py-4 border-b border-[#E9E1D3]">
-        <div className="text-sm font-semibold text-[#0E1916]">Sprich mit deinem KI-Ich</div>
-        <div className="text-xs text-[#9A9089]">Nur Sprache — keine Kamera, kein Text.</div>
+    <section className="bg-[var(--h-card)] rounded-3xl border border-[var(--h-line)] overflow-hidden">
+      <div className="px-5 py-4 border-b border-[var(--h-line)]">
+        <div className="text-sm font-semibold text-[var(--h-text)]">Sprich mit deinem KI-Ich</div>
+        <div className="text-xs text-[var(--h-dim)]">Nur Sprache — keine Kamera, kein Text.</div>
       </div>
 
       <div className="p-6 flex flex-col items-center">
@@ -225,9 +225,9 @@ export default function PersonaVoiceAgent({
 
         <div className="mt-4 min-h-[2.5rem] w-full max-w-md text-center">
           {partial ? (
-            <p className="text-sm text-[#6B625A] italic">„{partial}…"</p>
+            <p className="text-sm text-[var(--h-muted)] italic">„{partial}…"</p>
           ) : (
-            <p className="text-sm text-[#9A9089]">{statusText}</p>
+            <p className="text-sm text-[var(--h-dim)]">{statusText}</p>
           )}
         </div>
 
@@ -238,7 +238,7 @@ export default function PersonaVoiceAgent({
               onClick={listening ? stopListening : startListening}
               disabled={thinking}
               className={`inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-colors disabled:opacity-50 ${
-                listening ? "bg-[#C8431F] text-white hover:bg-[#A6371A]" : "bg-[#FA5935] text-white hover:bg-[#C8431F]"
+                listening ? "bg-[#C8431F] text-white hover:bg-[#A6371A]" : "h-btn h-btn--primary bg-[#FA5935] text-white hover:bg-[#C8431F]"
               }`}
             >
               <MicIcon />
@@ -250,7 +250,7 @@ export default function PersonaVoiceAgent({
                 setMuted(m => !m)
                 if (!muted) { stopAudio(); setPhase("idle") }
               }}
-              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[#E9E1D3] text-[#6B625A] hover:bg-[#F3EFE6] transition-colors"
+              className="inline-flex items-center justify-center w-11 h-11 rounded-full border border-[var(--h-line)] text-[var(--h-muted)] hover:bg-[var(--h-fill)] transition-colors"
               title={muted ? "Sprachausgabe an" : "Sprachausgabe aus"}
               aria-label={muted ? "Sprachausgabe einschalten" : "Sprachausgabe ausschalten"}
             >
@@ -266,22 +266,22 @@ export default function PersonaVoiceAgent({
               value={textInput}
               onChange={e => setTextInput(e.target.value)}
               placeholder="Spracherkennung nur in Chrome — hier tippen…"
-              className="flex-1 rounded-xl border border-[#E9E1D3] px-3.5 py-2.5 text-sm text-[#0E1916] placeholder-[#9A9089] focus:outline-none focus:border-[#FBCBB8]"
+              className="flex-1 rounded-xl border border-[var(--h-line)] px-3.5 py-2.5 text-sm text-[var(--h-text)] placeholder-[var(--h-dim)] focus:outline-none focus:border-[var(--h-hover-line)]"
             />
             <button
               type="submit"
               disabled={thinking || !textInput.trim()}
-              className="px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors disabled:opacity-40"
+              className="h-btn h-btn--primary px-4 py-2.5 rounded-xl text-sm font-semibold text-white bg-[#FA5935] hover:bg-[#C8431F] transition-colors disabled:opacity-40"
             >
               Fragen
             </button>
           </form>
         )}
 
-        {error && <p className="mt-3 text-xs text-red-600 text-center">{error}</p>}
+        {error && <p className="mt-3 text-xs text-[var(--h-error)] text-center">{error}</p>}
       </div>
 
-      <p className="px-5 pb-4 text-[11px] text-[#9A9089] text-center leading-relaxed">
+      <p className="px-5 pb-4 text-[11px] text-[var(--h-dim)] text-center leading-relaxed">
         Es wird ausschließlich dein Mikrofon genutzt — kein Video, keine Gesichtsanalyse.
         Antworten spiegeln die KI-Wahrnehmung wider, keine geprüften Fakten.
       </p>

@@ -1,32 +1,43 @@
 import type { HistoryPoint } from "@/lib/halo/score"
 
 const fmt = (d: string) => new Date(d + "T12:00:00Z").toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit" })
+const r2 = (n: number) => Math.round(n * 100) / 100
 
-/** Kleiner Verlauf des Halo Scores (Skala 0–100). Ab zwei Punkten. */
+/**
+ * Verlauf des Halo Scores (Skala 0–100). Ab zwei Punkten.
+ * Linie zeichnet sich beim Erscheinen auf, darunter eine weiche Fläche.
+ */
 export default function ScoreHistoryChart({ history }: { history: HistoryPoint[] }) {
   if (history.length < 2) return null
-  const w = 320
-  const h = 80
-  const pad = 6
-  const x = (i: number) => pad + (i / (history.length - 1)) * (w - pad * 2)
-  const y = (s: number) => pad + (1 - s / 100) * (h - pad * 2)
-  const points = history.map((p, i) => `${x(i)},${y(p.score)}`).join(" ")
+  const w = 400
+  const h = 120
+  const pad = 8
+  const x = (i: number) => r2(pad + (i / (history.length - 1)) * (w - pad * 2))
+  const y = (s: number) => r2(pad + (1 - s / 100) * (h - pad * 2))
+  const line = history.map((p, i) => `${i ? "L" : "M"}${x(i)},${y(p.score)}`).join(" ")
+  const area = `${line} L${x(history.length - 1)},${h} L${x(0)},${h} Z`
   const last = history[history.length - 1]
 
   return (
     <figure className="w-full">
-      <svg viewBox={`0 0 ${w} ${h}`} className="w-full h-20" role="img" aria-label={`Verlauf des Halo Scores, zuletzt ${last.score}`}>
-        <line x1={pad} x2={w - pad} y1={y(50)} y2={y(50)} stroke="#F0EAE0" strokeDasharray="3 3" />
-        <polyline points={points} fill="none" stroke="#FA5935" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" />
-        {history.map((p, i) => (
-          <circle key={p.date} cx={x(i)} cy={y(p.score)} r={i === history.length - 1 ? 3.5 : 2} fill="#FA5935">
-            <title>{`${fmt(p.date)}: ${p.score}`}</title>
-          </circle>
+      <svg viewBox={`0 0 ${w} ${h}`} preserveAspectRatio="none" className="w-full h-28 overflow-visible" role="img" aria-label={`Verlauf des Halo Scores, zuletzt ${last.score}`}>
+        <defs>
+          <linearGradient id="h-trend-fill" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0" stopColor="#FA5935" stopOpacity="0.28" />
+            <stop offset="1" stopColor="#FA5935" stopOpacity="0" />
+          </linearGradient>
+        </defs>
+        {[25, 50, 75].map(v => (
+          <line key={v} x1={pad} x2={w - pad} y1={y(v)} y2={y(v)} stroke="var(--h-line-soft)" strokeDasharray="3 4" vectorEffect="non-scaling-stroke" />
         ))}
+        <path d={area} fill="url(#h-trend-fill)" className="h-fade" />
+        <path d={line} fill="none" stroke="#FA5935" strokeWidth="2" strokeLinejoin="round" strokeLinecap="round" vectorEffect="non-scaling-stroke" pathLength={1} strokeDasharray="1 1" className="h-draw-line" />
       </svg>
-      <figcaption className="flex justify-between text-[11px] text-[#9A9089] mt-1">
+      <figcaption className="flex justify-between text-[11px] text-[var(--h-dim)] mt-2">
         <span>{fmt(history[0].date)}</span>
-        <span>{fmt(last.date)}</span>
+        <span className="text-[var(--h-muted)]">
+          {fmt(last.date)} · <span className="tabular-nums text-[var(--h-text)]">{last.score}</span>
+        </span>
       </figcaption>
     </figure>
   )

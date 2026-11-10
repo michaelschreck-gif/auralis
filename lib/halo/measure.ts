@@ -7,7 +7,7 @@
  */
 
 import { MARKETS } from "../auralis/markets"
-import { calcNextRunAt, measureTarget } from "../auralis/runner"
+import { calcNextRunAt, measureTarget, type MeasureProgressEvent } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
 import type { Json, PersonRow, SentimentType, TriggerType } from "../supabase/halo.types"
 import { MEASUREMENT, measurementProviders } from "./config"
@@ -29,7 +29,7 @@ export type MeasurementResult = {
 export async function runMeasurement(
   topicId: string,
   db: HaloClient,
-  options: { trigger: TriggerType; advanceNextRunAt: boolean },
+  options: { trigger: TriggerType; advanceNextRunAt: boolean; onProgress?: (e: MeasureProgressEvent) => void },
 ): Promise<MeasurementResult> {
   const { data: topic, error: topicError } = await db.from("topics").select("*").eq("id", topicId).single()
   if (topicError || !topic) throw new Error(`Thema ${topicId} nicht gefunden: ${topicError?.message ?? "unbekannt"}`)
@@ -50,6 +50,7 @@ export async function runMeasurement(
     background: true,
     seedBase: topic.id,
     logLabel: `topic ${topic.id}`,
+    onProgress: options.onProgress,
   })
 
   const { ai, perception } = pillarsFromReport(result.aggregateReport)
