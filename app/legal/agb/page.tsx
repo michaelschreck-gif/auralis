@@ -18,7 +18,7 @@ export default function AgbPage() {
 
       <Section title="§ 1 Geltungsbereich">
         <p>
-          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0E1916]">Halo UG (haftungsbeschränkt) i. G.</strong>
+          Diese AGB gelten für sämtliche Verträge zwischen <strong className="text-[#0E1916]">Leadesk UG (haftungsbeschränkt)</strong>
           {" "}(nachfolgend „Anbieter“) und dem registrierten Nutzer (nachfolgend „Kunde“) über die Nutzung
           der unter <a href="https://digital-halo.de" className="text-[#C8431F] hover:underline">digital-halo.de</a>{" "}
           (sowie etwaigen Folge-Domains) erreichbaren Plattform „Halo“.

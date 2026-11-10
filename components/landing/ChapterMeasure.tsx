@@ -18,12 +18,50 @@ const QUESTIONS = [
   "Wer berät Unternehmen zu KI-Strategie?",
 ]
 
-const STATS = [
-  { v: 7, l: "Fragen je Thema", d: "wie echte Menschen fragen" },
-  { v: 2, l: "Runden je Modell", d: "damit Zufall nicht zählt" },
-  { v: 4, l: "KI-Modelle", d: "plus Google-Suche & KI-Übersicht" },
-  { v: 52, l: "Messungen im Jahr", d: "wöchentlich ab Solo" },
+// Bewusst ohne Zahlen: was die Messung ausmacht, nicht wie oft.
+const STATS: { l: string; d: string; icon: "ask" | "rounds" | "models" | "weekly" }[] = [
+  { l: "Die richtigen Fragen je Thema", d: "so, wie echte Menschen fragen", icon: "ask" },
+  { l: "Mehrere Runden je Modell", d: "damit Zufall nicht zählt", icon: "rounds" },
+  { l: "Über mehrere KI-Modelle hinweg", d: "plus Google-Suche & KI-Übersicht", icon: "models" },
+  { l: "Wöchentliche Status-Abfragen", d: "du siehst, was sich bewegt", icon: "weekly" },
 ]
+
+function StatIcon({ name }: { name: (typeof STATS)[number]["icon"] }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const }
+  return (
+    <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+      {name === "ask" && (
+        <>
+          <path {...common} d="M4 5.5A2.5 2.5 0 0 1 6.5 3h11A2.5 2.5 0 0 1 20 5.5v8a2.5 2.5 0 0 1-2.5 2.5H10l-4.5 4v-4h0A2.5 2.5 0 0 1 4 13.5z" />
+          <path {...common} d="M9.8 7.8a2.3 2.3 0 1 1 3.2 2.1c-.6.3-1 .8-1 1.4v.3" />
+          <circle cx="12" cy="13.6" r=".6" fill="currentColor" />
+        </>
+      )}
+      {name === "rounds" && (
+        <>
+          <path {...common} d="M19.5 12a7.5 7.5 0 0 1-12.8 5.3" />
+          <path {...common} d="M4.5 12a7.5 7.5 0 0 1 12.8-5.3" />
+          <path {...common} d="M17.6 3.5v3.4h-3.4M6.4 20.5v-3.4h3.4" />
+        </>
+      )}
+      {name === "models" && (
+        <>
+          <circle {...common} cx="12" cy="5.5" r="2.5" />
+          <circle {...common} cx="5.5" cy="17.5" r="2.5" />
+          <circle {...common} cx="18.5" cy="17.5" r="2.5" />
+          <path {...common} d="M10.8 7.7 6.8 15.3M13.2 7.7l4 7.6M8 17.5h8" />
+        </>
+      )}
+      {name === "weekly" && (
+        <>
+          <rect {...common} x="3.5" y="5" width="17" height="15.5" rx="2.5" />
+          <path {...common} d="M3.5 9.5h17M8 3v4M16 3v4" />
+          <path {...common} d="m9 14.6 2 2 4-4" />
+        </>
+      )}
+    </svg>
+  )
+}
 
 export function ChapterMeasure() {
   const [ref, p] = useScrollProgress<HTMLElement>("pin")
@@ -44,21 +82,23 @@ export function ChapterMeasure() {
               DigitalHalo fragt die wichtigsten KI-Modelle so, wie Kund:innen, Veranstalter und Journalist:innen fragen –
               Woche für Woche. Dann wertet Halo aus: Wirst du genannt? An welcher Stelle? In welchem Ton?
             </p>
-            <dl className="mt-6 grid max-w-[520px] grid-cols-4 gap-x-3 gap-y-5 sm:mt-10 sm:grid-cols-2 sm:gap-x-6">
+            <ul className="mt-6 grid max-w-[540px] grid-cols-2 gap-x-4 gap-y-4 sm:mt-10 sm:gap-x-6 sm:gap-y-6">
               {STATS.map((s, i) => {
                 const v = ease(seg(statsOn, i * 0.15, 0.5 + i * 0.15))
                 return (
-                  <div key={s.l} className="border-t border-[var(--lx-line)] pt-3 sm:pt-4" style={{ opacity: 0.25 + v * 0.75 }}>
-                    <dt className="sr-only">{s.l}</dt>
-                    <dd>
-                      <span className="lx-display lx-num block text-[clamp(1.8rem,3.6vw,3.4rem)] text-[var(--lx-text)]">{Math.round(s.v * v)}</span>
-                      <span className="block text-[11px] font-medium leading-tight text-[var(--lx-text)] sm:text-[13px]">{s.l}</span>
-                      <span className="hidden text-[12px] text-[var(--lx-dim)] sm:block">{s.d}</span>
-                    </dd>
-                  </div>
+                  <li key={s.l} className="border-t border-[var(--lx-line)] pt-3 sm:pt-4" style={{ opacity: 0.25 + v * 0.75, transform: `translateY(${(1 - v) * 10}px)` }}>
+                    <span
+                      className="flex h-9 w-9 items-center justify-center rounded-full border sm:h-11 sm:w-11"
+                      style={{ borderColor: v > 0.6 ? "rgba(250,89,53,.55)" : "rgba(234,226,213,.15)", color: v > 0.6 ? "#f7b49b" : "#9aa6a2", boxShadow: v > 0.6 ? "0 0 22px rgba(250,89,53,.25)" : "none", transition: "all .6s ease" }}
+                    >
+                      <StatIcon name={s.icon} />
+                    </span>
+                    <span className="mt-3 block text-[13px] font-medium leading-snug text-[var(--lx-text)] sm:text-[15px]">{s.l}</span>
+                    <span className="mt-0.5 hidden text-[12.5px] text-[var(--lx-dim)] sm:block">{s.d}</span>
+                  </li>
                 )
               })}
-            </dl>
+            </ul>
           </div>
 
           {/* Orbit */}

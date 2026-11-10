@@ -52,7 +52,7 @@ export default function LegalLayout({ children }: { children: ReactNode }) {
 
           <footer className="pt-6 border-t border-[#E9E1D3] text-xs text-[#9A9089]">
             <p>
-              Halo · Halo UG (haftungsbeschränkt) i. G. · <Link href="/" className="hover:underline">Startseite</Link>
+              DigitalHalo · ein Produkt der Leadesk UG (haftungsbeschränkt) · <Link href="/" className="hover:underline">Startseite</Link>
             </p>
           </footer>
         </main>

@@ -175,7 +175,7 @@ export function Pricing() {
 const FAQ = [
   { q: "Was ist DigitalHalo?", a: "DigitalHalo ist ein KI-Reputations-Monitor für Personal Brands. Wir prüfen regelmäßig, ob und wie dich ChatGPT, Claude, Perplexity, Gemini und Google bei deinen Themen nennen – und machen daraus Score, Verlauf und konkrete nächste Schritte." },
   { q: "Wie unterscheidet sich das von klassischem SEO?", a: "SEO misst, wo deine Website bei Google rankt. Halo misst, ob KI-Assistenten dich in ihren Antworten nennen – und bezieht Google mit ein, inklusive Knowledge Panel und Googles KI-Übersicht. Beides zusammen ergibt den Halo Score." },
-  { q: "Wie funktioniert die Messung?", a: "Für jedes Thema stellt Halo sieben typische Fragen, jeweils in zwei Runden an jedes KI-Modell, und prüft dazu die Google-Suche. Ausgewertet wird, ob du genannt wirst, an welcher Stelle und in welchem Ton." },
+  { q: "Wie funktioniert die Messung?", a: "Für jedes Thema stellt Halo die Fragen, die echte Menschen stellen – in mehreren Runden und über mehrere KI-Modelle hinweg – und prüft dazu die Google-Suche. Woche für Woche wird ausgewertet, ob du genannt wirst, an welcher Stelle und in welchem Ton." },
   { q: "Wie setzt sich der Halo Score zusammen?", a: "KI-Sichtbarkeit zählt 50 %, Google-Sichtbarkeit 30 % und Wahrnehmung 20 %. Was noch nicht gemessen ist, zählt nicht als null; sein Gewicht geht auf die gemessenen Teile über." },
   { q: "Brauche ich eine Kreditkarte für den Check?", a: "Nein. Konto anlegen, Name und Thema eingeben – nach wenigen Minuten siehst du deinen Halo Score." },
   { q: "Was passiert mit meinen Daten?", a: "An die KI-Anbieter gehen nur die Suchfragen. Deine Kontodaten liegen in der EU. Wir verkaufen keine Nutzerdaten." },
@@ -307,7 +307,7 @@ export function Footer() {
         ))}
       </div>
       <div className="mx-auto mt-20 flex max-w-[1320px] flex-col gap-2 px-5 pb-8 text-[12px] text-[var(--lx-dim)] sm:flex-row sm:justify-between sm:px-8">
-        <span>© {new Date().getFullYear()} DigitalHalo · DigitalHalo UG (haftungsbeschränkt) i. G.</span>
+        <span>© {new Date().getFullYear()} DigitalHalo · ein Produkt der Leadesk UG (haftungsbeschränkt)</span>
         <span>Gehostet in der EU</span>
       </div>
       {/* Riesige Wortmarke als Abschluss */}
