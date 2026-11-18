@@ -288,6 +288,21 @@ export type WaitlistSignupRow = {
   created_at: string
 }
 
+export type ServiceRequestStatus = "new" | "contacted" | "offer" | "won" | "lost"
+
+export type ServiceRequestRow = {
+  id: string
+  account_id: string
+  person_id: string | null
+  user_id: string | null
+  services: string[]
+  message: string | null
+  phone: string | null
+  snapshot: Json | null
+  status: ServiceRequestStatus
+  created_at: string
+}
+
 export type HaloDatabase = {
   public: {
     Tables: {
@@ -402,6 +417,10 @@ export type HaloDatabase = {
         >
       >
       brief_sends: Table<BriefSendRow, WithOptional<BriefSendRow, "id" | "status" | "error" | "payload" | "created_at">>
+      service_requests: Table<
+        ServiceRequestRow,
+        WithOptional<ServiceRequestRow, "id" | "person_id" | "user_id" | "message" | "phone" | "snapshot" | "status" | "created_at">
+      >
     }
     Views: { [_ in never]: never }
     Functions: {
