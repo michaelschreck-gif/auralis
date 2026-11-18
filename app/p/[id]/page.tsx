@@ -9,6 +9,7 @@ import ScoreHistoryChart from "@/components/halo/ScoreHistoryChart"
 import MeasureNowButton from "@/components/halo/MeasureNowButton"
 import { card, secondaryBtn } from "@/components/halo/ui"
 import { CountUp } from "@/components/halo/motion"
+import { recommendServices } from "@/lib/halo/services"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Halo Score · Halo" }
@@ -172,6 +173,27 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
           )}
         </section>
       )}
+
+      {(() => {
+        const top = recommendServices(halo)[0]
+        return (
+          <Link
+            href={`/p/${id}/leistungen`}
+            className={`${card} h-featured group mt-6 flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between md:p-6`}
+          >
+            <div>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#F7B49B]">Mit uns verbessern</span>
+              <p className="h-display mt-2 font-[family-name:var(--font-display)] text-xl text-[var(--h-text)]">
+                {top.service.title}: <span className="text-[var(--h-muted)]">{top.service.tagline}</span>
+              </p>
+              <p className="mt-1 text-xs text-[var(--h-dim)]">{top.reason}</p>
+            </div>
+            <span className="shrink-0 text-sm font-medium text-[var(--h-link)] transition-transform duration-500 group-hover:translate-x-1">
+              Leistungen ansehen →
+            </span>
+          </Link>
+        )
+      })()}
 
       <div className="mt-6 grid lg:grid-cols-2 gap-4">
         {/* Themen */}
