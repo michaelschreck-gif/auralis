@@ -481,3 +481,22 @@ body:has(.halo-dark) {
     animation: none;
   }
 }
+
+/* Hervorgehobene Leistung (Empfehlung) */
+.halo-dark .h-featured {
+  border-color: rgba(250, 89, 53, 0.4);
+  background: linear-gradient(180deg, rgba(250, 89, 53, 0.09), rgba(255, 255, 255, 0.015) 60%);
+}
+@keyframes h-bar-in {
+  from {
+    transform: translate3d(0, 110%, 0);
+  }
+}
+.h-bar {
+  animation: h-bar-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .h-bar {
+    animation: none;
+  }
+}
