@@ -22,6 +22,7 @@ function navFor(base: string): NavItem[] {
     { href: `${base}/impulse`, label: "Impulse", icon: icon("M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z") },
     { href: `${base}/massnahmen`, label: "Maßnahmen", icon: icon("M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9") },
     { href: `${base}/persona`, label: "Wie die KI dich sieht", icon: icon("M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0") },
+    { href: `${base}/leistungen`, label: "Mit uns verbessern", icon: icon("M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z") },
   ]
 }
 
