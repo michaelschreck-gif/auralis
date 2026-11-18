@@ -1,7 +1,8 @@
 import { createHaloServerClient } from "@/lib/supabase/halo"
 import { loadHaloScore } from "@/lib/halo/load"
 import ActionList from "@/components/halo/ActionList"
-import { PageHeader } from "@/components/halo/ui"
+import Link from "next/link"
+import { PageHeader, card } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Maßnahmen · Halo" }
@@ -29,6 +30,13 @@ export default async function MassnahmenPage({ params }: { params: Promise<{ id:
         text="Konkrete Schritte, abgeleitet aus deiner schwächsten aktuellen Messung. Hake ab, was erledigt ist – so siehst du, wie sich der Score seitdem entwickelt."
       />
       <ActionList personId={id} actions={actions ?? []} currentScore={halo.score} canGenerate={halo.score !== null} />
+      <Link href={`/p/${id}/leistungen`} className={`${card} group flex flex-col gap-2 p-5 sm:flex-row sm:items-center sm:justify-between`}>
+        <span>
+          <span className="block text-sm font-medium text-[var(--h-text)]">Keine Zeit, das selbst umzusetzen?</span>
+          <span className="block text-xs text-[var(--h-muted)] mt-0.5">Unser Agentur-Team übernimmt die Maßnahmen für dich – einzeln oder als Paket.</span>
+        </span>
+        <span className="shrink-0 text-sm font-medium text-[var(--h-link)] transition-transform duration-500 group-hover:translate-x-1">Mit uns verbessern →</span>
+      </Link>
     </div>
   )
 }
