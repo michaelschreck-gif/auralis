@@ -8,6 +8,7 @@ const ITEMS = [
   { href: "/admin/konten", label: "Konten" },
   { href: "/admin/nutzer", label: "Nutzer" },
   { href: "/admin/leads", label: "Leads" },
+  { href: "/admin/anfragen", label: "Anfragen" },
   { href: "/admin/check", label: "Check" },
   { href: "/admin/audit", label: "Audit-Log" },
   { href: "/admin/calibration", label: "Kalibrierung" },
