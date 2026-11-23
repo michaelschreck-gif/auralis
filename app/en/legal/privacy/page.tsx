@@ -65,6 +65,7 @@ export default function PrivacyPage() {
           <li><strong className={b}>Account and profile data:</strong> name, email address, selected language, plan.</li>
           <li><strong className={b}>Content data:</strong> the topics and competitors you create and the analysis results generated from them (scores, AI answers, recommendations).</li>
           <li><strong className={b}>Usage and metadata:</strong> technical access data (IP address, browser, time) for secure provision of the service.</li>
+          <li><strong className={b}>Requests (optional):</strong> if you request implementation, the selected services, your message and phone number (see section 7).</li>
           <li><strong className={b}>Voice data (optional):</strong> if you use the voice avatar, microphone input is processed for speech recognition and answer texts for speech output (see section 6).</li>
         </ul>
       </Section>
@@ -138,7 +139,22 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="7. Cookies">
+      <Section title="7. Implementation requests to entrenous (optional)">
+        <p>
+          If you send a request under “Implementation by entrenous” in the tool, we pass your name, your email
+          address, the selected services, your optional message and phone number, and your current Halo Score with
+          the values of the three pillars to <strong className={b}>entrenous GmbH</strong>, Heußweg 60, 20255
+          Hamburg, Germany. entrenous is our partner agency for implementation and uses this information to
+          contact you and make you an offer.
+        </p>
+        <p>
+          The legal basis is Art. 6(1)(b) GDPR (pre-contractual measures at your request). entrenous GmbH is itself
+          the controller for any further processing; its privacy notice is available at entrenous.de. Without your
+          request, we do not pass any data to entrenous.
+        </p>
+      </Section>
+
+      <Section title="8. Cookies">
         <p>
           Halo uses technically necessary cookies, in particular to manage your login session. These are required
           for operation; the legal basis is Art. 6(1)(f) GDPR and § 25(2) TDDDG. We only use non-essential cookies
@@ -147,7 +163,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="8. SSL/TLS encryption">
+      <Section title="9. SSL/TLS encryption">
         <p>
           For security reasons and to protect the transmission of confidential content, this site uses SSL/TLS
           encryption. You can recognise an encrypted connection by “https://” in the address bar and the padlock
@@ -156,7 +172,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="9. Storage period">
+      <Section title="10. Storage period">
         <p>
           Unless a more specific storage period is stated in this policy, your personal data remains with us until
           the purpose of processing no longer applies – for example when your account is deleted. Statutory
@@ -164,7 +180,7 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
-      <Section title="10. Your rights">
+      <Section title="11. Your rights">
         <p>Under the GDPR you have in particular the following rights:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li>access to the data stored about you (Art. 15 GDPR),</li>
@@ -178,7 +194,7 @@ export default function PrivacyPage() {
         <p>To exercise your rights or if you have questions about data protection, please contact the controller named in section 2.</p>
       </Section>
 
-      <Section title="11. Objection to direct marketing">
+      <Section title="12. Objection to direct marketing">
         <p>
           If your personal data is processed for direct marketing purposes, you have the right to object at any
           time to the processing of your data for this purpose. Following an objection, your data will no longer be

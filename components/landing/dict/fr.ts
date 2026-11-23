@@ -177,11 +177,25 @@ export const fr: SiteDict = {
       { t: "Votre halo grandit", d: "Mettez en œuvre les actions, mesurez chaque semaine, suivez vos progrès." },
     ],
   },
+  partner: {
+    aria: "Chapitre 7 : mise en œuvre avec entrenous",
+    chapter: "Mise en œuvre",
+    heading: ["Halo montre le chemin.\n", { em: "entrenous le parcourt avec vous." }],
+    lead: "Pour chaque étape de votre résultat, vous choisissez : la mettre en œuvre vous-même ou la confier. Pour cela, nous travaillons avec entrenous, une agence de stratégie de marque et de communication basée à Hambourg.",
+    services: [
+      { t: "Positionnement", d: "Ce que vous incarnez – assez clair pour que l’IA et les gens le reprennent." },
+      { t: "Contenu & LinkedIn", d: "Des publications et profils qui relient visiblement vos thèmes à votre nom." },
+      { t: "RP & scènes", d: "Tribunes, interviews, podcasts – des sources que lisent les modèles d’IA." },
+      { t: "Visibilité IA & Google", d: "Site, profils et fiches pensés pour que moteurs de recherche et IA vous trouvent." },
+    ],
+    note: "Vous envoyez votre demande directement depuis votre résultat, votre score l’accompagne – personne ne vous pose deux fois la question. Le premier entretien stratégique est gratuit.",
+    cta: "Voir d’abord mon score",
+  },
   pricing: {
     chapter: "Tarifs",
     headingPre: "Des prix clairs. ",
     headingEm: "Des résultats clairs.",
-    lead: "Toutes les offres mesurent sur l’ensemble des modèles d’IA et Google. Commencez gratuitement et décidez une fois que vous connaissez votre Halo Score.",
+    lead: "Le check gratuit vous montre en quelques minutes où vous en êtes. Les offres payantes mesurent plus en profondeur, sur tous les modèles d’IA et Google.",
     recommended: "Recommandé",
     perMonth: "/ mois",
     plans: [
@@ -189,7 +203,7 @@ export const fr: SiteDict = {
         sub: "Où en êtes-vous aujourd’hui ?",
         cta: "Commencer gratuitement",
         unit: "",
-        feats: ["1 personne, 1 thème", "Mesure complète sur tous les modèles d’IA + Google", "Nouvelle mesure chaque mois", "Brief mensuel par e-mail"],
+        feats: ["1 personne, 1 thème", "Mesure sur ChatGPT, Gemini, Perplexity + Google", "Nouvelle mesure chaque mois", "Brief mensuel par e-mail"],
       },
       {
         sub: "Pour indépendants, consultants, conférenciers",

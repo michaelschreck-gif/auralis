@@ -21,7 +21,7 @@ export default async function LeistungenPage({ params }: { params: Promise<{ id:
       <PageHeader
         eyebrow="Umsetzung durch entrenous"
         title="Wir bringen deinen Halo nach vorn."
-        text="DigitalHalo zeigt, was zu tun ist – entrenous, unsere Agentur, setzt es um: von der Positionierung über PR bis zur KI-Optimierung. Wähle aus, was dich interessiert, und frag unverbindlich an."
+        text="DigitalHalo zeigt, was zu tun ist – entrenous, unsere Partneragentur, setzt es um: von der Positionierung über PR bis zur KI-Optimierung. Wähle aus, was dich interessiert, und frag unverbindlich an."
       />
       <ServiceCatalog personId={id} services={SERVICES} recommendations={recommendations} firstName={person?.first_name ?? ""} />
     </div>

@@ -56,6 +56,49 @@ export function Path() {
   )
 }
 
+/* ─────────────── 07 · Umsetzung mit entrenous ─────────────── */
+
+export function Partner() {
+  const t = useT()
+  const pa = t.partner
+  return (
+    <section id="umsetzung" className="relative scroll-mt-20 py-20 sm:py-28" aria-label={pa.aria}>
+      <div className="mx-auto max-w-[1320px] px-5 sm:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+          <div>
+            <Chapter n="07" title={pa.chapter} />
+            <SplitHeading className="mt-7 max-w-[820px] text-[clamp(2.3rem,5vw,4.6rem)]" parts={pa.heading} />
+          </div>
+          <Reveal delay={150}>
+            <p className="lx-lead max-w-[480px] lg:ml-auto">{pa.lead}</p>
+          </Reveal>
+        </div>
+
+        <ul className="mt-14 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {pa.services.map((s, i) => (
+            <Reveal key={s.t} as="li" delay={i * 90} className="h-full list-none">
+              <div onMouseMove={onSpotMove} className="lx-glass lx-spot h-full rounded-[27px] p-7">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--lx-peach)]">entrenous</span>
+                <h3 className="mt-3 text-lg font-medium text-[var(--lx-text)]">{s.t}</h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--lx-muted)]">{s.d}</p>
+              </div>
+            </Reveal>
+          ))}
+        </ul>
+
+        <Reveal delay={200}>
+          <div className="mt-10 flex flex-col gap-5 border-t border-[var(--lx-line)] pt-8 sm:flex-row sm:items-center sm:justify-between">
+            <p className="max-w-[640px] text-[14px] leading-relaxed text-[var(--lx-muted)]">{pa.note}</p>
+            <Link href={toolHref("/registrieren", t.locale)} className="lx-btn lx-btn--primary shrink-0">
+              {pa.cta} <Arrow />
+            </Link>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 /* ─────────────── Preise ─────────────── */
 
 type Plan = { name: string; price: string; unit?: string; sub: string; feats: string[]; featured?: boolean; cta: { href: string; label: string } }
@@ -116,7 +159,7 @@ export function Pricing() {
       <div className="relative mx-auto max-w-[1320px] px-5 sm:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
-            <Chapter n="07" title={pr.chapter} />
+            <Chapter n="08" title={pr.chapter} />
             <h2 id="lx-preise-h" className="lx-display mt-7 text-[clamp(2.3rem,5vw,4.8rem)]">
               {pr.headingPre}<span className="lx-em">{pr.headingEm}</span>
             </h2>
@@ -196,7 +239,7 @@ export function Faq() {
     <section id="faq" className="relative scroll-mt-20 py-20 sm:py-28" aria-labelledby="lx-faq-h">
       <div className="mx-auto grid max-w-[1320px] gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <Chapter n="08" title={fq.chapter} />
+          <Chapter n="09" title={fq.chapter} />
           <h2 id="lx-faq-h" className="lx-display mt-7 text-[clamp(2.3rem,4.4vw,4rem)]">
             {fq.headingPre}<span className="lx-em">{fq.headingEm}</span>
           </h2>

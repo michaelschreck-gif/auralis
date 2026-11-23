@@ -272,7 +272,7 @@ export default function ServiceCatalog({ personId, services, recommendations, fi
               </button>
             </div>
             <p className="mt-4 text-[11px] leading-relaxed text-[var(--h-dim)]">
-              Mit dem Senden geben wir deine Messung und Angaben an entrenous, unsere Agentur, weiter, um dir ein Angebot zu machen.
+              Mit dem Senden geben wir deine Messung und Angaben an die entrenous GmbH (Hamburg), unsere Partneragentur, weiter, um dir ein Angebot zu machen.
             </p>
           </div>
         </div>

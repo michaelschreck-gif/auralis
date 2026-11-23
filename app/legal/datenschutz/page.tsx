@@ -67,6 +67,7 @@ export default function DatenschutzPage() {
           <li><strong className="text-[#0E1916]">Konto- und Profildaten:</strong> Name, E-Mail-Adresse, gewählte Sprache, Tarif.</li>
           <li><strong className="text-[#0E1916]">Inhaltsdaten:</strong> die von Ihnen angelegten Themen, Wettbewerber sowie die daraus erzeugten Analyse-Ergebnisse (Scores, KI-Antworten, Empfehlungen).</li>
           <li><strong className="text-[#0E1916]">Nutzungs- und Metadaten:</strong> technische Zugriffsdaten (IP-Adresse, Browser, Zeitpunkt) zur sicheren Bereitstellung.</li>
+          <li><strong className="text-[#0E1916]">Anfragen (optional):</strong> wenn Sie eine Umsetzung anfragen, die gewählten Leistungen, Ihre Nachricht und Telefonnummer (siehe Abschnitt 7).</li>
           <li><strong className="text-[#0E1916]">Sprachdaten (optional):</strong> wenn Sie den Sprach-Avatar nutzen, werden Mikrofon-Eingaben zur Spracherkennung sowie Antworttexte zur Sprachausgabe verarbeitet (siehe Abschnitt 6).</li>
         </ul>
       </Section>
@@ -146,7 +147,23 @@ export default function DatenschutzPage() {
         </p>
       </Section>
 
-      <Section title="7. Cookies">
+      <Section title="7. Anfragen zur Umsetzung durch entrenous (optional)">
+        <p>
+          Wenn Sie im Tool unter „Umsetzung durch entrenous“ eine Anfrage stellen, übermitteln wir Ihren Namen,
+          Ihre E-Mail-Adresse, die gewählten Leistungen, Ihre optionale Nachricht und Telefonnummer sowie Ihren
+          aktuellen Halo Score mit den Werten der drei Säulen an die{" "}
+          <strong className="text-[#0E1916]">entrenous GmbH</strong>, Heußweg 60, 20255 Hamburg. entrenous ist
+          unsere Partneragentur für die Umsetzung und nutzt diese Angaben, um Sie zu kontaktieren und Ihnen ein
+          Angebot zu machen.
+        </p>
+        <p>
+          Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO (vorvertragliche Maßnahmen auf Ihre Anfrage). Für die
+          weitere Verarbeitung ist die entrenous GmbH selbst verantwortlich; ihre Datenschutzhinweise finden Sie
+          auf entrenous.de. Ohne Ihre Anfrage geben wir keine Daten an entrenous weiter.
+        </p>
+      </Section>
+
+      <Section title="8. Cookies">
         <p>
           Halo verwendet technisch notwendige Cookies, insbesondere zur Verwaltung Ihrer Anmeldesitzung
           (Login). Diese sind für den Betrieb erforderlich; Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO
@@ -156,7 +173,7 @@ export default function DatenschutzPage() {
         </p>
       </Section>
 
-      <Section title="8. SSL-/TLS-Verschlüsselung">
+      <Section title="9. SSL-/TLS-Verschlüsselung">
         <p>
           Diese Seite nutzt aus Sicherheitsgründen und zum Schutz der Übertragung vertraulicher Inhalte eine
           SSL- bzw. TLS-Verschlüsselung. Eine verschlüsselte Verbindung erkennen Sie am „https://" in der
@@ -166,7 +183,7 @@ export default function DatenschutzPage() {
         </p>
       </Section>
 
-      <Section title="9. Speicherdauer">
+      <Section title="10. Speicherdauer">
         <p>
           Soweit innerhalb dieser Erklärung keine speziellere Speicherdauer genannt wird, verbleiben Ihre
           personenbezogenen Daten bei uns, bis der Zweck der Verarbeitung entfällt – etwa bei Löschung Ihres
@@ -174,7 +191,7 @@ export default function DatenschutzPage() {
         </p>
       </Section>
 
-      <Section title="10. Ihre Rechte">
+      <Section title="11. Ihre Rechte">
         <p>Ihnen stehen nach der DSGVO insbesondere folgende Rechte zu:</p>
         <ul className="list-disc pl-5 space-y-1">
           <li>Auskunft über die zu Ihnen gespeicherten Daten (Art. 15 DSGVO),</li>
@@ -191,7 +208,7 @@ export default function DatenschutzPage() {
         </p>
       </Section>
 
-      <Section title="11. Widerspruch gegen Direktwerbung">
+      <Section title="12. Widerspruch gegen Direktwerbung">
         <p>
           Werden Ihre personenbezogenen Daten zum Zwecke der Direktwerbung verarbeitet, haben Sie das Recht,
           jederzeit Widerspruch gegen die Verarbeitung Sie betreffender Daten zu diesem Zweck einzulegen.

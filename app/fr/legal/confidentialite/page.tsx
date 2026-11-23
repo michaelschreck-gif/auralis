@@ -67,6 +67,7 @@ export default function ConfidentialitePage() {
           <li><strong className={b}>Données de compte et de profil :</strong> nom, adresse e-mail, langue choisie, offre.</li>
           <li><strong className={b}>Données de contenu :</strong> les thèmes et concurrents que vous créez ainsi que les résultats d’analyse qui en découlent (scores, réponses de l’IA, recommandations).</li>
           <li><strong className={b}>Données d’utilisation et métadonnées :</strong> données techniques d’accès (adresse IP, navigateur, horodatage) pour une mise à disposition sécurisée.</li>
+          <li><strong className={b}>Demandes (facultatif) :</strong> si vous demandez une mise en œuvre, les prestations choisies, votre message et votre numéro de téléphone (voir section 7).</li>
           <li><strong className={b}>Données vocales (facultatif) :</strong> si vous utilisez l’avatar vocal, les entrées du microphone sont traitées pour la reconnaissance vocale et les textes de réponse pour la synthèse vocale (voir section 6).</li>
         </ul>
       </Section>
@@ -145,7 +146,23 @@ export default function ConfidentialitePage() {
         </p>
       </Section>
 
-      <Section title="7. Cookies">
+      <Section title="7. Demandes de mise en œuvre à entrenous (facultatif)">
+        <p>
+          Si vous envoyez une demande dans l’outil sous « Mise en œuvre par entrenous », nous transmettons votre
+          nom, votre adresse e-mail, les prestations choisies, votre message et votre numéro de téléphone
+          facultatifs ainsi que votre Halo Score actuel avec les valeurs des trois piliers à{" "}
+          <strong className={b}>entrenous GmbH</strong>, Heußweg 60, 20255 Hambourg, Allemagne. entrenous est notre
+          agence partenaire pour la mise en œuvre et utilise ces informations pour vous contacter et vous faire une
+          offre.
+        </p>
+        <p>
+          La base juridique est l’art. 6, par. 1, point b du RGPD (mesures précontractuelles à votre demande).
+          entrenous GmbH est elle-même responsable de tout traitement ultérieur ; sa politique de confidentialité
+          est disponible sur entrenous.de. Sans votre demande, nous ne transmettons aucune donnée à entrenous.
+        </p>
+      </Section>
+
+      <Section title="8. Cookies">
         <p>
           Halo utilise des cookies techniquement nécessaires, notamment pour gérer votre session de connexion. Ils
           sont indispensables au fonctionnement ; la base juridique est l’art. 6, par. 1, point f du RGPD et le
@@ -155,7 +172,7 @@ export default function ConfidentialitePage() {
         </p>
       </Section>
 
-      <Section title="8. Chiffrement SSL/TLS">
+      <Section title="9. Chiffrement SSL/TLS">
         <p>
           Pour des raisons de sécurité et afin de protéger la transmission de contenus confidentiels, ce site
           utilise un chiffrement SSL/TLS. Vous reconnaissez une connexion chiffrée au préfixe « https:// » dans la
@@ -165,7 +182,7 @@ export default function ConfidentialitePage() {
         </p>
       </Section>
 
-      <Section title="9. Durée de conservation">
+      <Section title="10. Durée de conservation">
         <p>
           Sauf durée de conservation plus spécifique indiquée dans la présente politique, vos données personnelles
           sont conservées jusqu’à ce que la finalité du traitement disparaisse – par exemple lors de la suppression
@@ -173,7 +190,7 @@ export default function ConfidentialitePage() {
         </p>
       </Section>
 
-      <Section title="10. Vos droits">
+      <Section title="11. Vos droits">
         <p>En vertu du RGPD, vous disposez notamment des droits suivants :</p>
         <ul className="list-disc pl-5 space-y-1">
           <li>droit d’accès aux données vous concernant (art. 15 du RGPD),</li>
@@ -187,7 +204,7 @@ export default function ConfidentialitePage() {
         <p>Pour exercer vos droits ou pour toute question relative à la protection des données, veuillez vous adresser au responsable du traitement mentionné à la section 2.</p>
       </Section>
 
-      <Section title="11. Opposition à la prospection directe">
+      <Section title="12. Opposition à la prospection directe">
         <p>
           Lorsque vos données personnelles sont traitées à des fins de prospection directe, vous avez le droit de
           vous opposer à tout moment au traitement de vos données à cette fin. Après opposition, vos données ne

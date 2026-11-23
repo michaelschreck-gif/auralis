@@ -6,7 +6,7 @@ import { ChapterMeasure } from "./ChapterMeasure"
 import { ChapterQuestion } from "./ChapterQuestion"
 import { ChapterScore } from "./ChapterScore"
 import { ChapterShift } from "./ChapterShift"
-import { Faq, Finale, Footer, Path, Pricing } from "./Closing"
+import { Faq, Finale, Footer, Partner, Path, Pricing } from "./Closing"
 import { Features } from "./Features"
 import { Hero, Nav } from "./Hero"
 import { SiteDictProvider } from "./i18n"
@@ -54,6 +54,7 @@ export function Landing({ locale = "de", toolHref, isLoggedIn }: { locale?: Loca
           <ChapterScore />
           <Features />
           <Path />
+          <Partner />
           <Pricing />
           <Faq />
           <Finale />

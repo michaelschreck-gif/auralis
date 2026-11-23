@@ -177,11 +177,25 @@ export const de: SiteDict = {
       { t: "Dein Halo wächst", d: "Maßnahmen umsetzen, Woche für Woche messen, Fortschritt sehen." },
     ],
   },
+  partner: {
+    aria: "Kapitel 7: Umsetzung mit entrenous",
+    chapter: "Umsetzung",
+    heading: ["Halo zeigt den Weg.\n", { em: "entrenous geht ihn mit dir." }],
+    lead: "Zu jedem Schritt aus deinem Ergebnis kannst du wählen: selbst umsetzen oder umsetzen lassen. Dafür arbeiten wir mit entrenous zusammen, einer Agentur für Markenstrategie und Kommunikation aus Hamburg.",
+    services: [
+      { t: "Positionierung", d: "Wofür du stehst – klar genug, dass KI und Menschen es wiedergeben." },
+      { t: "Content & LinkedIn", d: "Beiträge und Profile, die deine Themen sichtbar mit deinem Namen verbinden." },
+      { t: "PR & Bühnen", d: "Gastbeiträge, Interviews, Podcasts – Quellen, die KI-Modelle lesen." },
+      { t: "KI- & Google-Sichtbarkeit", d: "Website, Profile und Einträge so, dass Suchmaschinen und KI dich finden." },
+    ],
+    note: "Anfragen stellst du direkt im Ergebnis, dein Score geht mit – niemand fragt zweimal. Das erste Strategie-Gespräch ist kostenlos.",
+    cta: "Erst den Score sehen",
+  },
   pricing: {
     chapter: "Preise",
     headingPre: "Klar im Preis. ",
     headingEm: "Klar im Ergebnis.",
-    lead: "Alle Tarife messen über alle KI-Modelle und Google. Starte kostenlos und entscheide, wenn du deinen Halo Score kennst.",
+    lead: "Der kostenlose Check zeigt dir in wenigen Minuten, wo du stehst. Die bezahlten Tarife messen tiefer, über alle KI-Modelle und Google.",
     recommended: "Empfohlen",
     perMonth: "/ Monat",
     plans: [
@@ -189,7 +203,7 @@ export const de: SiteDict = {
         sub: "Wo stehst du heute?",
         cta: "Kostenlos starten",
         unit: "",
-        feats: ["1 Person, 1 Thema", "Volle Messung über alle KI-Modelle + Google", "Monatliche Nachmessung", "Monatlicher Brief per Mail"],
+        feats: ["1 Person, 1 Thema", "Messung über ChatGPT, Gemini, Perplexity + Google", "Monatliche Nachmessung", "Monatlicher Brief per Mail"],
       },
       {
         sub: "Für Selbstständige, Berater, Speaker",
