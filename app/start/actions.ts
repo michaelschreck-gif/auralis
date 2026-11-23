@@ -27,7 +27,7 @@ export async function completeStart(raw: Record<string, unknown>): Promise<Start
   const plan = await planOfOwner(db, user.id)
   const limits = planLimits(plan)
   if (raw.accountType === "team" && !limits.teamAllowed) {
-    return { ok: false, error: "Teams gibt es im Tarif Team. Starte mit dir selbst – wir melden uns gern zu Team-Konten." }
+    return { ok: false, error: "Team-Konten richten wir auf Anfrage ein. Starte mit dir selbst – wir melden uns gern zu Team-Konten." }
   }
   const parsed = validateStartInput(raw, limits.topicsPerPerson)
   if (!parsed.ok) return parsed
@@ -100,7 +100,7 @@ export async function addPersonToTeam(raw: Record<string, unknown>): Promise<Sta
   const team = await ownedTeamAccount(db, user.id)
   if (!team) return { ok: false, error: "Personen hinzufügen geht nur in einem Team-Konto." }
   const limits = planLimits(await planOfAccount(db, team.id))
-  if (!limits.teamAllowed) return { ok: false, error: "Weitere Personen gibt es im Tarif Team." }
+  if (!limits.teamAllowed) return { ok: false, error: "Weitere Personen gibt es mit einem Team-Konto (auf Anfrage)." }
   const parsed = validateStartInput({ ...raw, accountType: "team" }, limits.topicsPerPerson)
   if (!parsed.ok) return parsed
   if (LIMITS.personsPerTeam !== null) {

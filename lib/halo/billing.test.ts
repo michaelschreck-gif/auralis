@@ -3,9 +3,11 @@
 
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { billingFromSubscription, offerOfPrice, priceEnvName, teamSeats, topicChangesForPlan } from "./billing.ts"
+import { billingFromSubscription, isBillingConfigured, isBookable, offerOfPrice, priceEnvName, teamSeats, topicChangesForPlan } from "./billing.ts"
 
 const env = {
+  STRIPE_PRICE_PLUS_M: "price_plus_m",
+  STRIPE_PRICE_PLUS_Y: "price_plus_y",
   STRIPE_PRICE_SOLO_M: "price_solo_m",
   STRIPE_PRICE_SOLO_Y: "price_solo_y",
   STRIPE_PRICE_PRO_M: "price_pro_m",
@@ -81,4 +83,20 @@ test("Upgrade: vom Tarif pausierte Themen laufen wieder", () => {
   const r = topicChangesForPlan(persons, paused, { topicsPerPerson: 5, teamAllowed: true })
   assert.deepEqual(r.resume.sort(), ["b", "d"])
   assert.deepEqual(r.pause, [])
+})
+
+test("Halo Plus: einziges buchbares Abo, ergibt Tarif starter", () => {
+  assert.equal(priceEnvName("plus", "month"), "STRIPE_PRICE_PLUS_M")
+  assert.deepEqual(offerOfPrice("price_plus_y", env), { offer: "plus", interval: "year" })
+  assert.equal(billingFromSubscription(sub({ priceId: "price_plus_m" }), env).plan, "starter")
+  assert.equal(isBookable("plus"), true)
+  for (const old of ["solo", "pro", "team"] as const) assert.equal(isBookable(old), false)
+  // Alte Abos werden weiter erkannt.
+  assert.equal(billingFromSubscription(sub({ priceId: "price_solo_m" }), env).plan, "starter")
+})
+
+test("Bezahlung gilt erst mit Halo-Plus-Preis als eingerichtet", () => {
+  const keys = { STRIPE_SECRET_KEY: "sk", STRIPE_WEBHOOK_SECRET: "wh" }
+  assert.equal(isBillingConfigured({ ...keys, STRIPE_PRICE_SOLO_M: "price_solo_m" }), false)
+  assert.equal(isBillingConfigured({ ...keys, STRIPE_PRICE_PLUS_M: "price_plus_m" }), true)
 })

@@ -2,7 +2,7 @@
  * Tarife und ihre Grenzen (Webseite #preise).
  *
  *   free        Check   1 Thema, kein Team, monatlich messen, „Neu messen“ alle 30 Tage
- *   starter     Solo    3 Themen, wöchentlich
+ *   starter     Halo Plus (früher Solo)  3 Themen, wöchentlich
  *   pro         Pro     5 Themen, wöchentlich
  *   enterprise  Team/Agentur, auch Bestandskonten: 5 Themen je Person, Teams
  *
@@ -37,7 +37,7 @@ export const PLAN_LIMITS: Record<PlanType, PlanLimits> = {
     monthlyBrief: true,
   },
   starter: {
-    label: "Solo",
+    label: "Halo Plus",
     topicsPerPerson: 3,
     teamAllowed: false,
     frequency: "weekly",

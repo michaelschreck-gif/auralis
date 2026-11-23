@@ -142,7 +142,7 @@ export const en: SiteDict = {
     voice: {
       title: "AI persona with a voice",
       text: "Talk to the image AI has of you. Audible, unvarnished, revealing.",
-      tag: "Pro",
+      tag: "Plus",
       quote: "“This is how AI describes me …”",
     },
     brief: {
@@ -155,7 +155,7 @@ export const en: SiteDict = {
     },
     trend: {
       title: "History & PDF report",
-      text: "Every measurement stays visible. On the Pro plan for 12 months, as a report to share.",
+      text: "Every measurement stays visible. With Halo Plus for 12 months, as a report to share.",
       label: "Halo Score · 12 months",
       example: "Example trend",
     },
@@ -195,7 +195,7 @@ export const en: SiteDict = {
     chapter: "Pricing",
     headingPre: "Clear pricing. ",
     headingEm: "Clear results.",
-    lead: "The free check shows you where you stand within minutes. Paid plans measure in more depth, across all AI models and Google.",
+    lead: "The free check shows you where you stand within minutes. Halo Plus measures every week, in more depth and across all AI models – so you can see what your steps achieve.",
     recommended: "Recommended",
     perMonth: "/ month",
     plans: [
@@ -203,32 +203,22 @@ export const en: SiteDict = {
         sub: "Where do you stand today?",
         cta: "Start for free",
         unit: "",
-        feats: ["1 person, 1 topic", "Measured on ChatGPT, Gemini, Perplexity + Google", "Monthly re-measurement", "Monthly brief by email"],
+        feats: ["1 person, 1 topic", "Measured on ChatGPT, Gemini, Perplexity + Google", "Monthly re-measurement", "Your next steps", "Monthly brief by email"],
       },
       {
-        sub: "For freelancers, consultants, speakers",
-        cta: "Join the waitlist",
-        feats: ["1 person, 3 topics", "Weekly measurement", "Weekly brief with changes", "Next steps + insights", "PDF report"],
-      },
-      {
-        sub: "For executives and visible experts",
-        cta: "Join the waitlist",
-        feats: ["1 person, 5 topics", "Measurement twice a week", "Everything in Solo", "AI persona with a voice", "12-month history"],
-      },
-      {
-        sub: "From 3 people, e.g. leadership teams",
-        cta: "Join the waitlist",
-        unit: "/ person / month",
-        feats: ["Each person as in Solo", "Team overview for everyone", "Individual access per person", "Combined report"],
+        sub: "For everyone who wants to become – and stay – visible",
+        cta: "Start with the check",
+        yearly: "or €99 / year – save €45",
+        feats: ["1 person, 3 topics", "Weekly measurement, deeper and across all AI models incl. Claude", "Google every week", "Weekly brief with changes", "All details: AI per model, insights, how AI sees you", "History + PDF report"],
       },
     ],
     agency: {
-      title: "Agency",
-      from: "from €490 / month",
-      text: "For PR, personal branding and LinkedIn consultants: many people, API access and reports for your clients.",
+      title: "Teams & agencies",
+      from: "on request",
+      text: "Several people, a team overview, API access and reports for your clients – get in touch.",
       cta: "Request a quote",
     },
-    note: "All prices exclude VAT – our offer is aimed at self-employed professionals and businesses. Pay annually and get two months free.",
+    note: "All prices exclude VAT – our offer is aimed at self-employed professionals and businesses. Cancel monthly or annually.",
   },
   faq: {
     chapter: "Questions",

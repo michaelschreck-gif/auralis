@@ -137,7 +137,14 @@ export default function PersonShell({
           Einstellungen
         </Link>
         {isOwner && (
-          <Link href="/konto" className="flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-[var(--h-side-text)] hover:text-white transition-colors">
+          <Link
+            href="/konto"
+            onClick={() => setOpen(false)}
+            aria-current={pathname === "/konto" ? "page" : undefined}
+            className={`flex items-center gap-3 rounded-xl px-3 py-2 text-sm transition-colors ${
+              pathname === "/konto" ? "bg-white/[0.06] text-white" : "text-[var(--h-side-text)] hover:text-white"
+            }`}
+          >
             {icon("M3 7h18v13H3zM8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2")}
             Konto
           </Link>
