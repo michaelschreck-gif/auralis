@@ -10,7 +10,9 @@ import { MARKETS } from "../auralis/markets"
 import { calcNextRunAt, measureTarget, type MeasureProgressEvent } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
 import type { Json, PersonRow, SentimentType, TriggerType } from "../supabase/halo.types"
-import { MEASUREMENT, measurementProviders } from "./config"
+import { measurementProviders } from "./config"
+import { planOfAccount } from "./plan-db"
+import { measurementPlanFor, pickProviders } from "./plans"
 import { pillarsFromReport } from "./score"
 
 /** Name, nach dem in den KI-Antworten gesucht wird. */
@@ -37,7 +39,9 @@ export async function runMeasurement(
   const { data: person, error: personError } = await db.from("persons").select("*").eq("id", topic.person_id).single()
   if (personError || !person) throw new Error(`Person ${topic.person_id} nicht gefunden: ${personError?.message ?? "unbekannt"}`)
 
-  const providers = measurementProviders()
+  // Messtiefe nach Tarif: kostenloser Check schlank, bezahlte Tarife voll (lib/halo/plans.ts).
+  const setup = measurementPlanFor(await planOfAccount(db, person.account_id))
+  const providers = pickProviders(measurementProviders(), setup.providerIds)
   if (providers.length === 0) throw new Error("Kein KI-Modell konfiguriert (mindestens ANTHROPIC_API_KEY setzen).")
 
   const targetName = personDisplayName(person)
@@ -45,7 +49,7 @@ export async function runMeasurement(
     targetName,
     topics: [topic.name],
     markets: [MARKETS[person.market]],
-    measurement: MEASUREMENT,
+    measurement: { depth: setup.depth, rounds: setup.rounds },
     providers,
     background: true,
     seedBase: topic.id,

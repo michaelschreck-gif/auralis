@@ -2,6 +2,7 @@ import { notFound, redirect } from "next/navigation"
 import { createHaloServerClient } from "@/lib/supabase/halo"
 import { loadPersonContext } from "@/lib/halo/load"
 import { personDisplayName } from "@/lib/halo/measure"
+import { planOfAccount } from "@/lib/halo/plan-db"
 import PersonShell from "@/components/halo/PersonShell"
 
 export const dynamic = "force-dynamic"
@@ -20,6 +21,7 @@ export default async function PersonLayout({
 
   const ctx = await loadPersonContext(db, id, user.id)
   if (!ctx) notFound()
+  const plan = await planOfAccount(db, ctx.account.id)
 
   return (
     <PersonShell
@@ -28,6 +30,7 @@ export default async function PersonLayout({
       accountName={ctx.account.name}
       teamPersons={ctx.teamPersons}
       isOwner={ctx.role === "owner"}
+      simple={plan === "free"}
     >
       {children}
     </PersonShell>

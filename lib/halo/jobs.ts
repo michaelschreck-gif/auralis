@@ -10,6 +10,7 @@
 import type { MeasureProgressEvent } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
 import type { Json, TriggerType } from "../supabase/halo.types"
+import { ensureFirstActions } from "./actions-gen"
 import { runMeasurement } from "./measure"
 import { applyProgress, emptyProgress } from "./progress"
 
@@ -107,6 +108,9 @@ export async function executeJob(service: HaloClient, jobId: string): Promise<vo
       onProgress: progress.onProgress,
     })
     await progress.flush()
+    // Erste Messung einer Person: nächste Schritte gleich mit erzeugen, damit Score und
+    // Empfehlungen zusammen erscheinen (wirft nie, höchstens ~45 s).
+    await ensureFirstActions(service, job.person_id)
     await service
       .from("jobs")
       .update({ status: "done", measurement_id: result.measurementId, finished_at: new Date().toISOString() })

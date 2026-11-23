@@ -8,7 +8,7 @@ const cfg = { topics: ["Personal Branding", "LinkedIn"], language: "de" as const
 
 test("Matrix: Gewichte summieren sich auf 1 (standard + extended, de + en)", () => {
   for (const language of ["de", "en"] as const) {
-    for (const depth of ["standard", "extended"] as const) {
+    for (const depth of ["quick", "standard", "extended"] as const) {
       const qs = generateQueryMatrix({ ...cfg, language }, { depth, seed: 1 })
       const sum = qs.reduce((a, q) => a + q.weight, 0)
       assert.ok(Math.abs(sum - 1) < 1e-9, `${language}/${depth}: ${sum}`)
@@ -17,6 +17,7 @@ test("Matrix: Gewichte summieren sich auf 1 (standard + extended, de + en)", () 
 })
 
 test("Matrix: Fragenanzahl je Tiefe", () => {
+  assert.equal(generateQueryMatrix(cfg, { depth: "quick", seed: 1 }).length, 5)
   assert.equal(generateQueryMatrix(cfg, { depth: "standard", seed: 1 }).length, 7)
   assert.equal(generateQueryMatrix(cfg, { depth: "extended", seed: 1 }).length, 12)
 })

@@ -43,8 +43,8 @@ export type MatrixConfig = {
   region?: string
 }
 
-/** "standard" = 7 Fragen, "extended" = 12 Fragen pro Runde. */
-export type MatrixDepth = "standard" | "extended"
+/** "quick" = 5 Fragen (eine je Absicht, kostenloser Check), "standard" = 7, "extended" = 12 Fragen pro Runde. */
+export type MatrixDepth = "quick" | "standard" | "extended"
 
 export const INTENT_WEIGHTS: Record<MatrixIntent, number> = {
   expert_discovery: 0.35,
@@ -63,6 +63,7 @@ const INTENT_ORDER: MatrixIntent[] = [
 ]
 
 const DEPTH_COUNTS: Record<MatrixDepth, Record<MatrixIntent, number>> = {
+  quick: { expert_discovery: 1, topic_authority: 1, recommendation: 1, leadership: 1, popular_figures: 1 },
   standard: { expert_discovery: 2, topic_authority: 1, recommendation: 2, leadership: 1, popular_figures: 1 },
   extended: { expert_discovery: 3, topic_authority: 2, recommendation: 3, leadership: 2, popular_figures: 2 },
 }

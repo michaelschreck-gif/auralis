@@ -2,13 +2,10 @@
 
 import { revalidatePath } from "next/cache"
 import { createHaloServerClient } from "@/lib/supabase/halo"
-import { generateRecommendations } from "@/lib/auralis/recommendations"
-import { asVisibilityReport, loadLatestMeasurements } from "@/lib/halo/details"
+import { createActionsFromLatest } from "@/lib/halo/actions-gen"
 import { loadHaloScore } from "@/lib/halo/load"
 
 export type ActionResult = { ok: true; created?: number } | { ok: false; error: string }
-
-const IMPACT_LABELS = { high: "Hohe Wirkung", medium: "Mittlere Wirkung", low: "Geringe Wirkung" } as const
 
 async function db() {
   const client = await createHaloServerClient()
@@ -17,42 +14,13 @@ async function db() {
   return client
 }
 
-/**
- * Neue Maßnahmen aus der schwächsten aktuellen Themen-Messung (dort ist am
- * meisten zu holen). Bereits offene Maßnahmen mit gleichem Titel werden
- * nicht doppelt angelegt.
- */
+/** Neue Maßnahmen aus der schwächsten aktuellen Messung (lib/halo/actions-gen.ts). */
 export async function generateActions(personId: string): Promise<ActionResult> {
   const client = await db()
-  const latest = await loadLatestMeasurements(client, personId)
-  const weakest = [...latest].filter(m => asVisibilityReport(m.report)).sort((a, b) => (a.aiScore ?? 0) - (b.aiScore ?? 0))[0]
-  if (!weakest) return { ok: false, error: "Erst messen – Maßnahmen entstehen aus deinen Messungen." }
-
-  const recs = await generateRecommendations(asVisibilityReport(weakest.report)!)
-  if (recs.length === 0) return { ok: false, error: "Gerade konnten keine Maßnahmen erzeugt werden. Bitte später erneut versuchen." }
-
-  const [{ data: open }, halo] = await Promise.all([
-    client.from("actions").select("title").eq("person_id", personId).eq("status", "open"),
-    loadHaloScore(client, personId),
-  ])
-  const existing = new Set((open ?? []).map(a => a.title.toLowerCase()))
-  const rows = recs
-    .filter(r => !existing.has(r.title.toLowerCase()))
-    .map(r => ({
-      person_id: personId,
-      measurement_id: weakest.id,
-      title: r.title,
-      detail: r.description,
-      category: r.category,
-      impact: IMPACT_LABELS[r.impact],
-      score_before: halo.score,
-    }))
-  if (rows.length > 0) {
-    const { error } = await client.from("actions").insert(rows)
-    if (error) return { ok: false, error: "Maßnahmen konnten nicht gespeichert werden." }
-  }
+  const res = await createActionsFromLatest(client, personId)
+  if (!res.ok) return res
   revalidatePath(`/p/${personId}`, "layout")
-  return { ok: true, created: rows.length }
+  return { ok: true, created: res.created }
 }
 
 export async function setActionStatus(personId: string, actionId: string, status: "open" | "done" | "dismissed"): Promise<ActionResult> {

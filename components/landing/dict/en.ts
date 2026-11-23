@@ -177,11 +177,25 @@ export const en: SiteDict = {
       { t: "Your halo grows", d: "Take action, measure week after week, see your progress." },
     ],
   },
+  partner: {
+    aria: "Chapter 7: Implementation with entrenous",
+    chapter: "Implementation",
+    heading: ["Halo shows the way.\n", { em: "entrenous walks it with you." }],
+    lead: "For every step in your result you can choose: do it yourself or have it done. For that we work with entrenous, a brand strategy and communications agency based in Hamburg.",
+    services: [
+      { t: "Positioning", d: "What you stand for – clear enough for AI and people to repeat it." },
+      { t: "Content & LinkedIn", d: "Posts and profiles that visibly connect your topics with your name." },
+      { t: "PR & stages", d: "Guest articles, interviews, podcasts – sources that AI models read." },
+      { t: "AI & Google visibility", d: "Website, profiles and listings set up so search engines and AI find you." },
+    ],
+    note: "You send requests straight from your result and your score goes with it – nobody asks twice. The first strategy call is free.",
+    cta: "See my score first",
+  },
   pricing: {
     chapter: "Pricing",
     headingPre: "Clear pricing. ",
     headingEm: "Clear results.",
-    lead: "Every plan measures across all AI models and Google. Start for free and decide once you know your Halo Score.",
+    lead: "The free check shows you where you stand within minutes. Paid plans measure in more depth, across all AI models and Google.",
     recommended: "Recommended",
     perMonth: "/ month",
     plans: [
@@ -189,7 +203,7 @@ export const en: SiteDict = {
         sub: "Where do you stand today?",
         cta: "Start for free",
         unit: "",
-        feats: ["1 person, 1 topic", "Full measurement across all AI models + Google", "Monthly re-measurement", "Monthly brief by email"],
+        feats: ["1 person, 1 topic", "Measured on ChatGPT, Gemini, Perplexity + Google", "Monthly re-measurement", "Monthly brief by email"],
       },
       {
         sub: "For freelancers, consultants, speakers",

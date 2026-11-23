@@ -16,6 +16,8 @@ export default function LoginForm({ locale }: { locale: Locale }) {
   const [password, setPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [linkSending, setLinkSending] = useState(false)
+  const [linkSent, setLinkSent] = useState(false)
 
   // NOTE: client is constructed INSIDE each handler (lazy) instead of at the
   // top level. Otherwise Next.js prerender of this client component fails
@@ -45,6 +47,28 @@ export default function LoginForm({ locale }: { locale: Locale }) {
 
     window.location.href = safeNextPath(new URLSearchParams(window.location.search).get("next"), "/weiter")
   }
+
+  // Login-Link per E-Mail (Standard seit dem schnellen Check: neue Konten haben kein Passwort).
+  async function sendLink() {
+    if (!email.trim()) return setError(l.linkNeedEmail)
+    setLinkSending(true)
+    setError(null)
+    const supabase = createSupabaseBrowserClient()
+    const next = safeNextPath(new URLSearchParams(window.location.search).get("next"), "/weiter")
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email.trim(),
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`, shouldCreateUser: false },
+    })
+    setLinkSending(false)
+    if (error) {
+      setError(error.message.toLowerCase().includes("signup") ? l.linkNoAccount : error.message)
+      return
+    }
+    setLinkSent(true)
+  }
+
+  const secondaryBtn =
+    "w-full rounded-xl border border-[var(--h-line)] py-3 text-sm font-medium text-[var(--h-text)] hover:border-[var(--h-hover-line)] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
 
   const inputCls =
     "w-full bg-[var(--h-input)] border border-[var(--h-line)] rounded-xl px-4 py-3 text-sm text-[var(--h-text)] placeholder-[var(--h-dim)] focus:outline-none focus:border-[#FA5935] focus:ring-1 focus:ring-[#FA5935]/20 transition-colors"
@@ -90,6 +114,17 @@ export default function LoginForm({ locale }: { locale: Locale }) {
               <p className="text-[var(--h-muted)] text-sm mt-2">{l.sub}</p>
             </div>
 
+            {linkSent ? (
+              <div className="rounded-2xl border border-[var(--h-line)] p-5">
+                <h3 className="h-display text-xl text-[var(--h-text)]">{l.linkSentTitle}</h3>
+                <p className="text-sm text-[var(--h-muted)] mt-2">
+                  {l.linkSentBefore}<span className="font-medium text-[var(--h-text)]">{email.trim()}</span>{l.linkSentAfter}
+                </p>
+                <button type="button" onClick={() => setLinkSent(false)} className="mt-4 text-xs text-[var(--h-muted)] hover:text-[var(--h-text)] transition-colors">
+                  {l.otherEmail}
+                </button>
+              </div>
+            ) : (
             <form onSubmit={handleSignIn} className="space-y-4 mt-4">
               <div className="space-y-1.5">
                 <label htmlFor="login-email" className="text-xs text-[var(--h-muted)] font-medium">{l.email}</label>
@@ -105,6 +140,28 @@ export default function LoginForm({ locale }: { locale: Locale }) {
                   className={inputCls}
                 />
               </div>
+
+              <button
+                type="button"
+                onClick={sendLink}
+                disabled={linkSending}
+                className="h-btn h-btn--primary w-full justify-center py-3 text-sm font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                {linkSending ? l.linkSending : l.linkCta}
+              </button>
+
+              {error && (
+                <div className="rounded-xl bg-[var(--h-error-bg)] border border-[var(--h-error-line)] px-4 py-3">
+                  <p className="text-xs text-[var(--h-error)]">{error}</p>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3 pt-2">
+                <div className="flex-1 h-px bg-[var(--h-line)]" />
+                <span className="text-xs text-[var(--h-dim)]">{l.or}</span>
+                <div className="flex-1 h-px bg-[var(--h-line)]" />
+              </div>
+
               <div className="space-y-1.5">
                 <label htmlFor="login-password" className="text-xs text-[var(--h-muted)] font-medium">{l.password}</label>
                 <input
@@ -113,41 +170,18 @@ export default function LoginForm({ locale }: { locale: Locale }) {
                   value={password}
                   onChange={e => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  required
                   autoComplete="current-password"
                   className={inputCls}
                 />
               </div>
 
-              {error && (
-                <div className="rounded-xl bg-[var(--h-error-bg)] border border-[var(--h-error-line)] px-4 py-3">
-                  <p className="text-xs text-[var(--h-error)]">{error}</p>
-                </div>
-              )}
-
-              <button
-                type="submit"
-                disabled={loading || !email.trim() || !password.trim()}
-                className="h-btn h-btn--primary w-full justify-center py-3 text-sm font-semibold text-white disabled:opacity-40 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <span className="flex items-center justify-center gap-2">
-                    <span className="w-3.5 h-3.5 border border-white/40 border-t-white rounded-full animate-spin" />
-                    {l.submitting}
-                  </span>
-                ) : (
-                  l.submit
-                )}
+              <button type="submit" disabled={loading || !email.trim() || !password.trim()} className={secondaryBtn}>
+                {loading ? l.submitting : l.submit}
               </button>
             </form>
+            )}
 
-            <div className="flex items-center gap-3 my-7">
-              <div className="flex-1 h-px bg-[var(--h-line)]" />
-              <span className="text-xs text-[var(--h-dim)]">{l.or}</span>
-              <div className="flex-1 h-px bg-[var(--h-line)]" />
-            </div>
-
-            <p className="text-center text-xs text-[var(--h-muted)]">
+            <p className="text-center text-xs text-[var(--h-muted)] mt-7">
               {l.noAccount}{" "}
               <Link href={toolHref("/registrieren", locale)} className="text-[var(--h-link)] hover:underline font-medium">
                 {l.startCheck}
