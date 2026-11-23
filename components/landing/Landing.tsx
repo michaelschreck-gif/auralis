@@ -9,6 +9,9 @@ import { ChapterShift } from "./ChapterShift"
 import { Faq, Finale, Footer, Path, Pricing } from "./Closing"
 import { Features } from "./Features"
 import { Hero, Nav } from "./Hero"
+import { SiteDictProvider } from "./i18n"
+import { LanguageSuggest } from "./LanguageSwitcher"
+import { toolHref as toolLink, type Locale } from "@/lib/i18n/site"
 
 /** Fortschrittslinie am oberen Rand – direkt per DOM, ohne React-Rerender. */
 function ScrollProgress() {
@@ -35,25 +38,29 @@ function ScrollProgress() {
   return <div ref={ref} className="lx-progress" style={{ transform: "scaleX(0)" }} aria-hidden="true" />
 }
 
-export function Landing({ toolHref, isLoggedIn }: { toolHref: string; isLoggedIn: boolean }) {
+export function Landing({ locale = "de", toolHref, isLoggedIn }: { locale?: Locale; toolHref: string; isLoggedIn: boolean }) {
+  const signupHref = toolLink("/registrieren", locale)
   return (
-    <div className="lx min-h-screen">
-      <ScrollProgress />
-      <div className="lx-grain" aria-hidden="true" />
-      <Nav toolHref={toolHref} isLoggedIn={isLoggedIn} />
-      <main>
-        <Hero />
-        <ChapterQuestion />
-        <ChapterShift />
-        <ChapterMeasure />
-        <ChapterScore />
-        <Features />
-        <Path />
-        <Pricing />
-        <Faq />
-        <Finale />
-      </main>
-      <Footer />
-    </div>
+    <SiteDictProvider locale={locale}>
+      <div className="lx min-h-screen" lang={locale}>
+        <ScrollProgress />
+        <div className="lx-grain" aria-hidden="true" />
+        <Nav toolHref={toolHref} signupHref={signupHref} isLoggedIn={isLoggedIn} />
+        <main>
+          <Hero signupHref={signupHref} />
+          <ChapterQuestion />
+          <ChapterShift />
+          <ChapterMeasure />
+          <ChapterScore />
+          <Features />
+          <Path />
+          <Pricing />
+          <Faq />
+          <Finale />
+        </main>
+        <Footer />
+        <LanguageSuggest />
+      </div>
+    </SiteDictProvider>
   )
 }

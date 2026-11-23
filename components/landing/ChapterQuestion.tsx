@@ -1,25 +1,20 @@
 "use client"
 
 import { ease, seg, useScrollProgress } from "./hooks"
+import { useT } from "./i18n"
 import { Chapter } from "./primitives"
 
-const PROMPT = "Wen empfiehlst du als Keynote-Speaker:in für KI im Mittelstand?"
-const INTRO = "Drei Namen, die bei diesem Thema häufig genannt werden:"
-// Frei erfundene Beispielnamen – keine realen Personen.
-const NAMES = [
-  { n: "Dr. Lea Hartmann", d: "Autorin, spricht regelmäßig auf Mittelstandsforen" },
-  { n: "Jonas Brandt", d: "Podcast-Host, viele Fachartikel zu KI-Strategie" },
-  { n: "Miriam Okafor", d: "Beraterin, Keynotes zu KI und Führung" },
-]
-
-const STORY = [
-  { t: "Eine Geschäftsführerin sucht eine Keynote für ihr Führungskräfte-Treffen.", from: 0 },
-  { t: "Sie googelt nicht mehr. Sie fragt die KI.", from: 0.2 },
-  { t: "Die Antwort kommt in Sekunden. Drei Namen. Klar, überzeugend, endgültig.", from: 0.42 },
-  { t: "Deiner ist nicht dabei. Und du erfährst es nie.", from: 0.72, strong: true },
-]
+// Wann welcher Satz der Erzählung erscheint (Scroll-Fortschritt).
+const STORY_FROM = [0, 0.2, 0.42, 0.72]
 
 export function ChapterQuestion() {
+  const t = useT()
+  const q = t.question
+  const PROMPT = q.prompt
+  const INTRO = q.intro
+  // Frei erfundene Beispielnamen – keine realen Personen.
+  const NAMES = q.names
+  const STORY = q.story.map((text, i) => ({ t: text, from: STORY_FROM[i], strong: i === q.story.length - 1 }))
   const [ref, p] = useScrollProgress<HTMLElement>("pin")
 
   const typed = Math.round(seg(p, 0.06, 0.24) * PROMPT.length)
@@ -31,13 +26,13 @@ export function ChapterQuestion() {
   const activeStory = STORY.reduce((acc, s, i) => (p >= s.from ? i : acc), 0)
 
   return (
-    <section ref={ref} id="geschichte" className="relative h-[340vh]" aria-label="Kapitel 1: Die Frage">
+    <section ref={ref} id="geschichte" className="relative h-[340vh]" aria-label={q.aria}>
       <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
         <div className="lx-aura left-[30%] top-[20%] h-[40vw] w-[40vw] bg-[#fa5935]/10" />
         <div className="relative mx-auto grid w-full max-w-[1320px] items-center gap-6 px-5 sm:gap-10 sm:px-8 lg:grid-cols-[1fr_1.1fr] lg:gap-20">
           {/* Erzählung */}
           <div className="relative">
-            <Chapter n="01" title="Die Frage" />
+            <Chapter n="01" title={q.chapter} />
             <div className="relative mt-5 min-h-[6.5rem] sm:mt-8 sm:min-h-[12rem] lg:min-h-[15rem]">
               {STORY.map((s, i) => (
                 <p
@@ -50,7 +45,7 @@ export function ChapterQuestion() {
                 >
                   {s.strong ? (
                     <>
-                      Deiner ist nicht dabei. <span className="lx-em">Und du erfährst es nie.</span>
+                      {q.storyLastPre}<span className="lx-em">{q.storyLastEm}</span>
                     </>
                   ) : (
                     s.t
@@ -75,10 +70,10 @@ export function ChapterQuestion() {
             <div className="lx-glass relative overflow-hidden rounded-[24px] p-4 sm:rounded-[28px] sm:p-7">
               <div className="mb-4 flex items-center justify-between sm:mb-5">
                 <div className="flex items-center gap-2.5">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#fa5935] to-[#f7b49b] text-[11px] font-bold text-white">KI</span>
-                  <span className="text-[13px] font-medium text-[var(--lx-text)]">KI-Assistent</span>
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-[#fa5935] to-[#f7b49b] text-[11px] font-bold text-white">{q.assistantBadge}</span>
+                  <span className="text-[13px] font-medium text-[var(--lx-text)]">{q.assistant}</span>
                 </div>
-                <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--lx-dim)]">Beispiel</span>
+                <span className="text-[11px] uppercase tracking-[0.2em] text-[var(--lx-dim)]">{q.example}</span>
               </div>
 
               {/* Frage */}
@@ -86,7 +81,7 @@ export function ChapterQuestion() {
                 <div className="max-w-[88%] rounded-2xl rounded-br-md bg-white/[0.07] px-4 py-3 text-[14.5px] leading-relaxed text-[var(--lx-text)] sm:text-[15px]">
                   {PROMPT.slice(0, typed)}
                   {typed < PROMPT.length && <span className="lx-caret" />}
-                  {typed === 0 && <span className="text-[var(--lx-dim)]">Nachricht eingeben …</span>}
+                  {typed === 0 && <span className="text-[var(--lx-dim)]">{q.placeholder}</span>}
                 </div>
               </div>
 
@@ -138,14 +133,14 @@ export function ChapterQuestion() {
                     </svg>
                   </span>
                   <div>
-                    <div className="text-[13px] font-semibold text-[var(--lx-text)]">Dein Name</div>
-                    <div className="text-[12px] text-[var(--lx-peach)]">In dieser Antwort nicht gefunden</div>
+                    <div className="text-[13px] font-semibold text-[var(--lx-text)]">{q.yourName}</div>
+                    <div className="text-[12px] text-[var(--lx-peach)]">{q.notFound}</div>
                   </div>
                 </div>
-                <span className="lx-num text-[12px] text-[var(--lx-dim)]">0 von 3</span>
+                <span className="lx-num text-[12px] text-[var(--lx-dim)]">{q.count}</span>
               </div>
             </div>
-            <p className="mt-4 hidden text-center text-[11px] text-[var(--lx-dim)] sm:block">Gestellte Szene mit erfundenen Namen.</p>
+            <p className="mt-4 hidden text-center text-[11px] text-[var(--lx-dim)] sm:block">{q.staged}</p>
           </div>
         </div>
       </div>

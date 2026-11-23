@@ -2,6 +2,7 @@ import { createServerClient } from "@supabase/ssr"
 import { NextResponse, type NextRequest } from "next/server"
 import { crossDomainRedirect, domainConfigFromEnv } from "@/lib/domains"
 import { safeNextPath } from "@/lib/halo/onboarding"
+import { isLocale, localeFromPath } from "@/lib/i18n/site"
 
 const PROTECTED_PREFIXES = ["/start", "/weiter", "/p", "/personen", "/konto", "/admin"]
 
@@ -15,7 +16,13 @@ export async function proxy(request: NextRequest) {
 
   const isProtected = PROTECTED_PREFIXES.some(p => pathname === p || pathname.startsWith(p + "/"))
   const isAuthPage = pathname === "/login" || pathname === "/registrieren"
-  if (!isProtected && !isAuthPage) return NextResponse.next()
+
+  // Sprache der Seite für <html lang> (app/layout.tsx): Pfad /en, /fr – auf Login/Registrierung ?lang=
+  const langParam = request.nextUrl.searchParams.get("lang")
+  const lang = isAuthPage && langParam && isLocale(langParam) ? langParam : localeFromPath(pathname)
+  request.headers.set("x-halo-lang", lang)
+
+  if (!isProtected && !isAuthPage) return NextResponse.next({ request })
 
   let supabaseResponse = NextResponse.next({ request })
 
@@ -57,7 +64,7 @@ export async function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/", "/login", "/registrieren",
+    "/", "/en", "/en/:path*", "/fr", "/fr/:path*", "/login", "/registrieren",
     "/start", "/weiter", "/p/:path*", "/personen/:path*", "/konto/:path*",
     "/auth/:path*", "/admin/:path*",
     "/warteliste", "/kontakt", "/legal/:path*", "/docs/:path*", "/u/:path*",

@@ -1,6 +1,7 @@
 "use client"
 
 import { useState } from "react"
+import { SITE_TEXTS, type WaitlistFormTexts } from "@/components/site/texts"
 
 type Variant = "light" | "dark"
 
@@ -10,6 +11,8 @@ interface WaitlistFormProps {
   placeholder?: string
   buttonLabel?: string
   className?: string
+  /** Texte in der Sprache der Seite (Standard: Deutsch). */
+  texts?: WaitlistFormTexts
 }
 
 // Reusable waitlist capture form. Posts to /api/waitlist, which is currently
@@ -18,8 +21,9 @@ interface WaitlistFormProps {
 export default function WaitlistForm({
   source,
   variant = "light",
-  placeholder = "deine@email.de",
-  buttonLabel = "Auf die Warteliste →",
+  texts = SITE_TEXTS.de.form,
+  placeholder = texts.placeholder,
+  buttonLabel = texts.button,
   className = "",
 }: WaitlistFormProps) {
   const [email, setEmail] = useState("")
@@ -43,7 +47,8 @@ export default function WaitlistForm({
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.error || "Da ist etwas schiefgelaufen. Bitte versuch es erneut.")
+        // Fehlertexte der API sind Deutsch – in anderen Sprachen den eigenen Text zeigen.
+        setError(texts.error === SITE_TEXTS.de.form.error && data.error ? data.error : texts.error)
         setLoading(false)
         return
       }
@@ -52,7 +57,7 @@ export default function WaitlistForm({
       setDone(true)
       setLoading(false)
     } catch {
-      setError("Da ist etwas schiefgelaufen. Bitte versuch es erneut.")
+      setError(texts.error)
       setLoading(false)
     }
   }
@@ -68,9 +73,7 @@ export default function WaitlistForm({
             : "bg-[#E8EEEE] border border-[#BFD6D6] text-[#1C2A2A]"
         } ${className}`}
       >
-        {alreadyOnList
-          ? "Du stehst schon auf der Warteliste — wir melden uns."
-          : "Danke! Du stehst auf der Warteliste — wir melden uns, sobald es losgeht."}
+        {alreadyOnList ? texts.already : texts.done}
       </div>
     )
   }
