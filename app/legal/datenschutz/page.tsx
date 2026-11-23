@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
+import { alternatesFor } from "@/lib/i18n/site"
 
 export const metadata: Metadata = {
   title: "Datenschutzerklärung – Halo",
   description: "Datenschutzerklärung von Halo nach DSGVO Art. 13 und 14.",
+  alternates: alternatesFor("privacy", "de"),
 }
 
 export default function DatenschutzPage() {

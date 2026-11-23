@@ -3,17 +3,13 @@
 import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useReducedMotion, useScrollProgress } from "./hooks"
+import { useT } from "./i18n"
+import { LanguageSwitcher } from "./LanguageSwitcher"
 import { Arrow, HaloMark, SplitHeading } from "./primitives"
 
-const NAV = [
-  { href: "#geschichte", label: "Die Geschichte" },
-  { href: "#messung", label: "Messung" },
-  { href: "#score", label: "Halo Score" },
-  { href: "#preise", label: "Preise" },
-  { href: "#faq", label: "FAQ" },
-]
-
-export function Nav({ toolHref, isLoggedIn }: { toolHref: string; isLoggedIn: boolean }) {
+export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; signupHref: string; isLoggedIn: boolean }) {
+  const t = useT()
+  const NAV = t.nav.items
   const [scrolled, setScrolled] = useState(false)
   const [hidden, setHidden] = useState(false)
   const [open, setOpen] = useState(false)
@@ -49,8 +45,8 @@ export function Nav({ toolHref, isLoggedIn }: { toolHref: string; isLoggedIn: bo
   return (
     <>
       <header className={`lx-nav ${scrolled ? "is-scrolled" : ""} ${hidden && !open ? "is-hidden" : ""}`}>
-        <nav className="mx-auto flex h-[72px] max-w-[1320px] items-center justify-between px-5 sm:px-8" aria-label="Hauptnavigation">
-          <a href="#top" className="flex items-center" aria-label="DigitalHalo – zum Seitenanfang">
+        <nav className="mx-auto flex h-[72px] max-w-[1320px] items-center justify-between px-5 sm:px-8" aria-label={t.nav.mainNav}>
+          <a href="#top" className="flex items-center" aria-label={t.nav.homeAria}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-[22px] w-auto" />
           </a>
@@ -62,16 +58,17 @@ export function Nav({ toolHref, isLoggedIn }: { toolHref: string; isLoggedIn: bo
             ))}
           </div>
           <div className="flex items-center gap-2">
+            <LanguageSwitcher className="hidden sm:flex" />
             <a href={toolHref} className="hidden rounded-full px-4 py-2 text-[13.5px] font-medium text-[var(--lx-text)] transition-colors hover:bg-white/5 sm:inline-flex">
-              {isLoggedIn ? "Zum Tool" : "Anmelden"}
+              {isLoggedIn ? t.nav.toTool : t.nav.login}
             </a>
-            <Link href="/registrieren" className="lx-btn lx-btn--primary !px-5 !py-2.5 !text-[13px]">
-              Kostenloser Check
+            <Link href={signupHref} className="lx-btn lx-btn--primary !px-5 !py-2.5 !text-[13px]">
+              {t.nav.cta}
             </Link>
             <button
               type="button"
               className="ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--lx-line-strong)] lg:hidden"
-              aria-label={open ? "Menü schließen" : "Menü öffnen"}
+              aria-label={open ? t.nav.menuClose : t.nav.menuOpen}
               aria-expanded={open}
               onClick={() => setOpen(o => !o)}
             >
@@ -99,19 +96,21 @@ export function Nav({ toolHref, isLoggedIn }: { toolHref: string; isLoggedIn: bo
           ))}
         </ul>
         <div className="mt-10 flex flex-col gap-3">
-          <Link href="/registrieren" className="lx-btn lx-btn--primary" tabIndex={open ? 0 : -1}>
-            Kostenlosen Check starten <Arrow />
+          <Link href={signupHref} className="lx-btn lx-btn--primary" tabIndex={open ? 0 : -1}>
+            {t.nav.ctaMobile} <Arrow />
           </Link>
           <a href={toolHref} className="lx-btn lx-btn--ghost" tabIndex={open ? 0 : -1}>
-            {isLoggedIn ? "Zum Tool" : "Anmelden"}
+            {isLoggedIn ? t.nav.toTool : t.nav.login}
           </a>
+          <LanguageSwitcher className="mt-4 justify-center" />
         </div>
       </div>
     </>
   )
 }
 
-export function Hero() {
+export function Hero({ signupHref }: { signupHref: string }) {
+  const t = useT()
   const [ready, setReady] = useState(false)
   const [ref, scrollP] = useScrollProgress<HTMLElement>("leave")
   const reduced = useReducedMotion()
@@ -178,31 +177,32 @@ export function Hero() {
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--lx-coral)] opacity-60" />
               <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--lx-coral)]" />
             </span>
-            <span className="text-[11px] font-semibold uppercase tracking-[0.26em] text-[var(--lx-muted)]">KI-Reputation für Personal Brands</span>
+            <span className="text-[11px] font-semibold uppercase tracking-[0.26em] text-[var(--lx-muted)]">{t.hero.eyebrow}</span>
           </div>
 
           <SplitHeading
             as="h1"
             start={ready}
             className="text-[clamp(2.8rem,6.6vw,6.3rem)] !leading-[0.98]"
-            parts={["Die KI spricht\nüber dich.\n", { em: "Weißt du, was\nsie sagt?" }]}
+            parts={t.hero.heading}
           />
 
           <p className={`lx-reveal lx-lead mt-8 max-w-[560px] ${ready ? "is-in" : ""}`} style={{ "--d": "700ms" } as React.CSSProperties}>
-            DigitalHalo misst, wie ChatGPT, Claude, Perplexity, Gemini und Google dich sehen – und verdichtet es zu einer Zahl,
-            die du bewegen kannst: dem <span className="text-[var(--lx-text)]">Halo&nbsp;Score™</span>.
+            {t.hero.leadPre}
+            <span className="text-[var(--lx-text)]">Halo&nbsp;Score™</span>
+            {t.hero.leadPost}
           </p>
 
           <div className={`lx-reveal mt-9 flex flex-col gap-3 sm:flex-row sm:items-center ${ready ? "is-in" : ""}`} style={{ "--d": "850ms" } as React.CSSProperties}>
-            <Link href="/registrieren" className="lx-btn lx-btn--primary">
-              Kostenlosen Check starten <Arrow />
+            <Link href={signupHref} className="lx-btn lx-btn--primary">
+              {t.hero.cta} <Arrow />
             </Link>
             <a href="#geschichte" className="lx-btn lx-btn--ghost">
-              Die Geschichte sehen
+              {t.hero.ctaSecondary}
             </a>
           </div>
           <p className={`lx-reveal mt-5 text-xs text-[var(--lx-dim)] ${ready ? "is-in" : ""}`} style={{ "--d": "1000ms" } as React.CSSProperties}>
-            Kostenlos · keine Kreditkarte · Daten in der EU
+            {t.hero.note}
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export function Hero() {
             <div className="lx-marquee__track gap-12 text-[13px] text-[var(--lx-dim)]">
               {[0, 1].map(k => (
                 <div key={k} className="flex shrink-0 items-center gap-12 pr-12" aria-hidden={k === 1}>
-                  {["Claude", "GPT-4o", "Perplexity", "Gemini", "Google-Suche", "Google KI-Übersicht"].map(m => (
+                  {t.hero.models.map(m => (
                     <span key={m} className="flex items-center gap-3 whitespace-nowrap">
                       <span className="h-1 w-1 rounded-full bg-[var(--lx-coral)]" />
                       {m}
@@ -224,11 +224,11 @@ export function Hero() {
               ))}
             </div>
           </div>
-          <a href="#geschichte" className="flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-[var(--lx-muted)]" aria-label="Weiter zur Geschichte">
+          <a href="#geschichte" className="flex items-center gap-3 text-[11px] uppercase tracking-[0.24em] text-[var(--lx-muted)]" aria-label={t.hero.scrollAria}>
             <span className="relative block h-10 w-px overflow-hidden bg-white/10">
               <span className="lx-scroll-cue absolute inset-0 bg-[var(--lx-peach)]" />
             </span>
-            Scrollen
+            {t.hero.scroll}
           </a>
         </div>
       </div>

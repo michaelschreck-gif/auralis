@@ -1,8 +1,10 @@
 import type { Metadata } from "next"
+import { alternatesFor } from "@/lib/i18n/site"
 
 export const metadata: Metadata = {
   title: "Impressum – Halo",
   description: "Impressum der Halo-Plattform nach § 5 DDG.",
+  alternates: alternatesFor("imprint", "de"),
 }
 
 export default function ImpressumPage() {

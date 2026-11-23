@@ -1,4 +1,5 @@
 import RegisterForm from "@/components/halo/RegisterForm"
+import { isLocale } from "@/lib/i18n/site"
 
 export const metadata = { title: "Registrieren · Halo" }
 export const dynamic = "force-dynamic"
@@ -11,6 +12,8 @@ function signupOpen(): boolean {
   return process.env.SIGNUP_OPEN !== "false"
 }
 
-export default function RegistrierenPage() {
-  return <RegisterForm open={signupOpen()} />
+export default async function RegistrierenPage({ searchParams }: { searchParams: Promise<{ lang?: string | string[] }> }) {
+  const { lang } = await searchParams
+  const locale = typeof lang === "string" && isLocale(lang) ? lang : "de"
+  return <RegisterForm open={signupOpen()} locale={locale} />
 }

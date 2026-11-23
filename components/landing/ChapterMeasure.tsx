@@ -1,32 +1,18 @@
 "use client"
 
 import { ease, seg, useScrollProgress } from "./hooks"
+import { useT } from "./i18n"
 import { Chapter, HaloMark } from "./primitives"
 
 const r3 = (n: number) => Math.round(n * 1000) / 1000
 
 const MODELS = ["Claude", "GPT-4o", "Perplexity", "Gemini", "Google"]
 
-// Beispielfragen zum Beispielthema „KI-Strategie“ (die echte Fragen-Matrix ist ausführlicher).
-const QUESTIONS = [
-  "Wer prägt das Thema KI-Strategie?",
-  "Wen empfiehlst du für eine Keynote zu KI-Strategie?",
-  "Welche Expert:innen für KI-Strategie kennst du?",
-  "Wer ist im DACH-Raum bekannt für KI-Strategie?",
-  "Welche Stimmen zu KI-Strategie lohnen sich?",
-  "Mit wem verbindet man KI-Strategie?",
-  "Wer berät Unternehmen zu KI-Strategie?",
-]
+// Bewusst ohne Zahlen: was die Messung ausmacht, nicht wie oft. Texte in dict/*.ts.
+const STAT_ICONS = ["ask", "rounds", "models", "weekly"] as const
+type StatIconName = (typeof STAT_ICONS)[number]
 
-// Bewusst ohne Zahlen: was die Messung ausmacht, nicht wie oft.
-const STATS: { l: string; d: string; icon: "ask" | "rounds" | "models" | "weekly" }[] = [
-  { l: "Die richtigen Fragen je Thema", d: "so, wie echte Menschen fragen", icon: "ask" },
-  { l: "Mehrere Runden je Modell", d: "damit Zufall nicht zählt", icon: "rounds" },
-  { l: "Über mehrere KI-Modelle hinweg", d: "plus Google-Suche & KI-Übersicht", icon: "models" },
-  { l: "Wöchentliche Status-Abfragen", d: "du siehst, was sich bewegt", icon: "weekly" },
-]
-
-function StatIcon({ name }: { name: (typeof STATS)[number]["icon"] }) {
+function StatIcon({ name }: { name: StatIconName }) {
   const common = { fill: "none", stroke: "currentColor", strokeWidth: 1.5, strokeLinecap: "round" as const, strokeLinejoin: "round" as const }
   return (
     <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
@@ -64,23 +50,27 @@ function StatIcon({ name }: { name: (typeof STATS)[number]["icon"] }) {
 }
 
 export function ChapterMeasure() {
+  const t = useT()
+  const m = t.measure
+  // Beispielfragen zum Beispielthema (die echte Fragen-Matrix ist ausführlicher).
+  const QUESTIONS = m.questions
+  const STATS = m.stats.map((x, i) => ({ ...x, icon: STAT_ICONS[i] }))
   const [ref, p] = useScrollProgress<HTMLElement>("pin")
   const spin = p * Math.PI * 1.6
   const statsOn = seg(p, 0.05, 0.45)
 
   return (
-    <section ref={ref} id="messung" className="relative h-[300vh]" aria-label="Kapitel 3: Die Messung">
+    <section ref={ref} id="messung" className="relative h-[300vh]" aria-label={m.aria}>
       <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
         <div className="lx-aura right-[5%] top-[15%] h-[38vw] w-[38vw] bg-[#8caaab]/15" />
         <div className="relative mx-auto grid w-full max-w-[1320px] items-center gap-6 px-5 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
           <div>
-            <Chapter n="03" title="Die Messung" />
+            <Chapter n="03" title={m.chapter} />
             <h2 className="lx-display mt-5 text-[clamp(1.9rem,4.4vw,4.2rem)] sm:mt-7">
-              Wir stellen die Fragen, <span className="lx-em">die über dich entscheiden.</span>
+              {m.headingPre}<span className="lx-em">{m.headingEm}</span>
             </h2>
             <p className="lx-lead mt-6 hidden max-w-[500px] sm:block">
-              DigitalHalo fragt die wichtigsten KI-Modelle so, wie Kund:innen, Veranstalter und Journalist:innen fragen –
-              Woche für Woche. Dann wertet Halo aus: Wirst du genannt? An welcher Stelle? In welchem Ton?
+              {m.lead}
             </p>
             <ul className="mt-6 grid max-w-[540px] grid-cols-2 gap-x-4 gap-y-4 sm:mt-10 sm:gap-x-6 sm:gap-y-6">
               {STATS.map((s, i) => {

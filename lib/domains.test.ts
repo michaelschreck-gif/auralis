@@ -74,3 +74,12 @@ test("Andere Hosts (vercel.app, Previews, localhost) und fehlende Konfiguration:
   assert.equal(crossDomainRedirect("localhost:3000", "/", "", cfg), null)
   assert.equal(crossDomainRedirect("digital-halo.de", "/login", "", null), null)
 })
+
+test("Sprachversionen /en und /fr gehören zur Webseite", () => {
+  for (const p of ["/en", "/en/waitlist", "/en/legal/privacy", "/fr", "/fr/liste-attente", "/fr/legal/cgv"]) {
+    assert.equal(crossDomainRedirect("digital-halo.de", p, "", cfg), null, p)
+    assert.equal(crossDomainRedirect("app.digital-halo.de", p, "", cfg), "https://digital-halo.de" + p, p)
+  }
+  // keine Präfix-Falle: /entwurf, /frage sind keine Sprachpfade
+  assert.equal(crossDomainRedirect("digital-halo.de", "/entwurf", "", cfg), null)
+})

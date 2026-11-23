@@ -1,6 +1,6 @@
 // lib/domains.ts
 // Aufteilung auf Domains:
-//   digital-halo.de        → Webseite (Landingpage, Warteliste, Kontakt, Legal, API-Doku, öffentliche Profile)
+//   digital-halo.de        → Webseite (Landingpage, Warteliste, Kontakt, Legal, API-Doku, öffentliche Profile, /en, /fr)
 //   app.digital-halo.de    → Tool (Login, Registrierung, Assistent, Personen, Konto)
 //   admin.digital-halo.de  → Admin (/admin), optional über NEXT_PUBLIC_ADMIN_URL
 // Aktiv nur, wenn NEXT_PUBLIC_SITE_URL und NEXT_PUBLIC_APP_URL gesetzt sind und die Anfrage
@@ -42,7 +42,7 @@ const TOOL_PREFIXES = [
   "/dashboard", "/onboarding", "/settings", "/login", "/auth", "/admin",
   "/registrieren", "/start", "/weiter", "/p", "/personen", "/konto",
 ]
-const SITE_PREFIXES = ["/warteliste", "/kontakt", "/legal", "/docs", "/u"]
+const SITE_PREFIXES = ["/warteliste", "/kontakt", "/legal", "/docs", "/u", "/en", "/fr"]
 /** Auf der Admin-Domain erlaubt (Login und Auth gehören dazu). */
 const ADMIN_PREFIXES = ["/admin", "/login", "/auth"]
 
