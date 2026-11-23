@@ -3,9 +3,10 @@ import { createHaloServerClient } from "@/lib/supabase/halo"
 import { homePath } from "@/lib/halo/home"
 import { planOfOwner } from "@/lib/halo/plan-db"
 import { planLimits } from "@/lib/halo/plans"
-import { TOPIC_SUGGESTIONS } from "@/lib/halo/onboarding"
+import { TOPIC_SUGGESTIONS, pendingCheckOf } from "@/lib/halo/onboarding"
 import { MARKET_LIST } from "@/lib/auralis/markets"
 import StartWizard from "@/components/halo/StartWizard"
+
 
 export const metadata = { title: "Loslegen · Halo" }
 export const dynamic = "force-dynamic"
@@ -24,8 +25,12 @@ export default async function StartPage() {
   // Neue Konten starten im kostenlosen Check (plan free).
   const limits = planLimits(await planOfOwner(db, user.id))
 
+  // Schneller Check: Angaben aus dem Registrierungsformular → sofort messen.
+  const pending = pendingCheckOf(user.user_metadata)
+
   return (
     <StartWizard
+      quick={pending ? { topic: pending.topic, market: pending.market } : null}
       markets={MARKET_LIST.map(m => ({ id: m.id, label: m.label, flag: m.flag, language: m.language }))}
       suggestions={TOPIC_SUGGESTIONS}
       maxTopics={limits.topicsPerPerson}

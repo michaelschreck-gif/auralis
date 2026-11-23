@@ -14,15 +14,30 @@ const icon = (d: string) => (
   </svg>
 )
 
-function navFor(base: string): NavItem[] {
+const ICON_SCORE = icon("M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5")
+const ICON_STEPS = icon("M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9")
+const ICON_PARTNER = icon("M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z")
+
+/**
+ * Navigation einer Person. `simple` (kostenloser Check): nur Ergebnis, nächste Schritte und
+ * Umsetzung durch entrenous. Bezahlte Tarife sehen zusätzlich die Detailbereiche.
+ */
+function navFor(base: string, simple: boolean): NavItem[] {
+  if (simple) {
+    return [
+      { href: base, label: "Halo Score", icon: ICON_SCORE },
+      { href: `${base}/massnahmen`, label: "Nächste Schritte", icon: ICON_STEPS },
+      { href: `${base}/leistungen`, label: "Umsetzung durch entrenous", icon: ICON_PARTNER },
+    ]
+  }
   return [
-    { href: base, label: "Halo Score", icon: icon("M12 3a9 9 0 1 0 9 9M12 7a5 5 0 1 0 5 5") },
+    { href: base, label: "Halo Score", icon: ICON_SCORE },
+    { href: `${base}/massnahmen`, label: "Nächste Schritte", icon: ICON_STEPS },
     { href: `${base}/ki`, label: "KI-Sichtbarkeit", icon: icon("M4 6h16M4 12h10M4 18h7M18 15l3 3-3 3") },
     { href: `${base}/google`, label: "Google-Sichtbarkeit", icon: icon("M11 4a7 7 0 1 0 0 14 7 7 0 0 0 0-14zM21 21l-4.3-4.3") },
     { href: `${base}/impulse`, label: "Impulse", icon: icon("M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.4 1 1.1 1 1.8V16h5v-.3c0-.7.4-1.4 1-1.8A6 6 0 0 0 12 3z") },
-    { href: `${base}/massnahmen`, label: "Maßnahmen", icon: icon("M9 11l3 3 8-8M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9") },
     { href: `${base}/persona`, label: "Wie die KI dich sieht", icon: icon("M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0") },
-    { href: `${base}/leistungen`, label: "Mit uns verbessern", icon: icon("M12 3l1.8 4.6L18.5 9l-4.7 1.4L12 15l-1.8-4.6L5.5 9l4.7-1.4zM19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z") },
+    { href: `${base}/leistungen`, label: "Umsetzung durch entrenous", icon: ICON_PARTNER },
   ]
 }
 
@@ -32,6 +47,7 @@ export default function PersonShell({
   accountName,
   teamPersons,
   isOwner,
+  simple = false,
   children,
 }: {
   personId: string
@@ -41,12 +57,14 @@ export default function PersonShell({
   teamPersons: { id: string; name: string }[]
   /** Owner sehen den Link zum Konto (Name, API-Schlüssel). */
   isOwner: boolean
+  /** Kostenloser Check: reduzierte Navigation. */
+  simple?: boolean
   children: React.ReactNode
 }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const base = `/p/${personId}`
-  const items = navFor(base)
+  const items = navFor(base, simple)
   const settingsHref = `${base}/einstellungen`
 
   const isActive = (href: string) => (href === base ? pathname === base : pathname === href || pathname.startsWith(href + "/"))

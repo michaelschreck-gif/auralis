@@ -143,7 +143,7 @@ export default function ServiceCatalog({ personId, services, recommendations, fi
           Danke, {firstName}. <span className="h-em">Wir melden uns.</span>
         </h2>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-[var(--h-muted)]">
-          Unser Team sieht deine Messung und meldet sich innerhalb eines Werktags mit einem Vorschlag – persönlich und unverbindlich.
+          Das Team von entrenous sieht deine Messung und meldet sich innerhalb eines Werktags mit einem Vorschlag – persönlich und unverbindlich.
         </p>
         <ul className="mx-auto mt-6 flex max-w-md flex-wrap justify-center gap-2">
           {selected.map(id => (
@@ -272,7 +272,7 @@ export default function ServiceCatalog({ personId, services, recommendations, fi
               </button>
             </div>
             <p className="mt-4 text-[11px] leading-relaxed text-[var(--h-dim)]">
-              Mit dem Senden geben wir deine Messung und Angaben an unser Agentur-Team weiter, um dir ein Angebot zu machen.
+              Mit dem Senden geben wir deine Messung und Angaben an entrenous, unsere Agentur, weiter, um dir ein Angebot zu machen.
             </p>
           </div>
         </div>

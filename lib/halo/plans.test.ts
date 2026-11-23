@@ -3,7 +3,7 @@
 
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { allowedFrequency, isMonthlyBriefDay, nextManualAllowedAt, planLimits } from "./plans.ts"
+import { allowedFrequency, isMonthlyBriefDay, measurementPlanFor, nextManualAllowedAt, pickProviders, planLimits } from "./plans.ts"
 
 test("Check: 1 Thema, kein Team, monatlich", () => {
   const p = planLimits("free")
@@ -33,4 +33,20 @@ test("Check: Neu messen erst nach 30 Tagen", () => {
 test("Monatlicher Brief: erster Montag (Tag 1–7, deutsche Zeit)", () => {
   assert.equal(isMonthlyBriefDay(new Date("2026-11-02T06:00:00Z")), true)
   assert.equal(isMonthlyBriefDay(new Date("2026-11-09T06:00:00Z")), false)
+})
+
+test("Messtiefe: Check schlank, bezahlte Tarife voll", () => {
+  const free = measurementPlanFor("free")
+  assert.deepEqual([free.depth, free.rounds, free.providerIds?.length], ["quick", 1, 3])
+  assert.equal(measurementPlanFor(null).depth, "quick")
+  for (const plan of ["starter", "pro", "enterprise"] as const) {
+    assert.deepEqual(measurementPlanFor(plan), { depth: "standard", rounds: 2, providerIds: null })
+  }
+})
+
+test("Modellauswahl: gewünschte Modelle, sonst alle vorhandenen", () => {
+  const all = [{ id: "claude-sonnet" }, { id: "gpt-4o" }, { id: "gemini-flash" }]
+  assert.deepEqual(pickProviders(all, null).map(p => p.id), ["claude-sonnet", "gpt-4o", "gemini-flash"])
+  assert.deepEqual(pickProviders(all, ["gpt-4o", "gemini-flash", "perplexity-sonar"]).map(p => p.id), ["gpt-4o", "gemini-flash"])
+  assert.deepEqual(pickProviders([{ id: "claude-sonnet" }], ["gpt-4o"]).map(p => p.id), ["claude-sonnet"])
 })

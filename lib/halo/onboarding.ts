@@ -94,3 +94,18 @@ export function safeNextPath(next: string | null | undefined, fallback: string):
   if (!next || !next.startsWith("/") || next.startsWith("//") || next.includes("\\")) return fallback
   return next
 }
+
+/** Angaben aus dem schnellen Check (RegisterForm), bis zum ersten Start in den Auth-Metadaten. */
+export type PendingCheck = { first_name: string; last_name: string; topic: string; market: MarketId; lang: string | null }
+
+/** Liest und prüft `pending_check` aus den Auth-Metadaten; null, wenn nichts Brauchbares da ist. */
+export function pendingCheckOf(meta: Record<string, unknown> | null | undefined): PendingCheck | null {
+  const p = meta?.pending_check as Record<string, unknown> | null | undefined
+  if (!p || typeof p !== "object") return null
+  const first = clean(p.first_name).slice(0, MAX_NAME_LENGTH)
+  const last = clean(p.last_name).slice(0, MAX_NAME_LENGTH)
+  const topic = clean(p.topic).slice(0, MAX_TOPIC_LENGTH)
+  if (!first || !last || !topic) return null
+  const market = MARKET_IDS.find(m => m === p.market) ?? "dach"
+  return { first_name: first, last_name: last, topic, market, lang: typeof p.lang === "string" ? p.lang : null }
+}

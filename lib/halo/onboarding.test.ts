@@ -1,6 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { accountNameFor, normalizeTopics, safeNextPath, validateStartInput } from "./onboarding.ts"
+import { accountNameFor, normalizeTopics, pendingCheckOf, safeNextPath, validateStartInput } from "./onboarding.ts"
 
 const valid = {
   accountType: "individual",
@@ -48,4 +48,15 @@ test("Weiterleitung nur auf interne Pfade", () => {
   assert.equal(safeNextPath("https://evil.com", "/weiter"), "/weiter")
   assert.equal(safeNextPath("/\\evil.com", "/weiter"), "/weiter")
   assert.equal(safeNextPath(null, "/weiter"), "/weiter")
+})
+
+test("Schneller Check: pending_check aus den Auth-Metadaten", () => {
+  assert.equal(pendingCheckOf(undefined), null)
+  assert.equal(pendingCheckOf({ pending_check: null }), null)
+  assert.equal(pendingCheckOf({ pending_check: { first_name: "Ada", last_name: "", topic: "KI" } }), null)
+  assert.deepEqual(
+    pendingCheckOf({ pending_check: { first_name: "  Ada ", last_name: "Lovelace", topic: "Künstliche  Intelligenz", market: "eu", lang: "fr" } }),
+    { first_name: "Ada", last_name: "Lovelace", topic: "Künstliche Intelligenz", market: "eu", lang: "fr" },
+  )
+  assert.equal(pendingCheckOf({ pending_check: { first_name: "A", last_name: "B", topic: "T", market: "mars" } })?.market, "dach")
 })

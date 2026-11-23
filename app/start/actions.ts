@@ -4,7 +4,7 @@ import { after } from "next/server"
 import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { LIMITS } from "@/lib/halo/config"
 import { notifyNewLead } from "@/lib/halo/leads"
-import { accountNameFor, validateStartInput } from "@/lib/halo/onboarding"
+import { accountNameFor, pendingCheckOf, validateStartInput } from "@/lib/halo/onboarding"
 import { createPersonWithTopics, ownedTeamAccount } from "@/lib/halo/people"
 import { checkTeamSeat, planOfAccount, planOfOwner } from "@/lib/halo/plan-db"
 import { planLimits } from "@/lib/halo/plans"
@@ -58,6 +58,32 @@ export async function completeStart(raw: Record<string, unknown>): Promise<Start
   }
 
   return createPersonWithTopics(db, createHaloServiceClient(), accountId, input, limits.frequency)
+}
+
+/**
+ * Schneller Check: Konto, Person und Thema aus den Angaben des Registrierungsformulars
+ * anlegen und die erste (schlanke) Messung starten. Die Angaben werden danach gelöscht.
+ */
+export async function completeQuickStart(): Promise<StartResult> {
+  const db = await createHaloServerClient()
+  const { data: { user } } = await db.auth.getUser()
+  if (!user) return { ok: false, error: "Bitte melde dich erneut an." }
+  const pending = pendingCheckOf(user.user_metadata)
+  if (!pending) return { ok: false, error: "Keine Angaben gefunden. Bitte fülle die Schritte aus." }
+
+  const res = await completeStart({
+    accountType: "individual",
+    firstName: pending.first_name,
+    lastName: pending.last_name,
+    market: pending.market,
+    topics: [pending.topic],
+    context: "",
+  })
+  // Erledigt oder Konto schon eingerichtet: Angaben nicht erneut verwenden.
+  if (res.ok || res.error === "Dein Konto ist bereits eingerichtet.") {
+    await db.auth.updateUser({ data: { pending_check: null } })
+  }
+  return res
 }
 
 /** „Person hinzufügen“ im Team: wie der Assistent, nur in das bestehende Team-Konto. */

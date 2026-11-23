@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useRef, useState } from "react"
-import { addPersonToTeam, completeStart } from "@/app/start/actions"
+import { addPersonToTeam, completeQuickStart, completeStart } from "@/app/start/actions"
 import type { JobProgress } from "@/lib/halo/progress"
 import type { HaloScore } from "@/lib/halo/score"
 import MeasureProgress from "./MeasureProgress"
@@ -27,6 +27,7 @@ export default function StartWizard({
   maxTopics,
   mode = "start",
   teamAllowed = true,
+  quick = null,
 }: {
   markets: Market[]
   suggestions: string[]
@@ -35,6 +36,8 @@ export default function StartWizard({
   mode?: "start" | "addPerson"
   /** false (kostenloser Check): kein Schritt „Für wen“, immer Einzelperson. */
   teamAllowed?: boolean
+  /** Schneller Check: Angaben aus dem Registrierungsformular liegen schon vor → sofort messen, ohne Assistent. */
+  quick?: { topic: string; market: string } | null
 }) {
   const skipTypeStep = mode === "addPerson" || !teamAllowed
   const firstStep = skipTypeStep ? 1 : 0
@@ -46,7 +49,7 @@ export default function StartWizard({
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [context, setContext] = useState("")
-  const [market, setMarket] = useState("dach")
+  const [market, setMarket] = useState(quick?.market ?? "dach")
   const [topics, setTopics] = useState<string[]>([])
   const [topicDraft, setTopicDraft] = useState("")
   const [error, setError] = useState<string | null>(null)
@@ -96,6 +99,27 @@ export default function StartWizard({
     setPersonId(res.personId)
     setJobs(Object.fromEntries(res.jobIds.map(id => [id, { status: "queued", error: null, progress: null }])))
   }
+
+  // Schneller Check: einmalig automatisch starten (setTimeout statt setState direkt im Effekt).
+  const quickStarted = useRef(false)
+  useEffect(() => {
+    if (!quick || quickStarted.current) return
+    quickStarted.current = true
+    const id = setTimeout(async () => {
+      setSubmitting(true)
+      const res = await completeQuickStart()
+      setSubmitting(false)
+      if (!res.ok) {
+        setError(res.error)
+        return
+      }
+      startedAt.current = Date.now()
+      setMeasuredTopics([quick.topic])
+      setPersonId(res.personId)
+      setJobs(Object.fromEntries(res.jobIds.map(jid => [jid, { status: "queued", error: null, progress: null }])))
+    }, 0)
+    return () => clearTimeout(id)
+  }, [quick])
 
   // Fortschritt abfragen, solange Messungen laufen. Die Jobliste liegt in
   // einer Ref, damit die Intervalle nicht bei jeder Antwort neu starten.
@@ -188,10 +212,22 @@ export default function StartWizard({
               </p>
             )}
             <a href={`/p/${personId}`} className={`${primaryBtn} inline-block mt-8`}>
-              Zum Halo Score →
+              {quick ? "Deine nächsten Schritte →" : "Zum Halo Score →"}
             </a>
           </div>
         )}
+      </Shell>
+    )
+  }
+
+  // Schneller Check: Messung wird gestartet (oder ist fehlgeschlagen).
+  if (quick && !error) {
+    return (
+      <Shell>
+        <div className="py-10 text-center">
+          <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-[var(--h-line)] border-t-[#FA5935]" aria-hidden />
+          <p className="mt-5 text-sm text-[var(--h-muted)]">Deine Messung wird gestartet …</p>
+        </div>
       </Shell>
     )
   }

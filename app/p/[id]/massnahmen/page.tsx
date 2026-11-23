@@ -5,7 +5,7 @@ import Link from "next/link"
 import { PageHeader, card } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
-export const metadata = { title: "Maßnahmen · Halo" }
+export const metadata = { title: "Nächste Schritte · Halo" }
 // Das Erzeugen ruft Claude auf.
 export const maxDuration = 60
 
@@ -25,7 +25,7 @@ export default async function MassnahmenPage({ params }: { params: Promise<{ id:
   return (
     <div className="h-stage max-w-4xl space-y-6">
       <PageHeader
-        eyebrow="Maßnahmen"
+        eyebrow="Nächste Schritte"
         title="Was du als Nächstes tun kannst"
         text="Konkrete Schritte, abgeleitet aus deiner schwächsten aktuellen Messung. Hake ab, was erledigt ist – so siehst du, wie sich der Score seitdem entwickelt."
       />
@@ -33,9 +33,9 @@ export default async function MassnahmenPage({ params }: { params: Promise<{ id:
       <Link href={`/p/${id}/leistungen`} className={`${card} group flex flex-col gap-2 p-5 sm:flex-row sm:items-center sm:justify-between`}>
         <span>
           <span className="block text-sm font-medium text-[var(--h-text)]">Keine Zeit, das selbst umzusetzen?</span>
-          <span className="block text-xs text-[var(--h-muted)] mt-0.5">Unser Agentur-Team übernimmt die Maßnahmen für dich – einzeln oder als Paket.</span>
+          <span className="block text-xs text-[var(--h-muted)] mt-0.5">entrenous, unsere Agentur, übernimmt die Schritte für dich – einzeln oder als Paket.</span>
         </span>
-        <span className="shrink-0 text-sm font-medium text-[var(--h-link)] transition-transform duration-500 group-hover:translate-x-1">Mit uns verbessern →</span>
+        <span className="shrink-0 text-sm font-medium text-[var(--h-link)] transition-transform duration-500 group-hover:translate-x-1">entrenous setzt es um →</span>
       </Link>
     </div>
   )

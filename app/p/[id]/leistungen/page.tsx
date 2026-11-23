@@ -5,7 +5,7 @@ import ServiceCatalog from "@/components/halo/ServiceCatalog"
 import { PageHeader } from "@/components/halo/ui"
 
 export const dynamic = "force-dynamic"
-export const metadata = { title: "Mit uns verbessern · Halo" }
+export const metadata = { title: "Umsetzung durch entrenous · Halo" }
 
 export default async function LeistungenPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -19,9 +19,9 @@ export default async function LeistungenPage({ params }: { params: Promise<{ id:
   return (
     <div className="h-stage max-w-5xl space-y-10 pb-24">
       <PageHeader
-        eyebrow="Mit uns verbessern"
+        eyebrow="Umsetzung durch entrenous"
         title="Wir bringen deinen Halo nach vorn."
-        text="DigitalHalo misst nicht nur. Unser Agentur-Team setzt um, was deinen Score bewegt – von der Positionierung über PR bis zur KI-Optimierung. Wähle aus, was dich interessiert, und frag unverbindlich an."
+        text="DigitalHalo zeigt, was zu tun ist – entrenous, unsere Agentur, setzt es um: von der Positionierung über PR bis zur KI-Optimierung. Wähle aus, was dich interessiert, und frag unverbindlich an."
       />
       <ServiceCatalog personId={id} services={SERVICES} recommendations={recommendations} firstName={person?.first_name ?? ""} />
     </div>

@@ -92,3 +92,29 @@ export function isMonthlyBriefDay(now: Date): boolean {
   const day = Number(new Intl.DateTimeFormat("en-US", { day: "numeric", timeZone: "Europe/Berlin" }).format(now))
   return day <= 7
 }
+
+/**
+ * Messtiefe je Tarif. Der kostenlose Check misst schlank (3 Modelle × 5 Fragen × 1 Runde,
+ * ca. 15 Abfragen), damit sich viele Gratis-Checks rechnen; bezahlte Tarife messen voll
+ * (alle Modelle × 7 Fragen × 2 Runden). `providerIds` = null heißt: alle konfigurierten Modelle.
+ */
+export type MeasurementPlan = {
+  depth: "quick" | "standard"
+  rounds: number
+  providerIds: string[] | null
+}
+
+/** Modelle des kostenlosen Checks: die drei mit der größten Reichweite bei Endnutzern zu geringen Kosten. */
+export const QUICK_PROVIDER_IDS = ["gpt-4o", "gemini-flash", "perplexity-sonar"]
+
+export function measurementPlanFor(plan: PlanType | null | undefined): MeasurementPlan {
+  if ((plan ?? "free") === "free") return { depth: "quick", rounds: 1, providerIds: QUICK_PROVIDER_IDS }
+  return { depth: "standard", rounds: 2, providerIds: null }
+}
+
+/** Wählt die Modelle für eine Messung; fehlen alle gewünschten, wird mit den vorhandenen gemessen. */
+export function pickProviders<T extends { id: string }>(available: T[], ids: string[] | null): T[] {
+  if (!ids) return available
+  const picked = available.filter(p => ids.includes(p.id))
+  return picked.length > 0 ? picked : available
+}

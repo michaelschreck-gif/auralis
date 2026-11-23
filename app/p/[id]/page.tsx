@@ -10,6 +10,7 @@ import MeasureNowButton from "@/components/halo/MeasureNowButton"
 import { card, secondaryBtn } from "@/components/halo/ui"
 import { CountUp } from "@/components/halo/motion"
 import { recommendServices } from "@/lib/halo/services"
+import { planOfPerson } from "@/lib/halo/plan-db"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Halo Score · Halo" }
@@ -61,11 +62,14 @@ function Delta({ value }: { value: number | null }) {
 export default async function HaloScorePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const db = await createHaloServerClient()
-  const [{ data: person }, overview, changes] = await Promise.all([
+  const [{ data: person }, overview, changes, plan] = await Promise.all([
     db.from("persons").select("first_name, last_name, context").eq("id", id).single(),
     loadPersonOverview(db, id),
     loadRecentChanges(db, id, CHANGES_DAYS),
+    planOfPerson(db, id),
   ])
+  // Kostenloser Check: nur Score, drei Säulen, nächste Schritte und Umsetzung durch entrenous.
+  const simple = plan === "free"
   const { halo, history, trend, topics, openActions } = overview
   const topicIds = topics.map(t => t.id)
 
@@ -119,7 +123,9 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
                   <ScoreHistoryChart history={history} />
                 ) : (
                   <p className="text-sm text-[var(--h-dim)]">
-                    Der Verlauf erscheint, sobald an zwei Tagen gemessen wurde. Gemessen wird automatisch jede Woche.
+                    {simple
+                      ? "Der Verlauf erscheint ab der zweiten Messung. Im kostenlosen Check misst du einmal im Monat neu."
+                      : "Der Verlauf erscheint, sobald an zwei Tagen gemessen wurde. Gemessen wird automatisch jede Woche."}
                   </p>
                 )}
               </div>
@@ -130,8 +136,8 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
           <section className="mt-6 grid md:grid-cols-3 gap-4" aria-label="Säulen des Halo Scores">
             {halo.pillars.map(p => {
               const info = PILLAR_INFO[p.key]
-              return (
-                <Link key={p.key} href={`/p/${id}/${info.href}`} className={`${card} p-5 md:p-6 hover:border-[var(--h-hover-line)] transition-colors block`}>
+              const body = (
+                <>
                   <div className="flex items-baseline justify-between">
                     <span className="flex items-center gap-2.5 text-sm font-medium text-[var(--h-text)]">
                       <span className="h-2 w-2 rounded-full" style={{ background: PILLAR_COLOR[p.key], boxShadow: `0 0 12px ${PILLAR_COLOR[p.key]}` }} aria-hidden />
@@ -143,14 +149,63 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
                     {p.measured && p.value !== null ? <CountUp value={p.value} delay={400} /> : <span className="font-sans text-base font-normal text-[var(--h-dim)]">nicht gemessen</span>}
                   </div>
                   <p className="text-xs text-[var(--h-muted)] mt-2 leading-relaxed">{p.measured ? info.text : info.missing}</p>
+                </>
+              )
+              return simple ? (
+                <div key={p.key} className={`${card} p-5 md:p-6`}>{body}</div>
+              ) : (
+                <Link key={p.key} href={`/p/${id}/${info.href}`} className={`${card} p-5 md:p-6 hover:border-[var(--h-hover-line)] transition-colors block`}>
+                  {body}
                 </Link>
               )
             })}
           </section>
+
+          {/* Nächste Schritte – das Wichtigste nach dem Score */}
+          <section className={`${card} mt-6 p-5 md:p-6`} aria-labelledby="next-steps">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <h2 id="next-steps" className="h-display font-[family-name:var(--font-display)] text-2xl text-[var(--h-text)]">
+                Deine {openActions.length > 0 ? openActions.length : 3} nächsten Schritte
+              </h2>
+              <span className="text-xs text-[var(--h-dim)]">sortiert nach Wirkung auf deinen Score</span>
+            </div>
+            {openActions.length === 0 ? (
+              <p className="text-sm text-[var(--h-muted)] mt-4">
+                Deine Schritte werden aus der Messung erstellt. Lade die Seite gleich neu oder{" "}
+                <Link href={`/p/${id}/massnahmen`} className="text-[var(--h-link)] hover:underline">erstelle sie jetzt</Link>.
+              </p>
+            ) : (
+              <ol className="mt-5 space-y-3">
+                {openActions.map((a, i) => (
+                  <li key={a.id} className="rounded-2xl border border-[var(--h-line)] p-4 md:p-5">
+                    <div className="flex items-start gap-4">
+                      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[var(--h-bad-bg)] text-sm font-semibold text-[#F7B49B]" aria-hidden>
+                        {i + 1}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[15px] font-medium text-[var(--h-text)]">{a.title}</p>
+                        {(a.impact || a.category) && (
+                          <p className="mt-1 text-[11px] text-[var(--h-dim)]">{[a.impact, a.category].filter(Boolean).join(" · ")}</p>
+                        )}
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          <Link href={`/p/${id}/massnahmen`} className="rounded-full border border-[var(--h-line)] px-3 py-1.5 text-xs font-medium text-[var(--h-text)] hover:border-[var(--h-hover-line)] transition-colors">
+                            Selbst umsetzen
+                          </Link>
+                          <Link href={`/p/${id}/leistungen`} className="rounded-full bg-[#FA5935] px-3 py-1.5 text-xs font-semibold text-white hover:bg-[#C8431F] transition-colors">
+                            entrenous setzt es um →
+                          </Link>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
         </>
       )}
 
-      {halo.score !== null && (
+      {halo.score !== null && !simple && (
         <section className={`${card} mt-6 p-5`}>
           <h2 className="text-sm font-semibold text-[var(--h-text)]">Was sich verändert hat</h2>
           <p className="text-xs text-[var(--h-dim)] mt-0.5">Jüngste gegenüber vorheriger Messung, letzte {CHANGES_DAYS} Tage</p>
@@ -182,7 +237,7 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
             className={`${card} h-featured group mt-6 flex flex-col gap-4 p-5 md:flex-row md:items-center md:justify-between md:p-6`}
           >
             <div>
-              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#F7B49B]">Mit uns verbessern</span>
+              <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#F7B49B]">Umsetzung durch entrenous</span>
               <p className="h-display mt-2 font-[family-name:var(--font-display)] text-xl text-[var(--h-text)]">
                 {top.service.title}: <span className="text-[var(--h-muted)]">{top.service.tagline}</span>
               </p>
@@ -195,7 +250,8 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
         )
       })()}
 
-      <div className="mt-6 grid lg:grid-cols-2 gap-4">
+      {!simple && (
+        <div className="mt-6">
         {/* Themen */}
         <section className={`${card} p-5`}>
           <h2 className="text-sm font-semibold text-[var(--h-text)]">Themen</h2>
@@ -223,34 +279,8 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
           </Link>
         </section>
 
-        {/* Maßnahmen */}
-        <section className={`${card} p-5`}>
-          <h2 className="text-sm font-semibold text-[var(--h-text)]">Nächste Schritte</h2>
-          <p className="text-xs text-[var(--h-dim)] mt-0.5">Die wichtigsten offenen Maßnahmen</p>
-          {openActions.length === 0 ? (
-            <p className="text-sm text-[var(--h-muted)] mt-4">
-              Hier erscheinen konkrete Maßnahmen, abgeleitet aus deinen Messungen.
-            </p>
-          ) : (
-            <ul className="mt-4 space-y-3">
-              {openActions.map(a => (
-                <li key={a.id} className="flex items-start gap-3">
-                  <span className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#FA5935] shrink-0" />
-                  <div>
-                    <span className="block text-sm text-[var(--h-text)]">{a.title}</span>
-                    {(a.impact || a.category) && (
-                      <span className="block text-[11px] text-[var(--h-dim)]">{[a.impact, a.category].filter(Boolean).join(" · ")}</span>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-          <Link href={`/p/${id}/massnahmen`} className="inline-block mt-3 text-xs font-medium text-[var(--h-link)] hover:underline">
-            Alle Maßnahmen →
-          </Link>
-        </section>
-      </div>
+        </div>
+      )}
     </div>
   )
 }
