@@ -21,6 +21,7 @@ export const en: SiteDict = {
     login: "Log in",
     toTool: "Open app",
     cta: "Free check",
+    ctaShort: "Free check",
     ctaMobile: "Start your free check",
     menuOpen: "Open menu",
     menuClose: "Close menu",

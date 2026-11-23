@@ -21,6 +21,7 @@ export const de: SiteDict = {
     login: "Anmelden",
     toTool: "Zum Tool",
     cta: "Kostenloser Check",
+    ctaShort: "Gratis-Check",
     ctaMobile: "Kostenlosen Check starten",
     menuOpen: "Menü öffnen",
     menuClose: "Menü schließen",

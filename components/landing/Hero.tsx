@@ -4,7 +4,7 @@ import Link from "next/link"
 import { useEffect, useRef, useState } from "react"
 import { useReducedMotion, useScrollProgress } from "./hooks"
 import { useT } from "./i18n"
-import { LanguageSwitcher } from "./LanguageSwitcher"
+import { LanguageMenu, LanguagePills, LanguageSwitcher } from "./LanguageSwitcher"
 import { Arrow, HaloMark, SplitHeading } from "./primitives"
 
 export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; signupHref: string; isLoggedIn: boolean }) {
@@ -46,7 +46,7 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
     <>
       <header className={`lx-nav ${scrolled ? "is-scrolled" : ""} ${hidden && !open ? "is-hidden" : ""}`}>
         <nav className="mx-auto flex h-[72px] max-w-[1320px] items-center justify-between px-5 sm:px-8" aria-label={t.nav.mainNav}>
-          <a href="#top" className="flex items-center" aria-label={t.nav.homeAria}>
+          <a href="#top" className="flex shrink-0 items-center" aria-label={t.nav.homeAria}>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src="/brand/combinationmark-white.svg" alt="DigitalHalo" className="h-[22px] w-auto" />
           </a>
@@ -57,17 +57,19 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
               </a>
             ))}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <LanguageSwitcher className="hidden sm:flex" />
+            <LanguageMenu className="sm:hidden" />
             <a href={toolHref} className="hidden rounded-full px-4 py-2 text-[13.5px] font-medium text-[var(--lx-text)] transition-colors hover:bg-white/5 sm:inline-flex">
               {isLoggedIn ? t.nav.toTool : t.nav.login}
             </a>
-            <Link href={signupHref} className="lx-btn lx-btn--primary !px-5 !py-2.5 !text-[13px]">
-              {t.nav.cta}
+            <Link href={signupHref} className="lx-btn lx-btn--primary !px-4 !py-2.5 !text-[13px] max-[379px]:!hidden sm:!px-5">
+              <span className="sm:hidden">{t.nav.ctaShort}</span>
+              <span className="hidden sm:inline">{t.nav.cta}</span>
             </Link>
             <button
               type="button"
-              className="ml-1 inline-flex h-10 w-10 items-center justify-center rounded-full border border-[var(--lx-line-strong)] lg:hidden"
+              className="inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--lx-line-strong)] lg:hidden"
               aria-label={open ? t.nav.menuClose : t.nav.menuOpen}
               aria-expanded={open}
               onClick={() => setOpen(o => !o)}
@@ -86,6 +88,7 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
         className={`fixed inset-0 z-40 flex flex-col justify-end bg-[rgba(6,11,10,0.94)] px-6 pb-12 pt-28 backdrop-blur-xl transition-opacity duration-500 lg:hidden ${open ? "opacity-100" : "pointer-events-none opacity-0"}`}
         aria-hidden={!open}
       >
+        <LanguagePills className="mb-8" tabbable={open} />
         <ul className="space-y-2">
           {NAV.map((n, i) => (
             <li key={n.href} style={{ transitionDelay: `${open ? 80 + i * 60 : 0}ms` }} className={`transition-all duration-700 ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
@@ -102,7 +105,6 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
           <a href={toolHref} className="lx-btn lx-btn--ghost" tabIndex={open ? 0 : -1}>
             {isLoggedIn ? t.nav.toTool : t.nav.login}
           </a>
-          <LanguageSwitcher className="mt-4 justify-center" />
         </div>
       </div>
     </>

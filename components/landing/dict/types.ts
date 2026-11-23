@@ -15,6 +15,8 @@ export type SiteDict = {
     login: string
     toTool: string
     cta: string
+    /** Kurzform für die schmale mobile Kopfzeile. */
+    ctaShort: string
     ctaMobile: string
     menuOpen: string
     menuClose: string
