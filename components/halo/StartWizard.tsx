@@ -224,10 +224,12 @@ export default function StartWizard({
   if (quick && !error) {
     return (
       <Shell>
-        <div className="py-10 text-center">
-          <span className="mx-auto block h-8 w-8 animate-spin rounded-full border-2 border-[var(--h-line)] border-t-[#FA5935]" aria-hidden />
-          <p className="mt-5 text-sm text-[var(--h-muted)]">Deine Messung wird gestartet …</p>
-        </div>
+        <MeasureProgress
+          progress={[]}
+          topics={[quick.topic]}
+          marketLabel={markets.find(m => m.id === quick.market)?.label ?? null}
+          elapsed={0}
+        />
       </Shell>
     )
   }

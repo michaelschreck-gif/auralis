@@ -11,8 +11,42 @@ import type { MeasureProgressEvent } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
 import type { Json, TriggerType } from "../supabase/halo.types"
 import { ensureFirstActions } from "./actions-gen"
+import { isGoogleConfigured, runGoogleMeasurement } from "./google"
 import { runMeasurement } from "./measure"
 import { applyProgress, emptyProgress } from "./progress"
+
+/** Höchstens so lange wartet ein Job auf die Google-Messung, die neben ihm läuft. */
+const GOOGLE_WAIT_MS = 90_000
+
+/**
+ * Hat eine Person noch keine Google-Messung, läuft sie mit ihrer Messung mit – sonst steht die
+ * Säule Google nach dem ersten Check auf „nicht gemessen“ (der tägliche Lauf käme erst später).
+ * Nur im Job des ältesten aktiven Themas, damit mehrere Themen-Jobs nicht doppelt messen.
+ * Wirft nie.
+ */
+async function ensureFirstGoogle(service: HaloClient, personId: string, topicId: string): Promise<void> {
+  try {
+    if (!isGoogleConfigured()) return
+    const [{ count }, { data: first }] = await Promise.all([
+      service.from("google_measurements").select("id", { count: "exact", head: true }).eq("person_id", personId),
+      service
+        .from("topics")
+        .select("id")
+        .eq("person_id", personId)
+        .eq("is_active", true)
+        .order("created_at", { ascending: true })
+        .limit(1),
+    ])
+    if ((count ?? 0) > 0 || first?.[0]?.id !== topicId) return
+    const timeout = new Promise<{ ok: false; error: string }>(resolve =>
+      setTimeout(() => resolve({ ok: false, error: "timeout" }), GOOGLE_WAIT_MS),
+    )
+    const res = await Promise.race([runGoogleMeasurement(service, personId), timeout])
+    if (!res.ok) console.error("[halo/jobs] first google measurement failed:", personId, res.error)
+  } catch (e) {
+    console.error("[halo/jobs] first google measurement failed:", personId, e instanceof Error ? e.message : String(e))
+  }
+}
 
 /** Jobs, die länger als das in queued/running hängen, gelten als abgestürzt. */
 const JOB_STALE_MS = 10 * 60 * 1000
@@ -101,6 +135,8 @@ export async function executeJob(service: HaloClient, jobId: string): Promise<vo
   await service.from("jobs").update({ status: "running", started_at: new Date().toISOString() }).eq("id", jobId)
 
   const progress = progressWriter(service, jobId)
+  // Google parallel zur KI-Messung, damit der erste Score alle Säulen hat.
+  const google = ensureFirstGoogle(service, job.person_id, job.topic_id)
   try {
     const result = await runMeasurement(job.topic_id, service, {
       trigger: job.trigger,
@@ -108,6 +144,7 @@ export async function executeJob(service: HaloClient, jobId: string): Promise<vo
       onProgress: progress.onProgress,
     })
     await progress.flush()
+    await google
     // Erste Messung einer Person: nächste Schritte gleich mit erzeugen, damit Score und
     // Empfehlungen zusammen erscheinen (wirft nie, höchstens ~45 s).
     await ensureFirstActions(service, job.person_id)
@@ -119,6 +156,7 @@ export async function executeJob(service: HaloClient, jobId: string): Promise<vo
     const message = e instanceof Error ? e.message : String(e)
     console.error("[halo/jobs] job failed:", jobId, message)
     await progress.flush()
+    await google
     await service
       .from("jobs")
       .update({ status: "failed", error: message.slice(0, 500), finished_at: new Date().toISOString() })
