@@ -80,8 +80,13 @@ export async function completeQuickStart(): Promise<StartResult> {
     context: "",
   })
   // Erledigt oder Konto schon eingerichtet: Angaben nicht erneut verwenden.
+  // Über die Admin-API, nicht db.auth.updateUser: Das schreibt Sitzungs-Cookies, und neue
+  // Cookies in einer Server-Action lassen Next die Seite neu laden – /start leitet dann
+  // sofort zur Person weiter, und die Messanzeige ist weg.
   if (res.ok || res.error === "Dein Konto ist bereits eingerichtet.") {
-    await db.auth.updateUser({ data: { pending_check: null } })
+    await createHaloServiceClient()
+      .auth.admin.updateUserById(user.id, { user_metadata: { pending_check: null } })
+      .catch(() => undefined)
   }
   return res
 }

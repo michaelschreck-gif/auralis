@@ -46,6 +46,51 @@ function Metric({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
+/** Was gerade im Hintergrund passiert – wechselt alle paar Sekunden. */
+const HINTS = [
+  "ChatGPT, Gemini und Perplexity bekommen die Fragen, die echte Menschen zu deinem Thema stellen – ohne dass dein Name darin vorkommt.",
+  "Wir zählen, ob du in den Antworten genannt wirst und an welcher Stelle. Platz 1 zählt mehr als Platz 5.",
+  "Parallel prüfen wir, was Google zu deinem Namen zeigt: Treffer über dich, „Name + Thema“ und ein mögliches Knowledge Panel.",
+  "Der Halo Score setzt sich zusammen aus KI (50 %), Google (30 %) und Wahrnehmung (20 %).",
+  "Ein niedriger erster Score ist normal: Die meisten Expertinnen und Experten werden von KI noch kaum genannt.",
+  "Zum Schluss leiten wir aus deinen schwächsten Signalen konkrete nächste Schritte ab.",
+]
+const HINT_SECONDS = 7
+
+type PhaseState = "done" | "active" | "waiting"
+
+function Phases({ items }: { items: { label: string; detail?: string; state: PhaseState }[] }) {
+  return (
+    <ol className="mt-6 space-y-2.5 text-left">
+      {items.map(i => (
+        <li key={i.label} className="flex items-center gap-3 text-sm">
+          {i.state === "done" ? (
+            <span className="grid h-5 w-5 shrink-0 place-items-center rounded-full bg-[#FA5935] text-[11px] text-white" aria-hidden>✓</span>
+          ) : i.state === "active" ? (
+            <span className="h-5 w-5 shrink-0 animate-spin rounded-full border-2 border-[var(--h-hover-line)] border-t-[#FA5935]" aria-hidden />
+          ) : (
+            <span className="h-5 w-5 shrink-0 rounded-full border-2 border-[var(--h-line)]" aria-hidden />
+          )}
+          <span className={i.state === "waiting" ? "text-[var(--h-dim)]" : "text-[var(--h-text)]"}>{i.label}</span>
+          {i.detail && <span className="ml-auto tabular-nums text-xs text-[var(--h-muted)]">{i.detail}</span>}
+        </li>
+      ))}
+    </ol>
+  )
+}
+
+function Hint({ elapsed }: { elapsed: number }) {
+  const hint = HINTS[Math.floor(elapsed / HINT_SECONDS) % HINTS.length]
+  return (
+    <div className="mt-6 rounded-xl bg-[var(--h-inset)] px-4 py-3 text-left">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-[#FA5935]">Was gerade passiert</div>
+      <p key={hint} className="mt-1 text-[13px] leading-relaxed text-[var(--h-text)]" aria-live="polite">
+        {hint}
+      </p>
+    </div>
+  )
+}
+
 export default function MeasureProgress({
   progress,
   topics,
@@ -62,14 +107,31 @@ export default function MeasureProgress({
     .filter(Boolean)
     .join(" · ")
 
+  const started = p !== null && p.total > 0
+  const answered = started && p.done >= p.total
+  const phases: { label: string; detail?: string; state: PhaseState }[] = [
+    { label: "Konto und Thema angelegt", state: "done" },
+    {
+      label: "KI-Modelle befragen",
+      detail: started ? `${p.done} / ${p.total}` : undefined,
+      state: answered ? "done" : "active",
+    },
+    { label: "Google-Suche prüfen", detail: answered ? undefined : "parallel", state: answered ? "active" : started ? "active" : "waiting" },
+    { label: "Halo Score und nächste Schritte", state: answered ? "active" : "waiting" },
+  ]
+
   // Noch kein Fortschritt (Job wartet auf den Start).
-  if (!p || p.total === 0) {
+  if (!started) {
     return (
-      <div className="text-center py-6">
-        <div className="w-12 h-12 mx-auto rounded-full border-2 border-[var(--h-hover-line)] border-t-[#FA5935] animate-spin" />
-        <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--h-text)] mt-6">Deine erste Messung startet</h2>
-        <p className="text-sm text-[var(--h-muted)] mt-2">{context}</p>
-        <p className="text-xs text-[var(--h-dim)] mt-3">{elapsed} s · Das dauert meist ein bis zwei Minuten.</p>
+      <div className="py-4">
+        <div className="text-center">
+          <div className="w-12 h-12 mx-auto rounded-full border-2 border-[var(--h-hover-line)] border-t-[#FA5935] animate-spin" />
+          <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--h-text)] mt-6">Deine erste Messung startet</h2>
+          <p className="text-sm text-[var(--h-muted)] mt-2">{context}</p>
+          <p className="text-xs text-[var(--h-dim)] mt-3">{elapsed} s · Das dauert meist ein bis zwei Minuten. Bleib gern auf dieser Seite.</p>
+        </div>
+        <Phases items={phases} />
+        <Hint elapsed={elapsed} />
       </div>
     )
   }
@@ -80,8 +142,12 @@ export default function MeasureProgress({
     <div className="py-2">
       <p className="text-xs text-[var(--h-muted)]">Deine erste Messung · {context}</p>
       <h2 className="font-[family-name:var(--font-display)] text-2xl text-[var(--h-text)] mt-1">
-        Wir befragen gerade {p.models.length} {p.models.length === 1 ? "KI-Modell" : "KI-Modelle"} zu dir
+        {answered
+          ? "Fast fertig – wir berechnen deinen Halo Score"
+          : `Wir befragen gerade ${p.models.length} ${p.models.length === 1 ? "KI-Modell" : "KI-Modelle"} zu dir`}
       </h2>
+
+      <Phases items={phases} />
 
       <div className="mt-5 grid grid-cols-3 gap-2">
         <Metric label="Antworten" value={<>{p.done}<span className="text-sm font-normal text-[var(--h-dim)]"> / {p.total}</span></>} />
@@ -129,6 +195,8 @@ export default function MeasureProgress({
           </ul>
         </div>
       )}
+
+      <Hint elapsed={elapsed} />
 
       <p className="text-xs text-[var(--h-dim)] mt-5">
         {p.queriesPerRound} Fragen aus verschiedenen Blickwinkeln, {p.rounds === 1 ? "eine Runde" : `${p.rounds} Runden`} je

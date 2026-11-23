@@ -4,7 +4,7 @@
 // sowohl von der Server Action (Persistierung) als auch anderswo nutzbar ist.
 
 import Anthropic from "@anthropic-ai/sdk"
-import { CLAUDE_MODEL, CLAUDE_NO_THINKING } from "./providers"
+import { CLAUDE_MODEL, CLAUDE_NO_THINKING, openaiProvider } from "./providers"
 import type { VisibilityReport } from "./analyzer"
 
 export type GeneratedRecommendation = {
@@ -77,12 +77,6 @@ function parseRecommendationsJson(raw: string): GeneratedRecommendation[] {
 export async function generateRecommendations(
   report: VisibilityReport,
 ): Promise<GeneratedRecommendation[]> {
-  if (!process.env.ANTHROPIC_API_KEY) {
-    console.error("[recommendations] ANTHROPIC_API_KEY is not configured")
-    return []
-  }
-  const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
-
   const userName = report.personName || "Die Person"
   const topics = report.topics ?? []
   const score = report.overallScore ?? null
@@ -109,7 +103,19 @@ Regeln:
 - Mindestens 1 "high" impact
 - KEINE Markdown-Codeblöcke, kein Kommentar, NUR das Array`
 
+  const viaClaude = await askClaude(system, prompt)
+  if (viaClaude.length > 0) return viaClaude
+  // Claude nicht erreichbar (z. B. Guthaben leer): mit GPT-4o weiter, damit niemand ohne nächste Schritte bleibt.
+  return askOpenAI(system, prompt)
+}
+
+async function askClaude(system: string, prompt: string): Promise<GeneratedRecommendation[]> {
+  if (!process.env.ANTHROPIC_API_KEY) {
+    console.error("[recommendations] ANTHROPIC_API_KEY is not configured")
+    return []
+  }
   try {
+    const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
     const message = await client.messages.create({
       model: CLAUDE_MODEL,
       thinking: CLAUDE_NO_THINKING,
@@ -125,6 +131,19 @@ Regeln:
     return recs
   } catch (e) {
     console.error("[recommendations] Anthropic call failed:", e instanceof Error ? e.message : e)
+    return []
+  }
+}
+
+async function askOpenAI(system: string, prompt: string): Promise<GeneratedRecommendation[]> {
+  if (!openaiProvider.isConfigured()) return []
+  try {
+    const raw = await openaiProvider.call(prompt, system, 1024)
+    const recs = parseRecommendationsJson(raw)
+    if (recs.length === 0) console.error("[recommendations] OpenAI parser returned empty. Raw:", raw.slice(0, 500))
+    return recs
+  } catch (e) {
+    console.error("[recommendations] OpenAI fallback failed:", e instanceof Error ? e.message : e)
     return []
   }
 }

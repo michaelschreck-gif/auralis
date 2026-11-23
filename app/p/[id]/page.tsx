@@ -11,6 +11,7 @@ import { card, secondaryBtn } from "@/components/halo/ui"
 import { CountUp } from "@/components/halo/motion"
 import { recommendServices } from "@/lib/halo/services"
 import { planOfPerson } from "@/lib/halo/plan-db"
+import { isGoogleConfigured } from "@/lib/halo/google"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Halo Score · Halo" }
@@ -24,7 +25,7 @@ const PILLAR_INFO: Record<PillarKey, { text: string; href: string; missing: stri
   google: {
     text: "Was man findet, wenn man dich googelt: Treffer über dich, Name + Thema, Knowledge Panel.",
     href: "google",
-    missing: "Die Google-Messung ist noch nicht angebunden.",
+    missing: "Noch keine Google-Messung – sie läuft mit deiner nächsten Messung.",
   },
   perception: {
     text: "Wie positiv und passend zu deinen Themen die KI über dich spricht.",
@@ -148,7 +149,7 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
                   <div className="mt-4 font-[family-name:var(--font-display)] font-light text-[2.6rem] leading-none tabular-nums text-[var(--h-text)]">
                     {p.measured && p.value !== null ? <CountUp value={p.value} delay={400} /> : <span className="font-sans text-base font-normal text-[var(--h-dim)]">nicht gemessen</span>}
                   </div>
-                  <p className="text-xs text-[var(--h-muted)] mt-2 leading-relaxed">{p.measured ? info.text : info.missing}</p>
+                  <p className="text-xs text-[var(--h-muted)] mt-2 leading-relaxed">{p.measured ? info.text : p.key === "google" && !isGoogleConfigured() ? "Die Google-Messung ist noch nicht angebunden." : info.missing}</p>
                 </>
               )
               return simple ? (
