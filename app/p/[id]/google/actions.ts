@@ -25,7 +25,7 @@ export async function measureGoogle(personId: string): Promise<ActionResult> {
       .limit(1)
     const at = last?.[0]?.created_at
     if (at && Date.now() - Date.parse(at) < limits.googleIntervalDays * 24 * 60 * 60 * 1000) {
-      return { ok: false, error: "Im kostenlosen Check misst Halo Google einmal im Monat. Häufiger geht es mit Solo oder Pro." }
+      return { ok: false, error: "Im kostenlosen Check misst Halo Google einmal im Monat. Wöchentlich geht es mit Halo Plus." }
     }
   }
 

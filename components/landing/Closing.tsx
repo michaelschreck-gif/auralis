@@ -101,14 +101,12 @@ export function Partner() {
 
 /* ─────────────── Preise ─────────────── */
 
-type Plan = { name: string; price: string; unit?: string; sub: string; feats: string[]; featured?: boolean; cta: { href: string; label: string } }
+type Plan = { name: string; price: string; unit?: string; yearly?: string; sub: string; feats: string[]; featured?: boolean; cta: { href: string; label: string } }
 
 // Preise und Namen sind in allen Sprachen gleich; Texte in dict/*.ts (gleiche Reihenfolge).
 const PLAN_BASE = [
   { name: "Check", price: "0", signup: true },
-  { name: "Solo", price: "39" },
-  { name: "Pro", price: "89", featured: true },
-  { name: "Team", price: "59" },
+  { name: "Halo Plus", price: "12", featured: true, signup: true },
 ] as { name: string; price: string; featured?: boolean; signup?: boolean }[]
 
 function PlanCard({ plan, recommended, perMonth }: { plan: Plan; recommended: string; perMonth: string }) {
@@ -123,6 +121,7 @@ function PlanCard({ plan, recommended, perMonth }: { plan: Plan; recommended: st
         <span className="lx-display text-[3.4rem] !leading-none text-[var(--lx-text)]">€{plan.price}</span>
         <span className="text-[13px] text-[var(--lx-dim)]">{plan.unit ?? perMonth}</span>
       </div>
+      {plan.yearly && <p className="mt-2 text-[12.5px] text-[var(--lx-peach)]">{plan.yearly}</p>}
       <ul className="mt-7 flex-1 space-y-3 border-t border-[var(--lx-line)] pt-6">
         {plan.feats.map(f => (
           <li key={f} className="flex gap-3 text-[13.5px] text-[var(--lx-text)]/85">
@@ -150,6 +149,7 @@ export function Pricing() {
     featured: b.featured,
     sub: pr.plans[i].sub,
     unit: pr.plans[i].unit,
+    yearly: pr.plans[i].yearly,
     feats: pr.plans[i].feats,
     cta: { href: b.signup ? toolHref("/registrieren", t.locale) : siteHref("waitlist", t.locale), label: pr.plans[i].cta },
   }))
@@ -169,7 +169,7 @@ export function Pricing() {
           </Reveal>
         </div>
 
-        <div className="mt-16 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="mx-auto mt-16 grid max-w-[920px] gap-4 md:grid-cols-2">
           {PLANS.map((pl, i) => (
             <Reveal key={pl.name} delay={i * 90} className="h-full">
               <PlanCard plan={pl} recommended={pr.recommended} perMonth={pr.perMonth} />
@@ -177,7 +177,7 @@ export function Pricing() {
           ))}
         </div>
 
-        <Reveal className="mt-6">
+        <Reveal className="mx-auto mt-6 max-w-[920px]">
           <div className="lx-glass flex flex-col gap-4 rounded-[26px] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-7">
             <div>
               <div className="flex items-center gap-3">
@@ -191,7 +191,7 @@ export function Pricing() {
             </a>
           </div>
         </Reveal>
-        <p className="mt-6 text-[12.5px] leading-relaxed text-[var(--lx-dim)]">
+        <p className="mx-auto mt-6 max-w-[920px] text-[12.5px] leading-relaxed text-[var(--lx-dim)]">
           {pr.note}
         </p>
       </div>

@@ -63,5 +63,5 @@ export async function checkManualMeasure(db: HaloClient, personId: string): Prom
   const next = nextManualAllowedAt(plan, data?.[0]?.created_at ?? null)
   if (!next) return { ok: true }
   const date = next.toLocaleDateString("de-DE", { day: "2-digit", month: "2-digit", year: "numeric", timeZone: "Europe/Berlin" })
-  return { ok: false, error: `Im kostenlosen Check misst Halo einmal im Monat automatisch. Die nächste Messung ist ab ${date} möglich – oder sofort mit Solo oder Pro (buchbar unter Konto).` }
+  return { ok: false, error: `Im kostenlosen Check misst Halo einmal im Monat automatisch. Die nächste Messung ist ab ${date} möglich – oder wöchentlich mit Halo Plus (buchbar unter Konto).` }
 }

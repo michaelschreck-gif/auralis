@@ -56,7 +56,7 @@ export default function TermsPage() {
           (including Claude, ChatGPT, Perplexity, Gemini, Google AI Overview).
         </p>
         <p>
-          The specific features of each plan (Check, Solo, Pro, Team, Agency) are set out on the current{" "}
+          The specific features of each plan (Check, Halo Plus, Agency) are set out on the current{" "}
           <a href={`${siteHref("home", "en")}#preise`} className={a}>pricing page</a>.
           The Provider is entitled to further develop the scope of services. Material reductions will be
           announced with reasonable notice.

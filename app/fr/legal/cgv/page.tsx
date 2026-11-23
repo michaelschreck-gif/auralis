@@ -57,7 +57,7 @@ export default function CgvPage() {
           systèmes de réponse par IA (notamment Claude, ChatGPT, Perplexity, Gemini, Google AI Overview).
         </p>
         <p>
-          Les caractéristiques concrètes de chaque offre (Check, Solo, Pro, Team, Agence) figurent sur la{" "}
+          Les caractéristiques concrètes de chaque offre (Check, Halo Plus, Agence) figurent sur la{" "}
           <a href={`${siteHref("home", "fr")}#preise`} className={a}>page des tarifs</a> en vigueur.
           Le Prestataire est autorisé à faire évoluer l’étendue des prestations. Les réductions substantielles
           seront annoncées avec un préavis raisonnable.

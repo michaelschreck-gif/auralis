@@ -2,24 +2,31 @@
  * Bezahlung mit Stripe – reine Funktionen, keine Datenbank, kein SDK
  * (docs/stripe-plan.md; Stripe-Aufrufe in lib/halo/billing-stripe.ts).
  *
+ *   Halo Plus → plan starter   12 €/Monat · 99 €/Jahr   (einziges buchbares Abo, DigitalHalo 2.0)
+ *
+ * Nicht mehr buchbar, aber für bestehende Abos weiter erkannt:
  *   Solo  → plan starter   39 €/Monat · 390 €/Jahr
  *   Pro   → plan pro       89 €/Monat · 890 €/Jahr
  *   Team  → plan enterprise 59 €/Person/Monat · 590 €/Person/Jahr, ab 3 Personen
  *
- * Preis-IDs aus env: STRIPE_PRICE_SOLO_M, STRIPE_PRICE_SOLO_Y, STRIPE_PRICE_PRO_M,
- * STRIPE_PRICE_PRO_Y, STRIPE_PRICE_TEAM_M, STRIPE_PRICE_TEAM_Y. Alle Preise netto.
+ * Preis-IDs aus env: STRIPE_PRICE_PLUS_M, STRIPE_PRICE_PLUS_Y (sowie die alten
+ * STRIPE_PRICE_SOLO_*, _PRO_*, _TEAM_*). Alle Preise netto.
  */
 
 import type { PlanType } from "../supabase/halo.types"
 
-export type Offer = "solo" | "pro" | "team"
+export type Offer = "plus" | "solo" | "pro" | "team"
 export type Interval = "month" | "year"
 
 export const OFFERS: Record<Offer, { label: string; plan: PlanType; month: number; year: number; perPerson: boolean }> = {
+  plus: { label: "Halo Plus", plan: "starter", month: 12, year: 99, perPerson: false },
   solo: { label: "Solo", plan: "starter", month: 39, year: 390, perPerson: false },
   pro: { label: "Pro", plan: "pro", month: 89, year: 890, perPerson: false },
   team: { label: "Team", plan: "enterprise", month: 59, year: 590, perPerson: true },
 }
+
+/** Was neue Kund:innen buchen können. Solo, Pro und Team laufen nur noch als Bestandsabos. */
+export const BOOKABLE_OFFERS: Offer[] = ["plus"]
 
 export const MIN_TEAM_SEATS = 3
 
@@ -44,11 +51,15 @@ export function offerOfPrice(priceId: string, env: Env = process.env): { offer: 
 }
 
 export function isBillingConfigured(env: Env = process.env): boolean {
-  return !!env.STRIPE_SECRET_KEY && !!env.STRIPE_WEBHOOK_SECRET && !!priceIdFor("solo", "month", env)
+  return !!env.STRIPE_SECRET_KEY && !!env.STRIPE_WEBHOOK_SECRET && !!priceIdFor("plus", "month", env)
 }
 
 export function isOffer(value: unknown): value is Offer {
-  return value === "solo" || value === "pro" || value === "team"
+  return value === "plus" || value === "solo" || value === "pro" || value === "team"
+}
+
+export function isBookable(offer: Offer): boolean {
+  return BOOKABLE_OFFERS.includes(offer)
 }
 
 export function isInterval(value: unknown): value is Interval {

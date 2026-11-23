@@ -12,7 +12,7 @@ import type { Json, PlanType } from "../supabase/halo.types"
 import { planLimits } from "./plans"
 import { personDisplayName } from "./measure"
 
-/** Wie oft der tägliche Lauf Google je Person neu misst (Solo und höher; Check: PLAN_LIMITS). */
+/** Wie oft der tägliche Lauf Google je Person neu misst (Halo Plus und höher; Check: PLAN_LIMITS). */
 export const GOOGLE_INTERVAL_DAYS = 7
 
 export type GoogleResult = { ok: true; score: number | null } | { ok: false; error: string }

@@ -96,7 +96,7 @@ export type SiteDict = {
     lead: string
     recommended: string
     perMonth: string
-    plans: { sub: string; feats: string[]; cta: string; unit?: string }[]
+    plans: { sub: string; feats: string[]; cta: string; unit?: string; yearly?: string }[]
     agency: { title: string; from: string; text: string; cta: string }
     note: string
   }

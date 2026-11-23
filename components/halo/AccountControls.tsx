@@ -55,13 +55,13 @@ export function AccountForm({ name, type, personCount }: { name: string; type: "
   )
 }
 
-export function WeeklyBriefSetting({ on, email }: { on: boolean; email: string | null }) {
+export function WeeklyBriefSetting({ on, email, monthly = false }: { on: boolean; email: string | null; monthly?: boolean }) {
   const [pending, start] = useTransition()
   const [value, setValue] = useState(on)
   const [error, setError] = useState<string | null>(null)
   return (
     <section className={`${card} p-5 sm:p-6`}>
-      <h2 className="text-sm font-semibold text-[var(--h-text)]">Wochenbrief</h2>
+      <h2 className="text-sm font-semibold text-[var(--h-text)]">{monthly ? "Monatsbrief" : "Wochenbrief"}</h2>
       <label className="mt-3 flex items-start gap-3 cursor-pointer">
         <input
           type="checkbox"
@@ -82,7 +82,7 @@ export function WeeklyBriefSetting({ on, email }: { on: boolean; email: string |
           }}
         />
         <span className="text-sm text-[var(--h-muted)]">
-          Jeden Montag per Mail{email ? ` an ${email}` : ""}: Halo Score, was sich verändert hat und der nächste Schritt.
+          {monthly ? "Am ersten Montag im Monat" : "Jeden Montag"} per Mail{email ? ` an ${email}` : ""}: Halo Score, was sich verändert hat und der nächste Schritt.
         </span>
       </label>
       {error && <p className="text-xs text-[var(--h-error)] mt-2">{error}</p>}

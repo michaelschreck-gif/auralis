@@ -142,7 +142,7 @@ export const de: SiteDict = {
     voice: {
       title: "KI-Persona mit Stimme",
       text: "Sprich mit dem Bild, das die KI von dir hat. Hörbar, ungeschönt, aufschlussreich.",
-      tag: "Pro",
+      tag: "Plus",
       quote: "„So beschreibt mich die KI …“",
     },
     brief: {
@@ -155,7 +155,7 @@ export const de: SiteDict = {
     },
     trend: {
       title: "Verlauf & PDF-Report",
-      text: "Jede Messung bleibt sichtbar. Im Pro-Tarif über 12 Monate, als Report zum Teilen.",
+      text: "Jede Messung bleibt sichtbar. Mit Halo Plus über 12 Monate, als Report zum Teilen.",
       label: "Halo Score · 12 Monate",
       example: "Beispielverlauf",
     },
@@ -195,7 +195,7 @@ export const de: SiteDict = {
     chapter: "Preise",
     headingPre: "Klar im Preis. ",
     headingEm: "Klar im Ergebnis.",
-    lead: "Der kostenlose Check zeigt dir in wenigen Minuten, wo du stehst. Die bezahlten Tarife messen tiefer, über alle KI-Modelle und Google.",
+    lead: "Der kostenlose Check zeigt dir in wenigen Minuten, wo du stehst. Halo Plus misst jede Woche, gründlicher und über alle KI-Modelle – damit du siehst, was deine Schritte bewirken.",
     recommended: "Empfohlen",
     perMonth: "/ Monat",
     plans: [
@@ -203,32 +203,22 @@ export const de: SiteDict = {
         sub: "Wo stehst du heute?",
         cta: "Kostenlos starten",
         unit: "",
-        feats: ["1 Person, 1 Thema", "Messung über ChatGPT, Gemini, Perplexity + Google", "Monatliche Nachmessung", "Monatlicher Brief per Mail"],
+        feats: ["1 Person, 1 Thema", "Messung über ChatGPT, Gemini, Perplexity + Google", "Monatliche Nachmessung", "Deine nächsten Schritte", "Monatlicher Brief per Mail"],
       },
       {
-        sub: "Für Selbstständige, Berater, Speaker",
-        cta: "Vormerken",
-        feats: ["1 Person, 3 Themen", "Wöchentliche Messung", "Wochenbrief mit Veränderungen", "Maßnahmen + Impulse", "PDF-Report"],
-      },
-      {
-        sub: "Für Führungskräfte und sichtbare Expert:innen",
-        cta: "Vormerken",
-        feats: ["1 Person, 5 Themen", "Messung zweimal pro Woche", "Alles aus Solo", "KI-Persona mit Stimme", "Verlauf über 12 Monate"],
-      },
-      {
-        sub: "Ab 3 Personen, z. B. Geschäftsführung",
-        cta: "Vormerken",
-        unit: "/ Person / Monat",
-        feats: ["Je Person wie Solo", "Team-Übersicht für alle Personen", "Eigener Zugang je Person", "Sammel-Report"],
+        sub: "Für alle, die sichtbar werden und bleiben wollen",
+        cta: "Mit dem Check starten",
+        yearly: "oder €99 / Jahr – €45 gespart",
+        feats: ["1 Person, 3 Themen", "Wöchentliche Messung, gründlicher und über alle KI-Modelle inkl. Claude", "Google wöchentlich", "Wochenbrief mit Veränderungen", "Alle Details: KI je Modell, Impulse, Wie die KI dich sieht", "Verlauf + PDF-Report"],
       },
     ],
     agency: {
-      title: "Agentur",
-      from: "ab €490 / Monat",
-      text: "Für PR-, Personal-Branding- und LinkedIn-Berater:innen: viele Personen, API und Berichte für Kund:innen.",
+      title: "Teams & Agenturen",
+      from: "auf Anfrage",
+      text: "Mehrere Personen, Team-Übersicht, API und Berichte für Kund:innen – sprich uns an.",
       cta: "Angebot anfragen",
     },
-    note: "Alle Preise netto zzgl. MwSt. – das Angebot richtet sich an Selbstständige und Unternehmen. Bei jährlicher Zahlung zwei Monate gratis.",
+    note: "Alle Preise netto zzgl. MwSt. – das Angebot richtet sich an Selbstständige und Unternehmen. Monatlich bzw. jährlich kündbar.",
   },
   faq: {
     chapter: "Fragen",

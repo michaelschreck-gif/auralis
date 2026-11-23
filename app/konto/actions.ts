@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache"
 import { headers } from "next/headers"
 import { createHaloServerClient, createHaloServiceClient } from "@/lib/supabase/halo"
 import { generateApiKey } from "@/lib/halo/api"
-import { isBillingConfigured, isInterval, isOffer, OFFERS } from "@/lib/halo/billing"
+import { isBillingConfigured, isBookable, isInterval, isOffer, OFFERS } from "@/lib/halo/billing"
 import { createCheckout, createPortal, hasRunningSubscription } from "@/lib/halo/billing-stripe"
 import { LIMITS } from "@/lib/halo/config"
 import { planOfAccount } from "@/lib/halo/plan-db"
@@ -46,7 +46,7 @@ export async function convertToTeam(): Promise<ActionResult> {
   const o = await ownerAccount()
   if (!o) return { ok: false, error: "Nur der Owner kann das Konto ändern." }
   if (!planLimits(await planOfAccount(o.db, o.accountId)).teamAllowed) {
-    return { ok: false, error: "Teams gibt es im Tarif Team – oben unter Tarif buchbar." }
+    return { ok: false, error: "Team-Konten richten wir auf Anfrage ein – schreib uns." }
   }
   const { error } = await o.db.from("accounts").update({ type: "team" }).eq("id", o.accountId)
   if (error) return { ok: false, error: "Konnte nicht umgestellt werden." }
@@ -94,9 +94,9 @@ async function origin(): Promise<string> {
 
 const BILLING_SELECT = "id, name, stripe_customer_id, stripe_subscription_id, subscription_status"
 
-/** Stripe-Bezahlseite für Solo, Pro oder Team. Läuft schon ein Abo: Kundenportal. */
+/** Stripe-Bezahlseite für Halo Plus. Läuft schon ein Abo: Kundenportal. */
 export async function startCheckout(offer: unknown, interval: unknown): Promise<RedirectResult> {
-  if (!isOffer(offer) || !isInterval(interval)) return { ok: false, error: "Unbekannter Tarif." }
+  if (!isOffer(offer) || !isInterval(interval) || !isBookable(offer)) return { ok: false, error: "Unbekannter Tarif." }
   if (!isBillingConfigured()) return { ok: false, error: "Die Bezahlung ist noch nicht eingerichtet. Schreib uns, wir stellen dein Konto um." }
   const o = await ownerAccount()
   if (!o) return { ok: false, error: "Nur der Owner kann den Tarif ändern." }

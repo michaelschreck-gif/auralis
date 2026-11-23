@@ -142,7 +142,7 @@ export const fr: SiteDict = {
     voice: {
       title: "Persona IA avec voix",
       text: "Parlez à l’image que l’IA se fait de vous. Audible, sans filtre, révélateur.",
-      tag: "Pro",
+      tag: "Plus",
       quote: "« Voilà comment l’IA me décrit … »",
     },
     brief: {
@@ -155,7 +155,7 @@ export const fr: SiteDict = {
     },
     trend: {
       title: "Historique & rapport PDF",
-      text: "Chaque mesure reste visible. Avec l’offre Pro sur 12 mois, sous forme de rapport à partager.",
+      text: "Chaque mesure reste visible. Avec Halo Plus sur 12 mois, sous forme de rapport à partager.",
       label: "Halo Score · 12 mois",
       example: "Évolution d’exemple",
     },
@@ -195,7 +195,7 @@ export const fr: SiteDict = {
     chapter: "Tarifs",
     headingPre: "Des prix clairs. ",
     headingEm: "Des résultats clairs.",
-    lead: "Le check gratuit vous montre en quelques minutes où vous en êtes. Les offres payantes mesurent plus en profondeur, sur tous les modèles d’IA et Google.",
+    lead: "Le check gratuit vous montre en quelques minutes où vous en êtes. Halo Plus mesure chaque semaine, plus en profondeur et sur tous les modèles d’IA – pour voir ce que vos actions apportent.",
     recommended: "Recommandé",
     perMonth: "/ mois",
     plans: [
@@ -203,32 +203,22 @@ export const fr: SiteDict = {
         sub: "Où en êtes-vous aujourd’hui ?",
         cta: "Commencer gratuitement",
         unit: "",
-        feats: ["1 personne, 1 thème", "Mesure sur ChatGPT, Gemini, Perplexity + Google", "Nouvelle mesure chaque mois", "Brief mensuel par e-mail"],
+        feats: ["1 personne, 1 thème", "Mesure sur ChatGPT, Gemini, Perplexity + Google", "Nouvelle mesure chaque mois", "Vos prochaines étapes", "Brief mensuel par e-mail"],
       },
       {
-        sub: "Pour indépendants, consultants, conférenciers",
-        cta: "S’inscrire sur la liste",
-        feats: ["1 personne, 3 thèmes", "Mesure hebdomadaire", "Brief hebdomadaire des évolutions", "Actions + pistes", "Rapport PDF"],
-      },
-      {
-        sub: "Pour dirigeants et experts visibles",
-        cta: "S’inscrire sur la liste",
-        feats: ["1 personne, 5 thèmes", "Mesure deux fois par semaine", "Tout Solo inclus", "Persona IA avec voix", "Historique sur 12 mois"],
-      },
-      {
-        sub: "À partir de 3 personnes, p. ex. comité de direction",
-        cta: "S’inscrire sur la liste",
-        unit: "/ personne / mois",
-        feats: ["Par personne comme Solo", "Vue d’ensemble de l’équipe", "Accès individuel par personne", "Rapport consolidé"],
+        sub: "Pour devenir visible – et le rester",
+        cta: "Commencer par le check",
+        yearly: "ou 99 € / an – 45 € d’économie",
+        feats: ["1 personne, 3 thèmes", "Mesure hebdomadaire, plus approfondie et sur tous les modèles d’IA, Claude inclus", "Google chaque semaine", "Brief hebdomadaire des évolutions", "Tous les détails : IA par modèle, pistes, comment l’IA vous voit", "Historique + rapport PDF"],
       },
     ],
     agency: {
-      title: "Agence",
-      from: "à partir de 490 € / mois",
-      text: "Pour les conseils en RP, personal branding et LinkedIn : de nombreuses personnes, une API et des rapports pour vos clients.",
+      title: "Équipes & agences",
+      from: "sur demande",
+      text: "Plusieurs personnes, vue d’ensemble de l’équipe, API et rapports pour vos clients – contactez-nous.",
       cta: "Demander un devis",
     },
-    note: "Tous les prix s’entendent hors TVA – l’offre s’adresse aux indépendants et aux entreprises. En paiement annuel, deux mois offerts.",
+    note: "Tous les prix s’entendent hors TVA – l’offre s’adresse aux indépendants et aux entreprises. Résiliable chaque mois ou chaque année.",
   },
   faq: {
     chapter: "Questions",
