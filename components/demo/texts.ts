@@ -25,7 +25,7 @@ export type DemoPerson = {
   /** davon mit Unternehmen (in %) */
   withCompany: [number, number]
   gaps: { title: L; detail: L; severity: "high" | "medium" }[]
-  actions: { title: L; detail: L; impact: "high" | "medium"; by: "self" | "entrenous" }[]
+  actions: { title: L; detail: L; impact: "high" | "medium"; by: "self" | "halo" }[]
 }
 
 export const PERSONS: DemoPerson[] = [
@@ -71,7 +71,7 @@ export const PERSONS: DemoPerson[] = [
     actions: [
       {
         impact: "high",
-        by: "entrenous",
+        by: "halo",
         title: { de: "Fachbeitrag mit Firmenbezug platzieren", en: "Place an expert article tied to the company", fr: "Publier une tribune liée à l’entreprise" },
         detail: {
           de: "Gastbeitrag in einem Industriemagazin: Lena Brandt als CTO von Lumara Energie, Thema Wasserstoff-Hochlauf.",
@@ -91,7 +91,7 @@ export const PERSONS: DemoPerson[] = [
       },
       {
         impact: "medium",
-        by: "entrenous",
+        by: "halo",
         title: { de: "Bühne auf einem Entscheider-Event", en: "Stage at a decision-maker event", fr: "Intervention dans un événement de décideurs" },
         detail: {
           de: "Panel oder Keynote vor Einkauf und Geschäftsführung – Berichte darüber füllen die Lücke bei Entscheider-Fragen.",
@@ -143,7 +143,7 @@ export const PERSONS: DemoPerson[] = [
     actions: [
       {
         impact: "high",
-        by: "entrenous",
+        by: "halo",
         title: { de: "Positionierung schärfen", en: "Sharpen the positioning", fr: "Affiner le positionnement" },
         detail: {
           de: "Ein klares Thema statt drei: „CO₂-Bilanzierung im Mittelstand“ – in Profil, Bio und allen Auftritten gleich.",
@@ -163,7 +163,7 @@ export const PERSONS: DemoPerson[] = [
       },
       {
         impact: "medium",
-        by: "entrenous",
+        by: "halo",
         title: { de: "Podcast-Gastauftritte", en: "Podcast guest appearances", fr: "Invitations dans des podcasts" },
         detail: {
           de: "Drei Fachpodcasts in einem Quartal, jeweils mit Transkript und Verweis auf Lumara Energie.",
@@ -206,7 +206,7 @@ export const PERSONS: DemoPerson[] = [
     actions: [
       {
         impact: "high",
-        by: "entrenous",
+        by: "halo",
         title: { de: "Narrativ neu setzen", en: "Reset the narrative", fr: "Redéfinir le récit" },
         detail: {
           de: "Interviewreihe zu konkreten Projekten im Mittelstand – neue, positive Quellen statt der alten Debatte.",
@@ -252,7 +252,7 @@ export const DEMO_TEXTS: Record<Locale, {
   severity: { high: string; medium: string }
   actionsTitle: string
   impact: { high: string; medium: string }
-  by: { self: string; entrenous: string }
+  by: { self: string; halo: string }
   effectTitle: string
   effectHint: string
   before: string
@@ -293,7 +293,7 @@ export const DEMO_TEXTS: Record<Locale, {
     severity: { high: "wichtig", medium: "mittel" },
     actionsTitle: "Nächste Schritte",
     impact: { high: "Hohe Wirkung", medium: "Mittlere Wirkung" },
-    by: { self: "Selbst umsetzen", entrenous: "Mit entrenous" },
+    by: { self: "Selbst umsetzen", halo: "Mit DigitalHalo" },
     effectTitle: "Was sich bewegt hat",
     effectHint: "Beispielverlauf nach acht Wochen mit den Maßnahmen oben. Halo misst jede Woche weiter.",
     before: "vorher",
@@ -334,7 +334,7 @@ export const DEMO_TEXTS: Record<Locale, {
     severity: { high: "important", medium: "medium" },
     actionsTitle: "Next steps",
     impact: { high: "High impact", medium: "Medium impact" },
-    by: { self: "In-house", entrenous: "With entrenous" },
+    by: { self: "In-house", halo: "With DigitalHalo" },
     effectTitle: "What changed",
     effectHint: "Example trend after eight weeks with the actions above. Halo keeps measuring every week.",
     before: "before",
@@ -375,7 +375,7 @@ export const DEMO_TEXTS: Record<Locale, {
     severity: { high: "important", medium: "moyen" },
     actionsTitle: "Prochaines étapes",
     impact: { high: "Impact élevé", medium: "Impact moyen" },
-    by: { self: "En interne", entrenous: "Avec entrenous" },
+    by: { self: "En interne", halo: "Avec DigitalHalo" },
     effectTitle: "Ce qui a évolué",
     effectHint: "Exemple d’évolution après huit semaines avec les actions ci-dessus. Halo continue de mesurer chaque semaine.",
     before: "avant",

@@ -188,7 +188,7 @@ export function DemoPage({ locale }: { locale: Locale }) {
                       <p className="mt-1.5 text-[13.5px] leading-relaxed text-[var(--lx-muted)]">{a.detail[locale]}</p>
                       <div className="mt-3 flex flex-wrap gap-2 text-[11px]">
                         <span className="rounded-full border border-[var(--lx-line)] px-2.5 py-0.5 text-[var(--lx-muted)]">{t.impact[a.impact]}</span>
-                        <span className={`rounded-full px-2.5 py-0.5 ${a.by === "entrenous" ? "bg-[#fa5935] text-white" : "border border-[var(--lx-line)] text-[var(--lx-muted)]"}`}>{t.by[a.by]}</span>
+                        <span className={`rounded-full px-2.5 py-0.5 ${a.by === "halo" ? "bg-[#fa5935] text-white" : "border border-[var(--lx-line)] text-[var(--lx-muted)]"}`}>{t.by[a.by]}</span>
                       </div>
                     </div>
                   </li>
