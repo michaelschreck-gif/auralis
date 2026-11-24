@@ -89,6 +89,17 @@ export type SiteDict = {
   }
   path: { aria: string; chapter: string; heading: Part[]; steps: { t: string; d: string }[] }
   partner: { aria: string; chapter: string; heading: Part[]; lead: string; services: { t: string; d: string }[]; note: string; cta: string }
+  business: {
+    aria: string
+    chapter: string
+    heading: Part[]
+    lead: string
+    steps: { t: string; d: string }[]
+    signalLabel: string
+    signalText: string
+    demoCta: string
+    contactCta: string
+  }
   pricing: {
     chapter: string
     headingPre: string
@@ -109,6 +120,8 @@ export type SiteDict = {
     legal: string
     story: string
     score: string
+    business: string
+    demo: string
     pricing: string
     api: string
     contact: string

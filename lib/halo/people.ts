@@ -17,7 +17,7 @@ export async function createPersonWithTopics(
   db: HaloClient,
   service: HaloClient,
   accountId: string,
-  input: Pick<StartInput, "firstName" | "lastName" | "context" | "market" | "topics">,
+  input: Pick<StartInput, "firstName" | "lastName" | "context" | "company" | "market" | "topics">,
   /** Messrhythmus der Themen laut Tarif (lib/halo/plans.ts). */
   frequency: FrequencyType = "weekly",
 ): Promise<{ ok: true; personId: string; jobIds: string[] } | { ok: false; error: string }> {
@@ -28,6 +28,7 @@ export async function createPersonWithTopics(
       first_name: input.firstName,
       last_name: input.lastName,
       context: input.context || null,
+      company: input.company || null,
       market: input.market,
     })
     .select("id")

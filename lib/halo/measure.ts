@@ -10,6 +10,7 @@ import { MARKETS } from "../auralis/markets"
 import { calcNextRunAt, measureTarget, type MeasureProgressEvent } from "../auralis/runner"
 import type { HaloClient } from "../supabase/halo"
 import type { Json, PersonRow, SentimentType, TriggerType } from "../supabase/halo.types"
+import { companyMentionStats } from "./company"
 import { measurementProviders } from "./config"
 import { planOfAccount } from "./plan-db"
 import { measurementPlanFor, pickProviders } from "./plans"
@@ -60,6 +61,14 @@ export async function runMeasurement(
   const { ai, perception } = pillarsFromReport(result.aggregateReport)
   const modelsOk = result.successfulProviders.length
 
+  // Unternehmen in den Antworten (Corporate Ambassadors), nur wenn eins hinterlegt ist.
+  const companyMentions = person.company
+    ? companyMentionStats(
+        result.providerOutcomes.flatMap(o => o.queryResults.map(r => ({ text: r.rawResponse, personMentioned: r.signal.mentioned }))),
+        person.company,
+      )
+    : null
+
   const { data: saved, error: saveError } = await db
     .from("measurements")
     .insert({
@@ -73,7 +82,7 @@ export async function runMeasurement(
       models_total: providers.length,
       stability: (result.finalRawData.stability ?? null) as unknown as Json,
       summary: `KI-Sichtbarkeit ${ai}/100 über ${modelsOk} von ${providers.length} Modellen, genannt in ${result.aggregateReport.mentionRate}% der Antworten.`,
-      raw: result.finalRawData as unknown as Json,
+      raw: (companyMentions ? { ...result.finalRawData, companyMentions } : result.finalRawData) as unknown as Json,
     })
     .select("id")
     .single()

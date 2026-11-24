@@ -47,6 +47,8 @@ export type StartInput = {
   firstName: string
   lastName: string
   context: string
+  /** Unternehmen (optional), siehe lib/halo/company.ts */
+  company?: string
   market: MarketId
   topics: string[]
 }
@@ -77,6 +79,7 @@ export function validateStartInput(raw: Record<string, unknown>, maxTopics: numb
       firstName,
       lastName,
       context: clean(raw.context).slice(0, 120),
+      company: clean(raw.company).slice(0, 120),
       market,
       topics,
     },

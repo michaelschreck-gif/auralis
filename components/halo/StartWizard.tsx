@@ -49,6 +49,7 @@ export default function StartWizard({
   const [firstName, setFirstName] = useState("")
   const [lastName, setLastName] = useState("")
   const [context, setContext] = useState("")
+  const [company, setCompany] = useState("")
   const [market, setMarket] = useState(quick?.market ?? "dach")
   const [topics, setTopics] = useState<string[]>([])
   const [topicDraft, setTopicDraft] = useState("")
@@ -88,7 +89,7 @@ export default function StartWizard({
     setSubmitting(true)
     setError(null)
     const submitAction = mode === "addPerson" ? addPersonToTeam : completeStart
-    const res = await submitAction({ accountType, teamName, firstName, lastName, context, market, topics: finalTopics })
+    const res = await submitAction({ accountType, teamName, firstName, lastName, context, company, market, topics: finalTopics })
     setSubmitting(false)
     if (!res.ok) {
       setError(res.error)
@@ -293,17 +294,17 @@ export default function StartWizard({
               <input id="lastName" value={lastName} onChange={e => setLastName(e.target.value)} className={inputCls} />
             </div>
           </div>
-          <div className="mt-3 space-y-1.5">
-            <label className="text-xs text-[var(--h-muted)] font-medium" htmlFor="context">Rolle oder Unternehmen (empfohlen)</label>
-            <input
-              id="context"
-              value={context}
-              onChange={e => setContext(e.target.value)}
-              placeholder="z. B. Geschäftsführerin bei Halo"
-              className={inputCls}
-            />
-            <p className="text-xs text-[var(--h-dim)]">Hilft, dich von Personen mit gleichem Namen zu unterscheiden.</p>
+          <div className="grid sm:grid-cols-2 gap-3 mt-3">
+            <div className="space-y-1.5">
+              <label className="text-xs text-[var(--h-muted)] font-medium" htmlFor="context">Rolle (empfohlen)</label>
+              <input id="context" value={context} onChange={e => setContext(e.target.value)} placeholder="z. B. Geschäftsführerin" className={inputCls} />
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-xs text-[var(--h-muted)] font-medium" htmlFor="company">Unternehmen (optional)</label>
+              <input id="company" value={company} onChange={e => setCompany(e.target.value)} placeholder="z. B. Nordlicht Energie GmbH" className={inputCls} />
+            </div>
           </div>
+          <p className="text-xs text-[var(--h-dim)] mt-1.5">Hilft, dich von Namensvettern zu unterscheiden. Mit Unternehmen prüft Halo auch, ob die KI deine Firma zusammen mit dir nennt.</p>
         </section>
       )}
 

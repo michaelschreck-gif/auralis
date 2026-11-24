@@ -67,6 +67,6 @@ export const config = {
     "/", "/en", "/en/:path*", "/fr", "/fr/:path*", "/login", "/registrieren",
     "/start", "/weiter", "/p/:path*", "/personen/:path*", "/konto/:path*",
     "/auth/:path*", "/admin/:path*",
-    "/warteliste", "/kontakt", "/legal/:path*", "/docs/:path*", "/u/:path*",
+    "/warteliste", "/kontakt", "/demo", "/legal/:path*", "/docs/:path*", "/u/:path*",
   ],
 }

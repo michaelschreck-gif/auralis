@@ -12,6 +12,8 @@ import { CountUp } from "@/components/halo/motion"
 import { recommendServices } from "@/lib/halo/services"
 import { planOfPerson } from "@/lib/halo/plan-db"
 import { isGoogleConfigured } from "@/lib/halo/google"
+import { loadCompanyMentions, type CompanyView } from "@/lib/halo/company-db"
+import { percent } from "@/lib/halo/company"
 
 export const dynamic = "force-dynamic"
 export const metadata = { title: "Halo Score · Halo" }
@@ -60,14 +62,72 @@ function Delta({ value }: { value: number | null }) {
   )
 }
 
+/**
+ * Strahlt die Person auf ihr Unternehmen ab? Nennt die KI das Unternehmen – und
+ * zusammen mit der Person? (Corporate Ambassadors, lib/halo/company.ts)
+ */
+function CompanyCard({ view, personId }: { view: CompanyView; personId: string }) {
+  const settings = `/p/${personId}/einstellungen`
+  if (!view.company) {
+    return (
+      <section className={`${card} mt-6 p-5 md:p-6 flex flex-col gap-3 md:flex-row md:items-center md:justify-between`}>
+        <div>
+          <h2 className="text-sm font-semibold text-[var(--h-text)]">Strahlt deine Sichtbarkeit auf dein Unternehmen ab?</h2>
+          <p className="text-sm text-[var(--h-muted)] mt-1 max-w-2xl">
+            Trag dein Unternehmen ein. Ab der nächsten Messung zeigt Halo, ob die KI es zusammen mit dir nennt.
+          </p>
+        </div>
+        <Link href={settings} className={`${secondaryBtn} shrink-0`}>Unternehmen eintragen</Link>
+      </section>
+    )
+  }
+  if (!view.stats) {
+    return (
+      <section className={`${card} mt-6 p-5 md:p-6`}>
+        <h2 className="text-sm font-semibold text-[var(--h-text)]">{view.company} in KI-Antworten</h2>
+        <p className="text-sm text-[var(--h-muted)] mt-1">Ab der nächsten Messung siehst du hier, ob die KI {view.company} zusammen mit dir nennt.</p>
+      </section>
+    )
+  }
+  const s = view.stats
+  const companyRate = percent(s.companyMentioned, s.answers)
+  const withYou = percent(s.together, s.personMentioned)
+  return (
+    <section className={`${card} mt-6 p-5 md:p-6`} aria-labelledby="company-h">
+      <span className="h-eyebrow text-xs font-semibold uppercase tracking-wider text-[#FA5935]">Wirkung auf dein Unternehmen</span>
+      <h2 id="company-h" className="h-display font-[family-name:var(--font-display)] text-2xl text-[var(--h-text)] mt-2">{s.company} in KI-Antworten</h2>
+      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+        <div className="rounded-xl bg-[var(--h-inset)] p-4">
+          <div className="text-[11px] text-[var(--h-muted)]">{s.company} genannt</div>
+          <div className="mt-1 text-2xl font-semibold tabular-nums text-[var(--h-text)]">{companyRate} %</div>
+          <div className="text-[11px] text-[var(--h-dim)]">der Antworten zu deinen Themen</div>
+        </div>
+        <div className="rounded-xl bg-[var(--h-inset)] p-4">
+          <div className="text-[11px] text-[var(--h-muted)]">Zusammen mit dir</div>
+          <div className="mt-1 text-2xl font-semibold tabular-nums text-[var(--h-text)]">{s.personMentioned > 0 ? `${withYou} %` : "–"}</div>
+          <div className="text-[11px] text-[var(--h-dim)]">{s.personMentioned > 0 ? "der Antworten, die dich nennen" : "Die KI nennt dich noch nicht"}</div>
+        </div>
+      </div>
+      <p className="text-sm text-[var(--h-muted)] mt-4 leading-relaxed">
+        {s.personMentioned === 0
+          ? `Sobald die KI dich als Expertin oder Experten nennt, zeigt sich hier, ob ${s.company} davon profitiert.`
+          : withYou >= 50
+            ? `Wenn die KI dich nennt, nennt sie meist auch ${s.company} – deine Sichtbarkeit zahlt direkt auf die Marke ein.`
+            : `Die KI nennt dich oft ohne ${s.company}. Ein klarer Bezug zum Unternehmen in Profilen, Beiträgen und Auftritten verbindet beides.`}
+      </p>
+    </section>
+  )
+}
+
 export default async function HaloScorePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const db = await createHaloServerClient()
-  const [{ data: person }, overview, changes, plan] = await Promise.all([
+  const [{ data: person }, overview, changes, plan, companyView] = await Promise.all([
     db.from("persons").select("first_name, last_name, context").eq("id", id).single(),
     loadPersonOverview(db, id),
     loadRecentChanges(db, id, CHANGES_DAYS),
     planOfPerson(db, id),
+    loadCompanyMentions(db, id),
   ])
   // Kostenloser Check: nur Score, drei Säulen, nächste Schritte und Umsetzung durch entrenous.
   const simple = plan === "free"
@@ -161,6 +221,8 @@ export default async function HaloScorePage({ params }: { params: Promise<{ id: 
               )
             })}
           </section>
+
+          <CompanyCard view={companyView} personId={id} />
 
           {/* Nächste Schritte – das Wichtigste nach dem Score */}
           <section className={`${card} mt-6 p-5 md:p-6`} aria-labelledby="next-steps">

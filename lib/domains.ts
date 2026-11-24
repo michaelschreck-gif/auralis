@@ -42,7 +42,7 @@ const TOOL_PREFIXES = [
   "/dashboard", "/onboarding", "/settings", "/login", "/auth", "/admin",
   "/registrieren", "/start", "/weiter", "/p", "/personen", "/konto",
 ]
-const SITE_PREFIXES = ["/warteliste", "/kontakt", "/legal", "/docs", "/u", "/en", "/fr"]
+const SITE_PREFIXES = ["/warteliste", "/kontakt", "/demo", "/legal", "/docs", "/u", "/en", "/fr"]
 /** Auf der Admin-Domain erlaubt (Login und Auth gehören dazu). */
 const ADMIN_PREFIXES = ["/admin", "/login", "/auth"]
 
