@@ -11,7 +11,7 @@ export const fr: SiteDict = {
   },
   nav: {
     items: [
-      { href: "#geschichte", label: "L’histoire" },
+      { href: "/fr/demo", label: "Démo", highlight: true },
       { href: "#messung", label: "La mesure" },
       { href: "#score", label: "Halo Score" },
       { href: "#unternehmen", label: "Entreprises" },
@@ -41,7 +41,7 @@ export const fr: SiteDict = {
       "DigitalHalo mesure comment ChatGPT, Claude, Perplexity, Gemini et Google vous perçoivent – et le résume en un seul chiffre que vous pouvez faire progresser : le ",
     leadPost: ".",
     cta: "Lancer le check gratuit",
-    ctaSecondary: "Découvrir l’histoire",
+    ctaSecondary: "Voir la démo",
     note: "Gratuit · sans carte bancaire · données hébergées dans l’UE",
     scroll: "Défiler",
     scrollAria: "Continuer vers l’histoire",

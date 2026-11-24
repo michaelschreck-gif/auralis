@@ -10,7 +10,7 @@ export type SiteDict = {
   locale: Locale
   meta: { title: string; description: string; ogTitle: string; ogDescription: string }
   nav: {
-    items: { href: string; label: string }[]
+    items: { href: string; label: string; highlight?: boolean }[]
     homeAria: string
     login: string
     toTool: string

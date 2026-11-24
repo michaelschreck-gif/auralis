@@ -6,6 +6,7 @@ import { useReducedMotion, useScrollProgress } from "./hooks"
 import { useT } from "./i18n"
 import { LanguageMenu, LanguagePills, LanguageSwitcher } from "./LanguageSwitcher"
 import { Arrow, HaloMark, SplitHeading } from "./primitives"
+import { siteHref } from "@/lib/i18n/site"
 
 export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; signupHref: string; isLoggedIn: boolean }) {
   const t = useT()
@@ -52,7 +53,8 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
           </a>
           <div className="hidden items-center gap-9 text-[13.5px] lg:flex">
             {NAV.map(n => (
-              <a key={n.href} href={n.href} className="lx-navlink">
+              <a key={n.href} href={n.href} className={`lx-navlink ${n.highlight ? "inline-flex items-center gap-2 !text-[var(--lx-text)]" : ""}`}>
+                {n.highlight && <LiveDot />}
                 {n.label}
               </a>
             ))}
@@ -92,7 +94,8 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
         <ul className="space-y-2">
           {NAV.map((n, i) => (
             <li key={n.href} style={{ transitionDelay: `${open ? 80 + i * 60 : 0}ms` }} className={`transition-all duration-700 ${open ? "translate-y-0 opacity-100" : "translate-y-4 opacity-0"}`}>
-              <a href={n.href} onClick={() => setOpen(false)} className="lx-display block py-2 text-4xl text-[var(--lx-text)]" tabIndex={open ? 0 : -1}>
+              <a href={n.href} onClick={() => setOpen(false)} className="lx-display flex items-center gap-3 py-2 text-4xl text-[var(--lx-text)]" tabIndex={open ? 0 : -1}>
+                {n.highlight && <LiveDot />}
                 {n.label}
               </a>
             </li>
@@ -108,6 +111,16 @@ export function Nav({ toolHref, signupHref, isLoggedIn }: { toolHref: string; si
         </div>
       </div>
     </>
+  )
+}
+
+/** Pulsierender Punkt für die Live-Demo (Navigation und Hero). */
+function LiveDot() {
+  return (
+    <span className="relative flex h-2 w-2 shrink-0" aria-hidden="true">
+      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[var(--lx-coral)] opacity-60" />
+      <span className="relative inline-flex h-2 w-2 rounded-full bg-[var(--lx-coral)]" />
+    </span>
   )
 }
 
@@ -199,9 +212,10 @@ export function Hero({ signupHref }: { signupHref: string }) {
             <Link href={signupHref} className="lx-btn lx-btn--primary">
               {t.hero.cta} <Arrow />
             </Link>
-            <a href="#geschichte" className="lx-btn lx-btn--ghost">
-              {t.hero.ctaSecondary}
-            </a>
+            <Link href={siteHref("demo", t.locale)} className="lx-btn lx-btn--ghost inline-flex items-center gap-2.5">
+              <LiveDot />
+              {t.hero.ctaSecondary} <Arrow />
+            </Link>
           </div>
           <p className={`lx-reveal mt-5 text-xs text-[var(--lx-dim)] ${ready ? "is-in" : ""}`} style={{ "--d": "1000ms" } as React.CSSProperties}>
             {t.hero.note}
