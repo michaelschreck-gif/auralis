@@ -179,10 +179,10 @@ export const en: SiteDict = {
     ],
   },
   partner: {
-    aria: "Chapter 7: Implementation with entrenous",
+    aria: "Chapter 7: Implementation",
     chapter: "Implementation",
-    heading: ["Halo shows the way.\n", { em: "entrenous walks it with you." }],
-    lead: "For every step in your result you can choose: do it yourself or have it done. For that we work with entrenous, a brand strategy and communications agency based in Hamburg.",
+    heading: ["Halo shows the way.\n", { em: "We walk it with you." }],
+    lead: "For every step in your result you can choose: do it yourself or have it done. DigitalHalo supports you along the way – with experts in brand strategy, communications and visibility.",
     services: [
       { t: "Positioning", d: "What you stand for – clear enough for AI and people to repeat it." },
       { t: "Content & LinkedIn", d: "Posts and profiles that visibly connect your topics with your name." },
@@ -201,7 +201,7 @@ export const en: SiteDict = {
       { t: "Measure", d: "Per person: are they named for their topics, in which position, in what tone – and does the company name appear next to them?" },
       { t: "Spot the gaps", d: "Where does AI name the person without the company, where are they missing entirely? Halo shows it per ambassador and topic." },
       { t: "Derive measures", d: "The gaps become concrete steps per person, sorted by impact: positioning, content, PR, profiles." },
-      { t: "Implement & see the impact", d: "In-house or with entrenous. Halo keeps measuring every week – so you can see whether people and brand are named together more often." },
+      { t: "Implement & see the impact", d: "In-house or with support from DigitalHalo. Halo keeps measuring every week – so you can see whether people and brand are named together more often." },
     ],
     signalLabel: "Newly measured",
     signalText: "“Company named too”: how many AI answers that name a person also name their company.",

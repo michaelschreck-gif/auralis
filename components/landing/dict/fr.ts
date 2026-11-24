@@ -179,10 +179,10 @@ export const fr: SiteDict = {
     ],
   },
   partner: {
-    aria: "Chapitre 7 : mise en œuvre avec entrenous",
+    aria: "Chapitre 7 : mise en œuvre",
     chapter: "Mise en œuvre",
-    heading: ["Halo montre le chemin.\n", { em: "entrenous le parcourt avec vous." }],
-    lead: "Pour chaque étape de votre résultat, vous choisissez : la mettre en œuvre vous-même ou la confier. Pour cela, nous travaillons avec entrenous, une agence de stratégie de marque et de communication basée à Hambourg.",
+    heading: ["Halo montre le chemin.\n", { em: "Nous le parcourons avec vous." }],
+    lead: "Pour chaque étape de votre résultat, vous choisissez : la mettre en œuvre vous-même ou la confier. DigitalHalo vous accompagne – avec des experts en stratégie de marque, communication et visibilité.",
     services: [
       { t: "Positionnement", d: "Ce que vous incarnez – assez clair pour que l’IA et les gens le reprennent." },
       { t: "Contenu & LinkedIn", d: "Des publications et profils qui relient visiblement vos thèmes à votre nom." },
@@ -201,7 +201,7 @@ export const fr: SiteDict = {
       { t: "Mesurer", d: "Par personne : est-elle citée sur ses thèmes, à quelle place, sur quel ton – et le nom de l’entreprise apparaît-il à côté ?" },
       { t: "Repérer les écarts", d: "Où l’IA cite-t-elle la personne sans l’entreprise, où est-elle absente ? Halo le montre par ambassadeur et par thème." },
       { t: "Définir les actions", d: "Les écarts deviennent des étapes concrètes par personne, classées par impact : positionnement, contenus, RP, profils." },
-      { t: "Mettre en œuvre et voir l’effet", d: "En interne ou avec entrenous. Halo continue de mesurer chaque semaine – pour voir si personnes et marque sont plus souvent citées ensemble." },
+      { t: "Mettre en œuvre et voir l’effet", d: "En interne ou avec l’appui de DigitalHalo. Halo continue de mesurer chaque semaine – pour voir si personnes et marque sont plus souvent citées ensemble." },
     ],
     signalLabel: "Nouvelle mesure",
     signalText: "« Entreprise citée aussi » : la part des réponses IA citant une personne qui mentionnent aussi son entreprise.",

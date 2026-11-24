@@ -56,7 +56,7 @@ export function Path() {
   )
 }
 
-/* ─────────────── 07 · Umsetzung mit entrenous ─────────────── */
+/* ─────────────── 07 · Umsetzung ─────────────── */
 
 export function Partner() {
   const t = useT()
@@ -78,7 +78,7 @@ export function Partner() {
           {pa.services.map((s, i) => (
             <Reveal key={s.t} as="li" delay={i * 90} className="h-full list-none">
               <div onMouseMove={onSpotMove} className="lx-glass lx-spot h-full rounded-[27px] p-7">
-                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--lx-peach)]">entrenous</span>
+                <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--lx-peach)]">DigitalHalo</span>
                 <h3 className="mt-3 text-lg font-medium text-[var(--lx-text)]">{s.t}</h3>
                 <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--lx-muted)]">{s.d}</p>
               </div>

@@ -179,10 +179,10 @@ export const de: SiteDict = {
     ],
   },
   partner: {
-    aria: "Kapitel 7: Umsetzung mit entrenous",
+    aria: "Kapitel 7: Umsetzung",
     chapter: "Umsetzung",
-    heading: ["Halo zeigt den Weg.\n", { em: "entrenous geht ihn mit dir." }],
-    lead: "Zu jedem Schritt aus deinem Ergebnis kannst du wählen: selbst umsetzen oder umsetzen lassen. Dafür arbeiten wir mit entrenous zusammen, einer Agentur für Markenstrategie und Kommunikation aus Hamburg.",
+    heading: ["Halo zeigt den Weg.\n", { em: "Wir gehen ihn mit dir." }],
+    lead: "Zu jedem Schritt aus deinem Ergebnis kannst du wählen: selbst umsetzen oder umsetzen lassen. DigitalHalo unterstützt dich dabei – mit Fachleuten für Markenstrategie, Kommunikation und Sichtbarkeit.",
     services: [
       { t: "Positionierung", d: "Wofür du stehst – klar genug, dass KI und Menschen es wiedergeben." },
       { t: "Content & LinkedIn", d: "Beiträge und Profile, die deine Themen sichtbar mit deinem Namen verbinden." },
@@ -201,7 +201,7 @@ export const de: SiteDict = {
       { t: "Messen", d: "Je Person: Wird sie bei ihren Themen genannt, an welcher Stelle, in welchem Ton – und steht der Firmenname daneben?" },
       { t: "Lücken erkennen", d: "Wo nennt die KI die Person ohne das Unternehmen, wo fehlt sie ganz? Halo zeigt es je Ambassador und Thema." },
       { t: "Maßnahmen ableiten", d: "Aus den Lücken werden konkrete Schritte je Person, nach Wirkung sortiert: Positionierung, Content, PR, Profile." },
-      { t: "Umsetzen & Wirkung sehen", d: "Selbst oder mit entrenous. Halo misst jede Woche weiter – so wird sichtbar, ob Personen und Marke häufiger zusammen genannt werden." },
+      { t: "Umsetzen & Wirkung sehen", d: "Selbst oder mit Unterstützung von DigitalHalo. Halo misst jede Woche weiter – so wird sichtbar, ob Personen und Marke häufiger zusammen genannt werden." },
     ],
     signalLabel: "Neu gemessen",
     signalText: "„Unternehmen mitgenannt“: In wie vielen KI-Antworten, die eine Person nennen, auch ihr Unternehmen steht.",
