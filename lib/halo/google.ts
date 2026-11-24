@@ -23,7 +23,7 @@ export function isGoogleConfigured(): boolean {
 
 export async function runGoogleMeasurement(db: HaloClient, personId: string): Promise<GoogleResult> {
   const [{ data: person }, { data: topics }] = await Promise.all([
-    db.from("persons").select("first_name, last_name, market, website_url, context").eq("id", personId).maybeSingle(),
+    db.from("persons").select("first_name, last_name, market, website_url, context, company").eq("id", personId).maybeSingle(),
     db.from("topics").select("name").eq("person_id", personId).eq("is_active", true),
   ])
   if (!person) return { ok: false, error: "Person nicht gefunden." }
@@ -33,7 +33,8 @@ export async function runGoogleMeasurement(db: HaloClient, personId: string): Pr
     targetName: personDisplayName(person),
     topics: topics.map(t => t.name),
     websiteUrl: person.website_url,
-    context: person.context,
+    // Rolle und Unternehmen helfen, Namensvettern auseinanderzuhalten.
+    context: [person.context, person.company].filter(Boolean).join(", ") || null,
     language: MARKETS[person.market].language,
   })
   if (outcome.sourcesUsed.length === 0) {

@@ -99,6 +99,61 @@ export function Partner() {
   )
 }
 
+/* ─────────────── Für Unternehmen ─────────────── */
+
+export function Business() {
+  const t = useT()
+  const b = t.business
+  return (
+    <section id="unternehmen" className="relative scroll-mt-20 py-20 sm:py-28" aria-label={b.aria}>
+      <div className="lx-aura left-[10%] top-[30%] h-[28vw] w-[40vw] bg-[#8caaab]/10" />
+      <div className="relative mx-auto max-w-[1320px] px-5 sm:px-8">
+        <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-end">
+          <div>
+            <Chapter n="08" title={b.chapter} />
+            <SplitHeading className="mt-7 max-w-[820px] text-[clamp(2.3rem,5vw,4.6rem)]" parts={b.heading} />
+          </div>
+          <Reveal delay={150}>
+            <p className="lx-lead max-w-[520px] lg:ml-auto">{b.lead}</p>
+          </Reveal>
+        </div>
+
+        <ol className="mt-14 grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          {b.steps.map((s, i) => (
+            <Reveal key={s.t} as="li" delay={i * 90} className="h-full list-none">
+              <div onMouseMove={onSpotMove} className="lx-glass lx-spot relative h-full rounded-[27px] p-7">
+                <span className="lx-display text-[2.2rem] !leading-none text-[var(--lx-coral)]">{String(i + 1).padStart(2, "0")}</span>
+                <h3 className="mt-4 text-lg font-medium text-[var(--lx-text)]">{s.t}</h3>
+                <p className="mt-2 text-[13.5px] leading-relaxed text-[var(--lx-muted)]">{s.d}</p>
+                {i < b.steps.length - 1 && (
+                  <span className="absolute -right-3 top-1/2 hidden h-px w-6 bg-gradient-to-r from-[var(--lx-coral)] to-transparent xl:block" aria-hidden="true" />
+                )}
+              </div>
+            </Reveal>
+          ))}
+        </ol>
+
+        <Reveal delay={200}>
+          <div className="mt-10 flex flex-col gap-6 border-t border-[var(--lx-line)] pt-8 lg:flex-row lg:items-center lg:justify-between">
+            <p className="max-w-[640px] text-[14px] leading-relaxed text-[var(--lx-muted)]">
+              <span className="mr-2 rounded-full border border-[var(--lx-coral)]/40 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--lx-peach)]">{b.signalLabel}</span>
+              {b.signalText}
+            </p>
+            <div className="flex shrink-0 flex-col gap-3 sm:flex-row">
+              <Link href={siteHref("demo", t.locale)} className="lx-btn lx-btn--primary">
+                {b.demoCta} <Arrow />
+              </Link>
+              <Link href={siteHref("contact", t.locale)} className="lx-btn lx-btn--ghost">
+                {b.contactCta} <Arrow />
+              </Link>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </section>
+  )
+}
+
 /* ─────────────── Preise ─────────────── */
 
 type Plan = { name: string; price: string; unit?: string; yearly?: string; sub: string; feats: string[]; featured?: boolean; cta: { href: string; label: string } }
@@ -159,7 +214,7 @@ export function Pricing() {
       <div className="relative mx-auto max-w-[1320px] px-5 sm:px-8">
         <div className="grid gap-6 lg:grid-cols-2 lg:items-end">
           <div>
-            <Chapter n="08" title={pr.chapter} />
+            <Chapter n="09" title={pr.chapter} />
             <h2 id="lx-preise-h" className="lx-display mt-7 text-[clamp(2.3rem,5vw,4.8rem)]">
               {pr.headingPre}<span className="lx-em">{pr.headingEm}</span>
             </h2>
@@ -239,7 +294,7 @@ export function Faq() {
     <section id="faq" className="relative scroll-mt-20 py-20 sm:py-28" aria-labelledby="lx-faq-h">
       <div className="mx-auto grid max-w-[1320px] gap-12 px-5 sm:px-8 lg:grid-cols-[0.8fr_1.2fr]">
         <div>
-          <Chapter n="09" title={fq.chapter} />
+          <Chapter n="10" title={fq.chapter} />
           <h2 id="lx-faq-h" className="lx-display mt-7 text-[clamp(2.3rem,4.4vw,4rem)]">
             {fq.headingPre}<span className="lx-em">{fq.headingEm}</span>
           </h2>
@@ -305,7 +360,7 @@ export function Footer() {
   const ft = t.footer
   const loc = t.locale
   const cols: [string, [string, string][]][] = [
-    [ft.product, [[ft.story, "#geschichte"], [ft.score, "#score"], [ft.pricing, "#preise"], [ft.api, "/docs/api"]]],
+    [ft.product, [[ft.story, "#geschichte"], [ft.score, "#score"], [ft.business, "#unternehmen"], [ft.demo, siteHref("demo", t.locale)], [ft.pricing, "#preise"], [ft.api, "/docs/api"]]],
     [ft.company, [[ft.contact, siteHref("contact", loc)], [ft.waitlist, siteHref("waitlist", loc)]]],
     [ft.legal, [[ft.imprint, siteHref("imprint", loc)], [ft.privacy, siteHref("privacy", loc)], [ft.terms, siteHref("terms", loc)]]],
   ]

@@ -90,6 +90,8 @@ export type PersonRow = {
   first_name: string
   last_name: string
   context: string | null
+  /** Unternehmen (optional) – Messung prüft, ob die KI es mitnennt (lib/halo/company.ts). */
+  company: string | null
   market: MarketId
   website_url: string | null
   public_slug: string | null
@@ -329,7 +331,7 @@ export type HaloDatabase = {
         PersonRow,
         WithOptional<
           PersonRow,
-          "id" | "context" | "market" | "website_url" | "public_slug" | "public_profile_enabled" | "created_at" | "updated_at"
+          "id" | "context" | "company" | "market" | "website_url" | "public_slug" | "public_profile_enabled" | "created_at" | "updated_at"
         >
       >
       topics: Table<

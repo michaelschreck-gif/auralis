@@ -50,6 +50,7 @@ export async function updatePerson(personId: string, form: FormData): Promise<Ac
       first_name: firstName,
       last_name: lastName,
       context: clean(form.get("context"), 120) || null,
+      company: clean(form.get("company"), 120) || null,
       market,
       website_url: website || null,
       updated_at: new Date().toISOString(),

@@ -16,7 +16,7 @@ export default async function EinstellungenPage({ params }: { params: Promise<{ 
   const [{ data: person }, { data: topics }, plan] = await Promise.all([
     db
       .from("persons")
-      .select("id, first_name, last_name, context, market, website_url, public_slug, public_profile_enabled")
+      .select("id, first_name, last_name, context, company, market, website_url, public_slug, public_profile_enabled")
       .eq("id", id)
       .single(),
     db.from("topics").select("id, name, frequency, is_active, last_run_at").eq("person_id", id).order("created_at", { ascending: true }),

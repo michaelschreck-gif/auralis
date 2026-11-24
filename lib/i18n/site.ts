@@ -32,6 +32,7 @@ export const SITE_ROUTES = {
   imprint: { de: "/legal/impressum", en: "/en/legal/imprint", fr: "/fr/legal/mentions-legales" },
   privacy: { de: "/legal/datenschutz", en: "/en/legal/privacy", fr: "/fr/legal/confidentialite" },
   terms: { de: "/legal/agb", en: "/en/legal/terms", fr: "/fr/legal/cgv" },
+  demo: { de: "/demo", en: "/en/demo", fr: "/fr/demo" },
 } as const satisfies Record<string, Record<Locale, string>>
 
 export type SiteRoute = keyof typeof SITE_ROUTES

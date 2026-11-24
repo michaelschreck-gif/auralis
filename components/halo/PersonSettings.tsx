@@ -9,6 +9,7 @@ type Person = {
   first_name: string
   last_name: string
   context: string | null
+  company: string | null
   market: string
   website_url: string | null
 }
@@ -54,9 +55,14 @@ export default function PersonSettings({
             <span className="text-xs text-[var(--h-muted)] font-medium">Nachname</span>
             <input name="lastName" defaultValue={person.last_name} required className={inputCls} />
           </label>
-          <label className="space-y-1.5 sm:col-span-2">
-            <span className="text-xs text-[var(--h-muted)] font-medium">Rolle oder Unternehmen</span>
-            <input name="context" defaultValue={person.context ?? ""} placeholder="z. B. Geschäftsführerin bei Halo" className={inputCls} />
+          <label className="space-y-1.5">
+            <span className="text-xs text-[var(--h-muted)] font-medium">Rolle</span>
+            <input name="context" defaultValue={person.context ?? ""} placeholder="z. B. Geschäftsführerin" className={inputCls} />
+          </label>
+          <label className="space-y-1.5">
+            <span className="text-xs text-[var(--h-muted)] font-medium">Unternehmen (optional)</span>
+            <input name="company" defaultValue={person.company ?? ""} placeholder="z. B. Nordlicht Energie GmbH" className={inputCls} />
+            <span className="block text-[11px] text-[var(--h-dim)]">Halo prüft, ob die KI dein Unternehmen zusammen mit dir nennt.</span>
           </label>
           <label className="space-y-1.5">
             <span className="text-xs text-[var(--h-muted)] font-medium">Region</span>
